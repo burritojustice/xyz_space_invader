@@ -6,8 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>HERE XYZ Space Invader</title>
 	<link href="space-invader-144-294760.png" rel="icon" type="image/x-icon" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css" />
-	
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+
 	<style>
 	html, body {
 		margin: 0;
@@ -15,11 +15,11 @@
 		font-family: 'Fira Sans', sans-serif;
 		font-size: 12px;
 		}
-		
+
 	#map {
 	    height: 100%;
 	    width: 100%;
-		position: absolute; 
+		position: absolute;
 	}
 
 	#label {
@@ -37,7 +37,7 @@
 		text-shadow: 2px 2px #FFFFFF;
 		display: table;
 		padding: 10px;
-		border-radius: 15px; 
+		border-radius: 15px;
 	}
 	#text{
 /*             display: table-cell; */
@@ -58,14 +58,14 @@
 		height: 100%;
 /*             border-radius: 6px; */
 	}
-	
+
 	#properties {
 /* 		height: auto; */
 		overflow: scroll;
 		height: 40vh;
 
 	}
-	
+
 	#colors {
 /* 		height: auto; */
 		overflow: scroll;
@@ -85,13 +85,13 @@
 		max-height: 900px;
 		overflow: scroll;
 	}
-	
+
 	#minidiv {
 		margin: 1px;
 		padding: 0.5em;
 		color: black;
 	}
-	
+
 	#controls_right {
 		position: absolute;
 		z-index: 1000;
@@ -111,7 +111,7 @@
 		max-height: 500px;
 		overflow: scroll;
 	}
-	
+
 	#controls_middle {
 		position: absolute;
 		z-index: 1000;
@@ -120,7 +120,7 @@
 		height: 85%;
 		left: 20%
 	}
-	
+
 	#controls_middle div {
 		margin: 10px;
 		padding: 0.5em;
@@ -139,10 +139,10 @@
 		border: 2px solid grey;
 		border-radius: 50%;
 		display: inline-block;
-		vertical-align:bottom; 
+		vertical-align:bottom;
 /* 		float:right; */
 	}
-		
+
 	</style>
 </head>
 <body>
@@ -160,7 +160,7 @@
 	<div id="colors">
 		<p id="colorProperties">click on property value for unique colors</p>
 		<table id="prop_stats"></table>
-		<p style="color:blue;" id="clear_color_properties" onclick="clearColorProperties()">CLEAR COLOR FILTERS</p>	
+		<p style="color:blue;" id="clear_color_properties" onclick="clearColorProperties()">CLEAR COLOR FILTERS</p>
 	</div>
 </div>
 <div id="controls_middle">
@@ -184,27 +184,29 @@
 		<p id="someTagsallTags" onclick="showAllKnownTags">tags visible in viewport</p>
 		<table><tr>
 		<td style="color:blue;" id="at_filter" onclick="filterAts()">[only show @ tags]</td>
-		<td style="color:blue;" id="alphabetize" onclick="alphabetize_tags()">[sort by name]</td>
+		<td style="color:blue;" id="alphabetize" onclick="alphabetizeTags()">[sort by name]</td>
 		</tr></table>
 		<p id="tags"></p>
 	</div>
 </div>
 
 
-<!-- 
+<!--
 <div id="label" style="text-align: center; color: red">
 	<p id="text">Space ID
 	</p>
 </div>
  -->
-<script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js">
-</script>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+<script src="https://unpkg.com/lodash@4.17.11/lodash.min.js"></script>
 <!-- Main tangram library -->
-<script src="https://unpkg.com/tangram/dist/tangram.min.js">
-</script>
-<script src="leaflet-hash.js">
-</script>
+<script src="https://unpkg.com/tangram/dist/tangram.min.js"></script>
+<script src="leaflet-hash.js"></script>
+
+<!-- <script type="module"> -->
+<script src="basemaps.js"></script>
 <script>
+  // import { getBasemapScene, getNextBasemap } from './basemaps.js';
 
 	var property_text
 //	var space_count, space_size
@@ -222,24 +224,25 @@
 	var randomColors = 0,highlight = 0,lines = 0,water = 0,outlines = 1,points = 0,bright = 0,basemap = 0
 	var roads = 1, buildings = 1
 	var property
-	
+
 	var tag_list = []
 	var space_list = {}
-	var layer
+  var layer
+  var scene_config
 	var scene_file = 'tangram_xyz_scene.yaml'
 	var map, hash, popup
-	
+
 	map = L.map('map', {boxZoom: false});
     hash = new L.Hash(map);
     popup = L.popup();
 	//map.setView([37.7,-122.4], 12);
 	map.zoomControl.setPosition('bottomright')
-	
-	
+
+
 	query = parseQuery(window.location.search.slice(1));
-	
+
 	// grab query parameters from the url and assign them to globals
-	
+
 	if (query.space){
 		space = query.space
 	}
@@ -252,7 +255,7 @@
 		tags_filtered.push(tags)
 		document.getElementById("tags_filtered").innerHTML = "filtering by tags:<br>" + tags
 	}
-	
+
 	if (!query.space || !query.token){
 		console.log('no token or space')
 		scene_file = 'dark_refill.yaml'
@@ -262,17 +265,17 @@
 //     	popup = L.popup();
 // 		map.zoomControl.setPosition('bottomright')
 
-		
+
 		inputSpace() // get user to enter a space id and token
-		
+
 	}
-	
+
 	if (query.buildings){
 		buildings = query.buildings
-	}	
+	}
 	if (query.randomColors){
 		randomColors = query.randomColors
-	}		
+	}
 	if (query.highlight){
 		highlight = query.highlight
 	}
@@ -295,11 +298,11 @@
 		water = query.water
 	}
 	if (query.basemap){
-		basemap = query.basemap
+    basemap = query.basemap
 	}
 	if (query.property){
 		property = query.property
-	}	
+	}
 	if (query.tags){
 		// look for AND tags
 		if (query.tags.includes('+')){
@@ -310,12 +313,12 @@
 		if (query.tags.includes(',')){
 			tags_filtered = query.tags.split(',')
 			and_or = 'or'
-		}		
+		}
 	}
-	
+
 	console.log('url query is',query)
-	
-	
+
+
  	var url_hash = window.location.hash.slice(1, window.location.hash.length).split('/');
 	var map_start_location = null
 	if (url_hash.length == 3) {
@@ -325,11 +328,12 @@
 			zoom: Number(url_hash[0])
 		};
 	}
-	
-    makeLayer()
-    
+
+  buildBasemap();
+  loadScene();
+
 // 	getBbox(space,token)
-	
+
 	if (map_start_location == null){
 		console.log('no url hash, getting bbox')
 		getBbox(space,token)
@@ -338,20 +342,6 @@
 		map.setView([map_start_location.lat,map_start_location.lng],map_start_location.zoom)
 		getStats(space,token)
 	}
-	
-// 	layer.scene.subscribe({
-//     	load: getSpace
-//     	}
-// 	);
-
-	layer.scene.subscribe({
-    	load: function(){
-    		getSpace()
-//     		queryViewport()
-            applyURLQuery()
-    	}
-	});
-	
 
 	map.on("keypress", function(e) {
 		// b = toggle buildings
@@ -363,63 +353,49 @@
 		// r = toggle roads
 		// s = make dots smaller and lines narrower
 		// w = put polygons under water
-	
-    	var keyPressed = e.originalEvent.key;
-    	
-		
-    	if (keyPressed == "b") { // toggle buildings
-    		toggleBuildings()
-		}	
-    	
-    	if (keyPressed == "c") { // color hash each feature
-			toggleColors() 
-		}
-		
-    	if (keyPressed == "h") { // highlight colors and make points bigger
-			toggleHighlight()
-		}
-		
-    	if (keyPressed == "a") { // pick colors for a light basemap
-			toggleBright()
-		}
 
-    	if (keyPressed == "m") { // toggle basemap
-    		updateBasemap()
-    	}		
+    var key = e.originalEvent.key;
 
-    	if (keyPressed == "o") { // toggle polygon outlines
-			toggleOutlines()
-		}	
-		
-    	if (keyPressed == "p") { // make points bigger
-			togglePoints()
-		}	
-		
-//     	if (keyPressed == "q") {
-//     		layer.scene.queryFeatures({ filter: { $source: '_xyzspace' }}).then(
-//     			features => {console.log(features)
-//     			console.log('yo')
-//     		});
-//     		queryViewport()
-// 		}			
-		
-    	if (keyPressed == "r") { // toggle roads
-			toggleRoads()
-		}	
-		
-    	if (keyPressed == "l") { // make lines smaller
-			toggleLines()
-		}
-
-    	if (keyPressed == "w") { // put polygons under water
+    if (key == "m") { // toggle basemap
+      nextBasemap();
+      makeQuery(query);
+      return;
+    }
+    else {
+      if (key == "b") { // toggle buildings
+        toggleBuildings()
+      }
+    	else if (key == "c") { // color hash each feature
+			  toggleColors()
+		  }
+    	else if (key == "h") { // highlight colors and make points bigger
+        toggleHighlight()
+      }
+    	else if (key == "a") { // pick colors for a light basemap
+        toggleBright()
+      }
+      else if (key == "o") { // toggle polygon outlines
+        toggleOutlines()
+      }
+    	else if (key == "p") { // make points bigger
+        togglePoints()
+      }
+    	else if (key == "r") { // toggle roads
+        toggleRoads()
+      }
+    	else if (key == "l") { // make lines smaller
+        toggleLines()
+      }
+    	else if (key == "w") { // put polygons under water
     		toggleWater()
-		}	
+      }
 
-		makeQuery(query)
-
+      makeQuery(query)
+      scene.updateConfig();
+    }
 	});
- 
- 
+
+
 	map.on("moveend", function(){
 		queryViewport()
 		if (query.property){
@@ -432,72 +408,61 @@
 			colorProperties(query.property)
 		}
 	})
-// 	map.on("load", queryViewport)
-	map.on("load", function(){
-		queryViewport()
-		applyURLQuery()
-	})
 
-// 	map.on('tangramloaded', function(e) { //ugh mapzen.js only 
-// 		queryViewport()
-//         applyURLQuery()
-//         
-//       });
-	
-	// this is to apply any arguments from the URL query. some of these conflict (bright and highlight with property-driven colors, and point sizes, need to figure that out)
-	
+  // this is to apply any arguments from the URL query. some of these conflict (bright and highlight with property-driven colors, and point sizes, need to figure that out)
+
 	function applyURLQuery(){
 		console.log('applying url query',query)
-		if (query.basemap == 1){basemapDots()}
-		if (query.basemap == 2){basemapPixel()}
-		if (query.basemap == 3){basemapWalkabout()}
-		if (query.basemap == 4){basemapRefill()}
-		
-		
+		// if (query.basemap == 1){basemapDots()}
+		// if (query.basemap == 2){basemapPixel()}
+		// if (query.basemap == 3){basemapWalkabout()}
+		// if (query.basemap == 4){basemapRefill()}
+
+
 		if (query.buildings == 0){disableBuildings()}
-		
+
 		if (query.colors == 1){enableColorHash()}
-		
+
 		if (query.highlight == 1){enableHighlight()}
-		
+
 		if (query.bright == 1){enableBright()}
-		
+
 		if (query.outlines == 1){enableOutlines()}
 		if (query.outlines == 0){disableOutlines()}
 
-		
+
 		if (query.points == 1){mediumPoints()}
 		if (query.points == 2){bigPoints()}
 		if (query.points == 3){smallerPoints()}
 		if (query.points == 4){smallPoints()}
-		
+
 		if (query.roads == 0){disableRoads()}
-		
+
 		if (query.lines == 1){enableSmallerLines()}
 		if (query.lines == 2){enableMuchSmallerLines()}
 
 		if (query.water == 0){underWater()}
-		
+
 		if (query.property){
 			console.log('we have a property and it is',query.property)
-			colorProperties(query.property)
+			colorProperties(query.property, false)
 		}
 		displayQuery()
-		
+
 	}
-	
+
 	function displayQuery(){
 		document.getElementById("style_info").innerHTML = ''
 		var query_string = Object.entries(query)
-		var row_1 = "<tr><td onclick='toggleRoads()'>roads:</td><td>" + query.roads + "</td><td onclick='toggleBuildings()'>buildings:</td><td>" + query.buildings + "</td><td onclick='toggleWater()'>water:</td><td>" + query.water + "</td></tr>" 
-		var row_2 = "</td><td onclick='togglePoints()'>points:</td><td>" + query.points + "</td><td onclick='toggleLines()'>lines:</td><td>" + query.lines + "</td><td onclick='toggleOutlines()'>outlines:</td><td>" + query.outlines + "</td></tr>" 
-		var row_3 = "<tr><td onclick='updateBasemap()'>basemap:</td><td>" + query.basemap + "</td><td onclick='toggleColors()'>colors:</td><td >" + query.randomColors + "</td></tr>" 
+		var row_1 = "<tr><td onclick='toggleRoads()'>roads:</td><td>" + query.roads + "</td><td onclick='toggleBuildings()'>buildings:</td><td>" + query.buildings + "</td><td onclick='toggleWater()'>water:</td><td>" + query.water + "</td></tr>"
+		var row_2 = "</td><td onclick='togglePoints()'>points:</td><td>" + query.points + "</td><td onclick='toggleLines()'>lines:</td><td>" + query.lines + "</td><td onclick='toggleOutlines()'>outlines:</td><td>" + query.outlines + "</td></tr>"
+		var row_3 = "<tr><td onclick='nextBasemap()'>basemap:</td><td>" + query.basemap + "</td><td onclick='toggleColors()'>colors:</td><td >" + query.randomColors + "</td></tr>"
 		var query_table = "<table>" + row_1 + row_2 + row_3 + "</table>"
 		console.log(query_table)
 		document.getElementById("style_info").innerHTML = query_table
 
 	}
-	
+
 	function toggleBuildings(){
 		// toggle buildings
 		if (buildings == 1){ // turn off buildings
@@ -506,58 +471,59 @@
 		else{ // turn on buildings
 			enableBuildings()
 		}
-		query.buildings = buildings //
+		query.buildings = buildings
 		makeQuery(query)
+  }
 
-onclick='toggleColors()'	}
 	function disableBuildings(){
-		layer.scene.config.layers.buildings.enabled = false
-		layer.scene.updateConfig()
+    if (scene_config.layers.buildings) {
+      scene_config.layers.buildings.enabled = false
+    }
 		buildings = 0
-		console.log('no buildings')	
+		console.log('no buildings')
 	}
 	function enableBuildings(){
-		layer.scene.config.layers.buildings.enabled = true
-		layer.scene.updateConfig()
+    if (scene_config.layers.buildings) {
+      scene_config.layers.buildings.enabled = true
+    }
 		buildings = 1
 		console.log('yes buildings')
 	}
-	
 
-	
-	
+
+
+
 	function toggleColors(){
 		// toggle random colors for features
 		if (randomColors == 0){ // make random colors
  			enableColorHash()
-		} 
+		}
 		else{ // revert to default colors
 			disableColorHash()
-		}
+    }
+    scene.updateConfig();
 		query.randomColors = randomColors
 		makeQuery(query)
 
 	}
 	function enableColorHash(){
-		layer.scene.config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_hash'
-		layer.scene.config.layers._xyz_lines.draw._lines.color = 'global.color_hash'
-		layer.scene.config.layers._xyz_dots.draw.points.color = 'global.color_hash'
+		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_hash'
+		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_hash'
+		scene_config.layers._xyz_dots.draw.points.color = 'global.color_hash'
 
 		console.log('color feature hash')
-		layer.scene.updateConfig();	
-		randomColors = 1 
+		randomColors = 1
 	}
 	function disableColorHash(){
-		layer.scene.config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_polygons'
-		layer.scene.config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
-		layer.scene.config.layers._xyz_dots.draw.points.color = 'global.color_points'
+		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_polygons'
+		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
+		scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
 		console.log('base colors')
-		layer.scene.updateConfig();	
 		randomColors = 0
-	}	
-	
-	
-	
+	}
+
+
+
 	function toggleHighlight(){
 		// highlight colors, make things bigger and wider
 		if (highlight == 0){
@@ -565,53 +531,51 @@ onclick='toggleColors()'	}
 		}
 		else{
 			disableHiglight()
-		}
+    }
+    // scene.updateConfig();
 		query.highlight = highlight
 	}
 	function enableHighlight(){ // outline points, make points bigger, thicker lines
-		layer.scene.config.layers._xyz_lines.draw._lines.outline = 'global.highlight'
-		layer.scene.config.layers._xyz_dots.draw.points.size = '12px'
-		layer.scene.config.layers._xyz_polygons._outlines.draw._lines.width = '3px'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_lines.draw._lines.outline = 'global.highlight'
+		scene_config.layers._xyz_dots.draw.points.size = '12px'
+		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '3px'
 		highlight = 1
 		console.log('big')
 	}
 	function disableHighlight(){
-		layer.scene.config.layers._xyz_lines.draw._lines.outline = null
-		layer.scene.config.layers._xyz_dots.draw.points.size = '6px'
-		layer.scene.config.layers._xyz_polygons._outlines.draw._lines.width = '1px'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_lines.draw._lines.outline = null
+		scene_config.layers._xyz_dots.draw.points.size = '6px'
+		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '1px'
 		highlight = 0
 		console.log('not big')
-	}	
-		
-		
+	}
+
+
 	function toggleBright(){
 	// make colors that are nicer on a light basemap
-		if (bright == 0){ 
+		if (bright == 0){
 			enableBright()
 		}
 		else{
 			disableBright()
-		}
+    }
+    // scene.updateConfig();
 		query.bright = bright
 	}
 	function enableBright(){
-		layer.scene.config.layers._xyz_lines.draw._lines.color = [1,0,0,0.5]
-		layer.scene.config.layers._xyz_dots.draw.points.color = [0,0,1,0.5]
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_lines.draw._lines.color = [1,0,0,0.5]
+		scene_config.layers._xyz_dots.draw.points.color = [0,0,1,0.5]
 		bright = 1
 		console.log('light basemap friendly')
 	}
 	function disableBright(){
-		layer.scene.config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
-		layer.scene.config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
+		scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
 		bright = 0
 		console.log('dark basemap friendly')
 	}
-	
-	
+
+
 	function toggleOutlines(){
 	// change outlines of polygons
 		if (outlines == 0){
@@ -619,43 +583,42 @@ onclick='toggleColors()'	}
 		}
 		else if (outlines == 1){
 			disableOutlines()
-		}
+    }
+    // scene.updateConfig();
 		query.outlines = outlines
 		makeQuery(query)
 
 	}
 	function disableOutlines(){
-		layer.scene.config.layers._xyz_polygons._outlines.draw._lines.width = '0px'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '0px'
 		outlines = 0
 		console.log('no polygon outlines')
 	}
 	function enableOutlines(){
-		layer.scene.config.layers._xyz_polygons._outlines.draw._lines.width = '1px'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '1px'
 		outlines = 1
 		console.log('yes polygon outlines')
 	}
-	
+
 	function enableOutlinesNoFill(){
-		layer.scene.config.layers._xyz_polygons.draw._polygons_inlay.color = null
+		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = null
 		var color
 		if (property){
-			layer.scene.config.layers._xyz_polygons._outlines.draw._lines.color = colorProperties(property)
+      // TODO: this can't be right, colorProperties() doesn't return anything
+			scene_config.layers._xyz_polygons._outlines.draw._lines.color = colorProperties(property)
 			console.log('outlines only, colored by property')
 
 		}
 		if (randomColors = 1){
-			layer.scene.config.layers._xyz_polygons._outlines.draw._lines.color = 'global.color_hash'
+			scene_config.layers._xyz_polygons._outlines.draw._lines.color = 'global.color_hash'
 			console.log('outlines only, colored randomly')
 
 		}
-		layer.scene.updateConfig()
 		outlines = 2
 	}
-	
 
-	
+
+
 	function togglePoints(x){
 		// make points big, bigger, biggest,smaller
 		if (points == 0){
@@ -675,43 +638,39 @@ onclick='toggleColors()'	}
 
 	}
 	function mediumPoints(){
-		layer.scene.config.layers._xyz_dots.draw.points.size = '12px'
-// 				layer.scene.config.layers._xyz_dots.draw.points.color = [1,0,0,0.5]
-		layer.scene.config.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.5]
-		layer.scene.config.layers._xyz_dots.draw.points.outline.width = '1px'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_dots.draw.points.size = '12px'
+// 				scene_config.layers._xyz_dots.draw.points.color = [1,0,0,0.5]
+		scene_config.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.5]
+		scene_config.layers._xyz_dots.draw.points.outline.width = '1px'
 		points = 1
 		console.log('medium points')
 	}
 	function bigPoints(){
-		layer.scene.config.layers._xyz_dots.draw.points.size = '16px'
-// 				layer.scene.config.layers._xyz_dots.draw.points.color = [1,0,0,0.5]
-		layer.scene.config.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.5]
-		layer.scene.config.layers._xyz_dots.draw.points.outline.width = '1px'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_dots.draw.points.size = '16px'
+// 				scene_config.layers._xyz_dots.draw.points.color = [1,0,0,0.5]
+		scene_config.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.5]
+		scene_config.layers._xyz_dots.draw.points.outline.width = '1px'
 		points = 2
 		console.log('big points')
 	}
 	function smallerPoints(){
-		layer.scene.config.layers._xyz_dots.draw.points.size = '3px'
-// 				layer.scene.config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		layer.scene.config.layers._xyz_dots.draw.points.outline.color = null
-		layer.scene.config.layers._xyz_dots.draw.points.outline.width = null
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_dots.draw.points.size = '3px'
+// 				scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
+		scene_config.layers._xyz_dots.draw.points.outline.color = null
+		scene_config.layers._xyz_dots.draw.points.outline.width = null
 		points = 3
 		console.log('smaller points')
 	}
 	function smallPoints(){
-		layer.scene.config.layers._xyz_dots.draw.points.size = '6px'
-// 				layer.scene.config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		layer.scene.config.layers._xyz_dots.draw.points.outline.color = null
-		layer.scene.config.layers._xyz_dots.draw.points.outline.width = null
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_dots.draw.points.size = '6px'
+// 				scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
+		scene_config.layers._xyz_dots.draw.points.outline.color = null
+		scene_config.layers._xyz_dots.draw.points.outline.width = null
 		points = 0
 		console.log('small points')
 	}
-	
-	
+
+
 	function toggleRoads(){
 		// toggle road visibilty
 		if (roads == 1){
@@ -725,24 +684,30 @@ onclick='toggleColors()'	}
 
 	}
 	function disableRoads(){
-		layer.scene.config.layers.roads.enabled = false
-		if (layer.scene.config.layers.pois){
-			layer.scene.config.layers.pois.enabled = false //to handle exit numbers
-		}
-		layer.scene.updateConfig()
+    if (scene_config.layers.roads) {
+      scene_config.layers.roads.enabled = false
+    }
+
+		if (scene_config.layers.pois) {
+			scene_config.layers.pois.enabled = false //to handle exit numbers
+    }
+
 		roads = 0
 		console.log('no roads')
 	}
 	function enableRoads(){
-		layer.scene.config.layers.roads.enabled = true
-		if (layer.scene.config.layers.pois){
-			layer.scene.config.layers.pois.enabled = true
-		}
-		layer.scene.updateConfig()
+    if (scene_config.layers.roads) {
+      scene_config.layers.roads.enabled = true
+    }
+
+		if (scene_config.layers.pois) {
+			scene_config.layers.pois.enabled = true
+    }
+
 		roads = 1
 		console.log('yes roads')
 	}
-	
+
 	// make lines smaller
 	function toggleLines(x){
 		if (lines == 0){
@@ -759,32 +724,29 @@ onclick='toggleColors()'	}
 
 	}
 	function enableSmallerLines(){
-// 		layer.scene.config.layers._xyz_dots.draw.points.size = '3px'
-		layer.scene.config.layers._xyz_lines.draw._lines.width = '2px'
-		layer.scene.updateConfig()
+// 		scene_config.layers._xyz_dots.draw.points.size = '3px'
+		scene_config.layers._xyz_lines.draw._lines.width = '2px'
 		lines = 1
 		console.log('smaller lines')
 	}
 	function enableMuchSmallerLines(){
-// 		layer.scene.config.layers._xyz_dots.draw.points.size = '1px'
-		layer.scene.config.layers._xyz_lines.draw._lines.width = '1px'
-		layer.scene.updateConfig()
+// 		scene_config.layers._xyz_dots.draw.points.size = '1px'
+		scene_config.layers._xyz_lines.draw._lines.width = '1px'
 		lines = 2
 		console.log('much smaller lines')
 	}
 	function disableSmallerLines(){
-// 		layer.scene.config.layers._xyz_dots.draw.points.size = '6px'
-		layer.scene.config.layers._xyz_lines.draw._lines.width = '4px'
-		layer.scene.updateConfig()
+// 		scene_config.layers._xyz_dots.draw.points.size = '6px'
+		scene_config.layers._xyz_lines.draw._lines.width = '4px'
 		lines = 0
 		console.log('regular lines')
 	}
-	
-	
-	
+
+
+
 	function toggleWater(x){
 		// move polygons above or below water
-		
+
 		if (water == 0){
 			underWater()
 		}
@@ -794,273 +756,98 @@ onclick='toggleColors()'	}
 		query.water = water
 		makeQuery(query)
 
-	
+
 	}
-	
+
 	function underWater(){
-		layer.scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 200
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_polygons.draw._polygons_inlay.order = 200
 		water = 1
 		console.log('under water')
 	}
 	function overWater(){
-		layer.scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 300
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_polygons.draw._polygons_inlay.order = 300
 		water = 0
 		console.log('over water')
 	}
-	
-	
-	function updateBasemap(){
-		
+
+
+  function buildBasemap() {
+    console.log('basemap', getBasemapName(basemap));
+    query.basemap = basemap;
+    scene_file = getBasemapScene(basemap);
+  }
+
+	function nextBasemap(){
 		// toggle basemap
-		
 		// this is overriding an import of the initial basemap, so we need to call tangram_xyz_scene_no_import.yaml which does not import a basemap -- this is a pain to keep in sync -- if you make a change to the yaml, you need to do it in both scene files
+    console.log('m',basemap)
 
-		console.log('m',basemap)
+    basemap = getNextBasemap(basemap);
+    buildBasemap();
+    loadScene();
+	}
 
-		if (basemap == 0){
-			basemapDots()
-		}
-		else if (basemap == 1){
-			basemapPixel()
-		}
-// 		else if (basemap == 2){
-//			basemapStripes
-// 		}
-// 		else if (basemap == 3){
-//			basemapGrid()
-// 		}
-		else if (basemap == 2){ // skipping stripes and grid for now, otherwise this would be 4
-			basemapWalkabout()
-		}
-		else if (basemap == 5){
-			basemapRefill()		
-		}
-		else if (basemap == 6){
-			basemapNone()
-		}
-		else if (basemap == 7){ //reset to grey-gold refill
-			basemapRefillDark()		
-		}
-		query.basemap = basemap
-	}
-	
-	function basemapDots(){
-		console.log('loading dots')
-		layer.scene.load({    
-			import: [
-			  'https://raw.githubusercontent.com/sensescape/xyz-dots/master/scene.yaml',
-			  'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-			  'tangram_xyz_scene_no_import.yaml'
-			],
-			layers: {
-			  _xyz_lines: { draw: { _lines: { color: [1,0,0,0.5] } } },
-			  _xyz_dots: { draw: { points: { color: [0,0,1,0.5] } } }
-			},
-			sources: {
-				_xyzspace: {
-					url_params: {
-						tags: tags_filtered
-					}
-				}
-			}
-		})
-		basemap = 1
-		console.log('dots')
-		drawTags()
-	}
-	
-	function basemapPixel(){
-		console.log('loading pixel')
-		layer.scene.load({    
-			import: [
-			  'https://raw.githubusercontent.com/sensescape/xyz-pixel/master/scene.yaml',
-			  'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-			  'tangram_xyz_scene_no_import.yaml'
-			],
-			layers: {
-			  _xyz_lines: { draw: { _lines: { color: [1,0,0,0.5] } } },
-			  _xyz_dots: { draw: { points: { color: [0,0,1,0.5] } } }
-			},
-			sources: {
-				_xyzspace: {
-					url_params: {
-						tags: tags_filtered
-					}
-				}
-			}
-		})
-		basemap = 2 
-		console.log('pixel')
-		drawTags()
-	}
-	
-	function basemapStripes(){
-		console.log('loading stripes')
-		layer.scene.load({    
-			import: [
-			  'https://raw.githubusercontent.com/sensescape/xyz-stripes/master/scene.yaml',
-			  'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-			  'tangram_xyz_scene_no_import.yaml'
-			],
-			layers: {
-			  _xyz_lines: { draw: { _lines: { color: [1,0,0,0.5] } } },
-			  _xyz_dots: { draw: { points: { color: [0,0,1,0.5] } } }
-			},
-			sources: {
-				_xyzspace: {
-					url_params: {
-						tags: tags_filtered
-					}
-				}
-			}
-		})
-		basemap = 3
-		console.log('stripes')
-		drawTags()
-	}
-	
-	function basemapGrid(){
-		console.log('loading grid')
-		layer.scene.load({    
-			import: [
-			  'https://raw.githubusercontent.com/sensescape/xyz-grid/master/scene.yaml',
-			  'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-			  'tangram_xyz_scene_no_import.yaml'
-			],
-			layers: {
-			  _xyz_lines: { draw: { _lines: { color: [1,0,0,0.5] } } },
-			  _xyz_dots: { draw: { points: { color: [0,0,1,0.5] } } }
-			},
-			sources: {
-				_xyzspace: {
-					url_params: {
-						tags: tags_filtered
-					}
-				}
-			}
-		})
-		basemap = 4
-		console.log('grid')
-		drawTags()
-	}	
-	
-	function basemapWalkabout(){
-		console.log('loading walkabout')
-		layer.scene.load({
-			import: [
-				'https://www.nextzen.org/carto/walkabout-style/walkabout-style.zip',
-				'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-				'tangram_xyz_scene_no_import.yaml'
-			]
-		})
-		
-		basemap = 5
-		console.log('walkabout')
-	}
-	
-	function basemapRefill(){
-		layer.scene.load({
-			import: [
-				'https://www.nextzen.org/carto/refill-style/refill-style.zip',
-				'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
-				'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
-				'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-				'tangram_xyz_scene_no_import.yaml'
-			]
-		})
-		basemap = 6
-		console.log('refill')	
-	}
-	
-	function basemapNone(){
-		layer.scene.load({
-			import: [
-				'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-				'tangram_xyz_scene_no_import.yaml'
-			],
-			scene: {
-				background: { 
-					color: [0,0,0]
-				}
-			}
-		})
+  function loadScene() {
+    if (layer == null) {
+      makeLayer();
+    }
+    else {
+      scene.load(scene_file);
+    }
+  }
 
-		basemap = 7
-		console.log('no basemap')
-		
-		drawTags()	
-	}
-	
-	function basemapRefillDark(){
-		layer.scene.load({
-			import: [
-				'https://www.nextzen.org/carto/refill-style/refill-style.zip',
-				'https://www.nextzen.org/carto/refill-style/themes/color-gray-gold.zip',
-				'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
-				'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
-				'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-				'tangram_xyz_scene_no_import.yaml'
-			]
-		})
-		layer.scene.config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
-		layer.scene.config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		layer.scene.updateConfig()
-		basemap = 0
-		console.log('grey-gold refill')		
-	}
-	
-    function makeLayer(){
-    // moved this to a function while trying to get inputSpace() -> getSpaces() to work
+  function makeLayer(){
 		layer = Tangram.leafletLayer({
-//          scene: 'https://s3.amazonaws.com/xyz-demo/scenes/tangram_xyz_scene.yaml',
+			// scene: 'https://s3.amazonaws.com/xyz-demo/scenes/tangram_xyz_scene.yaml',
 			scene: scene_file,
-// 			scene: 'dark_refill.yaml',
+			// scene: 'dark_refill.yaml',
 			attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
 			events: {
-			  click: function(selection) {
-				if (selection.feature) {
-				  var properties = (selection.feature.properties)
-				  console.log(selection.feature)
-				  showPopup(selection.leaflet_event.latlng, properties);
-				} else {
-				  map.closePopup();
-				  console.log("close")
+				click: function(selection) {
+					if (selection.feature) {
+						var properties = (selection.feature.properties)
+						console.log(selection.feature)
+						showPopup(selection.leaflet_event.latlng, properties);
+					} else {
+						map.closePopup();
+						console.log("close")
+					}
+				},
+				hover: function(selection) {
+					if (selection.feature) {
+						var properties = (selection.feature.properties)
+						showPopup(selection.leaflet_event.latlng, properties);
+					} else {
+						map.closePopup();
+					}
 				}
-			  },
-			  hover: function(selection) {
-				if (selection.feature) {
-				  var properties = (selection.feature.properties)
-				  showPopup(selection.leaflet_event.latlng, properties);
-				} else {
-				  map.closePopup();
-				}
-			  },
-			  //load: queryViewport
-			  load: function(){
-			  	console.log('load')
-			  	queryViewport()
-			  	applyURLQuery() // does not fire?
-			  },
-			  view_complete: function(){
-			  	console.log('view complete')
-			  	queryViewport()
-			  	applyURLQuery() // does not fire
-			  }
-			  
 			}
-		  });   
-	
-		layer.addTo(map);
+		});
+
+		layer.scene.subscribe({
+			load: function ({ config }) {
+        scene_config = config;
+				getSpace()
+        applyURLQuery()
+			},
+			view_complete: function () {
+				console.log('view complete')
+				queryViewport()
+			}
+		});
+
+    layer.addTo(map);
+
+    window.layer = layer; // debugging
+    window.scene = layer.scene;  // debugging
 	}
 
 	function inputSpace(){
-	
+
 		// creates text input fields if no space id or token in the url
-	
+
 		var br = document.createElement("br");
-		
+
 		var space_input_label = document.createElement("label");
 		var space_input_description = "XYZ space ID"
 		var space_input = document.createElement("INPUT");
@@ -1069,7 +856,7 @@ onclick='toggleColors()'	}
 		space_input.id = 'space_input'
 		space_input.placeholder = "enter an XYZ space ID"
 
-		
+
 		var token_input_label = document.createElement("label");
 		var token_input_description = "XYZ token"
 		var token_input = document.createElement("INPUT");
@@ -1077,10 +864,10 @@ onclick='toggleColors()'	}
 		token_input.id = 'token_input'
 		token_input.setAttribute("type", "text");
 		token_input.placeholder = "enter an XYZ token"
-		
+
 		space_input_label.innerHTML = space_input_description
 		space_input_label.appendChild(space_input);   // add the box to the element
-		
+
 		token_input_label.innerHTML = token_input_description
 		token_input_label.appendChild(token_input);   // add the box to the element
 
@@ -1094,92 +881,72 @@ onclick='toggleColors()'	}
 		get_space_text.style = "color:blue;"
 		get_space_text.innerHTML = ('Show XYZ Space')
 		get_space_text.onclick = () => {
-			getSpace()
+      // TODO need to load a new scene here
+      getSpace()
+      alert('TODO: fix loading space from UI')
 		}
-		document.getElementById("spaces").appendChild(get_space_text)	
-		
-		
+		document.getElementById("spaces").appendChild(get_space_text)
+
+
 	}
-	
-	
+
+
 	function getSpace(){
 		if ((!space) && (document.getElementById("space_input").value)){
 			console.log('no space and token in url, looking in text input boxes')
 			space = document.getElementById("space_input").value
 			token = document.getElementById("token_input").value
 			console.log(space,token)
-			var url_custom = 'https://xyz.api.here.com/hub/spaces/' + space +  '/tile/web/{z}_{x}_{y}'
-			
-			layer.scene.load({    
-				import: [
-					'https://www.nextzen.org/carto/refill-style/refill-style.zip',
-					'https://www.nextzen.org/carto/refill-style/themes/color-gray-gold.zip',
-					'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
-					'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
-					'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-					'tangram_xyz_scene_no_import.yaml'
-				],
-				sources: {
-					 _xyzspace: {
-						url: url_custom,
-						url_params: {
-							access_token: token,
-							tags: tags_filtered
-						}
-					}
-				}
-			})
 			getBbox(space,token)
-		}	
-		else {
-
-			layer.scene.config.sources._xyzspace.url = 'https://xyz.api.here.com/hub/spaces/' + space +  '/tile/web/{z}_{x}_{y}'
-			layer.scene.config.sources._xyzspace.url_params.access_token = token
-			layer.scene.config.sources._xyzspace.url_params.tags = tags_filtered
-// 			applyURLQuery() // getting desperate
-			layer.scene.updateConfig()
-
 		}
 
-    }
-	    
+    _.merge(scene_config, {
+      sources: {
+        _xyzspace: {
+          url: 'https://xyz.api.here.com/hub/spaces/' + space + '/tile/web/{z}_{x}_{y}',
+          url_params: {
+            access_token: token,
+            tags: tags_filtered
+          }
+        }
+      }
+    });
+  }
+
 	function filterTags(x){
 		console.log('tag',x)
 		var checkbox_status = document.getElementById(x).checked
 		console.log(x,'checked',checkbox_status)
-		// if checkbox was just unchecked, remove tag from list 
+		// if checkbox was just unchecked, remove tag from list
 		if (checkbox_status == false){
 			console.log('removing',x,'from',tags_filtered)
-// 			document.getElementById(x).checked = false
+			// document.getElementById(x).checked = false
 			var index = tags_filtered.indexOf(x)
 			// remove the tag
 			if (index > -1) {
 				tags_filtered.splice(index, 1);
 				console.log('removing tag',x,tags_filtered)
-				drawTags()
-// 			  return
 			}
 		}
 		// otherwise add it to the list
 		else {
 			tags_filtered.push(x)
 		}
-// 		console.log(checkbox_status,'status')
+		// console.log(checkbox_status,'status')
 
-		drawTags()
+    drawTags()
 	}
-	
+
 	function addTagsToQuery()	{
 		if (tags_filtered.includes('+')){
 			query.tags = tags_filtered.toString('+')
 		}
 		if (tags_filtered.includes(',')){
 			query.tags = tags_filtered.toString(',')
-		}	
+		}
 		makeQuery(query)
-	
 	}
-		
+
 	function drawTags(){
 
 		// change array to string. if AND, swap out commas for + so XYZ tags are AND, otherwise just use commas for XYZ OR
@@ -1203,32 +970,38 @@ onclick='toggleColors()'	}
 // 		console.log(label,tags_to_tangram)
 // 		console.log("innerhtml",document.getElementById("tags_filtered").innerHTML)
 		document.getElementById("tags_filtered").innerHTML = label
-		// tell tangram to filter by tags by changing the url_param
-		layer.scene.config.sources._xyzspace.url_params.tags = tags_to_tangram
-		layer.scene.updateConfig()
+    // tell tangram to filter by tags by changing the url_param
+
+    _.merge(scene_config, {
+      sources: {
+        _xyzspace: {
+          url_params: { tags: tags_to_tangram }
+        }
+      }
+    });
 	}
-	    
+
 	function clearTags(){
 		tags_filtered = []
-		
+
 		delete query.tags
 		makeQuery(query)
-		
-		layer.scene.config.sources._xyzspace.url_params.tags = ""
-		layer.scene.updateConfig()
-		document.getElementById("tags_filtered").innerHTML = "no tags filtered<br><br>"
-		
+
+		scene_config.sources._xyzspace.url_params.tags = ""
+		scene.updateConfig()
+
+    document.getElementById("tags_filtered").innerHTML = "no tags filtered<br><br>"
+
 		queryViewport()
-		
 	}
-	
+
 	function filterAts(){
 		if (filterAt){
 			console.log('showing all tags')
 			document.getElementById("at_filter").innerHTML = '[only show @ tags]'
 
 			filterAt = false
-		} 
+		}
 		else {
 			console.log('only showing @ tags')
 			document.getElementById("at_filter").innerHTML = '[show all tags]'
@@ -1237,8 +1010,8 @@ onclick='toggleColors()'	}
 		}
 		queryViewport()
 	}
-	
-	function alphabetize_tags(){
+
+	function alphabetizeTags(){
 		if (alphabetize){
 			console.log('sorting tags by frequency')
 			document.getElementById("alphabetize").innerHTML = '[sort by name]'
@@ -1251,23 +1024,23 @@ onclick='toggleColors()'	}
 		}
 		queryViewport()
 
-	
+
 	}
-	
+
 	function toggleAnd(){
 		and_or = "and"
 		console.log('and tags')
 		drawTags()
-		
+    scene.updateConfig();
 	}
 	function toggleOr(){
 		and_or = "or"
 		console.log('or tags')
 		drawTags()
+    scene.updateConfig();
+	}
 
-	}	
 
-	
 	function parseQuery (qstr) {
 		var query = {};
 		var a = qstr.split('&');
@@ -1277,7 +1050,7 @@ onclick='toggleColors()'	}
 			}
 		return query;
 	}
-	
+
 	function makeQuery(queryParams){
 		var esc = encodeURIComponent;
 		var updated_query = Object.keys(queryParams)
@@ -1290,7 +1063,7 @@ onclick='toggleColors()'	}
 // 		window.history.pushState = updated_query
 		displayQuery()
 	}
-	    
+
 	function showPopup(latlng, properties) {
 	 	var feature_tags = properties['@ns:com:here:xyz'].tags
 		property_text = ''
@@ -1307,39 +1080,37 @@ onclick='toggleColors()'	}
 		document.getElementById("properties").innerHTML = formatted
 
 	}
-	
 
-
-
-	
-	function colorProperties(x){
+	function colorProperties(x, update = true){
 		console.log('property', x)
 		color_by_prop = true
 		var target = x.split('@')
 // 		property_target = target[0]
-		layer.scene.config.global.property_hash_name = target[0]
-		layer.scene.config.layers._xyz_dots.draw.points.color = layer.scene.config.global.var_property_color_hash
-		layer.scene.config.layers._xyz_lines.draw._lines.color = layer.scene.config.global.var_property_color_hash
-		layer.scene.config.layers._xyz_polygons.draw._polygons_inlay.color = layer.scene.config.global.var_property_color_hash
-		layer.scene.config.layers._xyz_polygons._outlines.enabled = false
-		layer.scene.updateConfig()
-		// document.getElementById("colorProperties").innerHTML = 'coloring by property: ' + target[0]
-		console.log('sending',target[0],'to panel')
-		queryPropsViewport(target[0])
-	
+		scene_config.global.property_hash_name = target[0]
+		scene_config.layers._xyz_dots.draw.points.color = scene_config.global.var_property_color_hash
+		scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.var_property_color_hash
+		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.var_property_color_hash
+    scene_config.layers._xyz_polygons._outlines.enabled = false
+
+    if (update) {
+      scene.updateConfig()
+      // document.getElementById("colorProperties").innerHTML = 'coloring by property: ' + target[0]
+      console.log('sending',target[0],'to panel')
+      queryPropsViewport(target[0])
+    }
 	}
-	
+
 	function clearColorProperties(){
 		color_by_prop = false
-		layer.scene.config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
-		layer.scene.config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		layer.scene.config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_polygons'
-		layer.scene.updateConfig()
+		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
+		scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
+		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_polygons'
+		scene.updateConfig()
 		document.getElementById("prop_stats").innerHTML = ''
 		delete query.property
 		makeQuery(query)
 	}
-	
+
 	function colorHash(value){
 		var props = JSON.stringify(value)
 // 		console.log(props)
@@ -1354,7 +1125,7 @@ onclick='toggleColors()'	}
 // 		console.log(color)
 		return color
 	}
-	
+
 	function traverse(x,level,key) { // added key so we can pass key@value to colorProperties
 	  if (isArray(x)) {
 		traverseArray(x, level,key);
@@ -1363,8 +1134,8 @@ onclick='toggleColors()'	}
 	  } else {
 // 		console.log(level + x);
 		var _x = x + '' //x.toString()
-		_x = _x.replace(/ /g,'_') 
-		_x = _x.replace(/&/g,'and') 
+		_x = _x.replace(/ /g,'_')
+		_x = _x.replace(/&/g,'and')
 
 // 		console.log(_x)
 		_x = key + "@" + _x
@@ -1372,11 +1143,11 @@ onclick='toggleColors()'	}
 		property_text += text
 	  }
 	}
- 
+
 	function isArray(o) {
 	  return Object.prototype.toString.call(o) === '[object Array]';
 	}
- 
+
 	function traverseArray(arr, level,key) {
 // 	  console.log(level + "[array]");
 	  var text = level + "[array]"
@@ -1385,7 +1156,7 @@ onclick='toggleColors()'	}
 		traverse(x, level + "&nbsp;&nbsp;",key);
 	  });
 	}
- 
+
 	function traverseObject(obj, level) {
 // 	  console.log(level + "{object}");
 	  var text = level + "{object}"
@@ -1399,8 +1170,8 @@ onclick='toggleColors()'	}
 		}
 	  }
 	}
-	
-	
+
+
 	function buildTable(obj,div){
 		console.log("building table",div,Object.keys(obj).length)
 		console.log(Object.keys(obj))
@@ -1410,7 +1181,7 @@ onclick='toggleColors()'	}
 		var rows = Object.entries(obj)
 		console.log(rows)
 		rows.forEach((item,index) => {
-			
+
 			var tr = "<tr>";
 			console.log("making row")
 			var stats = item[index] //var id = Object.keys(space_list)[index]
@@ -1426,22 +1197,22 @@ onclick='toggleColors()'	}
 			tbody.innerHTML += tr;
 		})
 	} // https://stackoverflow.com/questions/17684201/create-html-table-from-javascript-object
-	
-	
+
+
 	function buildSelect(list){
 		var sel = document.getElementById("spaceSelect")
 // 		opt.onchange = function(){
-// 		layer.scene.config.sources._xyzspace.url = 'https://xyz.api.here.com/hub/spaces/' + x.id +  '/tile/web/{z}_{x}_{y}'
-// 				layer.scene.updateConfig();
+// 		scene_config.sources._xyzspace.url = 'https://xyz.api.here.com/hub/spaces/' + x.id +  '/tile/web/{z}_{x}_{y}'
+// 				scene.updateConfig();
 // 			}
-		list.forEach(x => { 
+		list.forEach(x => {
 			var opt = document.createElement("option");
 
 			opt.value = x.id
 			opt.text = x.title + '/' + x.description
 			sel.add(opt, null);
 		})
-		
+
 	}
 
 	function listSpaces(token){
@@ -1461,7 +1232,7 @@ onclick='toggleColors()'	}
 				space_list[id].title = item.title
 				space_list[id].description = item.description
 			})
-			
+
 			//make list of URLs for stats
 			const urls = data.map(x => 'https://xyz.api.here.com/hub/spaces/' + x.id + '/statistics' + '?access_token=' + token);
 			// fetch the urls and dump them into an object
@@ -1481,13 +1252,13 @@ onclick='toggleColors()'	}
 							space_list[id].bbox = item.bbox.value
 							space_list[id].space_size = item.byteSize.value
 							space_list[id].space_count = item.count.value
-						} 
+						}
 						else {
 							space_list[id].bbox = "n/a"
 							space_list[id].space_size = "n/a"
 							space_list[id].space_count = "n/a"
 						}
-						
+
 					})
 // 					var table_div = document.getElementById("spaceTable")
 					buildTable(space_list,"spaceTablebody")
@@ -1496,7 +1267,7 @@ onclick='toggleColors()'	}
 // 		console.log('space list:', space_list)
 // 		buildSelect(space_list)
 		}
-	
+
 	function getStats(space,token){
 		var url = 'https://xyz.api.here.com/hub/spaces/' + space + '/statistics' + '?access_token=' + token
 		fetch(url).then((response) => response.json()).then(function(data) {
@@ -1507,8 +1278,8 @@ onclick='toggleColors()'	}
 			if (map_start_location){
 			// if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
 				if (
-					((map_start_location.lat < bbox[1]) || (map_start_location.lat > bbox[3])) 
-					|| 
+					((map_start_location.lat < bbox[1]) || (map_start_location.lat > bbox[3]))
+					||
 					((map_start_location.lng < bbox[0]) || (map_start_location.lng > bbox[2]))
 				){
 					console.log('map start location outside bbox')
@@ -1530,8 +1301,8 @@ onclick='toggleColors()'	}
 				calc_size = (space_size/1024/1024/1024).toFixed(1) + ' GB'
 // 				console.log(calc_size,'GB!')
 				}
-			 
-// 			var density = 
+
+// 			var density =
 // 			console.log(bbox,mb,space_count)
 			var space_url = 'https://xyz.api.here.com/hub/spaces/' + space + '?access_token=' + token
 			fetch(space_url).then((response) => response.json()).then(function(data) {
@@ -1539,13 +1310,13 @@ onclick='toggleColors()'	}
 				var title = data.title
 				var description = data.description
 // 				console.log(space,title,description,calc_size,space_count)
-				document.getElementById("space_info").innerHTML = space + ': ' + title + '<br>' + space_count.toLocaleString() + " features, " + calc_size + '<br>' + description 
+				document.getElementById("space_info").innerHTML = space + ': ' + title + '<br>' + space_count.toLocaleString() + " features, " + calc_size + '<br>' + description
 
 			})
 
 		})
 	}
-	
+
 	function getBbox(){
 		var url = 'https://xyz.api.here.com/hub/spaces/' + space + '/statistics' + '?access_token=' + token
 		fetch(url).then((response) => response.json()).then(function(data) {
@@ -1560,30 +1331,30 @@ onclick='toggleColors()'	}
 			ne = L.latLng(bbox[3],bbox[2])
 			console.log("sw",sw,'ne',ne)
 			bounds = L.latLngBounds(sw, ne)
-			console.log('bounds:', bounds)	
+			console.log('bounds:', bounds)
 			// console.log(map)
-			
+
 			map.fitBounds(bounds);
-			
+
 			console.log('got bounds')
 			getStats(space,token)
 		})
 	}
-	
-	
+
+
 	function queryViewport(){ // for tags
 		tagsViewport = []
-		layer.scene.queryFeatures({ filter: { $source: '_xyzspace' }}).then(
+		scene.queryFeatures({ filter: { $source: '_xyzspace' }}).then(
 			features => {
 				// clear the previously seen list of tags
 				document.getElementById("tag_stats").innerHTML = ''
 				// console.log("features in viewport:", features.length)
-				//grab the tags from Tangram's viewport 
-				features.forEach(x => { 
+				//grab the tags from Tangram's viewport
+				features.forEach(x => {
 					tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
 				})
-				
-				//remove tags without an @ if 
+
+				//remove tags without an @ if
 				if (filterAt){
 					tagsViewport = tagsViewport.filter(tag => tag.includes('@'))
 				}
@@ -1614,7 +1385,7 @@ onclick='toggleColors()'	}
 // 						filterTags(x)
 // 						}
 				document.getElementById("tag_stats").appendChild(newEl)
-			
+
 				// count up the number of each tags
 				var tagCounts = {};
 				for (var i = 0; i < tagsViewport.length; i++) {
@@ -1631,8 +1402,8 @@ onclick='toggleColors()'	}
 
 				sortable.sort(function(a, b) {
 					return b[1] - a[1];
-				});		
-				
+				});
+
 				// console.log("sorted tag counts: ", sortable)
 
 				if (alphabetize){
@@ -1640,18 +1411,18 @@ onclick='toggleColors()'	}
 					var alpha = []
 					for (var aTag in tagCounts) {
 						alpha.push([aTag, tagCounts[aTag]]);
-					}			
+					}
 					alpha.sort()
-					//console.log('descending',alpha)	
+					//console.log('descending',alpha)
 					sortable = alpha
-					
+
 				}
 
 				document.getElementById("tags").innerHTML  = ''
-// 				tagsViewport.sort().map(x =>{ 
-				// make checkboxes				
-				sortable.map(x =>{ 
-				
+// 				tagsViewport.sort().map(x =>{
+				// make checkboxes
+				sortable.map(x =>{
+
 					var label = document.createElement("label");
 					if (alphabetize){
 						var description = document.createTextNode(x[0] + ' (' + x[1] + 'x)');
@@ -1661,19 +1432,20 @@ onclick='toggleColors()'	}
 					}
 					var checkbox = document.createElement("input");
 					var br = document.createElement("br");
-					
+
 					checkbox.setAttribute("type", "checkbox");
-					
+
 					var index = tags_filtered.indexOf(x[0]);
 					if (index > -1) {
 						checkbox.checked = true
 					}
-					
+
 					checkbox.name = x[0]
 					checkbox.value = x[0]
 					checkbox.id = x[0]
 					checkbox.onclick = () => {
-						filterTags(x[0])
+            filterTags(x[0])
+            scene.updateConfig();
 					}
 					label.appendChild(checkbox);   // add the box to the element
 					label.appendChild(description);// add the description to the element
@@ -1681,11 +1453,11 @@ onclick='toggleColors()'	}
 					// add the label element to your div
 					document.getElementById('tags').appendChild(label);
 					document.getElementById('tags').appendChild(br);
-				})				
+				})
 			}
 		)
     }
-    
+
 	// via https://www.quora.com/How-do-you-loop-through-a-complex-JSON-tree-of-objects-and-arrays-in-JavaScript
 
 	function queryPropsViewport(clicked){ // for tags
@@ -1694,15 +1466,15 @@ onclick='toggleColors()'	}
 		makeQuery(query)
 		console.log('query.property:',query.property)
 		propsViewport = []
-		layer.scene.queryFeatures({ filter: { $source: '_xyzspace' }}).then(
+		scene.queryFeatures({ filter: { $source: '_xyzspace' }}).then(
 			features => {
 
-				
+
 				// clear the previously seen list of tags
 
  				document.getElementById("prop_stats").innerHTML = ''
 				console.log("features in viewport:", features.length)
-				//grab the tags from Tangram's viewport 
+				//grab the tags from Tangram's viewport
 				features.forEach(x => {
 					propsViewport.push(x.properties[clicked])
 				})
@@ -1731,35 +1503,35 @@ onclick='toggleColors()'	}
 
 				sortable.sort(function(a, b) {
 					return b[1] - a[1];
-				});	
-				
+				});
+
 
 				//console.log("sorted prop counts: ", sortable)
 
 // 				document.getElementById("prop_list").innerHTML  = sortable
-				// make table	
-// 				console.log('rows',rows)			
-				sortable.map(x =>{ 
+				// make table
+// 				console.log('rows',rows)
+				sortable.map(x =>{
 // 					console.log(x)
-					var color =  colorHash(x[0]) // same color hash as tangram 
+					var color =  colorHash(x[0]) // same color hash as tangram
 					var dot = '<span class="dot" style="background-color:' + color + ';"> </span>'
 					var row = '<tr><td style="width: 15px;text-align: right;">' + x[1] + '</td><td style="width: 15px;">' +  dot +'</td><td>'+ x[0] + '</td></tr>'
 					rows += row
-					// console.log('rows',rows)			
+					// console.log('rows',rows)
 
-				})			
+				})
 // 				console.log(rows)
 
 				document.getElementById("prop_stats").innerHTML = rows
 			}
 		)
     }
-    
 
 
 
-        
-	
+
+
+
 </script>
 </body>
 </html>
