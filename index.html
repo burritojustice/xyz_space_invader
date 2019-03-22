@@ -332,16 +332,16 @@
   buildBasemap();
   loadScene();
 
-// 	getBbox(space,token)
-
-	if (map_start_location == null){
-		console.log('no url hash, getting bbox')
-		getBbox(space,token)
-	} else {
-		console.log('using url hash', map_start_location)
-		map.setView([map_start_location.lat,map_start_location.lng],map_start_location.zoom)
-		getStats(space,token)
-	}
+  if (space && token) {
+    if (map_start_location == null){
+      console.log('no url hash, getting bbox')
+      getBbox(space,token)
+    } else {
+      console.log('using url hash', map_start_location)
+      map.setView([map_start_location.lat,map_start_location.lng],map_start_location.zoom)
+      getStats(space,token)
+    }
+  }
 
 	map.on("keypress", function(e) {
 		// b = toggle buildings
@@ -881,9 +881,7 @@
 		get_space_text.style = "color:blue;"
 		get_space_text.innerHTML = ('Show XYZ Space')
 		get_space_text.onclick = () => {
-      // TODO need to load a new scene here
-      getSpace()
-      alert('TODO: fix loading space from UI')
+      loadScene();
 		}
 		document.getElementById("spaces").appendChild(get_space_text)
 
@@ -895,22 +893,26 @@
 		if ((!space) && (document.getElementById("space_input").value)){
 			console.log('no space and token in url, looking in text input boxes')
 			space = document.getElementById("space_input").value
-			token = document.getElementById("token_input").value
+      token = document.getElementById("token_input").value
+      query.space = space;
+      query.token = token;
 			console.log(space,token)
 			getBbox(space,token)
 		}
 
-    _.merge(scene_config, {
-      sources: {
-        _xyzspace: {
-          url: 'https://xyz.api.here.com/hub/spaces/' + space + '/tile/web/{z}_{x}_{y}',
-          url_params: {
-            access_token: token,
-            tags: tags_filtered
+    if (space && token) {
+      _.merge(scene_config, {
+        sources: {
+          _xyzspace: {
+            url: 'https://xyz.api.here.com/hub/spaces/' + space + '/tile/web/{z}_{x}_{y}',
+            url_params: {
+              access_token: token,
+              tags: tags_filtered
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
 	function filterTags(x){
