@@ -6,6 +6,7 @@ import:
     - https://www.nextzen.org/carto/refill-style/11/themes/label-4.zip
     # - https://www.nextzen.org/carto/refill-style/themes/terrain-shading.zip
     - https://www.nextzen.org/carto/refill-style/11/themes/terrain-shading-dark.zip
+    - https://s3.amazonaws.com/xyz-demo/scenes/viridis.yaml
 
 global:
     color_polygons: |
@@ -123,6 +124,13 @@ global:
             var color = 'hsla(' + hash + ', 100%, 50%, 0.75)'
             return color
         }
+        
+    virids_color_range: |
+        function(range){
+            var color
+            var color = global.viridis[viridis]
+            return color
+        }
 
 sources:
     _xyzspace:
@@ -133,6 +141,8 @@ sources:
             # tags: YOUR_TAG
             # limit: 50000 # 
             clip: true
+            
+
 
         
 styles:
