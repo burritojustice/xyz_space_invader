@@ -1,3 +1,6 @@
+import:
+    - https://s3.amazonaws.com/xyz-demo/scenes/viridis.yaml   
+
 global:
     color_polygons: |
         function(){
@@ -115,6 +118,13 @@ global:
                 hash |= 0; // Convert to 32bit integer
             }
             var color = 'hsla(' + hash + ', 100%, 50%, 0.75)'
+            return color
+        }
+        
+    virids_color_range: |
+        function(range){
+            var color
+            var color = global.viridis[viridis]
             return color
         }
         
