@@ -208,7 +208,6 @@
 <script>
   // import { getBasemapScene, getNextBasemap } from './basemaps.js';
 
-	var property_text
 //	var space_count, space_size
 	var tagSet = new Set() // all the tags seen so far
 	var tagsViewport = []//  unique lists of tags on screen
@@ -803,20 +802,17 @@
 			// scene: 'dark_refill.yaml',
 			attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
 			events: {
-				click: function(selection) {
-					if (selection.feature) {
-						var properties = (selection.feature.properties)
-						console.log(selection.feature)
-						showPopup(selection.leaflet_event.latlng, properties);
+				click: function({ feature }) {
+					if (feature) {
+            document.getElementById("properties").innerHTML = traverse(feature.properties);
 					} else {
 						map.closePopup();
 						console.log("close")
 					}
 				},
-				hover: function(selection) {
-					if (selection.feature) {
-						var properties = (selection.feature.properties)
-						showPopup(selection.leaflet_event.latlng, properties);
+				hover: function({ feature }) {
+					if (feature) {
+            document.getElementById("properties").innerHTML = traverse(feature.properties);
 					} else {
 						map.closePopup();
 					}
@@ -1066,23 +1062,6 @@
 		displayQuery()
 	}
 
-	function showPopup(latlng, properties) {
-	 	var feature_tags = properties['@ns:com:here:xyz'].tags
-		property_text = ''
-		const keys = Object.keys(properties)
-		const values = Object.values(properties)
-	    traverse(properties, "!!") // gotta be a better way to do this
-// 	    console.log(property_text)
-	    var formatted = property_text.replace(/:!!/g,":&nbsp;&nbsp;")
-// 	    console.log(formatted)
-	    formatted = formatted.replace(/!!/g,"<br>&nbsp;&nbsp;")
-	    formatted = formatted.replace(/<br>&nbsp;&nbsp;{object}<br>/g,'{object}<br>')
-// 	    console.log(formatted)
-
-		document.getElementById("properties").innerHTML = formatted
-
-	}
-
 	function colorProperties(x, update = true){
 		console.log('property', x)
 		color_by_prop = true
@@ -1128,49 +1107,39 @@
 		return color
 	}
 
-	function traverse(x,level,key) { // added key so we can pass key@value to colorProperties
-	  if (isArray(x)) {
-		traverseArray(x, level,key);
+	function traverse(x, level = '', key = '', text = '') { // added key so we can pass key@value to colorProperties
+	  if (Array.isArray(x)) {
+      return traverseArray(x, level, key, text);
 	  } else if ((typeof x === 'object') && (x !== null)) {
-		traverseObject(x, level);
+      return traverseObject(x, level, text);
 	  } else {
-// 		console.log(level + x);
-		var _x = x + '' //x.toString()
-		_x = _x.replace(/ /g,'_')
-		_x = _x.replace(/&/g,'and')
+      var _x = x + ''
+      _x = _x.replace(/ /g, '_')
+      _x = _x.replace(/&/g, 'and')
 
-// 		console.log(_x)
-		_x = key + "@" + _x
-		var text = level + '<y onclick=colorProperties(\'' + _x + '\')>' + x + '</y>'
-		property_text += text
+      _x = key + "@" + _x
+      text += level + '<span onclick=colorProperties(\'' + _x + '\')>' + x + '</span>'
+      text += '<br>';
+      return text;
 	  }
+  }
+
+	function traverseArray(arr, level, key, text) {
+	  text += level + "[array]<br>"
+    arr.forEach(x => text = traverse(x, level + "&nbsp;&nbsp;", key, text));
+    return text;
 	}
 
-	function isArray(o) {
-	  return Object.prototype.toString.call(o) === '[object Array]';
-	}
-
-	function traverseArray(arr, level,key) {
-// 	  console.log(level + "[array]");
-	  var text = level + "[array]"
-	  property_text += text
-	  arr.forEach(function(x) {
-		traverse(x, level + "&nbsp;&nbsp;",key);
-	  });
-	}
-
-	function traverseObject(obj, level) {
-// 	  console.log(level + "{object}");
-	  var text = level + "{object}"
-	  property_text += text
+	function traverseObject(obj, level, text) {
+    text += level + "{object}<br>"
+    level += '&nbsp;&nbsp;';
 	  for (var key in obj) {
-		if (obj.hasOwnProperty(key)) {
-// 		  console.log(level + "" + key + ":");
-		  var text = level + "" + key + ":"
-		  property_text += text
-		  traverse(obj[key], level + "&nbsp;&nbsp;&nbsp;&nbsp;",key);
-		}
-	  }
+      if (obj.hasOwnProperty(key)) {
+        text += level + "" + key + ":"
+        text = traverse(obj[key], level + "&nbsp;&nbsp;", key, text);
+      }
+    }
+    return text;
 	}
 
 
