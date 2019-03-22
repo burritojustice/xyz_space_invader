@@ -1064,10 +1064,10 @@
 
 	function colorProperties(x, update = true){
 		console.log('property', x)
-		color_by_prop = true
-		var target = x.split('@')
-// 		property_target = target[0]
-		scene_config.global.property_hash_name = target[0]
+    color_by_prop = true
+
+    var [target] = x.split('@')
+		scene_config.global.property_hash_name = target;
 		scene_config.layers._xyz_dots.draw.points.color = scene_config.global.var_property_color_hash
 		scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.var_property_color_hash
 		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.var_property_color_hash
@@ -1075,9 +1075,9 @@
 
     if (update) {
       scene.updateConfig()
-      // document.getElementById("colorProperties").innerHTML = 'coloring by property: ' + target[0]
-      console.log('sending',target[0],'to panel')
-      queryPropsViewport(target[0])
+      // document.getElementById("colorProperties").innerHTML = 'coloring by property: ' + target
+      console.log('sending',target,'to panel')
+      queryPropsViewport(target)
     }
 	}
 
@@ -1113,12 +1113,8 @@
 	  } else if ((typeof x === 'object') && (x !== null)) {
       return traverseObject(x, level, text);
 	  } else {
-      var _x = x + ''
-      _x = _x.replace(/ /g, '_')
-      _x = _x.replace(/&/g, 'and')
-
-      _x = key + "@" + _x
-      text += level + '<span onclick=colorProperties(\'' + _x + '\')>' + x + '</span>'
+      var _x = key + "@" + x;
+      text += level + '<span onclick="colorProperties(\'' + _x + '\')">' + x + '</span>'
       text += '<br>';
       return text;
 	  }
