@@ -1,7 +1,8 @@
 // export { getBasemapScene, nextBasemapIndex };
 Object.assign(window, { getBasemapScene, getBasemapName, getNextBasemap });
 
-function getBasemapScene (index) {
+
+function getBasemapScene(index) {
   return basemaps[Object.keys(basemaps)[index]];
 }
 
@@ -9,7 +10,7 @@ function getBasemapName(index) {
   return Object.keys(basemaps)[index];
 }
 
-function getNextBasemap (index) {
+function getNextBasemap(index) {
   return (index + 1) % Object.keys(basemaps).length;
 }
 
@@ -79,7 +80,7 @@ const basemaps = {
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
       'https://www.nextzen.org/carto/refill-style/themes/color-gray-gold.zip',
       'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
-      'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
+      // 'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
       'tangram_xyz_scene_no_import.yaml'
     ],
