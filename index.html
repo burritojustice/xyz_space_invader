@@ -177,57 +177,84 @@
 <div id="controls_middle">
 	<div id="demo">
 		Click to toggle Microsoft buildings by tags:<p>
+		<hr>
+		ZIP codes<br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="randolph_st" onclick="drawDemo('street@w_randolph_st,street@e_randolph_st')">Randoph St</label><br>
+			<input type="radio" name="demo_radio" value="postalcode@60606" onclick="drawDemo('postalcode@60606',[14.483333333333325,41.8827,-87.6442,'postalcode'])">60606
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="postalcode@60661" onclick="drawDemo('postalcode@60661',[14.483333333333325,41.8827,-87.6442,'postalcode'])">60661
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="postalcode@60601" onclick="drawDemo('postalcode@60601',[14.483333333333325,41.8827,-87.6442,'postalcode'])">60601
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="postalcode@60602" onclick="drawDemo('postalcode@60602',[14.483333333333325,41.8827,-87.6442,'postalcode'])">60602
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="postalcode@60603" onclick="drawDemo('postalcode@60603',[14.483333333333325,41.8827,-87.6442,'postalcode'])">60603
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="postalcodes" onclick="drawDemo('postalcode@60606,postalcode@60661,postalcode@60601,postalcode@60602,postalcode@60603',[14.483333333333325,41.8827,-87.6442,'postalcode'])">all of the above
+		</label><br>
+		<hr>
+		Neighborhoods<br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="the_loop" onclick="drawDemo('district@loop',[14.483333333333325,41.8827,-87.6442,'district'])">The Loop
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="west_loop" onclick="drawDemo('district@west_loop',[14.483333333333325,41.8827,-87.6442,'district'])">West Loop
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="south_loop" onclick="drawDemo('district@south_loop',[14.483333333333325,41.8827,-87.6442,'district'])">South Loop
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="near_west_side" onclick="drawDemo('district@near_west_side',[14.483333333333325,41.8827,-87.6442,'district'])">Near West Side
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="near_north_side" onclick="drawDemo('district@near_north_side',[14.483333333333325,41.8827,-87.6442,'district'])">Near North Side
+		</label><br>
+						
+		<hr>
+		Streets<br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="randolph_st" onclick="drawDemo('street@w_randolph_st,street@e_randolph_st',[14.483333333333325,41.8827,-87.6442,'postalcode'])">Randoph St</label><br>
 		</label>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="canal_st" onclick="drawDemo('street@n_canal_st,street@s_canal_st')">Canal St</label><br>
+			<input type="radio" name="demo_radio" value="canal_st" onclick="drawDemo('street@n_canal_st,street@s_canal_st',[14.483333333333325,41.8827,-87.6442,'postalcode'])">Canal St</label><br>
 		</label>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="Western Ave" onclick="drawDemo('street@n_western_ave,street@s_western_ave,street@western_ave')">Western Ave</label><br>
+			<input type="radio" name="demo_radio" value="Western Ave" onclick="drawDemo('street@n_western_ave,street@s_western_ave,street@western_ave',[13,41.8703,-87.6671,'postalcode'])">Western Ave</label><br>
 		</label>
-		------<br>
+		
+		<hr>
+		Cities<br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="the_loop" onclick="drawDemo('district@loop')">The Loop
+			<input type="radio" name="demo_radio" value="city@chicago" onclick="drawDemo('city@chicago',[15,42.0180,-87.7101,'city'])">Chicago
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="west_loop" onclick="drawDemo('district@west_loop')">West Loop
-		</label><br>
-		------<br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="postalcode@60606" onclick="drawDemo('postalcode@60606')">60606
+			<input type="radio" name="demo_radio" value="city@evanston" onclick="drawDemo('city@evanston',[15,42.0180,-87.7101,'city'])">Evanston
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="postalcode@60661" onclick="drawDemo('postalcode@60661')">60661
+			<input type="radio" name="demo_radio" value="city@skokie" onclick="drawDemo('city@skokie',[15,42.0180,-87.7101,'city'])">Skokie
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="postalcode@60601" onclick="drawDemo('postalcode@60601')">60601
+			<input type="radio" name="demo_radio" value="city@lincolnwood" onclick="drawDemo('city@lincolnwood',[15,42.0180,-87.7101,'city'])">Lincolnwood
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="postalcode@60602" onclick="drawDemo('postalcode@60602')">60602
+			<input type="radio" name="demo_radio" value="all_cities" onclick="drawDemo('city@chicago,city@evanston,city@skokie,city@lincolnwood',[15,42.0180,-87.7101,'city'])">All of the above
+		</label><br>
+		
+		<hr>
+		Counties<br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="county@cook" onclick="drawDemo('county@cook',[14,41.6755,-88.0414,'county'])">Cook County
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="postalcode@60603" onclick="drawDemo('postalcode@60603')">60603
-		</label><br>
-		------<br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="city@chicago" onclick="drawDemo('city@chicago')">Chicago
+			<input type="radio" name="demo_radio" value="county@dupage" onclick="drawDemo('county@dupage',[14,41.6755,-88.0414,'county'])">DuPage County
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="city@evanston" onclick="drawDemo('city@evanston')">Evanston
-		</label><br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="city@skokie" onclick="drawDemo('city@skokie')">Skokie
-		</label><br>
-		------<br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="county@cook" onclick="drawDemo('county@cook')">Cook County
-		</label><br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="county@dupage" onclick="drawDemo('county@dupage')">DuPage County
-		</label><br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="county@will" onclick="drawDemo('county@will')">Will County
+			<input type="radio" name="demo_radio" value="county@will" onclick="drawDemo('county@will',[14,41.6755,-88.0414,'county'])">Will County
 		</label><br>
 	</div>
 <!-- 
@@ -337,7 +364,9 @@
 		inputSpace() // get user to enter a space id and token
 
 	}
-
+	if (query.demo_div){
+		demo_div = query.demo_div
+	}
 	if (query.buildings){
 		buildings = query.buildings
 	}
@@ -513,6 +542,9 @@
 		if (query.lines == 2){enableMuchSmallerLines()}
 
 		if (query.water == 0){underWater()}
+		
+		if (query.demo_div == 1){toggleDemo()}
+
 
 		if (query.property){
 			console.log('we have a property and it is',query.property)
@@ -859,9 +891,18 @@
 	
 	}
 	
-	function drawDemo(x){
-		drawTags(x) // fake out the tags
-		scene.updateConfig()
+	function drawDemo(tag,location){
+		drawTags(tag) // fake out the tags
+		if (location){
+			var latlon = []
+			latlon = [location[1],location[2]]
+			var zoom = location[0]
+			map.setView(latlon, zoom)
+			colorProperties(location[3]) // property key to send to the color hash function
+		}
+		else{
+			scene.updateConfig()
+		}
 	}
 	
 	
@@ -1172,21 +1213,21 @@
 
 	function colorProperties(x, update = true){
 		console.log('property', x)
-    color_by_prop = true
+    	color_by_prop = true
 
-    var [target] = x.split('@')
-		scene_config.global.property_hash_name = target;
+    	var [target] = x.split('@')
+		scene_config.global.property_hash_name = target; // this updates the tangram global that is used by the color hash global function in the scene file
 		scene_config.layers._xyz_dots.draw.points.color = scene_config.global.var_property_color_hash
 		scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.var_property_color_hash
 		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.var_property_color_hash
-    scene_config.layers._xyz_polygons._outlines.enabled = false
+    	scene_config.layers._xyz_polygons._outlines.enabled = false
 
-    if (update) {
-      scene.updateConfig()
-      // document.getElementById("colorProperties").innerHTML = 'coloring by property: ' + target
-      console.log('sending',target,'to panel')
-      queryPropsViewport(target)
-    }
+    	if (update) {
+      		scene.updateConfig()
+      		// document.getElementById("colorProperties").innerHTML = 'coloring by property: ' + target
+      		console.log('sending',target,'to panel')
+      		queryPropsViewport(target)
+    	}
 	}
 
 	function clearColorProperties(){
@@ -1383,6 +1424,8 @@
 			fetch(space_url).then((response) => response.json()).then(function(data) {
 // 				console.log(data)
 				var title = data.title
+				var x = document.title + " " + space + " " + title
+				document.title = x
 				var description = data.description
 // 				console.log(space,title,description,calc_size,space_count)
 				document.getElementById("space_info").innerHTML = space + ': ' + title + '<br>' + space_count.toLocaleString() + " features, " + calc_size + '<br>' + description
