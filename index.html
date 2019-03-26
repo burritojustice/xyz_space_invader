@@ -176,7 +176,7 @@
 </div>
 <div id="controls_middle">
 	<div id="demo">
-		Click to toggle Microsoft buildings by tags:<p>
+		Click to select Microsoft buildings by tags:<p>
 		<hr>
 		ZIP codes<br>
 		<label class="radio">
@@ -209,11 +209,9 @@
 			<input type="radio" name="demo_radio" value="south_loop" onclick="drawDemo('district@south_loop',[14.483333333333325,41.8827,-87.6442,'district'])">South Loop
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="near_west_side" onclick="drawDemo('district@near_west_side',[14.483333333333325,41.8827,-87.6442,'district'])">Near West Side
+			<input type="radio" name="demo_radio" value="all_loop" onclick="drawDemo('district@south_loop,district@west_loop,district@loop',[14.483333333333325,41.8827,-87.6442,'district'])">All of the above
 		</label><br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="near_north_side" onclick="drawDemo('district@near_north_side',[14.483333333333325,41.8827,-87.6442,'district'])">Near North Side
-		</label><br>
 						
 		<hr>
 		Streets<br>
@@ -366,6 +364,14 @@
 	}
 	if (query.demo){
 		demo = query.demo
+	if (query.demo == 1){
+		document.getElementById("controls_right").style.display = "block"
+		document.getElementById("controls_middle").style.display = "none"
+		document.getElementById("controls").style.display = "block"
+		demo = 0
+		console.log('showing divs, demo mode off')
+	}
+		
 	}
 	if (query.buildings){
 		buildings = query.buildings
@@ -561,6 +567,7 @@
 		var row_2 = "</td><td onclick='togglePoints()'>points:</td><td>" + query.points + "</td><td onclick='toggleLines()'>lines:</td><td>" + query.lines + "</td><td onclick='toggleOutlines()'>outlines:</td><td>" + query.outlines + "</td></tr>"
 		var row_3 = "<tr><td onclick='nextBasemap()'>basemap:</td><td>" + query.basemap + "</td><td onclick='toggleColors()'>colors:</td><td >" + query.randomColors + "</td></tr>"
 		var query_table = "<table>" + row_1 + row_2 + row_3 + "</table>"
+		query_table = query_table.replace(/undefined/g,'n/a')
 // 		console.log(query_table)
 		document.getElementById("style_info").innerHTML = query_table
 
@@ -880,6 +887,7 @@
 			document.getElementById("controls").style.display = "none"
 			demo = 1
 			console.log('hiding divs, demo mode on')
+
 		}
 		else if (demo == 1){
 			document.getElementById("controls_right").style.display = "block"
@@ -887,10 +895,11 @@
 			document.getElementById("controls").style.display = "block"
 			demo = 0
 			console.log('showing divs, demo mode off')
+
 		}
+		query.demo = demo
 		makeQuery(query)
 
-	
 	}
 	
 	function drawDemo(tag,location){
