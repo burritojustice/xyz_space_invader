@@ -176,18 +176,20 @@
 </div>
 <div id="controls_middle">
 	<div id="demo">
+		Click to toggle Microsoft buildings by tags:<br>
 		<label class="radio">
-			<input type="radio" name="demo_radio" value="district@loop" onclick="drawTags('district@loop')">The Loop
-		</label><br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="postalcode@60606" onclick="drawTags('postalcode@60606')">60606
-		</label><br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="city@chicago" onclick="drawTags('city@chicago')">Chicago
-		</label><br>
-		<label class="radio">
-			<input type="radio" name="demo_radio" value="county@king" onclick="drawTags('county@king')">King County
+			<input type="radio" name="demo_radio" value="street@w_randolph_st" onclick="drawDemo('street@w_randolph_st')">W Randoph St</label><p>
 		</label>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="district@loop" onclick="drawDemo('district@loop')">The Loop
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="postalcode@60606" onclick="drawDemo('postalcode@60606')">60606
+		</label><br>
+		<label class="radio">
+			<input type="radio" name="demo_radio" value="city@chicago" onclick="drawDemo('city@chicago')">Chicago
+		</label><br>
+
 	</div>
 <!-- 
 	<div id="tableLabel">
@@ -417,7 +419,7 @@
     		toggleWater()
       }
      	else if (key == "d") { // hide divs
-    		toggleDivs()
+    		toggleDemo()
       }     
 
       makeQuery(query)
@@ -800,7 +802,7 @@
 		console.log('over water')
 	}
 	
-	function toggleDivs(){
+	function toggleDemo(){
 		if (demo_div == 0){
 			document.getElementById("controls_right").style.display = "none"
 			document.getElementById("controls_middle").style.display = "block"
@@ -817,6 +819,13 @@
 		}
 	
 	}
+	
+	function drawDemo(x){
+		drawTags(x) // fake out the tags
+		scene.updateConfig()
+	}
+	
+	
 
   function buildBasemap() {
     console.log('basemap', getBasemapName(basemap));
@@ -985,7 +994,6 @@
 			tags_filtered.push(x)
 		}
 		// console.log(checkbox_status,'status')
-
     	drawTags()
 	}
 
