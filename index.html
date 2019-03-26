@@ -316,14 +316,14 @@
 	var alphabetize = false // list tags by name, not frequency
 	var tags_filtered = [] // tags in use
 	// keyboard toggles
-	var randomColors = 0,highlight = 0,lines = 0,water = 0,outlines = 1,points = 0,bright = 0,basemap = 0,demo_div = 0
+	var randomColors = 0,highlight = 0,lines = 0,water = 0,outlines = 1,points = 0,bright = 0,basemap = 0,demo = 0
 	var roads = 1, buildings = 1
 	var property
 
 	var tag_list = []
 	var space_list = {}
-  var layer
-  var scene_config
+  	var layer
+  	var scene_config
 	var scene_file = 'tangram_xyz_scene.yaml'
 	var map, hash, popup
 
@@ -364,8 +364,8 @@
 		inputSpace() // get user to enter a space id and token
 
 	}
-	if (query.demo_div){
-		demo_div = query.demo_div
+	if (query.demo){
+		demo = query.demo
 	}
 	if (query.buildings){
 		buildings = query.buildings
@@ -543,7 +543,7 @@
 
 		if (query.water == 0){underWater()}
 		
-		if (query.demo_div == 1){toggleDemo()}
+		if (query.demo == 1){toggleDemo()}
 
 
 		if (query.property){
@@ -874,20 +874,22 @@
 	}
 	
 	function toggleDemo(){
-		if (demo_div == 0){
+		if (demo == 0){
 			document.getElementById("controls_right").style.display = "none"
 			document.getElementById("controls_middle").style.display = "block"
 			document.getElementById("controls").style.display = "none"
-			demo_div = 1
-			console.log('showing divs, demo mode off')
+			demo = 1
+			console.log('hiding divs, demo mode on')
 		}
-		else if (demo_div == 1){
+		else if (demo == 1){
 			document.getElementById("controls_right").style.display = "block"
 			document.getElementById("controls_middle").style.display = "none"
 			document.getElementById("controls").style.display = "block"
-			demo_div = 0
-			console.log('hiding divs, demo mode on')
+			demo = 0
+			console.log('showing divs, demo mode off')
 		}
+		makeQuery(query)
+
 	
 	}
 	
@@ -903,6 +905,8 @@
 		else{
 			scene.updateConfig()
 		}
+		makeQuery(query)
+
 	}
 	
 	
@@ -1093,7 +1097,7 @@
 		var tags_to_tangram
 		var tags_to_tangram_label
 		
-		if (demo_div == 1){
+		if (demo == 1){
 			console.log("demo mode, filtering by",x,"tags")
 			tags_filtered = x // grabbing the value from the demo radio buttons
 		}		
