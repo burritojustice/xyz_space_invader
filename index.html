@@ -935,16 +935,6 @@
     drawTags()
 	}
 
-	function addTagsToQuery()	{
-		if (tags_filtered.includes('+')){
-			query.tags = tags_filtered.toString('+')
-		}
-		if (tags_filtered.includes(',')){
-			query.tags = tags_filtered.toString(',')
-		}
-		makeQuery(query)
-	}
-
 	function drawTags(){
 
 		// change array to string. if AND, swap out commas for + so XYZ tags are AND, otherwise just use commas for XYZ OR
@@ -952,14 +942,14 @@
 		var tags_to_tangram_label
 		query.tags = tags_filtered // add tags to url query
 		if (and_or == 'and'){
-			tags_to_tangram = tags_filtered.toString().replace(/,/,'+')
-			tags_to_tangram_label = tags_filtered.toString().replace(/,/,' AND ')
+			tags_to_tangram = tags_filtered.join('+');
+			tags_to_tangram_label = tags_filtered.join(' AND ');
 			console.log('and',tags_to_tangram,tags_to_tangram_label)
 
 		}
 		else if (and_or =='or'){
-			tags_to_tangram = tags_filtered.toString()
-			tags_to_tangram_label = tags_to_tangram.replace(/,/,' OR ')
+			tags_to_tangram = tags_filtered.join(', ');
+			tags_to_tangram_label = tags_filtered.join(' OR ');
 			console.log('or',tags_to_tangram,tags_to_tangram_label)
 
 		}
