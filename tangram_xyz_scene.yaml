@@ -295,17 +295,17 @@ layers:
                 #     function(){
                 #         return 30 - (feature.scalerank * 4)
                 #         }
-            text:
-#                text_source: label
-                text_source: |
-                    function(){
-                        return feature.name || feature.NAME
-                    }
-                font:
-                    fill: grey
-                    size: 12px
-                    stroke:
-                        color: black
-                        width: 2px
+#             text:
+# #                text_source: label
+#                 text_source: |
+#                     function(){
+#                         return feature.name || feature.NAME
+#                     }
+#                 font:
+#                     fill: grey
+#                     size: 12px
+#                     stroke:
+#                         color: black
+#                         width: 2px
 
                     
