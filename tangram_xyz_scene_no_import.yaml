@@ -203,9 +203,9 @@ layers:
                     font:
                         fill: red
                         size: 12px
-                        # stroke:
-                        #     color: white
-                        #     width: 2px
+                        stroke:
+                            color: white
+                            width: 2px
                 outline:
                     color: [1,1,0,0.2]
                     width: .1px
