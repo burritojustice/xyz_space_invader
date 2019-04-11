@@ -199,7 +199,7 @@ layers:
                 #         return feature.location.count()
                 #         }
                 text:
-                    # text_source: NUMBER
+                    optional: true
                     font:
                         fill: red
                         size: 12px
