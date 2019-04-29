@@ -265,6 +265,9 @@
     var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
     const spaceInfo = await fetch(spaceURL).then((response) => response.json());
 
+    // updated document title
+    document.title = document.title + " / " + space + " / " + spaceInfo.title
+    
     // update UI
     appUI.set({
       // spaceId,
