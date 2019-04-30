@@ -1,0 +1,23 @@
+{
+  "name": "xyz_space_invader",
+  "version": "1.0.0",
+  "description": "XYZ space and tag visualization and exploration tool",
+  "main": "index.html",
+  "dependencies": {
+    "svelte": "^2.16.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build": "svelte compile -f umd AppUI.svelte > AppUI.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/burritojustice/xyz_space_invader.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/burritojustice/xyz_space_invader/issues"
+  },
+  "homepage": "https://github.com/burritojustice/xyz_space_invader#readme"
+}

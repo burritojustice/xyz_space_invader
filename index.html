@@ -1,909 +1,179 @@
 <!doctype html>
 <html lang="en-us">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>HERE XYZ Space Invader</title>
-	<link href="space-invader-144-294760.png" rel="icon" type="image/x-icon" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HERE XYZ Space Invader</title>
+  <link href="space-invader-144-294760.png" rel="icon" type="image/x-icon" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css" /> -->
 
-	<style>
-	html, body {
-		margin: 0;
-		border: 0;
-		font-family: 'Fira Sans', sans-serif;
-		font-size: 12px;
-		}
+  <style>
+  html, body {
+    margin: 0;
+    border: 0;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 12px;
+    /* height: 100%; */
+    }
 
-	#map {
-	    height: 100%;
-	    width: 100%;
-		position: absolute;
-	}
+  #map {
+      height: 100%;
+      width: 100%;
+    position: absolute;
+  }
 
-	#label {
-		text-align: center;
-		top: 0%;
-		height: 20%;
-		width: 40%;
-		left: 30%;
-		position: absolute;
-		margin: 0 auto;
-		z-index: 1000;
-		opacity: 0.8;
-		background-color: white;
-		font: 18px 'Fira Sans', sans-serif;
-		text-shadow: 2px 2px #FFFFFF;
-		display: table;
-		padding: 10px;
-		border-radius: 15px;
-	}
-	#text{
-/*             display: table-cell; */
-		vertical-align: middle;
-		text-align: center;
-	}
-	#small{
-		font-size:12px;
-	}
-	#controls {
-		position: absolute;
-/*             left: 1em; */
-/*             top: 25px; */
-		z-index: 1000;
-/*             background-color: rgba(200, 200, 200, 0.75); */
-		/* display: none; */
-		width: 300px;
-		height: 100%;
-/*             border-radius: 6px; */
-	}
-
-	#properties {
-/* 		height: auto; */
-		overflow: scroll;
-		height: 40vh;
-
-	}
-
-	#colors {
-/* 		height: auto; */
-		overflow: scroll;
-/* 		height: 1vh; */
-		max-height: 40vh;
-
-	}
-
-	#controls div {
-		margin: 10px;
-		padding: 0.5em;
-		background-color: rgba(200, 200, 200, 0.75);
-		border: 1px solid black;
-		border-radius: 3px;
-		color: black;
-		box-shadow: 2px 2px 2px black;
-		max-height: 900px;
-		overflow: scroll;
-	}
-
-	#minidiv {
-		margin: 1px;
-		padding: 0.5em;
-		color: black;
-	}
-
-	#controls_right {
-		position: absolute;
-		z-index: 1000;
-/*             width: 150px; */
-		width: 350px;
-		height: 85%;
-		right: 0%
-	}
-	#controls_right div {
-		margin: 10px;
-		padding: 0.5em;
-		background-color: rgba(200, 200, 200, 0.75);
-		border: 1px solid black;
-		border-radius: 3px;
-		color: black;
-		box-shadow: 2px 2px 2px black;
-		max-height: 500px;
-		overflow: scroll;
-	}
-
-	#controls_middle {
-		position: absolute;
-		z-index: 1000;
-/*             width: 150px; */
-		width: 50%
-		height: 85%;
-		left: 20%
-	}
-
-	#controls_middle div {
-		margin: 10px;
-		padding: 0.5em;
-		background-color: rgba(200, 200, 200, 0.75);
-		border: 1px solid black;
-		border-radius: 3px;
-		color: black;
-		box-shadow: 2px 2px 2px black;
-		max-height: 900px;
-		overflow: scroll;
-	}
-	.dot {
-		height: 11px;
-		width: 11px;
-		background-color: yellow;
-		border: 2px solid grey;
-		border-radius: 50%;
-		display: inline-block;
-		vertical-align:bottom;
-/* 		float:right; */
-	}
-
-	</style>
+  </style>
 </head>
 <body>
-<div id="map">
-</div>
+<div id="map"></div>
+<div id="ui"></div>
 
-<div id="controls">
-	<div id="spaces">
-		<p id="space_info"></p>
-		<p id="style_info"></p>
-<!-- 	<select id="spaceSelect"></select> -->
-	</div>
-	<div id="properties">Interact with map to see properties.<br>Click on a property value to generate unique colors. </div>
-
-	<div id="colors">
-		<p id="colorProperties">click on property value for unique colors</p>
-		<table id="prop_stats"></table>
-		<p style="color:blue;" id="clear_color_properties" onclick="clearColorProperties()">CLEAR COLOR FILTERS</p>
-	</div>
-</div>
-<div id="controls_middle">
-	<div id="tableLabel">
-		<table id="spaceTable">
-		    <tbody id="spaceTablebody"></tbody>
-		</table>
-	</div>
-</div>
-<div id="controls_right">
-	<div id="tag_summary">
-		<table id="tag_stats"></table>
-		<p id="tags_filtered"><i>no tags filtered<br><br></i></p>
-		<p style="color:blue;" id="clear_filters" onclick="clearTags()">CLEAR TAG FILTERS</p>
-		<p id="and_or">
-			<input type="radio" name="and_or" value="or" checked onclick="toggleOr()">or
-  			<input type="radio" name="and_or" value="and" onclick="toggleAnd()">and<br>
-		<p>
-	</div>
-	<div id="tags_list">
-		<p id="someTagsallTags" onclick="showAllKnownTags">tags visible in viewport</p>
-		<table><tr>
-		<td style="color:blue;" id="at_filter" onclick="filterAts()">[only show @ tags]</td>
-		<td style="color:blue;" id="alphabetize" onclick="alphabetizeTags()">[sort by name]</td>
-		</tr></table>
-		<p id="tags"></p>
-	</div>
-</div>
-
-
-<!--
-<div id="label" style="text-align: center; color: red">
-	<p id="text">Space ID
-	</p>
-</div>
- -->
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
 <script src="https://unpkg.com/lodash@4.17.11/lodash.min.js"></script>
 <!-- Main tangram library -->
-<script src="https://unpkg.com/tangram/dist/tangram.min.js"></script>
+<script src="https://unpkg.com/tangram/dist/tangram.debug.js"></script>
+<!-- <script src="http://localhost:8000/dist/tangram.debug.js"></script> -->
 <script src="leaflet-hash.js"></script>
 
 <!-- <script type="module"> -->
+<script src="AppUI.js"></script>
 <script src="basemaps.js"></script>
+<script src="displayOptions.js"></script>
 <script>
-  // import { getBasemapScene, getNextBasemap } from './basemaps.js';
-
-//	var space_count, space_size
-	var tagSet = new Set() // all the tags seen so far
-	var tagsViewport = []//  unique lists of tags on screen
-	var propsSet = new Set()
-	var propsViewport = []
-	var color_by_prop = false
-	var query, space, token, tags;
-	var and_or = 'or'
-	var filterAt = false // toggle for only showing tags with an @
-	var alphabetize = false // list tags by name, not frequency
-	var tags_filtered = [] // tags in use
-	// keyboard toggles
-	var randomColors = 0,highlight = 0,lines = 0,water = 0,outlines = 1,points = 0,bright = 0,basemap = 0
-	var roads = 1, buildings = 1
-	var property
-
-	var tag_list = []
-	var space_list = {}
-  var layer
+  var query;
+  var layer;
   var scene_config
-	var scene_file = 'tangram_xyz_scene.yaml'
-	var map, hash, popup
+  var map, hash, popup;
 
-	map = L.map('map', {boxZoom: false});
+  map = L.map('map', {boxZoom: false});
     hash = new L.Hash(map);
     popup = L.popup();
-	//map.setView([37.7,-122.4], 12);
-	map.zoomControl.setPosition('bottomright')
 
+  map.zoomControl.setPosition('bottomright')
 
-	query = parseQuery(window.location.search.slice(1));
+  // grab query parameters from the url and assign them to globals
+  query = new URLSearchParams(document.location.search);
 
-	// grab query parameters from the url and assign them to globals
-
-	if (query.space){
-		space = query.space
-	}
-	if (query.token){
-		token = query.token
-	}
-	if (query.tags){
-		tags = query.tags
-		console.log(tags)
-		tags_filtered.push(tags)
-		document.getElementById("tags_filtered").innerHTML = "filtering by tags:<br>" + tags
-	}
-
-	if (!query.space || !query.token){
-		console.log('no token or space')
-		scene_file = 'dark_refill.yaml'
-		map.setView([37.7,-122.4], 2);
-// 		map = L.map('map', {boxZoom: false});
-//     	hash = new L.Hash(map);
-//     	popup = L.popup();
-// 		map.zoomControl.setPosition('bottomright')
-
-
-		inputSpace() // get user to enter a space id and token
-
-	}
-
-	if (query.buildings){
-		buildings = query.buildings
-	}
-	if (query.randomColors){
-		randomColors = query.randomColors
-	}
-	if (query.highlight){
-		highlight = query.highlight
-	}
-	if (query.bright){
-		bright = query.bright
-	}
-	if (query.outlines){
-		outlines = query.outlines
-	}
-	if (query.points){
-		points = query.points
-	}
-	if (query.roads){
-		roads = query.roads
-	}
-	if (query.lines){
-		lines = query.lines
-	}
-	if (query.water){
-		water = query.water
-	}
-	if (query.basemap){
-    basemap = query.basemap
-	}
-	if (query.property){
-		property = query.property
-	}
-	if (query.tags){
-		// look for AND tags
-		if (query.tags.includes('+')){
-			tags_filtered = query.tags.split('+')
-			and_or = 'and'
-		}
-		// look for OR tags
-		if (query.tags.includes(',')){
-			tags_filtered = query.tags.split(',')
-			and_or = 'or'
-		}
-	}
-
-	console.log('url query is',query)
-
-
- 	var url_hash = window.location.hash.slice(1, window.location.hash.length).split('/');
-	var map_start_location = null
-	if (url_hash.length == 3) {
-		map_start_location = {
-			lat: Number(url_hash[1]),
-			lng: Number(url_hash[2]),
-			zoom: Number(url_hash[0])
-		};
-	}
-
-  buildBasemap();
-  loadScene();
-
-  if (space && token) {
-    if (map_start_location == null){
-      console.log('no url hash, getting bbox')
-      getBbox(space,token)
-    } else {
-      console.log('using url hash', map_start_location)
-      map.setView([map_start_location.lat,map_start_location.lng],map_start_location.zoom)
-      getStats(space,token)
-    }
+  var url_hash = window.location.hash.slice(1, window.location.hash.length).split('/');
+  var mapStartLocation = null
+  if (url_hash.length == 3) {
+    mapStartLocation = {
+      lat: Number(url_hash[1]),
+      lng: Number(url_hash[2]),
+      zoom: Number(url_hash[0])
+    };
   }
 
-	map.on("keypress", function(e) {
-		// b = toggle buildings
-		// c = toggle colors (color hash of all properties, pretty good but some chance of bordering features getting a similar color)
-		// h = toggle lines and dot highlights
-		// l = colors good for a light basemap
-		// o = toggle polygon outlines
-		// p = make dots bigger
-		// r = toggle roads
-		// s = make dots smaller and lines narrower
-		// w = put polygons under water
+  // Initialize App UI
+  const appUI = new AppUI({
+    target: document.getElementById('ui')
+  });
 
-    var key = e.originalEvent.key;
+  // Handle UI events affecting Tangram scene
+  appUI.on('loadScene', ({ basemapScene }) => {
+    loadScene(basemapScene);
+  });
 
-    if (key == "m") { // toggle basemap
-      nextBasemap();
-      makeQuery(query);
-      return;
-    }
-    else {
-      if (key == "b") { // toggle buildings
-        toggleBuildings()
-      }
-    	else if (key == "c") { // color hash each feature
-			  toggleColors()
-		  }
-    	else if (key == "h") { // highlight colors and make points bigger
-        toggleHighlight()
-      }
-    	else if (key == "a") { // pick colors for a light basemap
-        toggleBright()
-      }
-      else if (key == "o") { // toggle polygon outlines
-        toggleOutlines()
-      }
-    	else if (key == "p") { // make points bigger
-        togglePoints()
-      }
-    	else if (key == "r") { // toggle roads
-        toggleRoads()
-      }
-    	else if (key == "l") { // make lines smaller
-        toggleLines()
-      }
-    	else if (key == "w") { // put polygons under water
-    		toggleWater()
-      }
-
-      makeQuery(query)
+  appUI.on('updateScene', state => {
+    if (scene_config) {
+      updateScene(state);
       scene.updateConfig();
     }
-	});
+  });
 
+  // Load info on a new XYZ space
+  appUI.on('loadSpace', ({ spaceId, token }) => {
+    if (mapStartLocation == null) {
+      console.log('no url hash, getting bbox');
+      getBbox({ spaceId, token });
+    } else {
+      console.log('using url hash', mapStartLocation);
+      map.setView([mapStartLocation.lat,mapStartLocation.lng],mapStartLocation.zoom);
+      getStats({ spaceId, token });
+    }
+  });
 
-	map.on("moveend", function(){
-		queryViewport()
-		if (query.property){
-			colorProperties(query.property)
-		}
-	})
-	map.on("zoomend", function(){
-		queryViewport()
-		if (query.property){
-			colorProperties(query.property)
-		}
-	})
+  // Handle query string updates
+  appUI.on('updateQueryString', ({ queryParams }) => {
+    const query = new URLSearchParams(queryParams);
+    const qs = `?${query.toString()}${window.location.hash}`;
+    window.history.replaceState(null, null, qs);
+  });
 
-  // this is to apply any arguments from the URL query. some of these conflict (bright and highlight with property-driven colors, and point sizes, need to figure that out)
+  // Initialize UI with query string params
+  appUI.setFromQueryParams(query);
 
-	function applyURLQuery(){
-		console.log('applying url query',query)
-		// if (query.basemap == 1){basemapDots()}
-		// if (query.basemap == 2){basemapPixel()}
-		// if (query.basemap == 3){basemapWalkabout()}
-		// if (query.basemap == 4){basemapRefill()}
+  // apply updates to scene based on current display options
+  function updateScene({ spaceId, token, displayToggles, selectedFeatureProp, tagFilterQueryParam }) {
+    applySpace({ spaceId, token });
 
+    // display options such as point size, toggling buildings or roads on/off, etc.
+    applyDisplayOptions(displayToggles);
 
-		if (query.buildings == 0){disableBuildings()}
+    // color features by a specific property (if a property is currently selected)
+    applyFeatureColor(selectedFeatureProp);
 
-		if (query.colors == 1){enableColorHash()}
-
-		if (query.highlight == 1){enableHighlight()}
-
-		if (query.bright == 1){enableBright()}
-
-		if (query.outlines == 1){enableOutlines()}
-		if (query.outlines == 0){disableOutlines()}
-
-
-		if (query.points == 1){mediumPoints()}
-		if (query.points == 2){bigPoints()}
-		if (query.points == 3){smallerPoints()}
-		if (query.points == 4){smallPoints()}
-
-		if (query.roads == 0){disableRoads()}
-
-		if (query.lines == 1){enableSmallerLines()}
-		if (query.lines == 2){enableMuchSmallerLines()}
-
-		if (query.water == 0){underWater()}
-
-		if (query.property){
-			console.log('we have a property and it is',query.property)
-			colorProperties(query.property, false)
-		}
-		displayQuery()
-
-	}
-
-	function displayQuery(){
-		document.getElementById("style_info").innerHTML = ''
-		var query_string = Object.entries(query)
-		var row_1 = "<tr><td onclick='toggleRoads()'>roads:</td><td>" + query.roads + "</td><td onclick='toggleBuildings()'>buildings:</td><td>" + query.buildings + "</td><td onclick='toggleWater()'>water:</td><td>" + query.water + "</td></tr>"
-		var row_2 = "</td><td onclick='togglePoints()'>points:</td><td>" + query.points + "</td><td onclick='toggleLines()'>lines:</td><td>" + query.lines + "</td><td onclick='toggleOutlines()'>outlines:</td><td>" + query.outlines + "</td></tr>"
-		var row_3 = "<tr><td onclick='nextBasemap()'>basemap:</td><td>" + query.basemap + "</td><td onclick='toggleColors()'>colors:</td><td >" + query.randomColors + "</td></tr>"
-		var query_table = "<table>" + row_1 + row_2 + row_3 + "</table>"
-		console.log(query_table)
-		document.getElementById("style_info").innerHTML = query_table
-
-	}
-
-	function toggleBuildings(){
-		// toggle buildings
-		if (buildings == 1){ // turn off buildings
-			disableBuildings()
-		}
-		else{ // turn on buildings
-			enableBuildings()
-		}
-		query.buildings = buildings
-		makeQuery(query)
+    // update the tag filter on the XYZ tiles (if the tags have changed, this will cause new tiles to load)
+    applyTags(tagFilterQueryParam);
   }
 
-	function disableBuildings(){
-    if (scene_config.layers.buildings) {
-      scene_config.layers.buildings.enabled = false
-    }
-		buildings = 0
-		console.log('no buildings')
-	}
-	function enableBuildings(){
-    if (scene_config.layers.buildings) {
-      scene_config.layers.buildings.enabled = true
-    }
-		buildings = 1
-		console.log('yes buildings')
-	}
-
-
-
-
-	function toggleColors(){
-		// toggle random colors for features
-		if (randomColors == 0){ // make random colors
- 			enableColorHash()
-		}
-		else{ // revert to default colors
-			disableColorHash()
-    }
-    scene.updateConfig();
-		query.randomColors = randomColors
-		makeQuery(query)
-
-	}
-	function enableColorHash(){
-		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_hash'
-		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_hash'
-		scene_config.layers._xyz_dots.draw.points.color = 'global.color_hash'
-
-		console.log('color feature hash')
-		randomColors = 1
-	}
-	function disableColorHash(){
-		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_polygons'
-		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
-		scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		console.log('base colors')
-		randomColors = 0
-	}
-
-
-
-	function toggleHighlight(){
-		// highlight colors, make things bigger and wider
-		if (highlight == 0){
-			enableHighlight()
-		}
-		else{
-			disableHiglight()
-    }
-    // scene.updateConfig();
-		query.highlight = highlight
-	}
-	function enableHighlight(){ // outline points, make points bigger, thicker lines
-		scene_config.layers._xyz_lines.draw._lines.outline = 'global.highlight'
-		scene_config.layers._xyz_dots.draw.points.size = '12px'
-		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '3px'
-		highlight = 1
-		console.log('big')
-	}
-	function disableHighlight(){
-		scene_config.layers._xyz_lines.draw._lines.outline = null
-		scene_config.layers._xyz_dots.draw.points.size = '6px'
-		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '1px'
-		highlight = 0
-		console.log('not big')
-	}
-
-
-	function toggleBright(){
-	// make colors that are nicer on a light basemap
-		if (bright == 0){
-			enableBright()
-		}
-		else{
-			disableBright()
-    }
-    // scene.updateConfig();
-		query.bright = bright
-	}
-	function enableBright(){
-		scene_config.layers._xyz_lines.draw._lines.color = [1,0,0,0.5]
-		scene_config.layers._xyz_dots.draw.points.color = [0,0,1,0.5]
-		bright = 1
-		console.log('light basemap friendly')
-	}
-	function disableBright(){
-		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
-		scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		bright = 0
-		console.log('dark basemap friendly')
-	}
-
-
-	function toggleOutlines(){
-	// change outlines of polygons
-		if (outlines == 0){
-			enableOutlines()
-		}
-		else if (outlines == 1){
-			disableOutlines()
-    }
-    // scene.updateConfig();
-		query.outlines = outlines
-		makeQuery(query)
-
-	}
-	function disableOutlines(){
-		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '0px'
-		outlines = 0
-		console.log('no polygon outlines')
-	}
-	function enableOutlines(){
-		scene_config.layers._xyz_polygons._outlines.draw._lines.width = '1px'
-		outlines = 1
-		console.log('yes polygon outlines')
-	}
-
-	function enableOutlinesNoFill(){
-		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = null
-		var color
-		if (property){
-      // TODO: this can't be right, colorProperties() doesn't return anything
-			scene_config.layers._xyz_polygons._outlines.draw._lines.color = colorProperties(property)
-			console.log('outlines only, colored by property')
-
-		}
-		if (randomColors = 1){
-			scene_config.layers._xyz_polygons._outlines.draw._lines.color = 'global.color_hash'
-			console.log('outlines only, colored randomly')
-
-		}
-		outlines = 2
-	}
-
-
-
-	function togglePoints(x){
-		// make points big, bigger, biggest,smaller
-		if (points == 0){
-			mediumPoints()
-		}
-		else if (points == 1){
-			bigPoints()
-		}
-		else if (points == 2){
-			smallerPoints()
-		}
-		else if (points == 3){
-			smallPoints()
-		}
-		query.points = points
-		makeQuery(query)
-
-	}
-	function mediumPoints(){
-		scene_config.layers._xyz_dots.draw.points.size = '12px'
-// 				scene_config.layers._xyz_dots.draw.points.color = [1,0,0,0.5]
-		scene_config.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.5]
-		scene_config.layers._xyz_dots.draw.points.outline.width = '1px'
-		points = 1
-		console.log('medium points')
-	}
-	function bigPoints(){
-		scene_config.layers._xyz_dots.draw.points.size = '16px'
-// 				scene_config.layers._xyz_dots.draw.points.color = [1,0,0,0.5]
-		scene_config.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.5]
-		scene_config.layers._xyz_dots.draw.points.outline.width = '1px'
-		points = 2
-		console.log('big points')
-	}
-	function smallerPoints(){
-		scene_config.layers._xyz_dots.draw.points.size = '3px'
-// 				scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		scene_config.layers._xyz_dots.draw.points.outline.color = null
-		scene_config.layers._xyz_dots.draw.points.outline.width = null
-		points = 3
-		console.log('smaller points')
-	}
-	function smallPoints(){
-		scene_config.layers._xyz_dots.draw.points.size = '6px'
-// 				scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		scene_config.layers._xyz_dots.draw.points.outline.color = null
-		scene_config.layers._xyz_dots.draw.points.outline.width = null
-		points = 0
-		console.log('small points')
-	}
-
-
-	function toggleRoads(){
-		// toggle road visibilty
-		if (roads == 1){
-			disableRoads()
-		}
-		else{
-			enableRoads()
-		}
-		query.roads = roads
-		makeQuery(query)
-
-	}
-	function disableRoads(){
-    if (scene_config.layers.roads) {
-      scene_config.layers.roads.enabled = false
-    }
-
-		if (scene_config.layers.pois) {
-			scene_config.layers.pois.enabled = false //to handle exit numbers
-    }
-
-		roads = 0
-		console.log('no roads')
-	}
-	function enableRoads(){
-    if (scene_config.layers.roads) {
-      scene_config.layers.roads.enabled = true
-    }
-
-		if (scene_config.layers.pois) {
-			scene_config.layers.pois.enabled = true
-    }
-
-		roads = 1
-		console.log('yes roads')
-	}
-
-	// make lines smaller
-	function toggleLines(x){
-		if (lines == 0){
-			enableSmallerLines()
-		}
-		else if (lines == 1) {
-			enableMuchSmallerLines()
-		}
-		else if (lines == 2) {
-			disableSmallerLines()
-		}
-		query.lines = lines
-		makeQuery(query)
-
-	}
-	function enableSmallerLines(){
-// 		scene_config.layers._xyz_dots.draw.points.size = '3px'
-		scene_config.layers._xyz_lines.draw._lines.width = '2px'
-		lines = 1
-		console.log('smaller lines')
-	}
-	function enableMuchSmallerLines(){
-// 		scene_config.layers._xyz_dots.draw.points.size = '1px'
-		scene_config.layers._xyz_lines.draw._lines.width = '1px'
-		lines = 2
-		console.log('much smaller lines')
-	}
-	function disableSmallerLines(){
-// 		scene_config.layers._xyz_dots.draw.points.size = '6px'
-		scene_config.layers._xyz_lines.draw._lines.width = '4px'
-		lines = 0
-		console.log('regular lines')
-	}
-
-
-
-	function toggleWater(x){
-		// move polygons above or below water
-
-		if (water == 0){
-			underWater()
-		}
-		else{
-			overWater()
-		}
-		query.water = water
-		makeQuery(query)
-
-
-	}
-
-	function underWater(){
-		scene_config.layers._xyz_polygons.draw._polygons_inlay.order = 200
-		water = 1
-		console.log('under water')
-	}
-	function overWater(){
-		scene_config.layers._xyz_polygons.draw._polygons_inlay.order = 300
-		water = 0
-		console.log('over water')
-	}
-
-
-  function buildBasemap() {
-    console.log('basemap', getBasemapName(basemap));
-    query.basemap = basemap;
-    scene_file = getBasemapScene(basemap);
-  }
-
-	function nextBasemap(){
-		// toggle basemap
-		// this is overriding an import of the initial basemap, so we need to call tangram_xyz_scene_no_import.yaml which does not import a basemap -- this is a pain to keep in sync -- if you make a change to the yaml, you need to do it in both scene files
-    console.log('m',basemap)
-
-    basemap = getNextBasemap(basemap);
-    buildBasemap();
-    loadScene();
-	}
-
-  function loadScene() {
+  // load a new scene basemap (first creating the leaflet and tangram layers if needed)
+  function loadScene(scene_obj) {
     if (layer == null) {
-      makeLayer();
+      // if the Tangram layer doesn't exist yet, initialize it and load the scene for the first time
+      makeLayer(scene_obj);
     }
     else {
-      scene.load(scene_file);
+      scene.load(scene_obj);
     }
   }
 
-  function makeLayer(){
-		layer = Tangram.leafletLayer({
-			// scene: 'https://s3.amazonaws.com/xyz-demo/scenes/tangram_xyz_scene.yaml',
-			scene: scene_file,
-			// scene: 'dark_refill.yaml',
-			attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
-			events: {
-				click: function({ feature }) {
-					if (feature) {
-            document.getElementById("properties").innerHTML = traverse(feature.properties);
-					} else {
-						map.closePopup();
-						console.log("close")
-					}
-				},
-				hover: function({ feature }) {
-					if (feature) {
-            document.getElementById("properties").innerHTML = traverse(feature.properties);
-					} else {
-						map.closePopup();
-					}
-				}
-			}
-		});
+  // initialize Tangram leaflet layer, and load the scene for the first time
+  function makeLayer(scene_obj) {
+    layer = Tangram.leafletLayer({
+      scene: scene_obj,
+      attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
+      events: {
+        hover: function({ feature }) {
+          if (feature && feature.source_name === '_xyzspace') {
+            // let the UI know we're hovering over a new feature
+            appUI.set({ selectedFeature: feature });
+          }
+        }
+      }
+    });
 
-		layer.scene.subscribe({
-			load: function ({ config }) {
+    // setup Tangram event listeners
+    layer.scene.subscribe({
+      load: function ({ config }) {
+        // when a new scene loads (e.g. when app loads, or a new basemap is selected),
+        // update with current data source and display options
         scene_config = config;
-				getSpace()
-        applyURLQuery()
-			},
-			view_complete: function () {
-				console.log('view complete')
-				queryViewport()
-			}
-		});
+        updateScene(appUI.get());
+      },
+      view_complete: function (e) {
+        // when new tiles finish loading, update viewport counts for tags and feature properties
+        console.log('view complete')
+        queryViewport();
+      }
+    });
 
     layer.addTo(map);
 
     window.layer = layer; // debugging
     window.scene = layer.scene;  // debugging
-	}
+  }
 
-	function inputSpace(){
-
-		// creates text input fields if no space id or token in the url
-
-		var br = document.createElement("br");
-
-		var space_input_label = document.createElement("label");
-		var space_input_description = "XYZ space ID"
-		var space_input = document.createElement("INPUT");
-		space_input.setAttribute("type", "text");
-		space_input.name = 'space_input'
-		space_input.id = 'space_input'
-		space_input.placeholder = "enter an XYZ space ID"
-
-
-		var token_input_label = document.createElement("label");
-		var token_input_description = "XYZ token"
-		var token_input = document.createElement("INPUT");
-		token_input.name = 'token_input'
-		token_input.id = 'token_input'
-		token_input.setAttribute("type", "text");
-		token_input.placeholder = "enter an XYZ token"
-
-		space_input_label.innerHTML = space_input_description
-		space_input_label.appendChild(space_input);   // add the box to the element
-
-		token_input_label.innerHTML = token_input_description
-		token_input_label.appendChild(token_input);   // add the box to the element
-
-		document.getElementById("spaces").appendChild(space_input);
-		document.getElementById("spaces").appendChild(br);
-		document.getElementById("spaces").appendChild(token_input);
-		document.getElementById("spaces").appendChild(br);
-
-
-		var get_space_text = document.createElement("p");
-		get_space_text.style = "color:blue;"
-		get_space_text.innerHTML = ('Show XYZ Space')
-		get_space_text.onclick = () => {
-      loadScene();
-		}
-		document.getElementById("spaces").appendChild(get_space_text)
-
-
-	}
-
-
-	function getSpace(){
-		if ((!space) && (document.getElementById("space_input").value)){
-			console.log('no space and token in url, looking in text input boxes')
-			space = document.getElementById("space_input").value
-      token = document.getElementById("token_input").value
-      query.space = space;
-      query.token = token;
-			console.log(space,token)
-			getBbox(space,token)
-		}
-
-    if (space && token) {
+  function applySpace({ spaceId, token }) {
+    if (spaceId && token) {
       _.merge(scene_config, {
         sources: {
           _xyzspace: {
-            url: 'https://xyz.api.here.com/hub/spaces/' + space + '/tile/web/{z}_{x}_{y}',
+            url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
             url_params: {
-              access_token: token,
-              tags: tags_filtered
+              access_token: token
             }
           }
         }
@@ -911,583 +181,200 @@
     }
   }
 
-	function filterTags(x){
-		console.log('tag',x)
-		var checkbox_status = document.getElementById(x).checked
-		console.log(x,'checked',checkbox_status)
-		// if checkbox was just unchecked, remove tag from list
-		if (checkbox_status == false){
-			console.log('removing',x,'from',tags_filtered)
-			// document.getElementById(x).checked = false
-			var index = tags_filtered.indexOf(x)
-			// remove the tag
-			if (index > -1) {
-				tags_filtered.splice(index, 1);
-				console.log('removing tag',x,tags_filtered)
-			}
-		}
-		// otherwise add it to the list
-		else {
-			tags_filtered.push(x)
-		}
-		// console.log(checkbox_status,'status')
+  function applyDisplayOptions(options) {
+    for (const option in options) {
+      const value = options[option];
+      if (displayOptions[option] && displayOptions[option].apply) {
+        displayOptions[option].apply(scene_config, value);
+      }
+    }
+  }
 
-    drawTags()
-	}
+  function applyFeatureColor(prop) {
+    if (appUI.get().displayToggles.randomColors) {
+      return;
+    }
 
-	function drawTags(){
+    console.log('property', prop)
+    if (prop) {
+      scene_config.global.property_hash_name = prop;
+      scene_config.layers._xyz_dots.draw.points.color = scene_config.global.var_property_color_hash
+      scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.var_property_color_hash
+      scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.var_property_color_hash
+      scene_config.layers._xyz_polygons._outlines.enabled = false
+    }
+    else {
+      scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.color_lines;
+      scene_config.layers._xyz_dots.draw.points.color = scene_config.global.color_points;
+      scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.color_polygons;
+    }
+  }
 
-		// change array to string. if AND, swap out commas for + so XYZ tags are AND, otherwise just use commas for XYZ OR
-		var tags_to_tangram
-		var tags_to_tangram_label
-		query.tags = tags_filtered // add tags to url query
-		if (and_or == 'and'){
-			tags_to_tangram = tags_filtered.join('+');
-			tags_to_tangram_label = tags_filtered.join(' AND ');
-			console.log('and',tags_to_tangram,tags_to_tangram_label)
-
-		}
-		else if (and_or =='or'){
-			tags_to_tangram = tags_filtered.join(', ');
-			tags_to_tangram_label = tags_filtered.join(' OR ');
-			console.log('or',tags_to_tangram,tags_to_tangram_label)
-
-		}
-		var label = "filtering by tags:<br>" + tags_to_tangram_label
-		if (tags_to_tangram_label == ''){label += 'none'}
-// 		console.log(label,tags_to_tangram)
-// 		console.log("innerhtml",document.getElementById("tags_filtered").innerHTML)
-		document.getElementById("tags_filtered").innerHTML = label
-    // tell tangram to filter by tags by changing the url_param
-
+  function applyTags(tagFilterQueryParam) {
     _.merge(scene_config, {
       sources: {
         _xyzspace: {
-          url_params: { tags: tags_to_tangram }
+          url_params: { tags: tagFilterQueryParam }
         }
       }
     });
-	}
 
-	function clearTags(){
-		tags_filtered = []
-
-		delete query.tags
-		makeQuery(query)
-
-		scene_config.sources._xyzspace.url_params.tags = ""
-		scene.updateConfig()
-
-    document.getElementById("tags_filtered").innerHTML = "no tags filtered<br><br>"
-
-		queryViewport()
-	}
-
-	function filterAts(){
-		if (filterAt){
-			console.log('showing all tags')
-			document.getElementById("at_filter").innerHTML = '[only show @ tags]'
-
-			filterAt = false
-		}
-		else {
-			console.log('only showing @ tags')
-			document.getElementById("at_filter").innerHTML = '[show all tags]'
-
-			filterAt = true
-		}
-		queryViewport()
-	}
-
-	function alphabetizeTags(){
-		if (alphabetize){
-			console.log('sorting tags by frequency')
-			document.getElementById("alphabetize").innerHTML = '[sort by name]'
-			alphabetize = false
-		}
-		else{
-			console.log('sorting tags by name')
-			document.getElementById("alphabetize").innerHTML = '[sort by frequency]'
-			alphabetize = true
-		}
-		queryViewport()
-
-
-	}
-
-	function toggleAnd(){
-		and_or = "and"
-		console.log('and tags')
-		drawTags()
-    scene.updateConfig();
-	}
-	function toggleOr(){
-		and_or = "or"
-		console.log('or tags')
-		drawTags()
-    scene.updateConfig();
-	}
-
-
-	function parseQuery (qstr) {
-		var query = {};
-		var a = qstr.split('&');
-		for (var i in a) {
-			var b = a[i].split('=');
-			query[decodeURIComponent(b[0])] = decodeURIComponent(b[1]);
-			}
-		return query;
-	}
-
-	function makeQuery(queryParams){
-		var esc = encodeURIComponent;
-		var updated_query = Object.keys(queryParams)
-			.map(k => esc(k) + '=' + esc(queryParams[k]))
-			.join('&');
-		updated_query = '?' + updated_query + window.location.hash  // why is this ? necessary
-		console.log(updated_query)
-// 		window.location.search = updated_query
-		window.history.replaceState(null,null,updated_query)
-// 		window.history.pushState = updated_query
-		displayQuery()
-	}
-
-	function colorProperties(x, update = true){
-		console.log('property', x)
-    color_by_prop = true
-
-    var [target] = x.split('@')
-		scene_config.global.property_hash_name = target;
-		scene_config.layers._xyz_dots.draw.points.color = scene_config.global.var_property_color_hash
-		scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.var_property_color_hash
-		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.var_property_color_hash
-    scene_config.layers._xyz_polygons._outlines.enabled = false
-
-    if (update) {
-      scene.updateConfig()
-      // document.getElementById("colorProperties").innerHTML = 'coloring by property: ' + target
-      console.log('sending',target,'to panel')
-      queryPropsViewport(target)
+    // remove tags param if no tags - do this after merge above, to ensure the full object path exists
+    // (created by merge if doesn't exists already)
+    if (!tagFilterQueryParam) {
+      delete scene_config.sources._xyzspace.url_params.tags;
     }
-	}
-
-	function clearColorProperties(){
-		color_by_prop = false
-		scene_config.layers._xyz_lines.draw._lines.color = 'global.color_lines'
-		scene_config.layers._xyz_dots.draw.points.color = 'global.color_points'
-		scene_config.layers._xyz_polygons.draw._polygons_inlay.color = 'global.color_polygons'
-		scene.updateConfig()
-		document.getElementById("prop_stats").innerHTML = ''
-		delete query.property
-		makeQuery(query)
-	}
-
-	function colorHash(value){
-		var props = JSON.stringify(value)
-// 		console.log(props)
-		var hash = 0, i, chr;
-		if (props === 0){hash = 0};
-		for (i = 0; i < props.length; i++) {
-			chr   = props.charCodeAt(i);
-			hash  = ((hash << 5) - hash) + chr;
-			hash |= 0; // Convert to 32bit integer
-		}
-		var color = 'hsla(' + hash + ', 100%, 50%, 0.75)'
-// 		console.log(color)
-		return color
-	}
-
-	function traverse(x, level = '', key = '', text = '') { // added key so we can pass key@value to colorProperties
-	  if (Array.isArray(x)) {
-      return traverseArray(x, level, key, text);
-	  } else if ((typeof x === 'object') && (x !== null)) {
-      return traverseObject(x, level, text);
-	  } else {
-      var _x = key + "@" + x;
-      text += level + '<span onclick="colorProperties(\'' + _x + '\')">' + x + '</span>'
-      text += '<br>';
-      return text;
-	  }
   }
 
-	function traverseArray(arr, level, key, text) {
-	  text += level + "[array]<br>"
-    arr.forEach(x => text = traverse(x, level + "&nbsp;&nbsp;", key, text));
-    return text;
-	}
+  async function getStats({ spaceId, token }) {
+    // Get stats endpoint
+    var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
+    const stats = await fetch(url).then(r => r.json());
+      // console.log(stats)
 
-	function traverseObject(obj, level, text) {
-    text += level + "{object}<br>"
-    level += '&nbsp;&nbsp;';
-	  for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        text += level + "" + key + ":"
-        text = traverse(obj[key], level + "&nbsp;&nbsp;", key, text);
+    var bbox = stats.bbox.value
+    console.log('map start location:', mapStartLocation)
+    console.log('bbox',bbox)
+    if (mapStartLocation){
+    // if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
+      if (
+        ((mapStartLocation.lat < bbox[1]) || (mapStartLocation.lat > bbox[3]))
+        ||
+        ((mapStartLocation.lng < bbox[0]) || (mapStartLocation.lng > bbox[2]))
+      ){
+        console.log('map start location outside bbox')
+        var corner1 = L.latLng(bbox[1],bbox[0]),
+        corner2 = L.latLng(bbox[3],bbox[2])
+        bounds = L.latLngBounds(corner1, corner2)
+        map.fitBounds(bounds)
+        }
+    }
+    var spaceSize = stats.byteSize.value
+    var spaceCount = stats.count.value
+    var calcSize = (spaceSize/1024/1024)
+    console.log(spaceSize,'KB',calcSize)
+    if (calcSize < 1000){
+      calcSize = calcSize.toFixed(1) + ' MB'
       }
+    else{
+      calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
+      }
+
+    // Get space endpoint
+    var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
+    const spaceInfo = await fetch(spaceURL).then((response) => response.json());
+
+    // updated document title
+    document.title = document.title + " / " + space + " / " + spaceInfo.title
+    
+    // update UI
+    appUI.set({
+      // spaceId,
+      spaceInfo: {
+        title: spaceInfo.title,
+        description: spaceInfo.description,
+        numFeatures: spaceCount,
+        dataSize: calcSize
+      },
+      // token
+    });
+  }
+
+  function getBbox({ spaceId, token }) {
+    var url = 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/statistics' + '?access_token=' + token
+    fetch(url).then((response) => response.json()).then(function(data) {
+      var bbox = data.bbox.value
+      // check for all zero bbox
+      if ((bbox[0] == 0) && (bbox[1] == 0) && (bbox[2] == 0) && (bbox[3] == 0)){
+        console.log('zeros')
+        bbox = [-45,-45,45,45]
+        }
+      console.log(bbox)
+      var sw = L.latLng(bbox[1],bbox[0]),
+      ne = L.latLng(bbox[3],bbox[2])
+      bounds = L.latLngBounds(sw, ne)
+      map.fitBounds(bounds);
+      getStats({ spaceId, token })
+    })
+  }
+
+  // query Tangram viewport tiles, and update UI data (tag and property counts, etc.)
+  async function queryViewport() {
+    const features = await scene.queryFeatures({ filter: { $source: '_xyzspace' }});
+    console.log("features in viewport:", features.length);
+    updateViewportTags(features);
+    updateViewportProperties(features);
+  }
+
+  function updateViewportTags(features) {  // for tags
+    // grab the tags from Tangram's viewport tiles
+    let tagsViewport = [];
+    features.forEach(x => {
+      tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
+    })
+
+    // count them
+    const counts = {}
+    tagsViewport.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+
+    // count up the number of each tags
+    var tagCounts = {};
+    for (var i = 0; i < tagsViewport.length; i++) {
+      var num = tagsViewport[i];
+      tagCounts[num] = tagCounts[num] ? tagCounts[num] + 1 : 1;
     }
-    return text;
-	}
+    // console.log("tag counts: ",tagCounts)
+    // sort the list of tags by count
+    var sortable = [];
+    // make a new list of tags and their counts
+    for (var aTag in tagCounts) {
+      sortable.push([aTag, tagCounts[aTag]]);
+    }
+    sortable.sort((a, b) => b[1] - a[1]);
 
+    appUI.set({
+      numFeaturesInViewport: features.length,
+      tagsInViewport: tagsViewport,
+      tagsWithCounts: sortable
+    });
+  }
 
-	function buildTable(obj,div){
-		console.log("building table",div,Object.keys(obj).length)
-		console.log(Object.keys(obj))
-// 		var x = document.createElement("TABLE");
-		var tbody = document.getElementById(div);
-		console.log('tbody:',tbody)
-		var rows = Object.entries(obj)
-		console.log(rows)
-		rows.forEach((item,index) => {
+  function updateViewportProperties(features) { // for feature prop
+    const prop = appUI.get().selectedFeatureProp;
 
-			var tr = "<tr>";
-			console.log("making row")
-			var stats = item[index] //var id = Object.keys(space_list)[index]
-			var id = rows[stats]
-			var values = Object.values(stats)
-			tr += "<td>" + id + "</td>"
-			values.forEach( (item,index) =>{
-				tr += "<td>" + values + "</td>";
-			})
-			/* We add the table row to the table body */
-			tr += "</tr>"
-			console.log(tr)
-			tbody.innerHTML += tr;
-		})
-	} // https://stackoverflow.com/questions/17684201/create-html-table-from-javascript-object
-
-
-	function buildSelect(list){
-		var sel = document.getElementById("spaceSelect")
-// 		opt.onchange = function(){
-// 		scene_config.sources._xyzspace.url = 'https://xyz.api.here.com/hub/spaces/' + x.id +  '/tile/web/{z}_{x}_{y}'
-// 				scene.updateConfig();
-// 			}
-		list.forEach(x => {
-			var opt = document.createElement("option");
-
-			opt.value = x.id
-			opt.text = x.title + '/' + x.description
-			sel.add(opt, null);
-		})
-
-	}
-
-	function listSpaces(token){
-		var url = 'https://xyz.api.here.com/hub/spaces/?access_token=' + token
-		fetch(url).then((response) => response.json()).then(function(data) {
-		document.getElementById("tableLabel").innerHTML = "getting stats for " + data.length + " spaces (may take a bit)"
-
-// 			console.log(data)
-// 			buildSelect(data)
-			// make an object with each space id as the key
-			var id
-			// populate the object
-			data.forEach (item => {
-				id = item.id
-				// console.log(id)
-				space_list[id] = {}
-				space_list[id].title = item.title
-				space_list[id].description = item.description
-			})
-
-			//make list of URLs for stats
-			const urls = data.map(x => 'https://xyz.api.here.com/hub/spaces/' + x.id + '/statistics' + '?access_token=' + token);
-			// fetch the urls and dump them into an object
-			const promises = urls.map(url => fetch(url).then(y => y.json()));
-			// once all the /statistics response are collected (up to 30 secs) iterate throug them
-			Promise.all(promises).then(space_data => {
-				// console.log(space_data)
-				// loop through everything returned in the promise (returned in same order as asked)
-					space_data.forEach((item,index) => {
-						// console.log(index)
-// 						console.log(Object.keys(space_list)[index])
-						// figure out the key for that same point in the list of spaces
-						var id = Object.keys(space_list)[index]
-						// add the stats to that's space's space_list object
-						console.log(item.type)
-						if (item.type == "StatisticsResponse"){
-							space_list[id].bbox = item.bbox.value
-							space_list[id].space_size = item.byteSize.value
-							space_list[id].space_count = item.count.value
-						}
-						else {
-							space_list[id].bbox = "n/a"
-							space_list[id].space_size = "n/a"
-							space_list[id].space_count = "n/a"
-						}
-
-					})
-// 					var table_div = document.getElementById("spaceTable")
-					buildTable(space_list,"spaceTablebody")
-				})
-			})
-// 		console.log('space list:', space_list)
-// 		buildSelect(space_list)
-		}
-
-	function getStats(space,token){
-		var url = 'https://xyz.api.here.com/hub/spaces/' + space + '/statistics' + '?access_token=' + token
-		fetch(url).then((response) => response.json()).then(function(data) {
-// 			console.log(data)
-			var bbox = data.bbox.value
-			console.log('map start location:', map_start_location)
-			console.log('bbox',bbox)
-			if (map_start_location){
-			// if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
-				if (
-					((map_start_location.lat < bbox[1]) || (map_start_location.lat > bbox[3]))
-					||
-					((map_start_location.lng < bbox[0]) || (map_start_location.lng > bbox[2]))
-				){
-					console.log('map start location outside bbox')
-					var corner1 = L.latLng(bbox[1],bbox[0]),
-					corner2 = L.latLng(bbox[3],bbox[2])
-					bounds = L.latLngBounds(corner1, corner2)
-					map.fitBounds(bounds)
-					}
-			}
-			var space_size = data.byteSize.value
-			var space_count = data.count.value
-			var calc_size = (space_size/1024/1024)
-			console.log(space_size,'KB',calc_size)
-			if (calc_size < 1000){
-				calc_size = calc_size.toFixed(1) + ' MB'
-// 				console.log(calc_size,'MB!')
-				}
-			else{
-				calc_size = (space_size/1024/1024/1024).toFixed(1) + ' GB'
-// 				console.log(calc_size,'GB!')
-				}
-
-// 			var density =
-// 			console.log(bbox,mb,space_count)
-			var space_url = 'https://xyz.api.here.com/hub/spaces/' + space + '?access_token=' + token
-			fetch(space_url).then((response) => response.json()).then(function(data) {
-// 				console.log(data)
-				var title = data.title
-				var description = data.description
-// 				console.log(space,title,description,calc_size,space_count)
-				document.getElementById("space_info").innerHTML = space + ': ' + title + '<br>' + space_count.toLocaleString() + " features, " + calc_size + '<br>' + description
-
-			})
-
-		})
-	}
-
-	function getBbox(){
-		var url = 'https://xyz.api.here.com/hub/spaces/' + space + '/statistics' + '?access_token=' + token
-		fetch(url).then((response) => response.json()).then(function(data) {
-			var bbox = data.bbox.value
-			// check for all zero bbox
-			if ((bbox[0] == 0) && (bbox[1] == 0) && (bbox[2] == 0) && (bbox[3] == 0)){
-				console.log('zeros')
-				bbox = [-45,-45,45,45]
-				}
-			console.log(bbox)
-			var sw = L.latLng(bbox[1],bbox[0]),
-			ne = L.latLng(bbox[3],bbox[2])
-			console.log("sw",sw,'ne',ne)
-			bounds = L.latLngBounds(sw, ne)
-			console.log('bounds:', bounds)
-			// console.log(map)
-
-			map.fitBounds(bounds);
-
-			console.log('got bounds')
-			getStats(space,token)
-		})
-	}
-
-
-	function queryViewport(){ // for tags
-		tagsViewport = []
-		scene.queryFeatures({ filter: { $source: '_xyzspace' }}).then(
-			features => {
-				// clear the previously seen list of tags
-				document.getElementById("tag_stats").innerHTML = ''
-				// console.log("features in viewport:", features.length)
-				//grab the tags from Tangram's viewport
-				features.forEach(x => {
-					tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
-				})
-
-				//remove tags without an @ if
-				if (filterAt){
-					tagsViewport = tagsViewport.filter(tag => tag.includes('@'))
-				}
-
-				// add this to the tag set
-				tagsViewport.forEach(x => {tagSet.add(x)})
-				// console.log('unique tags seen so far',[...tagSet].sort())
-
-				// console.log("tags in viewport:", tagsViewport.length)
-				const counts = {}
-				const total_tags_seen = {}
-				// count them
-				tagsViewport.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
-				tagSet.forEach(function(x) { total_tags_seen[x] = (total_tags_seen[x] || 0)+1; });
-
-// 				console.log(tagsViewport)
-				// console.log("unique tags in viewport:",Object.keys(counts).length)
-				//make the tag stats table
-				var row_1 = "<tr><td>features in viewport</td><td>" + features.length + "</td><tr>"
-				var row_2 = "<tr><td>tags in viewport</td><td>" + tagsViewport.length + "</td><tr>"
-				var row_3 = "<tr><td>unique tags in viewport</td><td>" + Object.keys(counts).length + "</td><tr>"
-				var row_4 = "<tr><td>unique tags seen</td><td>" + Object.keys(total_tags_seen).length + "</td><tr>"
-				var table = "<table>" + row_1 + row_2 + row_3 + row_4 + "</table>"
-				// add it to the div
-				var newEl = document.createElement("x")
-				newEl.innerHTML = table
-// 					newEl.onclick = () => {
-// 						filterTags(x)
-// 						}
-				document.getElementById("tag_stats").appendChild(newEl)
-
-				// count up the number of each tags
-				var tagCounts = {};
-				for (var i = 0; i < tagsViewport.length; i++) {
-				  var num = tagsViewport[i];
-				  tagCounts[num] = tagCounts[num] ? tagCounts[num] + 1 : 1;
-				}
-				// console.log("tag counts: ",tagCounts)
-				// sort the list of tags by count
-				var sortable = [];
-				// make a new list of tags and their counts
-				for (var aTag in tagCounts) {
-					sortable.push([aTag, tagCounts[aTag]]);
-				}
-
-				sortable.sort(function(a, b) {
-					return b[1] - a[1];
-				});
-
-				// console.log("sorted tag counts: ", sortable)
-
-				if (alphabetize){
-					console.log('alphabetizing')
-					var alpha = []
-					for (var aTag in tagCounts) {
-						alpha.push([aTag, tagCounts[aTag]]);
-					}
-					alpha.sort()
-					//console.log('descending',alpha)
-					sortable = alpha
-
-				}
-
-				document.getElementById("tags").innerHTML  = ''
-// 				tagsViewport.sort().map(x =>{
-				// make checkboxes
-				sortable.map(x =>{
-
-					var label = document.createElement("label");
-					if (alphabetize){
-						var description = document.createTextNode(x[0] + ' (' + x[1] + 'x)');
-					}
-					else{
-						var description = document.createTextNode('(' + x[1] + 'x) ' + x[0]);
-					}
-					var checkbox = document.createElement("input");
-					var br = document.createElement("br");
-
-					checkbox.setAttribute("type", "checkbox");
-
-					var index = tags_filtered.indexOf(x[0]);
-					if (index > -1) {
-						checkbox.checked = true
-					}
-
-					checkbox.name = x[0]
-					checkbox.value = x[0]
-					checkbox.id = x[0]
-					checkbox.onclick = () => {
-            filterTags(x[0])
-            scene.updateConfig();
-					}
-					label.appendChild(checkbox);   // add the box to the element
-					label.appendChild(description);// add the description to the element
-
-					// add the label element to your div
-					document.getElementById('tags').appendChild(label);
-					document.getElementById('tags').appendChild(br);
-				})
-			}
-		)
+    if (!prop) {
+      appUI.set({
+        selectedFeaturePropCount: null,
+        selectedFeaturePropValueCounts: null
+      });
+      return;
     }
 
-	// via https://www.quora.com/How-do-you-loop-through-a-complex-JSON-tree-of-objects-and-arrays-in-JavaScript
+    // grab the feature properties from Tangram's viewport tiles
+    const propsViewport = features.map(x => x.properties[prop]);
 
-	function queryPropsViewport(clicked){ // for tags
-		console.log('received',clicked)
-		query.property = clicked
-		makeQuery(query)
-		console.log('query.property:',query.property)
-		propsViewport = []
-		scene.queryFeatures({ filter: { $source: '_xyzspace' }}).then(
-			features => {
+    // count them
+    const counts = propsViewport.reduce((obj, x) => {
+      obj[x] = (obj[x] || 0) + 1;
+      return obj;
+    }, {});
 
-
-				// clear the previously seen list of tags
-
- 				document.getElementById("prop_stats").innerHTML = ''
-				console.log("features in viewport:", features.length)
-				//grab the tags from Tangram's viewport
-				features.forEach(x => {
-					propsViewport.push(x.properties[clicked])
-				})
-				const counts = {}
-				const total_props_seen = {}
-				// count them
-				propsViewport.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
-				var rows = ''
-				var propsUnique = Object.keys(counts).length + " unique values of <i>" + clicked +  "</i> in viewport"
-				document.getElementById("colorProperties").innerHTML = propsUnique
-// 				rows += row_summary
-
-				// count up the number of each property value
-				var propCounts = {};
-				for (var i = 0; i < propsViewport.length; i++) {
-				  var num = propsViewport[i];
-				  propCounts[num] = propCounts[num] ? propCounts[num] + 1 : 1;
-				}
-// 				console.log("prop counts: ",propCounts)
-				// sort the list of tags by count
-				var sortable = [];
-				// make a new list of tags and their counts
-				for (var aTag in propCounts) {
-					sortable.push([aTag, propCounts[aTag]]);
-				}
-
-				sortable.sort(function(a, b) {
-					return b[1] - a[1];
-				});
-
-
-				//console.log("sorted prop counts: ", sortable)
-
-// 				document.getElementById("prop_list").innerHTML  = sortable
-				// make table
-// 				console.log('rows',rows)
-				sortable.map(x =>{
-// 					console.log(x)
-					var color =  colorHash(x[0]) // same color hash as tangram
-					var dot = '<span class="dot" style="background-color:' + color + ';"> </span>'
-					var row = '<tr><td style="width: 15px;text-align: right;">' + x[1] + '</td><td style="width: 15px;">' +  dot +'</td><td>'+ x[0] + '</td></tr>'
-					rows += row
-					// console.log('rows',rows)
-
-				})
-// 				console.log(rows)
-
-				document.getElementById("prop_stats").innerHTML = rows
-			}
-		)
+    // count up the number of each property value
+    var propCounts = {};
+    for (var i = 0; i < propsViewport.length; i++) {
+      var num = propsViewport[i];
+      propCounts[num] = propCounts[num] ? propCounts[num] + 1 : 1;
     }
 
+    // sort the list of properties by count
+    const sortable = Object.entries(propCounts).sort((a, b) => b[1] - a[1]);
 
-
-
-
+    // update UI
+    appUI.set({
+      selectedFeaturePropCount: Object.keys(counts).length,
+      selectedFeaturePropValueCounts: sortable
+    });
+  }
 
 </script>
 </body>
