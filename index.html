@@ -268,7 +268,7 @@
     const spaceInfo = await fetch(spaceURL).then((response) => response.json());
 
     // updated document title
-    document.title = document.title + " / " + space + " / " + spaceInfo.title
+    document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
 
     // update UI
     appUI.set({
