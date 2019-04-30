@@ -199,13 +199,13 @@ layers:
                 #         return feature.location.count()
                 #         }
                 text:
-                    # text_source: NUMBER
+                    optional: true
                     font:
                         fill: red
                         size: 12px
-                        # stroke:
-                        #     color: white
-                        #     width: 2px
+                        stroke:
+                            color: white
+                            width: 2px
                 outline:
                     color: [1,1,0,0.2]
                     width: .1px
@@ -286,15 +286,15 @@ layers:
                 #     function(){
                 #         return 30 - (feature.scalerank * 4)
                 #         }
-            text:
-#                text_source: label
-                text_source: |
-                    function(){
-                        return feature.name || feature.NAME
-                    }
-                font:
-                    fill: grey
-                    size: 12px
-                    stroke:
-                        color: black
-                        width: 2px
+#             text:
+# #                text_source: label
+#                 text_source: |
+#                     function(){
+#                         return feature.name || feature.NAME
+#                     }
+#                 font:
+#                     fill: grey
+#                     size: 12px
+#                     stroke:
+#                         color: black
+#                         width: 2px
