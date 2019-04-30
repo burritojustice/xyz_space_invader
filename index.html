@@ -47,15 +47,6 @@
   var scene_config
   var map, hash, popup;
 
-  map = L.map('map', {boxZoom: false});
-    hash = new L.Hash(map);
-    popup = L.popup();
-
-  // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
-  map.setView([37.7,-122.4], 2);
-
-  map.zoomControl.setPosition('bottomright')
-
   // grab query parameters from the url and assign them to globals
   query = new URLSearchParams(document.location.search);
 
@@ -68,6 +59,15 @@
       zoom: Number(url_hash[0])
     };
   }
+
+  map = L.map('map', {boxZoom: false});
+    hash = new L.Hash(map);
+    popup = L.popup();
+
+  // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
+  map.setView([37.7,-122.4], 2);
+
+  map.zoomControl.setPosition('bottomright')
 
   // Initialize App UI
   const appUI = new AppUI({
