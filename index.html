@@ -51,6 +51,9 @@
     hash = new L.Hash(map);
     popup = L.popup();
 
+  // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
+  map.setView([37.7,-122.4], 2);
+
   map.zoomControl.setPosition('bottomright')
 
   // grab query parameters from the url and assign them to globals
@@ -266,7 +269,7 @@
 
     // updated document title
     document.title = document.title + " / " + space + " / " + spaceInfo.title
-    
+
     // update UI
     appUI.set({
       // spaceId,
