@@ -6,21 +6,21 @@ It uses [tangram.js](https://github.com/tangrams/tangram) to display, filter, an
 
 XYZ Space Invader can be invoked from the HERE CLI using `here xyz show SPACEID -v`. The URL maintains the current view state, making it easy to share your map.
 
-## Keyboard Shortcuts
+## Keyboard Shortcuts for map state
 
 - `b`: toggle building visibility
 - `r`: toggle road visibility
 - `w`: move polygons below water
 
-- l: adjust size of lines
-- p: adjust size of points
+- `l`: adjust size of lines
+- `p`: adjust size of points
 
-- m: switch the basemap
+- `m`: switch the basemap
 
-- o: add outlines to polygons
-- c: use random colors
+- `o`: add outlines to polygons
+- `c`: use random colors
 
-These shortcuts can also be accessed via the main info pane in the top left.
+These shortcuts can also be accessed via the main info pane in the top left. Your selections will be saved in the URL query and can be shared.
 
 ## XYZ Tags
 
