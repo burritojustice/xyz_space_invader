@@ -34,7 +34,7 @@ Tags are a powerful feature of XYZ Spaces, especially with large datasets. XYZ S
 
 Click on a GeoJSON property to get a count and unique colors for the range of values in the viewport.
 
-## Installation
+## Local installation
 
 XYZ Space Invader uses [Svelte](https://svelte.dev/). If installing locally, you will need to generate the AppUI.js using
 
