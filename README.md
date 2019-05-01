@@ -8,9 +8,9 @@ XYZ Space Invader can be invoked from the HERE CLI using `here xyz show SPACEID 
 
 ## Keyboard Shortcuts
 
-- b: toggle building visibility
-- r: toggle road visibility
-- w: move polygons below water
+- `b`: toggle building visibility
+- `r`: toggle road visibility
+- `w`: move polygons below water
 
 - l: adjust size of lines
 - p: adjust size of points
