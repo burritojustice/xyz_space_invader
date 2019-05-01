@@ -1,4 +1,4 @@
-# xyz_space_invader
+# 👾 XYZ Space Invader 👾
 
 XYZ Space Invader is a XYZ Space and tag visualization and exploration tool. It lets you slice and dice data in an XYZ Space.
 
@@ -8,19 +8,23 @@ XYZ Space Invader can be invoked from the HERE CLI using `here xyz show SPACEID 
 
 ## Keyboard Shortcuts for map state
 
+### Hide and show
 - `b`: toggle building visibility
 - `r`: toggle road visibility
 - `w`: move polygons below water
 
+### Bigger and smaller
 - `l`: adjust size of lines
 - `p`: adjust size of points
 
+### Multiple basemaps
 - `m`: switch the basemap
 
+#### Adjust colors
 - `o`: add outlines to polygons
 - `c`: use random colors
 
-These shortcuts can also be accessed via the main info pane in the top left. Your selections will be saved in the URL query and can be shared.
+These shortcuts can also be accessed by clicking the labels in the main info pane on the top left. Your selections will be saved in the URL query, making it easy to share your map view.
 
 ## XYZ Tags
 
