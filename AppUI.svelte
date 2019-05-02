@@ -466,8 +466,8 @@ export default {
     formatFeatureRow(r) {
       const indent = 4;
       let t = Array(r.level * indent).fill('&nbsp;').join('');
-      if (r.prop) t += r.prop + ': ';
-      if (r.value) t += r.value;
+      if (r.prop !== undefined) t += r.prop + ': ';
+      if (r.value !== undefined) t += r.value;
       return t;
     },
 
