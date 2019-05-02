@@ -472,11 +472,18 @@ export default {
     },
 
     colorHash(value) {
-      const props = JSON.stringify(value);
+      if (typeof value !== 'string') {
+        value = (value === undefined ? 'undefined' : JSON.stringify(value));
+      }
+
+      if (['null', 'undefined'].indexOf(value) > -1) {
+        return 'gray'; // handle null/undefined values
+      }
+
       let hash = 0, i, chr;
-      if (props === 0) { hash = 0 };
-      for (i = 0; i < props.length; i++) {
-        chr = props.charCodeAt(i);
+      if (value === 0) { hash = 0 };
+      for (i = 0; i < value.length; i++) {
+        chr = value.charCodeAt(i);
         hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
       }

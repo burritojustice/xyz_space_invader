@@ -82,19 +82,21 @@ global:
         
     var_property_color_hash: |
         function(){
-            var x = ''
             var prop = global.property_hash_name
-            // console.log(prop)
-            if (feature[prop]){
-                x = feature[prop]
-                }
-            // console.log('feature.prop',x)
+            var value = feature[prop];
+            if (typeof value !== 'string') {
+              value = (value === undefined ? 'undefined' : JSON.stringify(value));
+            }
 
-            var props = JSON.stringify(x)
+            if (['null', 'undefined'].indexOf(value) > -1) {
+              return 'gray'; // handle null/undefined values
+            }
+
+            // console.log('feature.prop',x)
             var hash = 0, i, chr;
-            if (props === 0){hash = 0};
-            for (i = 0; i < props.length; i++) {
-                chr   = props.charCodeAt(i);
+            if (value === 0){hash = 0};
+            for (i = 0; i < value.length; i++) {
+                chr   = value.charCodeAt(i);
                 hash  = ((hash << 5) - hash) + chr;
                 hash |= 0; // Convert to 32bit integer
             }
@@ -106,9 +108,9 @@ global:
         function(){
             var x = ''
             var prop = global.property_hash_name // 'TRAJUNCTYP'
-            if (feature[prop]){
+            if (feature[prop] != null) {
                 x = feature[prop]
-                }
+            }
             var props = JSON.stringify(x)
             var hash = 0, i, chr;
             if (props === 0){hash = 0};
