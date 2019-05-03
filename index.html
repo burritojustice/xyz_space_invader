@@ -363,14 +363,17 @@
     }, {});
 
     // count up the number of each property value
-    var propCounts = {};
+    var propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
     for (var i = 0; i < propsViewport.length; i++) {
-      var num = propsViewport[i];
-      propCounts[num] = propCounts[num] ? propCounts[num] + 1 : 1;
+      var value = propsViewport[i];
+      if (propCounts.get(value) == null) {
+        propCounts.set(value, 0);
+      }
+      propCounts.set(value, propCounts.get(value) + 1);
     }
 
     // sort the list of properties by count
-    const sortable = Object.entries(propCounts).sort((a, b) => b[1] - a[1]);
+    const sortable = Array.from(propCounts.entries()).sort((a, b) => b[1] - a[1]);
 
     // update UI
     appUI.set({

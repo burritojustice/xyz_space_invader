@@ -77,7 +77,7 @@
               <!-- same color hash as tangram-->
               <span class="dot" style="background-color: {colorHash(r[0])};"> </span>
             </td>
-            <td>{r[0]}</td>
+            <td>{maybeStringifyObject(r[0])}</td>
           </tr>
         {/each}
       {/if}
@@ -489,6 +489,11 @@ export default {
       }
       var color = 'hsla(' + hash + ', 100%, 50%, 0.75)';
       return color;
+    },
+
+    maybeStringifyObject(v) {
+      // stringify objects, otherwise just return original object
+      return (v != null && typeof v === 'object') ? JSON.stringify(v) : v;
     }
   }
 }
@@ -515,6 +520,8 @@ function buildFeatureRows(obj, level = -1, prop = null, rows = []) {
   }
   return rows;
 }
+
+
 
 </script>
 
