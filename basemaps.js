@@ -22,7 +22,7 @@ const basemaps = {
       'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
       // 'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
+      'tangram_xyz_scene.yaml'
     ],
     layers: {
       _xyz_lines: { draw: { _lines: { color: 'global.color_lines' } } },
@@ -35,14 +35,14 @@ const basemaps = {
       'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
       'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
+      'tangram_xyz_scene.yaml'
     ]
   },
   'dots': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-dots/master/scene.yaml',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
+      'tangram_xyz_scene.yaml'
     ],
     layers: {
       _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
@@ -53,7 +53,7 @@ const basemaps = {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-pixel/master/scene.yaml',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
+      'tangram_xyz_scene.yaml'
     ],
     layers: {
       _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
@@ -64,13 +64,13 @@ const basemaps = {
     import: [
       'https://www.nextzen.org/carto/walkabout-style/walkabout-style.zip',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
+      'tangram_xyz_scene.yaml'
     ]
   },
   'none': {
     import: [
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
+      'tangram_xyz_scene.yaml'
     ],
     scene: {
       background: {
@@ -81,7 +81,7 @@ const basemaps = {
   'satellite': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
-      'tangram_xyz_scene_no_import.yaml',
+      'tangram_xyz_scene.yaml',
       'satellite.yaml',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
     ]
