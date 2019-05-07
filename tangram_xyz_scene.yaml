@@ -123,12 +123,48 @@ global:
             return color
         }
         
-    virids_color_range: |
-        function(range){
-            var color
-            var color = global.viridis[viridis]
-            return color
-        }
+    viridis_value:
+        min: 1970 # assign property value to this in .js
+        max: 2019 # assign property value to this in .js
+        property_value: 2000
+        # property_value: function(feature){return feature.install_yr} 
+        #10 assign property value to this in .js?
+        color_range: |
+            function(){
+                var min = global.viridis_value.min
+                var max = global.viridis_value.max
+                var delta = max - min
+                // var delta = global.viridis.range
+                // var number = feature.update_yr
+                // var number = feature.install_yr
+                var number = global.viridis_value.property_value
+                //var number = global.viridis_value.property_value(feature)
+                // if (number < -1){number = -1}
+                var ratio = 1 - ((max - number)/delta) 
+                var viridis = Math.round(ratio * 255)
+                // if (viridis < 0){viridis = 0}
+                // console.log("d",delta, "n",number, "r",ratio, "v", viridis)
+                var color = global.viridis_inferno[viridis]
+                // console.log(color)
+                return color
+            }
+            
+    viridis_count:
+        items: 1000 # assign property value to this in .js
+        rank: 10 # assign property value to this in .js?
+        color_range: |
+            function(){
+                var delta = global.viridis_count.items
+                var number = global.viridis_count.rank 
+                if (number < -1){number = -1}
+                var ratio = number/delta // less is brighter
+                var viridis = Math.round(ratio * 255)
+                // if (viridis < 0){viridis = 0}
+                // console.log("d",delta, "n",number, "r",ratio, "v", viridis)
+                var color = global.viridis[viridis]
+                // console.log(color)
+                return color
+            }
         
 sources:
     _xyzspace:
@@ -145,7 +181,7 @@ styles:
     _points:
         base: points
         blend: overlay
-        blend_order: 10
+        blend_order: 0
     _text:
         base: text
         blend: overlay
@@ -153,7 +189,7 @@ styles:
     _lines:
         base: lines
         blend: overlay
-        blend_order: 1
+        blend_order: 0
     _lines_low:
         base: lines
         blend: inlay
@@ -161,7 +197,7 @@ styles:
     _polygons_inlay:
         base: polygons
         blend: inlay
-        blend_order: 1
+        blend_order: 0
     _polygons_overlay:
         base: polygons
         blend: overlay
