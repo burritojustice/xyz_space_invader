@@ -1,0 +1,120 @@
+import:
+    - https://www.nextzen.org/carto/refill-style/refill-style.zip
+    - https://s3.amazonaws.com/xyz-demo/data/demo.yaml
+    # - https://www.nextzen.org/carto/refill-style/11/themes/label-4.zip
+
+sources:
+
+    terrain_normals:
+        type: Raster
+        url: https://tile.nextzen.org/tilezen/terrain/v1/512/normal/{z}/{x}/{y}.png
+        tile_size: 512
+        max_zoom: 14
+        url_params: { api_key: global.sdk_api_key }
+    _satellite:
+        # url: https://1.aerial.maps.api.here.com/maptile/2.1/maptile/newest/terrain.day/{z}/{x}/{y}/512/png
+        url: https://1.aerial.maps.api.here.com/maptile/2.1/maptile/newest/satellite.day/{z}/{x}/{y}/512/png
+
+        url_params: 
+            app_id: 93qjeH6hiGfOYf1QTcYq
+            app_code: PJ7NhTqDKtUp-CkCtUq_6g
+        type: Raster
+        rasters: [terrain_normals]
+    mapzen:
+    # _here_osm:
+        url: https://xyz.api.here.com/tiles/osmbase/256/all/{z}/{x}/{y}.mvt
+        url_params:
+            access_token: AVoxWfIDYgZOr4zOaUV3urg
+        type: MVT
+        max_zoom: 15
+
+styles:
+
+    _satellite_terrain:
+        base: raster
+    
+    # basic terrain lighting with normal map
+    terrain:
+        base: raster
+        blend: translucent
+        raster: normal
+
+    # normals:
+    #     base: raster
+    #     raster: normal
+    # applying terrain lighting with normal map to raster
+    # raster layer to light is raster 0, normal map is raster 1
+    terrain_raster:
+        base: raster
+        blend: opaque
+        raster: custom
+        # material:
+         # ambient: 1
+         # diffuse: 1
+         # specular: 1
+        shaders:
+            uniforms:
+                u_mode: 1
+            blocks:
+                normal: |
+                    normal = normalize(sampleRaster(1).xyz *2. - 1.4);
+                    
+
+                color: |
+                    // get the color from the raster
+                    // lighting will be automatically applied based on the normal assigned above
+                    color = sampleRaster(0);
+
+lights:
+    sun:
+        type: directional
+        direction: [-.5, .5, -.5] #lights are flipped to match sat hillshade
+        ambient: .5
+        diffuse: 1
+
+layers:
+    water:
+        enabled: false
+    earth:
+        enabled: false
+    landuse:
+        enabled: false
+    buildings:
+        enabled: false
+    roads:
+        filter: 
+            not:
+                kind: ferry
+        # enabled: false
+        # fake out road lines and just leave lables
+        z:
+            y:
+                no_lines:
+                    # enabled: false 
+                    # if no_lines is enabled, it will NOT draw road lines, just labels (inheretance overrides basemap default). uncomment  'enabled: false' if you *do* want road lines
+                    draw:
+                        lines:
+                            width: 0px 
+                            
+    _satellite:
+        enabled: false
+        data: {source: _satellite}
+        draw:
+            raster:
+                order: 0
+            # style: global.sdk_terrain_shading_landuse_style
+            # raster:
+            # normals:
+            # terrain_raster:
+            #     order: 0
+    _satellite_shader:
+        # slight enhancement of terrain with shaders and Nextzen terrain tiles
+        # enabled: false
+        data: {source: _satellite}
+        draw:
+            # style: global.sdk_terrain_shading_landuse_style
+            # raster:
+            # normals:
+            terrain_raster:
+                order: -1
+

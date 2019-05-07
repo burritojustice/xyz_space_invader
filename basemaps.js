@@ -15,6 +15,29 @@ function getNextBasemap(index) {
 }
 
 const basemaps = {
+  'refill-dark': {
+    import: [
+      'https://www.nextzen.org/carto/refill-style/refill-style.zip',
+      'https://www.nextzen.org/carto/refill-style/themes/color-gray-gold.zip',
+      'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
+      // 'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
+      'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
+      'tangram_xyz_scene_no_import.yaml'
+    ],
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: 'global.color_lines' } } },
+      _xyz_dots: { draw: { points: { color: 'global.color_points' } } }
+    }
+  },
+  'refill': {
+    import: [
+      'https://www.nextzen.org/carto/refill-style/refill-style.zip',
+      'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
+      'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
+      'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
+      'tangram_xyz_scene_no_import.yaml'
+    ]
+  },
   'dots': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-dots/master/scene.yaml',
@@ -37,57 +60,12 @@ const basemaps = {
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     }
   },
-  // 'stripes': {
-  //   import: [
-  //       'https://raw.githubusercontent.com/sensescape/xyz-stripes/master/scene.yaml',
-  //       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-  //       'tangram_xyz_scene_no_import.yaml'
-  //   ],
-  //   layers: {
-  //       _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
-  //       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
-  //   }
-  // },
-  // 'grid': {
-  //   import: [
-  //     'https://raw.githubusercontent.com/sensescape/xyz-grid/master/scene.yaml',
-  //     'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-  //     'tangram_xyz_scene_no_import.yaml'
-  //   ],
-  //   layers: {
-  //     _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
-  //     _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
-  //   }
-  // },
   'walkabout': {
     import: [
       'https://www.nextzen.org/carto/walkabout-style/walkabout-style.zip',
       'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
       'tangram_xyz_scene_no_import.yaml'
     ]
-  },
-  'refill': {
-    import: [
-      'https://www.nextzen.org/carto/refill-style/refill-style.zip',
-      'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
-      'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
-      'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
-    ]
-  },
-  'refill-dark': {
-    import: [
-      'https://www.nextzen.org/carto/refill-style/refill-style.zip',
-      'https://www.nextzen.org/carto/refill-style/themes/color-gray-gold.zip',
-      'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
-      // 'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
-      'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
-      'tangram_xyz_scene_no_import.yaml'
-    ],
-    layers: {
-      _xyz_lines: { draw: { _lines: { color: 'global.color_lines' } } },
-      _xyz_dots: { draw: { points: { color: 'global.color_points' } } }
-    }
   },
   'none': {
     import: [
@@ -99,5 +77,13 @@ const basemaps = {
         color: [0, 0, 0]
       }
     }
+  },
+  'satellite': {
+    import: [
+      'https://www.nextzen.org/carto/refill-style/refill-style.zip',
+      'tangram_xyz_scene_no_import.yaml',
+      'satellite.yaml',
+      'https://s3.amazonaws.com/xyz-demo/data/demo.yaml',
+    ]
   }
 };
