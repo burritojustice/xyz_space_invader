@@ -15,7 +15,7 @@ sources:
         # url: https://1.aerial.maps.api.here.com/maptile/2.1/maptile/newest/terrain.day/{z}/{x}/{y}/512/png
         url: https://1.aerial.maps.api.here.com/maptile/2.1/maptile/newest/satellite.day/{z}/{x}/{y}/512/png
 
-        url_params: 
+        url_params:
             app_id: 93qjeH6hiGfOYf1QTcYq
             app_code: PJ7NhTqDKtUp-CkCtUq_6g
         type: Raster
@@ -32,7 +32,7 @@ styles:
 
     _satellite_terrain:
         base: raster
-    
+
     # basic terrain lighting with normal map
     terrain:
         base: raster
@@ -58,7 +58,7 @@ styles:
             blocks:
                 normal: |
                     normal = normalize(sampleRaster(1).xyz *2. - 1.4);
-                    
+
 
                 color: |
                     // get the color from the raster
@@ -81,8 +81,9 @@ layers:
         enabled: false
     buildings:
         enabled: false
+        filter: function(){ return false } # set this to permanently turn off all buildings, since Invader  will re-enable layer
     roads:
-        filter: 
+        filter:
             not:
                 kind: ferry
         # enabled: false
@@ -90,12 +91,12 @@ layers:
         z:
             y:
                 no_lines:
-                    # enabled: false 
+                    # enabled: false
                     # if no_lines is enabled, it will NOT draw road lines, just labels (inheretance overrides basemap default). uncomment  'enabled: false' if you *do* want road lines
                     draw:
                         lines:
-                            width: 0px 
-                            
+                            width: 0px
+
     _satellite:
         enabled: false
         data: {source: _satellite}
