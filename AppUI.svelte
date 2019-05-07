@@ -62,7 +62,21 @@
   <div id="colors">
     <p id="colorProperties">
       {#if selectedFeatureProp && selectedFeaturePropCount != null}
-        {selectedFeaturePropCount} unique values of <i>{selectedFeatureProp}</i> in viewport
+        {selectedFeaturePropCount} unique values of <i>{selectedFeatureProp}</i> in viewport<br>
+      	{#if selectedFeaturePropMin != null}
+        min: {selectedFeaturePropMin}, max: {selectedFeaturePropMax}
+      	{:else}
+		no min/max (not exclusively numbers)
+      	{/if}<br>
+<!-- 
+    <span style="color:blue;" on:click="toggleRangeFrequency()">
+      {#if colorFrequency}
+        [color by range]
+      {:else}
+        [color by frequency]
+      {/if}
+    </span><br>
+ -->
         <p style="color:blue;" id="clear_color_properties" on:click="set({ selectedFeatureProp: null })">CLEAR COLOR FILTERS</p>
       {:else}
         click on property value for unique colors
@@ -118,7 +132,7 @@
       {:else}
         [only show tags in view]
       {/if}
-    </span>
+    </span><br>
     <span style="color:blue;" on:click="toggleTagFilterAt()">
       {#if tagFilterAt}
         [show all tag names]
@@ -162,6 +176,8 @@ export default {
       selectedFeatureProp: null,
       selectedFeaturePropCount: null,
       selectedFeaturePropValueCounts: null,
+	  selectedFeaturePropMin: null,
+	  selectedFeaturePropMax: null,
 
       tagsWithCounts: [],
       tagFilterList: [],

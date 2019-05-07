@@ -89,7 +89,7 @@ global:
             }
 
             if (['null', 'undefined'].indexOf(value) > -1) {
-              return 'gray'; // handle null/undefined values
+              return [0.5,0.5,0.5,0.5]; // handle null/undefined values
             }
 
             // console.log('feature.prop',x)

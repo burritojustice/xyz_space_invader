@@ -348,13 +348,25 @@
     if (!prop) {
       appUI.set({
         selectedFeaturePropCount: null,
-        selectedFeaturePropValueCounts: null
+        selectedFeaturePropValueCounts: null,
+        selectedFeaturePropMin: null,
+        selectedFeaturePropMax: null
       });
       return;
     }
 
     // grab the feature properties from Tangram's viewport tiles
     const propsViewport = features.map(x => x.properties[prop]);
+    
+	var min = Math.min(...propsViewport)
+	var max = Math.max(...propsViewport)
+	console.log('min: ', min, 'max: ', max)
+	if (isNaN(min)){
+		min = null
+		max = null
+		console.log(min,max)
+	}
+	
 
     // count them
     const counts = propsViewport.reduce((obj, x) => {
@@ -378,9 +390,13 @@
     // update UI
     appUI.set({
       selectedFeaturePropCount: Object.keys(counts).length,
-      selectedFeaturePropValueCounts: sortable
+      selectedFeaturePropValueCounts: sortable,
+      selectedFeaturePropMin: min,
+      selectedFeaturePropMax: max
     });
   }
+  
+
 
 </script>
 </body>
