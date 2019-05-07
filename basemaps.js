@@ -1,17 +1,33 @@
 // export { getBasemapScene, nextBasemapIndex };
-Object.assign(window, { getBasemapScene, getBasemapName, getNextBasemap });
 
-
-function getBasemapScene(index) {
-  return basemaps[Object.keys(basemaps)[index]];
+function getBasemapScene(basemap) {
+  return basemaps[basemap];
 }
 
-function getBasemapName(index) {
-  return Object.keys(basemaps)[index];
+function getBasemapName(basemap) {
+  // if the basemap looks like a number, return name from by index number
+  // this is mostly for backwards compatibility, could be removed in future
+  const index = parseInt(basemap);
+  if (typeof index === 'number' && !isNaN(index)) {
+    return Object.keys(basemaps)[index];
+  }
+
+  // otherwise just return the name
+  return basemap;
 }
 
-function getNextBasemap(index) {
-  return (index + 1) % Object.keys(basemaps).length;
+function getDefaultBasemapName() {
+  return Object.keys(basemaps)[0];
+}
+
+function getNextBasemap(basemap) {
+  // return (index + 1) % Object.keys(basemaps).length;
+  const names = Object.keys(basemaps);
+  const index = names.indexOf(basemap);
+  if (index > -1) {
+    return names[(index + 1) % names.length]; // return next basemap if current one found
+  }
+  return names[0]; // otherwise just return first basemap
 }
 
 const basemaps = {

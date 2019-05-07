@@ -356,9 +356,9 @@ export default {
         }
       }
 
-      let basemap = parseInt(params.basemap);
+      let basemap = getBasemapName(params.basemap);
       if (!getBasemapScene(basemap)) {
-        basemap = 0; // use first basemap as default if unrecognized param passed
+        basemap = getDefaultBasemapName();
       }
 
       this.set({
