@@ -1,0 +1,10 @@
+# dev/build process
+node_modules
+AppUI.js
+
+# MacOS
+.DS_Store
+
+# VSCode
+.cache
+.vscode
