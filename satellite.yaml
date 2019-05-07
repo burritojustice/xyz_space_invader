@@ -30,47 +30,21 @@ sources:
 
 styles:
 
-    _satellite_terrain:
-        base: raster
-
-    # basic terrain lighting with normal map
-    terrain:
-        base: raster
-        blend: translucent
-        raster: normal
-
-    # normals:
-    #     base: raster
-    #     raster: normal
     # applying terrain lighting with normal map to raster
     # raster layer to light is raster 0, normal map is raster 1
     terrain_raster:
         base: raster
-        blend: opaque
-        raster: custom
-        # material:
-         # ambient: 1
-         # diffuse: 1
-         # specular: 1
+        lighting: false # don't use scene lighting, use custom lighting in shader
         shaders:
             uniforms:
-                u_mode: 1
+                u_light: [-0.5, 0.5, -0.5] # lights are flipped to match sat hillshade
+                u_ambient: 0.5
             blocks:
-                normal: |
-                    normal = normalize(sampleRaster(1).xyz *2. - 1.4);
-
-
-                color: |
-                    // get the color from the raster
-                    // lighting will be automatically applied based on the normal assigned above
-                    color = sampleRaster(0);
-
-lights:
-    sun:
-        type: directional
-        direction: [-.5, .5, -.5] #lights are flipped to match sat hillshade
-        ambient: .5
-        diffuse: 1
+                filter: |
+                    // simple directional light with Lambert shading
+                    vec3 terrain = normalize(sampleRaster(1).xyz *2. - 1.4); // terrain surface normal
+                    float diffuse = clamp(dot(terrain, normalize(-u_light)), 0., 1.);
+                    color.rgb = clamp((color.rgb * u_ambient) + (color.rgb * diffuse), 0., 1.);
 
 layers:
     water:
@@ -87,12 +61,12 @@ layers:
             not:
                 kind: ferry
         # enabled: false
-        # fake out road lines and just leave lables
+        # fake out road lines and just leave labels
         z:
             y:
                 no_lines:
                     # enabled: false
-                    # if no_lines is enabled, it will NOT draw road lines, just labels (inheretance overrides basemap default). uncomment  'enabled: false' if you *do* want road lines
+                    # if no_lines is enabled, it will NOT draw road lines, just labels (inheritance overrides basemap default). uncomment  'enabled: false' if you *do* want road lines
                     draw:
                         lines:
                             width: 0px
@@ -103,19 +77,11 @@ layers:
         draw:
             raster:
                 order: 0
-            # style: global.sdk_terrain_shading_landuse_style
-            # raster:
-            # normals:
-            # terrain_raster:
-            #     order: 0
     _satellite_shader:
         # slight enhancement of terrain with shaders and Nextzen terrain tiles
         # enabled: false
         data: {source: _satellite}
         draw:
-            # style: global.sdk_terrain_shading_landuse_style
-            # raster:
-            # normals:
             terrain_raster:
-                order: -1
+                order: 0
 
