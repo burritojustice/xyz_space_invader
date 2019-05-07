@@ -112,21 +112,24 @@
     <p>
   </div>
   <div id="tag_list">
-    <p id="someTagsallTags">tags visible in viewport</p>
-    <table>
-      <tr>
-        <td style="color:blue;" on:click="toggleTagFilterAt()">
-          {#if tagFilterAt}
-            [show all tags]
-          {:else}
-            [only show @ tags]
-          {/if}
-        </td>
-        <td style="color:blue;" on:click="toggleTagSort()">
-          [sort by {nextTagSort}]
-        </td>
-      </tr>
-    </table>
+    <span style="color:blue;" on:click="toggleTagFilterViewport()">
+      {#if tagFilterViewport}
+        [show all tags seen]
+      {:else}
+        [only show tags in view]
+      {/if}
+    </span>
+    <span style="color:blue;" on:click="toggleTagFilterAt()">
+      {#if tagFilterAt}
+        [show all tag names]
+      {:else}
+        [only show @ tags]
+      {/if}
+    </span>
+    <br>
+    <span style="color:blue;" on:click="toggleTagSort()">
+      [sort by {nextTagSort}]
+    </span>
     <p id="tags">
       <!-- The JSON.stringify gives Svelte a way to uniquely identify the full tag info.
         This ensures that the correct checkboxes stay checked when the list is re-ordered
@@ -163,6 +166,7 @@ export default {
       tagsWithCounts: [],
       tagFilterList: [],
       tagFilterAndOr: 'or',
+      tagFilterViewport: false,
       tagFilterAt: false,
       tagSort: 'frequency',
 
@@ -181,10 +185,10 @@ export default {
 
     uniqueTagsInViewport: ({ tagsInViewport }) => new Set([...tagsInViewport]),
 
-    nextTagSort: ({ tagSort }) => (tagSort === 'frequency' ? 'alphabetize' : 'frequency'),
+    nextTagSort: ({ tagSort }) => (tagSort === 'frequency' ? 'name' : 'frequency'),
 
     // build the list of tags for display with checkboxes
-    tagDisplayList: ({ tagsWithCounts, tagSort, tagFilterList, tagFilterAt, uniqueTagsSeen }) => {
+    tagDisplayList: ({ tagsWithCounts, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, uniqueTagsSeen }) => {
       // start with tags currently in the viewport
       let tags = [...tagsWithCounts]; // copy tags so we don't modify original list
 
@@ -197,12 +201,14 @@ export default {
         }
       });
 
-      // add all uniquely seen tags that aren't currentl in the viewport
-      uniqueTagsSeen.forEach(tag => {
-        if (!tags.find(t => t[0] === tag)) {
-          tags.push([tag, 0]);
-        }
-      });
+      // add all uniquely seen tags that aren't currently in the viewport
+      if (!tagFilterViewport) {
+        uniqueTagsSeen.forEach(tag => {
+          if (!tags.find(t => t[0] === tag)) {
+            tags.push([tag, 0]);
+          }
+        });
+      }
 
       // remove tags without an @ if desired
       if (tagFilterAt) {
@@ -210,7 +216,7 @@ export default {
       }
 
       // sort tags as desired
-      if (tagSort === 'alphabetize') {
+      if (tagSort === 'name') {
         tags.sort((a, b) => a[0] > b[0] ? 1 : -1);
       }
       else if (tagSort === 'frequency') {
@@ -413,6 +419,10 @@ export default {
 
     toggleTagSort() {
       this.set({ tagSort: this.get().nextTagSort });
+    },
+
+    toggleTagFilterViewport() {
+      this.set({ tagFilterViewport: !this.get().tagFilterViewport })
     },
 
     toggleTagFilterAt() {
