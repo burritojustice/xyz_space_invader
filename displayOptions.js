@@ -14,8 +14,8 @@ const displayOptions = {
 
   // Random feature color
   colors: {
-    parse: parseInt,
-    values: ['x-ray', 'by_properties', 'random','range'], 
+//     parse: parseInt,
+    values: ['x-ray','by_properties','random','range'], 
 //     values: [0,1], 
 
     apply: (scene, value) => {
