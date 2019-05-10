@@ -126,6 +126,7 @@ global:
     viridis_value:
         min: 1970 # assign property value to this in .js
         max: 2019 # assign property value to this in .js
+        prop: 'x'
         property_value: 2000
         # property_value: function(feature){return feature.install_yr} 
         #10 assign property value to this in .js?
@@ -137,6 +138,7 @@ global:
                 // var delta = global.viridis.range
                 // var number = feature.update_yr
                 // var number = feature.install_yr
+                // need to pass feature[prop]
                 var number = global.viridis_value.property_value
                 //var number = global.viridis_value.property_value(feature)
                 // if (number < -1){number = -1}
@@ -150,14 +152,14 @@ global:
             }
             
     viridis_count:
-        items: 1000 # assign property value to this in .js
+        items: 1000 # assign total number of features  to this in .js
         rank: 10 # assign property value to this in .js?
         color_range: |
             function(){
                 var delta = global.viridis_count.items
                 var number = global.viridis_count.rank 
                 if (number < -1){number = -1}
-                var ratio = number/delta // less is brighter
+                var ratio = number/delta // fewer is brighter
                 var viridis = Math.round(ratio * 255)
                 // if (viridis < 0){viridis = 0}
                 // console.log("d",delta, "n",number, "r",ratio, "v", viridis)

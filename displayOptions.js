@@ -13,18 +13,31 @@ const displayOptions = {
   },
 
   // Random feature color
-  randomColors: {
+  colors: {
     parse: parseInt,
-    values: [0, 1],
+    values: ['x-ray', 'by_properties', 'random','range'], 
+//     values: [0,1], 
+
     apply: (scene, value) => {
-      if (value === 1) {
+      if (value === 'random') {
         scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.color_hash;
         scene.layers._xyz_lines.draw._lines.color = scene.global.color_hash;
         scene.layers._xyz_dots.draw.points.color = scene.global.color_hash;
       }
-      else {
+       else if (value === 'range') { // apply range and rank to viridian palette
+        scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.viridis_count.color_range;
+        scene.layers._xyz_lines.draw._lines.color = scene.global.viridis_count.color_range;
+        scene.layers._xyz_dots.draw.points.color = scene.global.viridis_count.color_range;
+        scene.global.viridis_count.items = {selectedFeaturePropCount}
+        scene.global.viridis_count.rank = {selectedFeatureProp}
+      }
+      else if (value === 'by_properties')   {
+      	applyFeatureColor(selectedFeatureProp) // is this how to access the existing property value color hash?
+      }  
+      else if (value === 'x-ray') {
         scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.color_polygons;
         scene.layers._xyz_lines.draw._lines.color = scene.global.color_lines;
+        scene.layers._xyz_polygons.draw._outlines.color = scene.global.color_lines;
         scene.layers._xyz_dots.draw.points.color = scene.global.color_points;
       }
     }

@@ -35,8 +35,8 @@
           <tr>
             <td on:click='toggleBasemap()'>basemap:</td>
             <td>{basemap}</td>
-            <td on:click='toggleDisplayOption("randomColors")'>colors:</td>
-            <td>{displayToggles.randomColors}</td>
+            <td on:click='toggleDisplayOption("colors")'>colors:</td>
+            <td>{displayToggles.colors}</td>
           </tr>
         </table>
       {/if}
@@ -464,7 +464,7 @@ export default {
           this.toggleDisplayOption('buildings');
         }
         else if (key == "c") { // color hash each feature
-          this.toggleDisplayOption('randomColors');
+          this.toggleDisplayOption('colors');
         }
         else if (key == "h") { // highlight colors and make points bigger
           this.toggleDisplayOption('highlight');

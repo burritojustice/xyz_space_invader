@@ -194,7 +194,7 @@
   }
 
   function applyFeatureColor(prop) {
-    if (appUI.get().displayToggles.randomColors) {
+    if (appUI.get().displayToggles.colors) {
       return;
     }
 
@@ -210,6 +210,32 @@
       scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.color_lines;
       scene_config.layers._xyz_dots.draw.points.color = scene_config.global.color_points;
       scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.color_polygons;
+    }
+  }
+
+  function applyValueColor(prop){ //figure out where a value sits in relation to min and max
+    if (prop) {
+    	scene.global.viridis_value.prop = prop
+    	scene.global.viridis_value.min = min 
+    	scene.global.viridis_value.max = max 
+		scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.viridis_value.color_range;
+		scene.layers._xyz_lines.draw._lines.color = scene.global.viridis_value.color_range;
+		scene.layers._xyz_dots.draw.points.color = scene.global.viridis_value.color_range;
+		scene.global.viridis_count.items = {selectedFeaturePropCount}
+		scene.global.viridis_count.rank = feature[prop]
+    }
+  }
+  
+  
+  // this is all wrong, need to figure out how to get the order :(
+  function applyRankColor(prop){ //figure out how many property values there are, and what 'rank' this prop's count is in that list 
+    if (prop) {
+    	scene.global.viridis_count.prop = prop
+		scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.viridis_count.color_range;
+		scene.layers._xyz_lines.draw._lines.color = scene.global.viridis_count.color_range;
+		scene.layers._xyz_dots.draw.points.color = scene.global.viridis_count.color_range;
+		scene.global.viridis_count.items = {selctedFeaturePropCount}
+		scene.global.viridis_count.rank = feature[property_value]
     }
   }
 
