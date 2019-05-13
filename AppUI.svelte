@@ -64,11 +64,16 @@
       {#if selectedFeatureProp && selectedFeaturePropCount != null}
         {selectedFeaturePropCount} unique values of <i>{selectedFeatureProp}</i> in viewport<br>
       	{#if selectedFeaturePropMin != null}
-        min: {selectedFeaturePropMin}, max: {selectedFeaturePropMax}
+          min: {selectedFeaturePropMin}, max: {selectedFeaturePropMax}
       	{:else}
-		no min/max (not exclusively numbers)
-      	{/if}<br>
-<!-- 
+          no min/max (not exclusively numbers)
+      	{/if}
+
+        <p style="color:blue;" id="clear_color_properties" on:click="set({ selectedFeatureProp: null })">CLEAR COLOR FILTERS</p>
+      {:else}
+        click on property value for unique colors
+      {/if}
+<!--
     <span style="color:blue;" on:click="toggleRangeFrequency()">
       {#if colorFrequency}
         [color by range]
@@ -77,10 +82,6 @@
       {/if}
     </span><br>
  -->
-        <p style="color:blue;" id="clear_color_properties" on:click="set({ selectedFeatureProp: null })">CLEAR COLOR FILTERS</p>
-      {:else}
-        click on property value for unique colors
-      {/if}
     </p>
     <table id="prop_stats">
       {#if selectedFeatureProp && selectedFeaturePropValueCounts}
@@ -176,8 +177,8 @@ export default {
       selectedFeatureProp: null,
       selectedFeaturePropCount: null,
       selectedFeaturePropValueCounts: null,
-	  selectedFeaturePropMin: null,
-	  selectedFeaturePropMax: null,
+      selectedFeaturePropMin: null,
+      selectedFeaturePropMax: null,
 
       tagsWithCounts: [],
       tagFilterList: [],
@@ -295,17 +296,16 @@ export default {
 
     // Apply Tangram scene updates based on state change
     if (changed.basemapScene) {
-      this.fire('loadScene', {
-        basemapScene: current.basemapScene
-      });
+      this.fire('loadScene', current);
     }
 
-    if (changed.selectedFeatureProp || changed.displayToggles || changed.tagFilterQueryParam) {
-      this.fire('updateScene', {
-        displayToggles: current.displayToggles,
-        selectedFeatureProp: current.selectedFeatureProp,
-        tagFilterQueryParam: current.tagFilterQueryParam
-      });
+    if (changed.selectedFeatureProp ||
+        changed.selectedFeaturePropMin ||
+        changed.selectedFeaturePropMax ||
+        changed.displayToggles ||
+        changed.tagFilterQueryParam) {
+
+      this.fire('updateScene', current);
     }
 
     // mark space as loaded
@@ -318,9 +318,7 @@ export default {
 
     // update query string as needed
     if (changed.queryParams) {
-      this.fire('updateQueryString', {
-        queryParams: current.queryParams
-      });
+      this.fire('updateQueryString', current);
     }
 
   },
@@ -503,7 +501,7 @@ export default {
       }
 
       if (['null', 'undefined'].indexOf(value) > -1) {
-        return 'gray'; // handle null/undefined values
+        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
 
       let hash = 0, i, chr;

@@ -1,5 +1,5 @@
 import:
-    - https://s3.amazonaws.com/xyz-demo/scenes/viridis.yaml   
+    - https://s3.amazonaws.com/xyz-demo/scenes/viridis.yaml
 
 global:
     color_polygons: |
@@ -11,7 +11,7 @@ global:
             else{color = [1,0,1,0.3]}
             return color
             }
-            
+
     color_lines: |
         function(){
             var color
@@ -21,7 +21,7 @@ global:
             else{color = [1,1,0,0.3]}
             return color
             }
-            
+
     color_lines_light_base_map: |
         function(){
             var color
@@ -31,13 +31,13 @@ global:
             else{color = [1,0,0,0.5]}
             return color
             }
-            
-            
-    highlight: 
+
+
+    highlight:
         color: [1,1,1,0.25]
         width: 2px
 
-            
+
     color_points: |
         function(){
             var color
@@ -77,9 +77,9 @@ global:
             var color = 'hsla(' + hash + ', 100%, 50%, 0.75)'
             return color
         }
-        
+
     property_hash_name: TRAJUNCTYP
-        
+
     var_property_color_hash: |
         function(){
             var prop = global.property_hash_name
@@ -122,13 +122,13 @@ global:
             var color = 'hsla(' + hash + ', 100%, 50%, 0.75)'
             return color
         }
-        
+
     viridis_value:
         min: 1970 # assign property value to this in .js
         max: 2019 # assign property value to this in .js
         prop: 'x'
         property_value: 2000
-        # property_value: function(feature){return feature.install_yr} 
+        # property_value: function(feature){return feature.install_yr}
         #10 assign property value to this in .js?
         color_range: |
             function(){
@@ -139,10 +139,20 @@ global:
                 // var number = feature.update_yr
                 // var number = feature.install_yr
                 // need to pass feature[prop]
-                var number = global.viridis_value.property_value
+                // var number = global.viridis_value.property_value
+                var number = parseFloat(feature[global.viridis_value.prop]);
+
+                if (typeof number !== 'number' || isNaN(number)) {
+                  return [0.5,0.5,0.5,0.5]; // handle non-numeric values
+                }
+
+                //if (typeof number === 'string') {
+                //  number = number.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+                //}
+
                 //var number = global.viridis_value.property_value(feature)
                 // if (number < -1){number = -1}
-                var ratio = 1 - ((max - number)/delta) 
+                var ratio = 1 - ((max - number)/delta)
                 var viridis = Math.round(ratio * 255)
                 // if (viridis < 0){viridis = 0}
                 // console.log("d",delta, "n",number, "r",ratio, "v", viridis)
@@ -150,14 +160,14 @@ global:
                 // console.log(color)
                 return color
             }
-            
+
     viridis_count:
         items: 1000 # assign total number of features  to this in .js
         rank: 10 # assign property value to this in .js?
         color_range: |
             function(){
                 var delta = global.viridis_count.items
-                var number = global.viridis_count.rank 
+                var number = global.viridis_count.rank
                 if (number < -1){number = -1}
                 var ratio = number/delta // fewer is brighter
                 var viridis = Math.round(ratio * 255)
@@ -167,18 +177,18 @@ global:
                 // console.log(color)
                 return color
             }
-        
+
 sources:
     _xyzspace:
         url: https://xyz.api.here.com/hub/spaces/cacVJZ1K/tile/web/{z}_{x}_{y}
         type: GeoJSON
-        url_params: 
+        url_params:
             access_token: AVoxWfIDYgZOr4zOaUV3urg
             # tags: YOUR_TAG
-            # limit: 50000 # 
+            # limit: 50000 #
             clip: true
 
-        
+
 styles:
     _points:
         base: points
@@ -204,9 +214,9 @@ styles:
         base: polygons
         blend: overlay
         blend_order: 1
-        
-        
-        
+
+
+
 layers:
 
     _xyz_dots:
@@ -226,7 +236,7 @@ layers:
                         else{color = [1,0,0,0.5]}
                         return color
                     }
-                # color: | 
+                # color: |
                 #     function(){
                 #         var pi = 3.14159
                 #         var zoom = pi - $zoom/20
@@ -281,10 +291,10 @@ layers:
                     # text_source: NAME
                     font:
                         fill: yellow
-                        size: 12px                
-        
+                        size: 12px
 
-            
+
+
     _xyz_polygons:
         filter: {$geometry: polygon}
         # enabled: false

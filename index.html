@@ -109,17 +109,15 @@
   appUI.setFromQueryParams(query);
 
   // apply updates to scene based on current display options
-  function updateScene({ spaceId, token, displayToggles, selectedFeatureProp, tagFilterQueryParam }) {
-    applySpace({ spaceId, token });
+  function updateScene(uiState) {
+    // configure data source for XYZ space
+    applySpace(uiState);
 
     // display options such as point size, toggling buildings or roads on/off, etc.
-    applyDisplayOptions(displayToggles);
-
-    // color features by a specific property (if a property is currently selected)
-    applyFeatureColor(selectedFeatureProp);
+    applyDisplayOptions(uiState);
 
     // update the tag filter on the XYZ tiles (if the tags have changed, this will cause new tiles to load)
-    applyTags(tagFilterQueryParam);
+    applyTags(uiState);
   }
 
   // load a new scene basemap (first creating the leaflet and tangram layers if needed)
@@ -184,62 +182,16 @@
     }
   }
 
-  function applyDisplayOptions(options) {
-    for (const option in options) {
-      const value = options[option];
+  function applyDisplayOptions(uiState) {
+    for (const option in uiState.displayToggles) {
+      const value = uiState.displayToggles[option];
       if (displayOptions[option] && displayOptions[option].apply) {
-        displayOptions[option].apply(scene_config, value);
+        displayOptions[option].apply(scene_config, value, uiState);
       }
     }
   }
 
-  function applyFeatureColor(prop) {
-    if (appUI.get().displayToggles.colors) {
-      return;
-    }
-
-    console.log('property', prop)
-    if (prop) {
-      scene_config.global.property_hash_name = prop;
-      scene_config.layers._xyz_dots.draw.points.color = scene_config.global.var_property_color_hash
-      scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.var_property_color_hash
-      scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.var_property_color_hash
-      scene_config.layers._xyz_polygons._outlines.enabled = false
-    }
-    else {
-      scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.color_lines;
-      scene_config.layers._xyz_dots.draw.points.color = scene_config.global.color_points;
-      scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.color_polygons;
-    }
-  }
-
-  function applyValueColor(prop){ //figure out where a value sits in relation to min and max
-    if (prop) {
-    	scene.global.viridis_value.prop = prop
-    	scene.global.viridis_value.min = min 
-    	scene.global.viridis_value.max = max 
-		scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.viridis_value.color_range;
-		scene.layers._xyz_lines.draw._lines.color = scene.global.viridis_value.color_range;
-		scene.layers._xyz_dots.draw.points.color = scene.global.viridis_value.color_range;
-		scene.global.viridis_count.items = {selectedFeaturePropCount}
-		scene.global.viridis_count.rank = feature[prop]
-    }
-  }
-  
-  
-  // this is all wrong, need to figure out how to get the order :(
-  function applyRankColor(prop){ //figure out how many property values there are, and what 'rank' this prop's count is in that list 
-    if (prop) {
-    	scene.global.viridis_count.prop = prop
-		scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.viridis_count.color_range;
-		scene.layers._xyz_lines.draw._lines.color = scene.global.viridis_count.color_range;
-		scene.layers._xyz_dots.draw.points.color = scene.global.viridis_count.color_range;
-		scene.global.viridis_count.items = {selctedFeaturePropCount}
-		scene.global.viridis_count.rank = feature[property_value]
-    }
-  }
-
-  function applyTags(tagFilterQueryParam) {
+  function applyTags({ tagFilterQueryParam }) {
     _.merge(scene_config, {
       sources: {
         _xyzspace: {
@@ -383,24 +335,20 @@
 
     // grab the feature properties from Tangram's viewport tiles
     const propsViewport = features.map(x => x.properties[prop]);
-    
-	var min = Math.min(...propsViewport)
-	var max = Math.max(...propsViewport)
-	console.log('min: ', min, 'max: ', max)
-	if (isNaN(min)){
-		min = null
-		max = null
-		console.log(min,max)
-	}
-	
 
-    // count them
-    const counts = propsViewport.reduce((obj, x) => {
-      obj[x] = (obj[x] || 0) + 1;
-      return obj;
-    }, {});
+    // convert to numbers to get min/max
+    var vals = propsViewport
+      .map(parseFloat)
+      .filter(x => typeof x === 'number' && !isNaN(x));
 
-    // count up the number of each property value
+    let min, max;
+    if (vals.length > 0) {
+      min = Math.min(...vals);
+      max = Math.max(...vals);
+    }
+    console.log('min: ', min, 'max: ', max);
+
+    // count up the number of each unique property value
     var propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
     for (var i = 0; i < propsViewport.length; i++) {
       var value = propsViewport[i];
@@ -415,13 +363,12 @@
 
     // update UI
     appUI.set({
-      selectedFeaturePropCount: Object.keys(counts).length,
+      selectedFeaturePropCount: propCounts.size,
       selectedFeaturePropValueCounts: sortable,
       selectedFeaturePropMin: min,
       selectedFeaturePropMax: max
     });
   }
-  
 
 
 </script>

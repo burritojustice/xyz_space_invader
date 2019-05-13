@@ -14,30 +14,40 @@ const displayOptions = {
 
   // Random feature color
   colors: {
-//     parse: parseInt,
-    values: ['x-ray','by_properties','random','range'], 
-//     values: [0,1], 
+    values: ['x-ray', 'property', 'random', 'range'],
 
-    apply: (scene, value) => {
+    apply: (scene, value, { selectedFeatureProp, selectedFeaturePropMin, selectedFeaturePropMax }) => {
       if (value === 'random') {
         scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.color_hash;
         scene.layers._xyz_lines.draw._lines.color = scene.global.color_hash;
         scene.layers._xyz_dots.draw.points.color = scene.global.color_hash;
       }
-       else if (value === 'range') { // apply range and rank to viridian palette
-        scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.viridis_count.color_range;
-        scene.layers._xyz_lines.draw._lines.color = scene.global.viridis_count.color_range;
-        scene.layers._xyz_dots.draw.points.color = scene.global.viridis_count.color_range;
-        scene.global.viridis_count.items = {selectedFeaturePropCount}
-        scene.global.viridis_count.rank = {selectedFeatureProp}
+      else if (value === 'range') { // apply min/max range to viridian palette
+        scene.global.viridis_value.prop = selectedFeatureProp;
+        scene.global.viridis_value.min = selectedFeaturePropMin;
+        scene.global.viridis_value.max = selectedFeaturePropMax;
+        scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.viridis_value.color_range;
+        scene.layers._xyz_lines.draw._lines.color = scene.global.viridis_value.color_range;
+        scene.layers._xyz_dots.draw.points.color = scene.global.viridis_value.color_range;
       }
-      else if (value === 'by_properties')   {
-      	applyFeatureColor(selectedFeatureProp) // is this how to access the existing property value color hash?
-      }  
+      else if (value === 'property')   {
+        if (selectedFeatureProp) {
+          scene_config.global.property_hash_name = selectedFeatureProp;
+          scene_config.layers._xyz_dots.draw.points.color = scene_config.global.var_property_color_hash;
+          scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.var_property_color_hash;
+          scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.var_property_color_hash;
+          scene_config.layers._xyz_polygons._outlines.enabled = false;
+        }
+        else {
+          scene_config.layers._xyz_lines.draw._lines.color = scene_config.global.color_lines;
+          scene_config.layers._xyz_dots.draw.points.color = scene_config.global.color_points;
+          scene_config.layers._xyz_polygons.draw._polygons_inlay.color = scene_config.global.color_polygons;
+        }
+      }
       else if (value === 'x-ray') {
         scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.color_polygons;
         scene.layers._xyz_lines.draw._lines.color = scene.global.color_lines;
-        scene.layers._xyz_polygons.draw._outlines.color = scene.global.color_lines;
+        scene.layers._xyz_polygons._outlines.draw._lines.color = scene.global.color_lines;
         scene.layers._xyz_dots.draw.points.color = scene.global.color_points;
       }
     }
