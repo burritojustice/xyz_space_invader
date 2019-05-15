@@ -1,81 +1,46 @@
-import:
-    - https://s3.amazonaws.com/xyz-demo/scenes/viridis.yaml
-
 global:
-    color_polygons: |
-        function(){
-            var color
-            if (feature.color){
-                color = feature.color
-                }
-            else{color = [1,0,1,0.3]}
-            return color
-            }
-
-    color_lines: |
-        function(){
-            var color
-            if (feature.color){
-                color = feature.color
-                }
-            else{color = [1,1,0,0.3]}
-            return color
-            }
-
-    color_lines_light_base_map: |
-        function(){
-            var color
-            if (feature.color){
-                color = feature.color
-                }
-            else{color = [1,0,0,0.5]}
-            return color
-            }
-
-
     highlight:
         color: [1,1,1,0.25]
         width: 2px
 
+    # dyanmic feature coloring, using the currently defined "color mode"
+    # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
+    featureColorDynamic: |
+      function () {
+        if (global.colorFunctions[global.colorMode]) {
+          if (global.colorFunctions[global.colorMode].useProperty) {
+            return global.colorFunctions[global.colorMode].color(
+              feature[global.colorState.featureProp],
+              global.colorState
+            );
+          }
+          else {
+            return global.colorFunctions[global.colorMode].color(
+              feature,
+              global.colorState
+            );
+          }
+        }
+        return 'rgba(127, 127, 127, .5)';
+      }
 
-    color_points: |
-        function(){
-            var color
-            if (feature.color){
+    # simple color by feature color property, or fallback to geometry type
+    featureColorDefault: |
+        function() {
+            var color;
+            if (feature.color) {
                 color = feature.color
             }
-            else {
-                color = [1,0,0,0.5]
+            else if ($geometry === 'point') {
+              color = [1, 0, 0, 0.5];
             }
-            return color
-        }
-
-    color_points_light_base_map: |
-        function(){
-            var color
-            if (feature.color){
-                color = feature.color
+            else if ($geometry === 'line') {
+              color = [1, 1, 0, 0.3];
             }
-            else {
-                color = [0,0,1,0.5]
+            else if ($geometry === 'polygon') {
+              color = [1, 0, 1, 0.3];
             }
-            return color
-        }
-
-    color_hash: |
-        function(){
-            var props = (JSON.stringify(feature))
-            // console.log(stringed)
-            // var props = Object.values(feature).toString()
-            var hash = 0, i, chr;
-            if (props === 0){hash = 0};
-            for (i = 0; i < props.length; i++) {
-                chr   = props.charCodeAt(i);
-                hash  = ((hash << 5) - hash) + chr;
-                hash |= 0; // Convert to 32bit integer
-            }
-            var color = 'hsla(' + hash + ', 100%, 50%, 0.75)'
-            return color
+            return color;
         }
 
     property_hash_name: TRAJUNCTYP

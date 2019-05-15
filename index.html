@@ -40,6 +40,8 @@
 <!-- <script type="module"> -->
 <script src="AppUI.js"></script>
 <script src="basemaps.js"></script>
+<script src="colorPalettes.js"></script>
+<script src="colorFunctions.js"></script>
 <script src="displayOptions.js"></script>
 <script>
   var query;
@@ -110,6 +112,8 @@
 
   // apply updates to scene based on current display options
   function updateScene(uiState) {
+    // scene_config.global.colorFunctions = colorFunctions;
+
     // configure data source for XYZ space
     applySpace(uiState);
 
@@ -140,7 +144,7 @@
         hover: function({ feature }) {
           if (feature && feature.source_name === '_xyzspace') {
             // let the UI know we're hovering over a new feature
-            appUI.set({ selectedFeature: feature });
+            appUI.set({ feature: feature });
           }
         }
       }
@@ -321,14 +325,14 @@
   }
 
   function updateViewportProperties(features) { // for feature prop
-    const prop = appUI.get().selectedFeatureProp;
+    const prop = appUI.get().featureProp;
 
     if (!prop) {
       appUI.set({
-        selectedFeaturePropCount: null,
-        selectedFeaturePropValueCounts: null,
-        selectedFeaturePropMin: null,
-        selectedFeaturePropMax: null
+        featurePropCount: null,
+        featurePropValueCounts: null,
+        featurePropMin: null,
+        featurePropMax: null
       });
       return;
     }
@@ -339,7 +343,7 @@
     // convert to numbers to get min/max
     var vals = propsViewport
       .map(parseFloat)
-      .filter(x => typeof x === 'number' && !isNaN(x));
+      .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity);
 
     let min, max;
     if (vals.length > 0) {
@@ -359,14 +363,17 @@
     }
 
     // sort the list of properties by count
-    const sortable = Array.from(propCounts.entries()).sort((a, b) => b[1] - a[1]);
+    const sortable = Array.from(propCounts.entries()).sort((a, b) => {
+      const d = b[1] - a[1];
+      return d !== 0 ? d : b[0] - a[0];
+    });
 
     // update UI
     appUI.set({
-      selectedFeaturePropCount: propCounts.size,
-      selectedFeaturePropValueCounts: sortable,
-      selectedFeaturePropMin: min,
-      selectedFeaturePropMax: max
+      featurePropCount: propCounts.size,
+      featurePropValueCounts: sortable,
+      featurePropMin: min,
+      featurePropMax: max
     });
   }
 

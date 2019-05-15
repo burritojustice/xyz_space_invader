@@ -41,8 +41,8 @@ const basemaps = {
       'tangram_xyz_scene.yaml'
     ],
     layers: {
-      _xyz_lines: { draw: { _lines: { color: 'global.color_lines' } } },
-      _xyz_dots: { draw: { points: { color: 'global.color_points' } } }
+      _xyz_lines: { draw: { _lines: { color: 'global.featureColorDefault' } } },
+      _xyz_dots: { draw: { points: { color: 'global.featureColorDefault' } } }
     }
   },
   'refill': {

@@ -1,7 +1,7 @@
 <svelte:window on:keydown="handleKeyPress(event)" />
 
 <div id="controls_left" class="controls">
-  <div id="spaces">
+  <div id="spaces" class="panel">
     <p id="space_info">
       {#if spaceInfo}
         {spaceId}: {spaceInfo.title}<br>
@@ -42,13 +42,13 @@
       {/if}
     </p>
   </div>
-  <div id="properties">
-    {#if selectedFeature}
+  <div id="properties" class="panel">
+    {#if feature}
       <table>
         {#each featurePropRows as r}
           <tr
-            class:active="r.prop === selectedFeatureProp"
-            on:click="set({ selectedFeatureProp: r.prop })"
+            class:active="r.prop === featureProp"
+            on:click="setFeatureProp(r.prop)"
           >
           <td>{@html formatFeatureRow(r)}</td>
           </tr>
@@ -59,17 +59,26 @@
     {/if}
   </div>
 
-  <div id="colors">
+  <div id="colors" class="panel">
     <p id="colorProperties">
-      {#if selectedFeatureProp && selectedFeaturePropCount != null}
-        {selectedFeaturePropCount} unique values of <i>{selectedFeatureProp}</i> in viewport<br>
-      	{#if selectedFeaturePropMin != null}
-          min: {selectedFeaturePropMin}, max: {selectedFeaturePropMax}
-      	{:else}
-          no min/max (not exclusively numbers)
-      	{/if}
+      {#if displayToggles}
+        <div>
+          <select bind:value="displayToggles.colors">
+            {#each colorModes as mode}
+              <option value="{mode}">{mode}</option>
+            {/each}
+          </select>
+        </div>
+      {/if}
 
-        <p style="color:blue;" id="clear_color_properties" on:click="set({ selectedFeatureProp: null })">CLEAR COLOR FILTERS</p>
+      {#if featureProp && featurePropCount != null}
+        {featurePropCount} unique values of <i>{featureProp}</i> in viewport<br>
+      	{#if featurePropMin != null}
+          min: {featurePropMin}, max: {featurePropMax}
+      	{:else}
+          no min/max (no numeric values found)
+      	{/if}
+        <p style="color:blue;" id="clear_color_properties" on:click="set({ featureProp: null })">CLEAR COLOR FILTERS</p>
       {:else}
         click on property value for unique colors
       {/if}
@@ -84,15 +93,30 @@
  -->
     </p>
     <table id="prop_stats">
-      {#if selectedFeatureProp && selectedFeaturePropValueCounts}
-        {#each selectedFeaturePropValueCounts as r}
+      {#if featureProp && featurePropValueCounts}
+        {#each featurePropValueCounts as [value, count]}
           <tr>
-            <td style="width: 15px;text-align: right;">{r[1]}</td>
+            <td style="width: 15px;text-align: right;">{count}</td>
             <td style="width: 15px;">
               <!-- same color hash as tangram-->
-              <span class="dot" style="background-color: {colorHash(r[0])};"> </span>
+              {#if showFeaturePropColorSwatch(displayToggles.colors)}
+                <span class="dot" style="background-color: {
+                  formatFeaturePropValueColor(
+                    // NOTE: seems there's no way to pass the whole svete state here,
+                    // so we have to pass the props we need one by one
+                    {
+                      displayToggles,
+                      featureProp,
+                      featurePropMin,
+                      featurePropMax,
+                      featurePropPalette
+                    },
+                    value
+                  )};">
+                </span>
+              {/if}
             </td>
-            <td>{maybeStringifyObject(r[0])}</td>
+            <td>{maybeStringifyObject(value)}</td>
           </tr>
         {/each}
       {/if}
@@ -101,7 +125,7 @@
 </div>
 
 <div id="controls_right" class="controls">
-  <div id="tag_summary">
+  <div id="tag_summary" class="panel">
     <table id="tag_stats">
       {#if numFeaturesInViewport}
         <tr><td>features in viewport</td><td>{numFeaturesInViewport}</td></tr>
@@ -126,7 +150,7 @@
       <input type="radio" name="and_or" value="and" bind:group='tagFilterAndOr'>and<br>
     <p>
   </div>
-  <div id="tag_list">
+  <div id="tag_list" class="panel">
     <span style="color:blue;" on:click="toggleTagFilterViewport()">
       {#if tagFilterViewport}
         [show all tags seen]
@@ -173,12 +197,13 @@ export default {
       token: '',
       spaceInfo: null,
 
-      selectedFeature: null,
-      selectedFeatureProp: null,
-      selectedFeaturePropCount: null,
-      selectedFeaturePropValueCounts: null,
-      selectedFeaturePropMin: null,
-      selectedFeaturePropMax: null,
+      feature: null,
+      featureProp: null,
+      featurePropCount: null,
+      featurePropValueCounts: null,
+      featurePropMin: null,
+      featurePropMax: null,
+      featurePropPalette: colorPalettes.viridisInferno, // TODO: move palette to import
 
       tagsWithCounts: [],
       tagFilterList: [],
@@ -192,13 +217,16 @@ export default {
       uniqueTagsSeen: new Set(),
 
       displayToggles: null,
+      colorModes: Object.keys(colorFunctions),
     }
   },
 
   computed: {
-    basemapScene: ({ basemap }) => getBasemapScene(basemap),
+    basemapScene: ({ basemap }) => {
+      return { ...getBasemapScene(basemap), ...{ global: { colorFunctions } } };
+    },
 
-    featurePropRows: ({ selectedFeature }) => selectedFeature && buildFeatureRows(selectedFeature.properties),
+    featurePropRows: ({ feature }) => feature && buildFeatureRows(feature.properties),
 
     uniqueTagsInViewport: ({ tagsInViewport }) => new Set([...tagsInViewport]),
 
@@ -257,7 +285,7 @@ export default {
       }
     },
 
-    queryParams: ({ spaceId, token, basemap, displayToggles, selectedFeatureProp, tagFilterQueryParam }) => {
+    queryParams: ({ spaceId, token, basemap, displayToggles, featureProp, tagFilterQueryParam }) => {
       const params = new URLSearchParams();
 
       if (spaceId) {
@@ -278,8 +306,8 @@ export default {
         params.set('tags', tagFilterQueryParam);
       }
 
-      if (selectedFeatureProp) {
-        params.set('property', selectedFeatureProp);
+      if (featureProp) {
+        params.set('property', featureProp);
       }
 
       return params;
@@ -299,9 +327,10 @@ export default {
       this.fire('loadScene', current);
     }
 
-    if (changed.selectedFeatureProp ||
-        changed.selectedFeaturePropMin ||
-        changed.selectedFeaturePropMax ||
+    if (changed.featureProp ||
+        changed.featurePropMin ||
+        changed.featurePropMax ||
+        changed.featurePropPalette ||
         changed.displayToggles ||
         changed.tagFilterQueryParam) {
 
@@ -380,7 +409,7 @@ export default {
         token,
         basemap,
         displayToggles: toggles,
-        selectedFeatureProp: params.property,
+        featureProp: params.property,
         tagFilterList,
         tagFilterAndOr
       });
@@ -408,6 +437,18 @@ export default {
           });
         }
       }
+    },
+
+    setFeatureProp(featureProp) {
+      // if selecting a feature property and current color mode isn't property-specific,
+      // automatically change to the 'property' color mode
+      const displayToggles = this.get().displayToggles;
+      let colors = displayToggles.colors;
+      if (colorFunctions[colors] && !colorFunctions[colors].useProperty) {
+        colors = 'property';
+      }
+
+      this.set({ featureProp, displayToggles: { ...displayToggles, colors } });
     },
 
     toggleBasemap() {
@@ -484,35 +525,28 @@ export default {
         }
       }
     }
-  },
+
+},
 
   helpers: {
+    showFeaturePropColorSwatch(colors) {
+      return colorFunctions[colors] && colorFunctions[colors].useProperty;
+    },
+
+    formatFeaturePropValueColor(state, value) {
+      const colors = state.displayToggles.colors;
+      if (colorFunctions[colors]) {
+        return colorFunctions[colors].color(value, state);
+      }
+      return 'rgba(127, 127, 127, .5)';
+    },
+
     formatFeatureRow(r) {
       const indent = 4;
       let t = Array(r.level * indent).fill('&nbsp;').join('');
       if (r.prop !== undefined) t += r.prop + ': ';
       if (r.value !== undefined) t += r.value;
       return t;
-    },
-
-    colorHash(value) {
-      if (typeof value !== 'string') {
-        value = (value === undefined ? 'undefined' : JSON.stringify(value));
-      }
-
-      if (['null', 'undefined'].indexOf(value) > -1) {
-        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
-      }
-
-      let hash = 0, i, chr;
-      if (value === 0) { hash = 0 };
-      for (i = 0; i < value.length; i++) {
-        chr = value.charCodeAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32bit integer
-      }
-      var color = 'hsla(' + hash + ', 100%, 50%, 0.75)';
-      return color;
     },
 
     maybeStringifyObject(v) {
@@ -560,7 +594,7 @@ function buildFeatureRows(obj, level = -1, prop = null, rows = []) {
     flex-direction: column;
   }
 
-  .controls div {
+  .panel {
     margin: 5px;
     padding: 0.5em;
     background-color: rgba(200, 200, 200, 0.75);
