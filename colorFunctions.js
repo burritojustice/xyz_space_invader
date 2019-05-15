@@ -42,7 +42,35 @@ const colorFunctions = {
         return 'rgba(128, 128, 128, 0.5)';
       }
     }
+  },
+
+  // color by value of specific property, based on frequency of values
+  rank: {
+    useProperty: true,
+    color: function (value, colorState) {
+      var palette = colorState.featurePropPalette;
+      var counts = colorState.featurePropValueCounts;
+      var min = colorState.featurePropMin;
+      var max = colorState.featurePropMax;
+      var rank = counts ? counts.findIndex(c => c[0] === value) : -1;
+
+      if (rank === -1 || min == null || max == null) {
+        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+      }
+
+      var ratio = Math.max(Math.min(1 - (rank / counts.length), 1), 0);
+      var viridis = Math.round(ratio * 255);
+      var color = palette[viridis];
+
+      try {
+        return `rgb(${color.map(c => c * 255).join(', ')})`;
+      }
+      catch (e) {
+        return 'rgba(128, 128, 128, 0.5)';
+      }
+    }
   }
+
 };
 
 function colorHash (value) {

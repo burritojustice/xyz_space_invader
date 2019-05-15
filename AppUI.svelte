@@ -112,7 +112,8 @@
                       featureProp,
                       featurePropMin,
                       featurePropMax,
-                      featurePropPalette
+                      featurePropPalette,
+                      featurePropValueCounts
                     },
                     value
                   )};">
