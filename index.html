@@ -332,7 +332,13 @@
         featurePropCount: null,
         featurePropValueCounts: null,
         featurePropMin: null,
-        featurePropMax: null
+        featurePropMax: null,
+        featurePropMedian: null,
+        featurePropMean: null,
+        featurePropStdDev: null,
+        featurePropSigma: null,
+        featurePropSigmaFloor: null,
+        featurePropSigmaCeiling: null
       });
       return;
     }
@@ -345,17 +351,91 @@
       .map(parseFloat)
       .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity);
 
-    let min, max;
-    if (vals.length > 0) {
+    let min, max, mean, median, stdDev, sigma;
+
+    if (vals.length > 0 ) {
       min = Math.min(...vals);
       max = Math.max(...vals);
-    }
-    console.log('min: ', min, 'max: ', max);
+
+      mean = vals.reduce((a,b) => a + b, 0) / vals.length;
+      if (vals.length % 2 === 0) {
+        median = (vals[(vals.length / 2)] + vals[(vals.length / 2) + 1]) / 2;
+      }
+      else {
+        median = vals[((vals.length + 1) / 2)]
+      }
+
+      var squareDiffs = vals.map(function(value){
+        var diff = value - mean;
+        var sqrDiff = diff * diff;
+        return sqrDiff;
+      });
+
+      var avgSquareDiff = squareDiffs.reduce((a,b) => a + b, 0) / squareDiffs.length;
+
+      stdDev = Math.sqrt(avgSquareDiff);
+
+      console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
+
+      // here we count things for quantiles ()
+      var range = max - min
+      var quantile = 10
+      var step = range / quantile
+      var bucket = []
+
+      for (var i = 0; i < quantile; i++) {
+        bucket[i] = vals.reduce((total,amount) => {
+          if ((amount > (step * i)+min) && (amount <= (step * (i+1))+ min)){
+            total += 1
+          }
+          return total
+         },0);
+      }
+
+      console.log(step,bucket)
+
+      var quantileMax = Math.max(...bucket);
+      var quantilePercent = bucket.map(x => x/quantileMax);
+
+      console.log("quantilePercent",quantilePercent)
+
+      var quantileChart = ''
+      quantilePercent.forEach(x => {
+        var row = '|'
+        var columns = Math.ceil(x*10)
+        for (var i = 0; i < columns ; i++) {
+          row = row + '*'
+          if (i == columns){
+            row = total + '\n'
+          }
+         }
+        quantileChart += row + '\n'
+      })
+
+      console.log(quantileChart)
+
+      // calculating sigmas and ranges using standard deviations
+      sigma = {
+        floor: mean - stdDev,
+        ceiling: mean + stdDev
+      };
+
+      sigma.count = vals.reduce((total,amount) => {
+        if ((amount > sigma.floor) && (amount < sigma.ceiling)) {
+          total += 1;
+        }
+        return total;
+      }, 0);
+      sigma.percent = 100 - sigma.count / vals.length
+      sigma.outside = vals.length - sigma.count
+
+      console.log(sigma)
+    } //endif for stats
 
     // count up the number of each unique property value
-    var propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
-    for (var i = 0; i < propsViewport.length; i++) {
-      var value = propsViewport[i];
+    const propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
+    for (let i = 0; i < propsViewport.length; i++) {
+      const value = propsViewport[i];
       if (propCounts.get(value) == null) {
         propCounts.set(value, 0);
       }
@@ -363,7 +443,7 @@
     }
 
     // sort the list of properties by count
-    const sortable = Array.from(propCounts.entries()).sort((a, b) => {
+    const sortedPropCounts = Array.from(propCounts.entries()).sort((a, b) => {
       const d = b[1] - a[1];
       return d !== 0 ? d : b[0] - a[0];
     });
@@ -371,9 +451,15 @@
     // update UI
     appUI.set({
       featurePropCount: propCounts.size,
-      featurePropValueCounts: sortable,
+      featurePropValueCounts: sortedPropCounts,
       featurePropMin: min,
-      featurePropMax: max
+      featurePropMax: max,
+      featurePropMedian: median,
+      featurePropMean: mean,
+      featurePropStdDev: stdDev,
+      featurePropSigma: sigma.percent,
+      featurePropSigmaFloor: sigma.floor,
+      featurePropSigmaCeiling: sigma.ceiling
     });
   }
 

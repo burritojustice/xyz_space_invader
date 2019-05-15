@@ -74,7 +74,10 @@
       {#if featureProp && featurePropCount != null}
         {featurePropCount} unique values of <i>{featureProp}</i> in viewport<br>
       	{#if featurePropMin != null}
-          min: {featurePropMin}, max: {featurePropMax}
+          min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}<br>
+          μ: {featurePropMean.toFixed(2)},
+          σ: {featurePropStdDev.toFixed(2)},
+          {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
       	{:else}
           no min/max (no numeric values found)
       	{/if}
@@ -201,9 +204,15 @@ export default {
       featureProp: null,
       featurePropCount: null,
       featurePropValueCounts: null,
+      featurePropPalette: colorPalettes.viridisInferno, // TODO: move palette to import
       featurePropMin: null,
       featurePropMax: null,
-      featurePropPalette: colorPalettes.viridisInferno, // TODO: move palette to import
+      featurePropMean: null,
+      featurePropMedian: null,
+      featurePropStdDev: null,
+      featurePropSigma: null,
+      featurePropSigmaFloor: null,
+      featurePropSigmaCeiling: null,
 
       tagsWithCounts: [],
       tagFilterList: [],
@@ -327,12 +336,19 @@ export default {
       this.fire('loadScene', current);
     }
 
-    if (changed.featureProp ||
-        changed.featurePropMin ||
-        changed.featurePropMax ||
+    if (changed.displayToggles ||
+        changed.tagFilterQueryParam ||
+        changed.featureProp ||
         changed.featurePropPalette ||
-        changed.displayToggles ||
-        changed.tagFilterQueryParam) {
+        changed.featurePropMin ||
+        changed.featurePropMax // ||
+        // changed.featurePropMedian ||
+        // changed.featurePropMean ||
+        // changed.featurePropStdDev ||
+        // changed.featurePropSigma ||
+        // changed.featurePropSigmaFloor ||
+        // changed.featurePropSigmaCeiling
+      ) {
 
       this.fire('updateScene', current);
     }
