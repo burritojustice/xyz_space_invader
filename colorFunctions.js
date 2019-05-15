@@ -50,11 +50,9 @@ const colorFunctions = {
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
       var counts = colorState.featurePropValueCounts;
-      var min = colorState.featurePropMin;
-      var max = colorState.featurePropMax;
       var rank = counts ? counts.findIndex(c => c[0] === value) : -1;
 
-      if (rank === -1 || min == null || max == null) {
+      if (rank === -1) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
 
