@@ -49,8 +49,8 @@ const colorFunctions = {
     useProperty: true,
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
-      var counts = colorState.featurePropValueCounts;
-      var rank = counts ? counts.findIndex(c => c[0] === value) : -1;
+      var counts = (colorState.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
+      var rank = counts.findIndex(c => c[0] === value);
 
       if (rank === -1) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
