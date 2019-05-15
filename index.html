@@ -351,7 +351,8 @@
       .map(parseFloat)
       .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity);
 
-    let min, max, mean, median, stdDev, sigma;
+    let min, max, mean, median, stdDev;
+    let sigma = {};
 
     if (vals.length > 0 ) {
       min = Math.min(...vals);
