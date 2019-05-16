@@ -390,7 +390,7 @@
             total += 1
           }
           return total
-         },0);
+         },1); 
       }
 
       console.log(step,bucket)
@@ -400,17 +400,21 @@
 
       console.log("quantilePercent",quantilePercent)
 
-      var quantileChart = ''
-      quantilePercent.forEach(x => {
-        var row = '|'
-        var columns = Math.ceil(x*10)
+      var quantileChart = 'histogram: ' + quantile + ' buckets, ' + step.toFixed(1) + ' wide\n'
+      quantilePercent.forEach((x,index) =>  {
+        var count = bucket[index].toString()
+        var width = 10
+        var columns = Math.ceil(x*width)
+        var spacing = ' '.repeat(width - columns)
+        var row = count.padStart(6,' ') + 'x | '
         for (var i = 0; i < columns ; i++) {
           row = row + '*'
-          if (i == columns){
-            row = total + '\n'
+          if (i == (columns-1)){
+            var suffix = spacing + ' | ' + (index*step + min).toFixed(0)
+            row = row + suffix + '\n'  
           }
          }
-        quantileChart += row + '\n'
+        quantileChart += row
       })
 
       console.log(quantileChart)
