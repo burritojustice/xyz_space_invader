@@ -411,7 +411,7 @@
         for (var i = 0; i < columns ; i++) {
           row = row + '*'
           if (i == (columns-1)){
-            var suffix = spacing + ' | ' + (index*step + min).toFixed(0) + '->' + (index*(step+1) + min).toFixed(0)
+            var suffix = spacing + ' | ' + (index*step + min).toFixed(0) + '->' + ((index+1)*step + min).toFixed(0)
             row = row + suffix + '\n'  
           }
          }
