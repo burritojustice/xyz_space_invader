@@ -72,12 +72,18 @@
           </span>
 
           <span>
-            <select bind:value="featurePropPalette">
+            <select bind:value="featurePropPaletteName">
               {#each Object.keys(colorPalettes) as palette}
                 <option value="{palette}">{palette}</option>
               {/each}
             </select>
           </span>
+
+          <label>
+            <input type="checkbox" bind:checked="featurePropPaletteFlip">
+            Flip
+          </label>
+
         </div>
       {/if}
 
@@ -216,7 +222,8 @@ export default {
       featureProp: null,
       featurePropCount: null,
       featurePropValueCounts: null,
-      featurePropPalette: 'viridisInferno', // TODO: move palette to import
+      featurePropPaletteName: 'viridisInferno', // TODO: move palette to import
+      featurePropPaletteFlip: false,
       featurePropMin: null,
       featurePropMax: null,
       featurePropMean: null,
@@ -249,6 +256,13 @@ export default {
     },
 
     featurePropRows: ({ feature }) => feature && buildFeatureRows(feature.properties),
+
+    featurePropPalette: ({ featurePropPaletteName, featurePropPaletteFlip }) => {
+      if (featurePropPaletteFlip) {
+        return Array.from(colorPalettes[featurePropPaletteName]).reverse(); // copy and reverse palette
+      }
+      return colorPalettes[featurePropPaletteName]; // return original/unmodified palette
+    },
 
     uniqueTagsInViewport: ({ tagsInViewport }) => new Set([...tagsInViewport]),
 
@@ -307,7 +321,7 @@ export default {
       }
     },
 
-    queryParams: ({ spaceId, token, basemap, displayToggles, featureProp, featurePropPalette, tagFilterQueryParam }) => {
+    queryParams: ({ spaceId, token, basemap, displayToggles, featureProp, featurePropPaletteName, featurePropPaletteFlip, tagFilterQueryParam }) => {
       const params = new URLSearchParams();
 
       if (spaceId) {
@@ -332,7 +346,8 @@ export default {
         params.set('property', featureProp);
       }
 
-      params.set('palette', featurePropPalette);
+      params.set('palette', featurePropPaletteName);
+      params.set('paletteFlip', featurePropPaletteFlip);
 
       return params;
     }
@@ -435,9 +450,9 @@ export default {
         basemap = getDefaultBasemapName();
       }
 
-      let featurePropPalette = this.get().featurePropPalette;
+      let featurePropPaletteName = this.get().featurePropPaletteName;
       if (colorPalettes[params.palette]) {
-        featurePropPalette = colorPalettes[params.palette];
+        featurePropPaletteName = params.palette;
       }
 
       this.set({
@@ -446,7 +461,8 @@ export default {
         basemap,
         displayToggles: toggles,
         featureProp: params.property,
-        featurePropPalette,
+        featurePropPaletteName,
+        featurePropPaletteFlip: Boolean(!!params.paletteFlip),
         tagFilterList,
         tagFilterAndOr
       });

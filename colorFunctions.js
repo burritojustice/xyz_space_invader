@@ -21,7 +21,7 @@ const colorFunctions = {
   range: {
     useProperty: true,
     color: function (value, colorState) {
-      var palette = colorState.colorPalettes[colorState.featurePropPalette];
+      var palette = colorState.featurePropPalette;
       var min = colorState.featurePropMin;
       var max = colorState.featurePropMax;
       var delta = max - min;
@@ -48,7 +48,7 @@ const colorFunctions = {
   rank: {
     useProperty: true,
     color: function (value, colorState) {
-      var palette = colorState.colorPalettes[colorState.featurePropPalette];
+      var palette = colorState.featurePropPalette;
       var counts = (colorState.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
       var rank = counts.findIndex(c => c[0] === value);
 
@@ -56,7 +56,7 @@ const colorFunctions = {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
 
-      var ratio = Math.max(Math.min(1 - (rank / counts.length), 1), 0);
+      var ratio = Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0);
       var viridis = Math.round(ratio * 255);
       var color = palette[viridis];
 
