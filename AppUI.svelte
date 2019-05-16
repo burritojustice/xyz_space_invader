@@ -97,6 +97,7 @@
             μ: {featurePropMean.toFixed(2)},
             σ: {featurePropStdDev.toFixed(2)},
             {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
+            <pre>{featurePropHistogram}</pre>
           {:else}
             no min/max (no numeric values found)
           {/if}
@@ -239,6 +240,7 @@ export default {
       featurePropSigma: null,
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
+      featurePropHistogram: null,
 
       tagsWithCounts: [],
       tagFilterList: [],
