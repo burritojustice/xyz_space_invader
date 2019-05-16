@@ -185,7 +185,7 @@
       {:else}
         [only show tags in view]
       {/if}
-    </span><br>
+    </span>
     <span style="color:blue;" on:click="toggleTagFilterAt()">
       {#if tagFilterAt}
         [show all tag names]
@@ -193,7 +193,6 @@
         [only show @ tags]
       {/if}
     </span>
-    <br>
     <span style="color:blue;" on:click="toggleTagSort()">
       [sort by {nextTagSort}]
     </span>
