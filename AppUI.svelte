@@ -71,18 +71,20 @@
             </select>
           </span>
 
-          <span>
-            <select bind:value="featurePropPaletteName">
-              {#each Object.keys(colorPalettes) as palette}
-                <option value="{palette}">{palette}</option>
-              {/each}
-            </select>
-          </span>
+          {#if showFeaturePropPalette(displayToggles.colors)}
+            <span>
+              <select bind:value="featurePropPaletteName">
+                {#each Object.keys(colorPalettes) as palette}
+                  <option value="{palette}">{palette}</option>
+                {/each}
+              </select>
+            </span>
 
-          <label>
-            <input type="checkbox" bind:checked="featurePropPaletteFlip">
-            Flip
-          </label>
+            <label>
+              <input type="checkbox" bind:checked="featurePropPaletteFlip">
+              Flip
+            </label>
+          {/if}
 
         </div>
       {/if}
@@ -584,6 +586,10 @@ export default {
   helpers: {
     showFeaturePropColorSwatch(colors) {
       return colorFunctions[colors] && colorFunctions[colors].useProperty;
+    },
+
+    showFeaturePropPalette(colors) {
+      return colorFunctions[colors] && colorFunctions[colors].usePalette;
     },
 
     formatFeaturePropValueColor(state, value) {

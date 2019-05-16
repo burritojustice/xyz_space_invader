@@ -1,25 +1,29 @@
 
 const colorFunctions = {
   xray: {
-    useProperty: false
+    useProperty: false,
+    usePalette: false,
     // no color function is defined, default one will be used
   },
 
   // color by hash of entire
   hash: {
     useProperty: false,
+    usePalette: false,
     color: colorHash
   },
 
   // color by hash of specific property
   property: {
     useProperty: true,
+    usePalette: false,
     color: colorHash,
   },
 
   // color by value of specific property, in provided min/max range
   range: {
     useProperty: true,
+    usePalette: true,
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
       var min = colorState.featurePropMin;
@@ -47,6 +51,7 @@ const colorFunctions = {
   // color by value of specific property, based on frequency of values
   rank: {
     useProperty: true,
+    usePalette: true,
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
       var counts = (colorState.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
