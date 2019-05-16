@@ -90,32 +90,32 @@
       {/if}
 
       {#if featureProp && featurePropCount != null}
-        {featurePropCount} unique values of <i>{featureProp}</i> in viewport<br>
-      	{#if featurePropMin != null}
-          min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}<br>
-          μ: {featurePropMean.toFixed(2)},
-          σ: {featurePropStdDev.toFixed(2)},
-          {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
-      	{:else}
-          no min/max (no numeric values found)
-      	{/if}
-        <p style="color:blue;" id="clear_color_properties" on:click="set({ featureProp: null })">CLEAR COLOR FILTERS</p>
+        <div style="margin: 5px 0 5px 0;">
+          {featurePropCount} unique values of <i>{featureProp}</i> in viewport<br>
+          {#if featurePropMin != null}
+            min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}<br>
+            μ: {featurePropMean.toFixed(2)},
+            σ: {featurePropStdDev.toFixed(2)},
+            {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
+          {:else}
+            no min/max (no numeric values found)
+          {/if}
+        </div>
+
+        <div>
+          <span style="color:blue;" on:click="toggleFeaturePropValueSort()">
+            [sort by {nextFeaturePropValueSort}]
+          </span>
+          <span style="color:blue;" id="clear_color_properties" on:click="set({ featureProp: null })">clear filter</span>
+        </div>
       {:else}
         click on property value for unique colors
       {/if}
-<!--
-    <span style="color:blue;" on:click="toggleRangeFrequency()">
-      {#if colorFrequency}
-        [color by range]
-      {:else}
-        [color by frequency]
-      {/if}
-    </span><br>
- -->
+
     </p>
     <table id="prop_stats">
       {#if featureProp && featurePropValueCounts}
-        {#each featurePropValueCounts as [value, count]}
+        {#each sortedFeaturePropValueCounts as [value, count]}
           <tr>
             <td style="width: 15px;text-align: right;">{count}</td>
             <td style="width: 15px;">
@@ -224,6 +224,7 @@ export default {
       featureProp: null,
       featurePropCount: null,
       featurePropValueCounts: null,
+      featurePropValueSort: 'count',
       featurePropPaletteName: 'viridisInferno', // TODO: move palette to import
       featurePropPaletteFlip: false,
       featurePropMin: null,
@@ -240,7 +241,7 @@ export default {
       tagFilterAndOr: 'or',
       tagFilterViewport: false,
       tagFilterAt: false,
-      tagSort: 'frequency',
+      tagSort: 'count',
 
       numFeaturesInViewport: null,
       tagsInViewport: [],
@@ -266,9 +267,29 @@ export default {
       return colorPalettes[featurePropPaletteName]; // return original/unmodified palette
     },
 
-    uniqueTagsInViewport: ({ tagsInViewport }) => new Set([...tagsInViewport]),
+    sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
+      if (featurePropValueSort === 'values') {
+        // copy and re-sort on value (descending) if needed
+        return Array.from(featurePropValueCounts).sort((a, b) => {
+          // try to get a number
+          let an = parseFloat(a[0]);
+          let bn = parseFloat(b[0]);
 
-    nextTagSort: ({ tagSort }) => (tagSort === 'frequency' ? 'name' : 'frequency'),
+          // sort nulls and NaNs to the bottom
+          an = (an == null || isNaN(an)) ? -Infinity : an;
+          bn = (bn == null || isNaN(bn)) ? -Infinity : bn;
+
+          return bn - an; // descending sort
+        });
+      }
+      return featurePropValueCounts; // return original/unmodified values
+    },
+
+    nextFeaturePropValueSort: ({ featurePropValueSort }) => (featurePropValueSort === 'count' ? 'values' : 'count'),
+
+    nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
+
+    uniqueTagsInViewport: ({ tagsInViewport }) => new Set([...tagsInViewport]),
 
     // build the list of tags for display with checkboxes
     tagDisplayList: ({ tagsWithCounts, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, uniqueTagsSeen }) => {
@@ -302,7 +323,7 @@ export default {
       if (tagSort === 'name') {
         tags.sort((a, b) => a[0] > b[0] ? 1 : -1);
       }
-      else if (tagSort === 'frequency') {
+      else if (tagSort === 'count') {
         tags.sort((a, b) => a[1] < b[1] ? 1 : -1);
       }
 
@@ -525,6 +546,10 @@ export default {
       }
 
       this.set({ displayToggles });
+    },
+
+    toggleFeaturePropValueSort() {
+      this.set({ featurePropValueSort: this.get().nextFeaturePropValueSort });
     },
 
     toggleTagSort() {
