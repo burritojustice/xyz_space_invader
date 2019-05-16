@@ -63,11 +63,21 @@
     <p id="colorProperties">
       {#if displayToggles}
         <div>
-          <select bind:value="displayToggles.colors">
-            {#each colorModes as mode}
-              <option value="{mode}">{mode}</option>
-            {/each}
-          </select>
+          <span>
+            <select bind:value="displayToggles.colors">
+              {#each colorModes as mode}
+                <option value="{mode}">{mode}</option>
+              {/each}
+            </select>
+          </span>
+
+          <span>
+            <select bind:value="featurePropPalette">
+              {#each Object.keys(colorPalettes) as palette}
+                <option value="{palette}">{palette}</option>
+              {/each}
+            </select>
+          </span>
         </div>
       {/if}
 
@@ -113,7 +123,8 @@
                       featurePropMin,
                       featurePropMax,
                       featurePropPalette,
-                      featurePropValueCounts
+                      featurePropValueCounts,
+                      colorPalettes
                     },
                     value
                   )};">
@@ -205,7 +216,7 @@ export default {
       featureProp: null,
       featurePropCount: null,
       featurePropValueCounts: null,
-      featurePropPalette: colorPalettes.viridisInferno, // TODO: move palette to import
+      featurePropPalette: 'viridisInferno', // TODO: move palette to import
       featurePropMin: null,
       featurePropMax: null,
       featurePropMean: null,
@@ -227,7 +238,8 @@ export default {
       uniqueTagsSeen: new Set(),
 
       displayToggles: null,
-      colorModes: Object.keys(colorFunctions),
+      colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
+      colorPalettes // need to reference here to make accessible to templates
     }
   },
 
@@ -295,7 +307,7 @@ export default {
       }
     },
 
-    queryParams: ({ spaceId, token, basemap, displayToggles, featureProp, tagFilterQueryParam }) => {
+    queryParams: ({ spaceId, token, basemap, displayToggles, featureProp, featurePropPalette, tagFilterQueryParam }) => {
       const params = new URLSearchParams();
 
       if (spaceId) {
@@ -319,6 +331,8 @@ export default {
       if (featureProp) {
         params.set('property', featureProp);
       }
+
+      params.set('palette', featurePropPalette);
 
       return params;
     }
@@ -421,12 +435,18 @@ export default {
         basemap = getDefaultBasemapName();
       }
 
+      let featurePropPalette = this.get().featurePropPalette;
+      if (colorPalettes[params.palette]) {
+        featurePropPalette = colorPalettes[params.palette];
+      }
+
       this.set({
         spaceId,
         token,
         basemap,
         displayToggles: toggles,
         featureProp: params.property,
+        featurePropPalette,
         tagFilterList,
         tagFilterAndOr
       });

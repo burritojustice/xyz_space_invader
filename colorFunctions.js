@@ -21,7 +21,7 @@ const colorFunctions = {
   range: {
     useProperty: true,
     color: function (value, colorState) {
-      var palette = colorState.featurePropPalette;
+      var palette = colorState.colorPalettes[colorState.featurePropPalette];
       var min = colorState.featurePropMin;
       var max = colorState.featurePropMax;
       var delta = max - min;
@@ -48,7 +48,7 @@ const colorFunctions = {
   rank: {
     useProperty: true,
     color: function (value, colorState) {
-      var palette = colorState.featurePropPalette;
+      var palette = colorState.colorPalettes[colorState.featurePropPalette];
       var counts = (colorState.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
       var rank = counts.findIndex(c => c[0] === value);
 
