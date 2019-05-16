@@ -338,7 +338,8 @@
         featurePropStdDev: null,
         featurePropSigma: null,
         featurePropSigmaFloor: null,
-        featurePropSigmaCeiling: null
+        featurePropSigmaCeiling: null,
+        featurePropHistogram: null
       });
       return;
     }
@@ -464,7 +465,8 @@
       featurePropStdDev: stdDev,
       featurePropSigma: sigma.percent,
       featurePropSigmaFloor: sigma.floor,
-      featurePropSigmaCeiling: sigma.ceiling
+      featurePropSigmaCeiling: sigma.ceiling,
+      featurePropHistogram: quantileChart
     });
   }
 
