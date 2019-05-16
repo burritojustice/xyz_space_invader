@@ -109,39 +109,44 @@
           <span style="color:blue;" id="clear_color_properties" on:click="set({ featureProp: null })">clear filter</span>
         </div>
       {:else}
-        click on property value for unique colors
+        <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
       {/if}
-
     </p>
+
     <table id="prop_stats">
       {#if featureProp && featurePropValueCounts}
-        {#each sortedFeaturePropValueCounts as [value, count]}
-          <tr>
-            <td style="width: 15px;text-align: right;">{count}</td>
-            <td style="width: 15px;">
-              <!-- same color hash as tangram-->
-              {#if showFeaturePropColorSwatch(displayToggles.colors)}
-                <span class="dot" style="background-color: {
-                  formatFeaturePropValueColor(
-                    // NOTE: seems there's no way to pass the whole svete state here,
-                    // so we have to pass the props we need one by one
-                    {
-                      displayToggles,
-                      featureProp,
-                      featurePropMin,
-                      featurePropMax,
-                      featurePropPalette,
-                      featurePropValueCounts,
-                      colorPalettes
-                    },
-                    value
-                  )};">
-                </span>
-              {/if}
-            </td>
-            <td>{maybeStringifyObject(value)}</td>
-          </tr>
-        {/each}
+        <thead>
+          <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
+        </thead>
+        <tbody>
+          {#each sortedFeaturePropValueCounts as [value, count]}
+            <tr>
+              <td style="width: 15px;text-align: right;">{count}</td>
+              <td style="width: 15px;">
+                <!-- uses color calc code shared with tangram-->
+                {#if showFeaturePropColorSwatch(displayToggles.colors)}
+                  <span class="dot" style="background-color: {
+                    formatFeaturePropValueColor(
+                      // NOTE: seems there's no way to pass the whole svelte state here,
+                      // so we have to pass the props we need one by one
+                      {
+                        displayToggles,
+                        featureProp,
+                        featurePropMin,
+                        featurePropMax,
+                        featurePropPalette,
+                        featurePropValueCounts,
+                        colorPalettes
+                      },
+                      value
+                    )};">
+                  </span>
+                {/if}
+              </td>
+              <td>{maybeStringifyObject(value)}</td>
+            </tr>
+          {/each}
+        </tbody>
       {/if}
     </table>
   </div>
