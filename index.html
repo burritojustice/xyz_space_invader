@@ -340,6 +340,7 @@
         featurePropSigmaFloor: null,
         featurePropSigmaCeiling: null,
         featurePropHistogram: null
+        
       });
       return;
     }
@@ -399,9 +400,11 @@
       
       // adjust for crazy outliers. 4 sigma works, but 3 sigma gives a better range where most of the data is jammed into one decile of the histogram -- maybe this can be some sort of sigma toggle?
       
-      if (max > (mean + stdDev * 4)){max = mean + stdDev * 4}
-      if (min < (mean - stdDev * 4)){min = mean - stdDev * 4}
-
+      var sigma_filter = 4 // any values above this range get squished into the same color (and below)
+      if (max > (mean + stdDev * sigma_filter)){max = mean + stdDev * sigma_filter}
+      if (min < (mean - stdDev * sigma_filter)){min = mean - stdDev * sigma_filter}
+      
+      // need to clearly indicate that these 'adjusted' min and max are not the true min and max (and we also need to store the 'global' min and max...
       
       // here we count things for quantiles ()
       var range = max - min
