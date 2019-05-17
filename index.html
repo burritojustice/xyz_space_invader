@@ -379,12 +379,36 @@
 
       console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
 
+      // calculating sigmas and ranges using standard deviations
+      
+      sigma = {
+        floor: mean - stdDev,
+        ceiling: mean + stdDev
+      };
+
+      sigma.count = vals.reduce((total,amount) => {
+        if ((amount > sigma.floor) && (amount < sigma.ceiling)) {
+          total += 1;
+        }
+        return total;
+      }, 0);
+      sigma.percent = 100 - sigma.count / vals.length
+      sigma.outside = vals.length - sigma.count
+
+      console.log(sigma)
+      
+      // adjust max for crazy outliers -- later we should do sliders though
+      
+      if (max > (mean + stdDev * 4)){max = mean + stdDev * 4}
+      
       // here we count things for quantiles ()
       var range = max - min
-      var quantile = 10
+      var quantile = 10 
       var step = range / quantile
       var bucket = []
-
+      
+      // add up the things in each bucket
+      
       for (var i = 0; i < quantile; i++) {
         bucket[i] = vals.reduce((total,amount) => {
           if ((amount > (step * i)+min) && (amount <= (step * (i+1))+ min)){
@@ -405,7 +429,6 @@
       quantilePercent.forEach((x,index) =>  {
         var count = bucket[index].toString()
         var width = 10
-        if (vals.length < 10){width = vals.length}
         var columns = Math.ceil(x*width)
         var spacing = ' '.repeat(width - columns)
         var row = count.padStart(6,' ') + 'x | '
@@ -421,23 +444,8 @@
 
       console.log(quantileChart)
 
-      // calculating sigmas and ranges using standard deviations
-      sigma = {
-        floor: mean - stdDev,
-        ceiling: mean + stdDev
-      };
 
-      sigma.count = vals.reduce((total,amount) => {
-        if ((amount > sigma.floor) && (amount < sigma.ceiling)) {
-          total += 1;
-        }
-        return total;
-      }, 0);
-      sigma.percent = 100 - sigma.count / vals.length
-      sigma.outside = vals.length - sigma.count
-
-      console.log(sigma)
-    } //endif for stats
+    } //endif 
 
     // count up the number of each unique property value
     const propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
