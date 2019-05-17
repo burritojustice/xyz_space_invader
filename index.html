@@ -405,6 +405,7 @@
       quantilePercent.forEach((x,index) =>  {
         var count = bucket[index].toString()
         var width = 10
+        if (vals.length < 10){width = vals.length)
         var columns = Math.ceil(x*width)
         var spacing = ' '.repeat(width - columns)
         var row = count.padStart(6,' ') + 'x | '
