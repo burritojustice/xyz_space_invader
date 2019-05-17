@@ -397,9 +397,11 @@
 
       console.log(sigma)
       
-      // how to adjust for crazy outliers? and how do we adjust the color palette?
+      // adjust for crazy outliers -- maybe this can be some sort of sigma toggle?
       
       if (max > (mean + stdDev * 3)){max = mean + stdDev * 3}
+      if (min < (mean - stdDev * 3)){min = mean - stdDev * 3}
+
       
       // here we count things for quantiles ()
       var range = max - min
