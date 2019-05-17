@@ -399,7 +399,7 @@
       
       // how to adjust for crazy outliers? and how do we adjust the color palette?
       
-//       if (max > (mean + stdDev * 2)){max = mean + stdDev * 2}
+      if (max > (mean + stdDev * 3)){max = mean + stdDev * 3}
       
       // here we count things for quantiles ()
       var range = max - min
