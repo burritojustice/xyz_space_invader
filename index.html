@@ -397,10 +397,10 @@
 
       console.log(sigma)
       
-      // adjust for crazy outliers -- maybe this can be some sort of sigma toggle?
+      // adjust for crazy outliers. 4 sigma works, but 3 sigma gives a better range where most of the data is jammed into one decile of the histogram -- maybe this can be some sort of sigma toggle?
       
-      if (max > (mean + stdDev * 3)){max = mean + stdDev * 3}
-      if (min < (mean - stdDev * 3)){min = mean - stdDev * 3}
+      if (max > (mean + stdDev * 4)){max = mean + stdDev * 4}
+      if (min < (mean - stdDev * 4)){min = mean - stdDev * 4}
 
       
       // here we count things for quantiles ()
