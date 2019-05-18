@@ -491,7 +491,7 @@ export default {
         displayToggles: toggles,
         featureProp: params.property,
         featurePropPaletteName,
-        featurePropPaletteFlip: Boolean(!!params.paletteFlip),
+        featurePropPaletteFlip: (params.paletteFlip === 'true'),
         tagFilterList,
         tagFilterAndOr
       });
