@@ -86,7 +86,7 @@ const displayOptions = {
 
   // Outlines
   outlines: {
-    parse: parseInt,
+//     parse: parseInt,
     values: ['none', 'white', 'grey', 'black'],
     apply: (scene, value) => {
       if (value === 'grey') {
