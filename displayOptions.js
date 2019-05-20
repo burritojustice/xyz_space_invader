@@ -109,8 +109,8 @@ const displayOptions = {
       }
       else if (value === 0) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
-        scene.layers._xyz_dots.draw.points.outline.width = scene.global.outline_none
-        scene.layers._xyz_lines.draw._lines.outline.width = scene.global.outline_none
+        scene.layers._xyz_dots.draw.points.outline = scene.global.outline_none
+        scene.layers._xyz_lines.draw._lines.outline = scene.global.outline_none
       }
     }
   },
