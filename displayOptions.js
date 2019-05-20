@@ -14,7 +14,7 @@ const displayOptions = {
 
   // Feature colors
   colors: {
-    values: ['xray', 'property', 'hash', 'range', 'rank'],
+    values: ['xray', 'range', 'rank', 'property', 'hash'],
 
     apply: (scene, value, { featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropValueCounts }) => {
       scene.global.colorMode = value;
@@ -45,24 +45,25 @@ const displayOptions = {
     apply: (scene, value) => {
       if (value === 0) { // small
         scene.layers._xyz_dots.draw.points.size = '6px';
-        scene.layers._xyz_dots.draw.points.outline.color = null;
-        scene.layers._xyz_dots.draw.points.outline.width = null;
+        scene.layers._xyz_dots.draw.points.outline.color = [.5, .5, .5, 0.5];
+        scene.layers._xyz_dots.draw.points.outline.width = '.5px';
       }
       else if (value === 1) { // big
         scene.layers._xyz_dots.draw.points.size = '16px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+        scene.layers._xyz_dots.draw.points.outline.color = [.5, .5, .5, 0.5];
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
-      else if (value === 2) { // smaller
+      else if (value === 2) { // medium
+        scene.layers._xyz_dots.draw.points.size = '12px';
+        scene.layers._xyz_dots.draw.points.outline.color = [.5, .5, .5, 0.5];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+      }
+      else if (value === 3) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
-      else if (value === 3) { // medium
-        scene.layers._xyz_dots.draw.points.size = '12px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-      }
+
     }
   },
 
@@ -90,9 +91,16 @@ const displayOptions = {
     apply: (scene, value) => {
       if (value === 1) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        scene.layers._xyz_dots.draw.lines.outline.color = 'global.grey'
+        scene.layers._xyz_dots.draw.lines.outline.width = '1px';
+        scene.layers._xyz_dots.draw.lines.outline.color = 'global.grey'
+
       }
       else {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
+        scene.layers._xyz_dots.draw.points.outline.width = '0px';
+        scene.layers._xyz_dots.draw.lines.outline.width = '0px';
       }
     }
   },
