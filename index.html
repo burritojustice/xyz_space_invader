@@ -185,9 +185,9 @@
   }
 
   function applyDisplayOptions(uiState) {
-    for (const option in uiState.displayToggles) {
+    for (const option in displayOptions) {
       const value = uiState.displayToggles[option];
-      if (displayOptions[option] && displayOptions[option].apply) {
+      if (value !== undefined && displayOptions[option].apply) {
         displayOptions[option].apply(scene_config, value, uiState);
       }
     }
