@@ -303,7 +303,7 @@ layers:
                         }
                 # color: white
                 # color: global.color_hash
-                # outline: global.highlight
+                outline: global.outline_none
                 width: 4px
                 order: 2000
                 # size: 5px
