@@ -2,8 +2,14 @@ global:
     highlight:
         color: [1,1,1,0.25]
         width: 2px
+    grey:
+        color: [.5,.5,.5,0.25]
+        width: 2px
+    black:
+        color: [0,0,0,0.25]
+        width: 2px
 
-    # dyanmic feature coloring, using the currently defined "color mode"
+    # dynamic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
       function () {
@@ -142,61 +148,6 @@ global:
                 // console.log(color)
                 return color
             }
-            
-    prop: x # elevation_ft
-    temperature_range:
-        min: 0 # assign property value to this in .js
-        max: 15000 # assign property value to this in .js
-        property_value: global.prop
-        color_range: |
-            function(){
-                var min = global.temperature_range.min
-                var max = global.temperature_range.max
-                var delta = max - min
-
-                var number = parseFloat(feature.elevation_ft)
-                // var number = feature.elevation_ft
-                if (typeof number !== 'number' || isNaN(number)) {
-                  return [0.5,0.5,0.5,0.5]; // handle non-numeric values
-                }
-
-                if (typeof number === 'string') {
-                 number = number.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-                }
-
-                var ratio = ((max - number)/delta)
-                var hsl = 240 - Math.round((1 - ratio) * 240)
-                // console.log(number,ratio,hsl)
-                var color = 'hsla(' + hsl + ', 100%, 50%, 0.75)'
-                // console.log(color)
-                return color
-            }
-    red_purple_blue:
-        min: 0 # assign property value to this in .js
-        max: 15000 # assign property value to this in .js
-        property_value: global.prop
-        color_range: |
-            function(){
-                var min = global.temperature_range.min
-                var max = global.temperature_range.max
-                var delta = max - min
-
-                var number = parseFloat(feature.elevation_ft)
-                // var number = feature.elevation_ft
-                if (typeof number !== 'number' || isNaN(number)) {
-                  return [0.5,0.5,0.5,0.5]; // handle non-numeric values
-                }
-
-                if (typeof number === 'string') {
-                 number = number.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-                }
-                var ratio = ((max - number)/delta)
-                var hsl = 240 + Math.round((1 - ratio) * 120)
-                console.log(number,ratio,hsl)
-                var color = 'hsla(' + hsl + ', 100%, 50%, 0.75)'
-                // console.log(color)
-                return color
-            }
 
 sources:
     _xyzspace:
@@ -269,17 +220,16 @@ layers:
                 #         return feature.location.count()
                 #         }
                 text:
-                    text_source: global.prop
                     optional: true
                     font:
-                        fill: yellow
+                        fill: red
                         size: 12px
                         stroke:
-                            color: black
+                            color: white
                             width: 2px
                 outline:
                     color: [1,1,0,0.2]
-                    width: .5px
+                    width: .1px
     _xyz_lines:
         filter: {$geometry: line}
         # enabled: false
@@ -309,7 +259,7 @@ layers:
                 #         return 30 - (feature.scalerank * 4)
                 #         }
                 text:
-                    text_source: global.prop
+                    # text_source: NAME
                     font:
                         fill: yellow
                         size: 12px
@@ -348,16 +298,24 @@ layers:
                         else{color = [1,0,1,0.3]}
                         return color
                         }
-
+                # color:  [1,0,1,0.3]
+                # color: global.color_hash
                 width: 2px
                 order: 300
-
-                text:
-                    text_source: global.prop
-                    optional: true
-                    font:
-                        fill: yellow
-                        size: 12px
-                        stroke:
-                            color: black
-                            width: 2px
+                # size: 5px
+                # size: |
+                #     function(){
+                #         return 30 - (feature.scalerank * 4)
+                #         }
+#             text:
+# #                text_source: label
+#                 text_source: |
+#                     function(){
+#                         return feature.name || feature.NAME
+#                     }
+#                 font:
+#                     fill: grey
+#                     size: 12px
+#                     stroke:
+#                         color: black
+#                         width: 2px
