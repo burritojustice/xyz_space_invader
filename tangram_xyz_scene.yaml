@@ -2,6 +2,12 @@ global:
     highlight:
         color: [1,1,1,0.25]
         width: 2px
+    grey:
+        color: [.5,.5,.5,0.25]
+        width: 2px
+    black:
+        color: [0,0,0,0.25]
+        width: 2px
 
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
