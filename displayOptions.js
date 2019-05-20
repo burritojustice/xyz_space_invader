@@ -86,28 +86,28 @@ const displayOptions = {
 
   // Outlines
   outlines: {
-//     parse: parseInt,
-    values: ['none', 'white', 'grey', 'black'],
+    parse: parseInt,
+    values: ['0', '1', '2', '3'],
     apply: (scene, value) => {
-      if (value === 'grey') {
+      if (value === 1) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
         scene.layers._xyz_dots.draw.points.outline = scene.global.outline_grey
         scene.layers._xyz_lines.draw._lines.outline = scene.global.outline_grey
 
       }
-      else if (value === 'white') {
+      else if (value === 2) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
         scene.layers._xyz_dots.draw.points.outline = scene.global.highlight
         scene.layers._xyz_lines.draw._lines.outline = scene.global.highlight
 
       }
-      else if (value === 'black') {
+      else if (value === 3) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
         scene.layers._xyz_dots.draw.points.outline = scene.global.outline_black
         scene.layers._xyz_lines.draw._lines.outline = scene.global.outline_black
 
       }
-      else if (value === 'none') {
+      else if (value === 0) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
         scene.layers._xyz_dots.draw.points.outline.width = scene.global.outline_none
         scene.layers._xyz_lines.draw._lines.outline.width = scene.global.outline_none
