@@ -87,7 +87,7 @@ const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: ['0', '1', '2', '3'],
+    values: [0, 1, 2, 3],
     apply: (scene, value) => {
       if (value === 1) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
