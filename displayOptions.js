@@ -87,18 +87,30 @@ const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1],
+    values: ['none', 'white', 'grey', 'black'],
     apply: (scene, value) => {
-      if (value === 1) {
+      if (value === 'grey') {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
         scene.layers._xyz_dots.draw.points.outline = scene.global.outline_grey
         scene.layers._xyz_lines.draw._lines.outline = scene.global.outline_grey
 
       }
-      else {
+      else if (value === 'white') {
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline = scene.global.highlight
+        scene.layers._xyz_lines.draw._lines.outline = scene.global.highlight
+
+      }
+      else if (value === 'black') {
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline = scene.global.outline_black
+        scene.layers._xyz_lines.draw._lines.outline = scene.global.outline_black
+
+      }
+      else if (value === 'none') {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
-        scene.layers._xyz_dots.draw.points.outline.width = '0px';
-        scene.layers._xyz_lines.draw._lines.outline.width = '0px';
+        scene.layers._xyz_dots.draw.points.outline.width = scene.global.outline_none
+        scene.layers._xyz_lines.draw._lines.outline.width = scene.global.outline_none
       }
     }
   },
