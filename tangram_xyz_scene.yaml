@@ -2,11 +2,14 @@ global:
     highlight:
         color: [1,1,1,0.25]
         width: 2px
-    grey:
+    outline_grey:
         color: [.5,.5,.5,0.25]
         width: 2px
-    black:
+    outline_black:
         color: [0,0,0,0.25]
+        width: 2px
+    outline_none:
+        color: [0,0,0,0]
         width: 2px
 
     # dynamic feature coloring, using the currently defined "color mode"
