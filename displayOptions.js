@@ -92,15 +92,15 @@ const displayOptions = {
       if (value === 1) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
-        scene.layers._xyz_dots.draw.lines.outline.color = 'global.grey'
-        scene.layers._xyz_dots.draw.lines.outline.width = '1px';
-        scene.layers._xyz_dots.draw.lines.outline.color = 'global.grey'
+        scene.layers._xyz_dots.draw.points.outline.color = 'global.grey'
+        scene.layers._xyz_dots.draw._lines.outline.width = '1px';
+        scene.layers._xyz_dots.draw._lines.outline.color = 'global.grey'
 
       }
       else {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
         scene.layers._xyz_dots.draw.points.outline.width = '0px';
-        scene.layers._xyz_dots.draw.lines.outline.width = '0px';
+        scene.layers._xyz_dots.draw._lines.outline.width = '0px';
       }
     }
   },
