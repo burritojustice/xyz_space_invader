@@ -202,7 +202,7 @@
         This ensures that the correct checkboxes stay checked when the list is re-ordered
         (for instance when tag counts change). See https://svelte.technology/guide#keyed-each-blocks.
       -->
-      {#each tagDisplayList as tag (JSON.stringify(tag))}
+      {#each tagDisplayList.slice(0, 500) as tag (JSON.stringify(tag))}
         <label>
           <input type="checkbox" value="{tag[0]}" bind:group='tagFilterList'>
           ({tag[1]}x) {tag[0]}
@@ -300,41 +300,54 @@ export default {
 
     // build the list of tags for display with checkboxes
     tagDisplayList: ({ tagsWithCountsInViewport, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, uniqueTagsSeen }) => {
-      // start with tags currently in the viewport
-      let tags = [...tagsWithCountsInViewport]; // copy tags so we don't modify original list
+      const tagCountMap = new Map();
 
       // add any tags that are selected, but not currently in the viewport
       // this also handles cases where an impossible tag combo is selected (postcode 98125 AND postcode 98122),
       // but we want those tags to still show up in the list so they can be de-selected
-      tagFilterList.forEach(tag => {
-        if (!tags.find(t => t[0] === tag)) {
-          tags.push([tag, 0]);
-        }
-      });
+      tagFilterList.forEach(tag => tagCountMap.set(tag, 0));
 
       // add all uniquely seen tags that aren't currently in the viewport
       if (!tagFilterViewport) {
-        uniqueTagsSeen.forEach(tag => {
-          if (!tags.find(t => t[0] === tag)) {
-            tags.push([tag, 0]);
-          }
-        });
+        uniqueTagsSeen.forEach(tag => tagCountMap.set(tag, 0));
       }
 
       // remove tags without an @ if desired
+      let tagFilter = () => true;
       if (tagFilterAt) {
-        tags = tags.filter(tag => tag[0].includes('@'));
+        tagCounts = tagCounts.filter(tag => tag[0].includes('@'));
+        tagFilter = ([tag]) => tag.includes('@');
       }
+
+      // add tags currently in the viewport
+      tagsWithCountsInViewport
+        .filter(tagFilter)
+        .forEach(([k, v]) => tagCountMap.set(k, v));
+
+      // convert to array entries for sorting
+      let tagCounts = [...tagCountMap.entries()];
 
       // sort tags as desired
       if (tagSort === 'name') {
-        tags.sort((a, b) => a[0] > b[0] ? 1 : -1);
+        tagCounts.sort((a, b) => {
+          if (a[0] === b[0]) {
+            return a[1] < b[1] ? 1 : -1;
+          }
+          return a[0] > b[0] ? 1 : -1;
+        });
       }
       else if (tagSort === 'count') {
-        tags.sort((a, b) => a[1] < b[1] ? 1 : -1);
+        tagCounts.sort((a, b) => {
+          if (a[1] === b[1]) {
+            return a[0] > b[0] ? 1 : -1;
+          }
+          return a[1] < b[1] ? 1 : -1;
+        });
       }
 
-      return tags;
+      tagCounts = tagCounts.slice(0, 500); // limit to top 500 tags
+
+      return tagCounts;
     },
 
     // format selected tags as a query parameter for XYZ tile requests
