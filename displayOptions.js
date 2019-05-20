@@ -60,8 +60,8 @@ const displayOptions = {
       }
       else if (value === 3) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
-        scene.layers._xyz_dots.draw.points.outline.color = global.outline_none;
-        scene.layers._xyz_dots.draw.points.outline.width = global.outline_none;
+        scene.layers._xyz_dots.draw.points.outline.color = scene.global.outline_none;
+        scene.layers._xyz_dots.draw.points.outline.width = scene.global.outline_none;
       }
 
     }
@@ -114,7 +114,7 @@ const displayOptions = {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '3px';
       }
       else {
-        scene.layers._xyz_lines.draw._lines.outline = global.outline_none;
+        scene.layers._xyz_lines.draw._lines.outline = scene.global.outline_none;
         // scene.layers._xyz_dots.draw.points.size = '6px';
         // scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
       }
