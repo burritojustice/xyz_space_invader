@@ -399,7 +399,7 @@ export default {
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
         changed.featureProp ||
-        changed.featurePropPalette ||
+       // changed.featurePropPalette ||
         changed.featurePropMin ||
         changed.featurePropMax // ||
         // changed.featurePropMedian ||
