@@ -159,8 +159,8 @@
       {#if numFeaturesInViewport}
         <tr><td>features in viewport</td><td>{numFeaturesInViewport}</td></tr>
       {/if}
-      {#if tagsInViewport}
-        <tr><td>tags in viewport</td><td>{tagsInViewport.length}</td></tr>
+      {#if numFeatureTagsInViewport != null}
+        <tr><td>feature tags in viewport</td><td>{numFeatureTagsInViewport}</td></tr>
       {/if}
       <tr><td>unique tags in viewport</td><td>{uniqueTagsInViewport.size}</td></tr>
       <tr><td>unique tags seen</td><td>{uniqueTagsSeen.size}</td></tr>
@@ -242,7 +242,7 @@ export default {
       featurePropSigmaCeiling: null,
       featurePropHistogram: null,
 
-      tagsWithCounts: [],
+      tagsWithCountsInViewport: [],
       tagFilterList: [],
       tagFilterAndOr: 'or',
       tagFilterViewport: false,
@@ -250,7 +250,6 @@ export default {
       tagSort: 'count',
 
       numFeaturesInViewport: null,
-      tagsInViewport: [],
       uniqueTagsSeen: new Set(),
 
       displayToggles: null,
@@ -295,12 +294,14 @@ export default {
 
     nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
 
-    uniqueTagsInViewport: ({ tagsInViewport }) => new Set([...tagsInViewport]),
+    uniqueTagsInViewport: ({ tagsWithCountsInViewport }) => new Set(tagsWithCountsInViewport.map(v => v[0])),
+
+    numFeatureTagsInViewport: ({ tagsWithCountsInViewport }) => tagsWithCountsInViewport.reduce((acc, cur) => acc + cur[1], 0),
 
     // build the list of tags for display with checkboxes
-    tagDisplayList: ({ tagsWithCounts, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, uniqueTagsSeen }) => {
+    tagDisplayList: ({ tagsWithCountsInViewport, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, uniqueTagsSeen }) => {
       // start with tags currently in the viewport
-      let tags = [...tagsWithCounts]; // copy tags so we don't modify original list
+      let tags = [...tagsWithCountsInViewport]; // copy tags so we don't modify original list
 
       // add any tags that are selected, but not currently in the viewport
       // this also handles cases where an impossible tag combo is selected (postcode 98125 AND postcode 98122),
@@ -384,9 +385,9 @@ export default {
   },
 
   onstate({ changed, current, previous }) {
-    if (changed.tagsInViewport) {
+    if (changed.uniqueTagsInViewport) {
       this.set({
-        uniqueTagsSeen: new Set([...current.uniqueTagsSeen, ...current.tagsInViewport])
+        uniqueTagsSeen: new Set([...current.uniqueTagsSeen, ...current.uniqueTagsInViewport])
       });
     }
 

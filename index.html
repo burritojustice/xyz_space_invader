@@ -298,29 +298,19 @@
       tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
     })
 
-    // count them
-    const counts = {}
-    tagsViewport.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
-
-    // count up the number of each tags
-    var tagCounts = {};
-    for (var i = 0; i < tagsViewport.length; i++) {
-      var num = tagsViewport[i];
-      tagCounts[num] = tagCounts[num] ? tagCounts[num] + 1 : 1;
-    }
-    // console.log("tag counts: ",tagCounts)
-    // sort the list of tags by count
-    var sortable = [];
-    // make a new list of tags and their counts
-    for (var aTag in tagCounts) {
-      sortable.push([aTag, tagCounts[aTag]]);
-    }
-    sortable.sort((a, b) => b[1] - a[1]);
+    const tagsWithCountsInViewport =
+      Object.entries(
+        features
+          .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
+          .reduce((tagCounts, tag) => {
+              tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
+              return tagCounts;
+            }, {}))
+      .sort((a, b) => b[1] - a[1]);
 
     appUI.set({
       numFeaturesInViewport: features.length,
-      tagsInViewport: tagsViewport,
-      tagsWithCounts: sortable
+      tagsWithCountsInViewport
     });
   }
 
@@ -340,7 +330,7 @@
         featurePropSigmaFloor: null,
         featurePropSigmaCeiling: null,
         featurePropHistogram: null
-        
+
       });
       return;
     }
@@ -381,7 +371,7 @@
       console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
 
       // calculating sigmas and ranges using standard deviations
-      
+
       sigma = {
         floor: mean - stdDev,
         ceiling: mean + stdDev
@@ -397,30 +387,30 @@
       sigma.outside = vals.length - sigma.count
 
       console.log(sigma)
-      
+
       // adjust for crazy outliers. 4 sigma works, but 3 sigma gives a better range where most of the data is jammed into one decile of the histogram -- maybe this can be some sort of sigma toggle?
-      
+
       var sigma_filter = 4 // any values above this range get squished into the same color (and below)
       if (max > (mean + stdDev * sigma_filter)){max = mean + stdDev * sigma_filter}
       if (min < (mean - stdDev * sigma_filter)){min = mean - stdDev * sigma_filter}
-      
+
       // need to clearly indicate that these 'adjusted' min and max are not the true min and max (and we also need to store the 'global' min and max...
-      
+
       // here we count things for quantiles ()
       var range = max - min
-      var quantile = 10 
+      var quantile = 10
       var step = range / quantile
       var bucket = []
-      
+
       // add up the things in each bucket
-      
+
       for (var i = 0; i < quantile; i++) {
         bucket[i] = vals.reduce((total,amount) => {
           if ((amount > (step * i)+min) && (amount <= (step * (i+1))+ min)){
             total += 1
           }
           return total
-         },1); 
+         },1);
       }
 
       console.log(step,bucket)
@@ -441,7 +431,7 @@
           row = row + '*'
           if (i == (columns-1)){
             var suffix = spacing + ' | ' + (index*step + min).toFixed(0) + '->' + ((index+1)*step + min).toFixed(0)
-            row = row + suffix + '\n'  
+            row = row + suffix + '\n'
           }
          }
         quantileChart += row
@@ -450,7 +440,7 @@
       console.log(quantileChart)
 
 
-    } //endif 
+    } //endif
 
     // count up the number of each unique property value
     const propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
