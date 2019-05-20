@@ -413,6 +413,7 @@ export default {
         changed.tagFilterQueryParam ||
         changed.featureProp ||
         changed.featurePropPalette ||
+        changed.featurePropValueCounts ||
         changed.featurePropMin ||
         changed.featurePropMax // ||
         // changed.featurePropMedian ||
