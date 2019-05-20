@@ -216,14 +216,14 @@ layers:
                 text:
                     optional: true
                     font:
-                        fill: red
+                        fill: yellow
                         size: 12px
                         stroke:
-                            color: white
+                            color: black
                             width: 2px
                 outline:
                     color: [1,1,0,0.2]
-                    width: .1px
+                    width: .5px
     _xyz_lines:
         filter: {$geometry: line}
         # enabled: false
