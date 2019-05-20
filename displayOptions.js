@@ -91,8 +91,8 @@ const displayOptions = {
     apply: (scene, value) => {
       if (value === 1) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
-        scene.layers._xyz_dots.draw.points.outline = scene.global.grey
-        scene.layers._xyz_lines.draw._lines.outline = scene.global.grey
+        scene.layers._xyz_dots.draw.points.outline = scene.global.outline_grey
+        scene.layers._xyz_lines.draw._lines.outline = scene.global.outline_grey
 
       }
       else {
