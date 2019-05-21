@@ -259,18 +259,10 @@ layers:
                         else{color = [1,0,0,0.5]}
                         return color
                     }
-                # color: |
-                #     function(){
-                #         var pi = 3.14159
-                #         var zoom = pi - $zoom/20
-                #         var opacity = Math.cos(zoom)
-                #         return [1,0,0,opacity]
-                #     }
                 size: 6px
-                # size: |
-                #     function(){
-                #         return feature.location.count()
-                #         }
+                outline:
+                    color: [1,1,0,0.2]
+                    width: .2px
                 text:
                     text_source: global.prop
                     optional: true
@@ -280,9 +272,7 @@ layers:
                         stroke:
                             color: black
                             width: 2px
-                outline:
-                    color: [1,1,0,0.2]
-                    width: .1px
+
     _xyz_lines:
         filter: {$geometry: line}
         # enabled: false
