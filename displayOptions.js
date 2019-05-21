@@ -60,7 +60,7 @@ const displayOptions = {
       }
       else if (value === 3) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
-        scene.layers._xyz_dots.draw.points.outline = scene.global.outline_none;
+        scene.layers._xyz_dots.draw.points.outline = [.5, .5, .5, 0.5];
       }
 
     }
