@@ -290,6 +290,8 @@ export default {
       return featurePropValueCounts; // return original/unmodified values
     },
 
+    featurePropValueCountHash: ({ featurePropValueCounts }) => hashString(JSON.stringify(featurePropValueCounts)),
+
     nextFeaturePropValueSort: ({ featurePropValueSort }) => (featurePropValueSort === 'count' ? 'values' : 'count'),
 
     nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
@@ -413,7 +415,7 @@ export default {
         changed.tagFilterQueryParam ||
         changed.featureProp ||
         changed.featurePropPalette ||
-        changed.featurePropValueCounts ||
+        changed.featurePropValueCountHash ||
         changed.featurePropMin ||
         changed.featurePropMax // ||
         // changed.featurePropMedian ||
@@ -684,6 +686,20 @@ function buildFeatureRows(obj, level = -1, prop = null, rows = []) {
   return rows;
 }
 
+function hashString (string) {
+    var hash = 0, i, chr, len;
+
+    if (string.length === 0) {
+        return hash;
+    }
+
+    for (i = 0, len = string.length; i < len; i++) {
+        chr   = string.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}
 
 
 </script>

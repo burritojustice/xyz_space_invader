@@ -457,8 +457,9 @@
     });
 
     // update UI
-    const update = {
+    appUI.set({
       featurePropCount: propCounts.size,
+      featurePropValueCounts: sortedPropCounts,
       featurePropMin: min,
       featurePropMax: max,
       featurePropMedian: median,
@@ -468,15 +469,7 @@
       featurePropSigmaFloor: sigma.floor,
       featurePropSigmaCeiling: sigma.ceiling,
       featurePropHistogram: quantileChart
-    };
-
-    // only update prop counts in svelte if we're sure they've changed
-    // TODO: find a better solution
-    if (JSON.stringify(sortedPropCounts) !== JSON.stringify(appUI.get().featurePropValueCounts)) {
-      update.featurePropValueCounts = sortedPropCounts;
-    }
-
-    appUI.set(update);
+    });
   }
 
 
