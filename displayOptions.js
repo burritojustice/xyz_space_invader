@@ -16,9 +16,12 @@ const displayOptions = {
   colors: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
 
-    apply: (scene, value, { featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropValueCounts }) => {
+    apply: (scene, value, { featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
       scene.global.colorMode = value;
-      scene.global.colorState = { featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropValueCounts };
+      scene.global.colorState = {
+        featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
+        colorHelpers
+      };
 
       // use color mode color calc function if one exists, and a feature property is selected if required
       if (colorFunctions[value] && colorFunctions[value].color &&

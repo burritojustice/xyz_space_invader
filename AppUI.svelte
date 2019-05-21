@@ -136,8 +136,9 @@
                         featurePropMin,
                         featurePropMax,
                         featurePropPalette,
+                        featurePropPaletteFlip,
                         featurePropValueCounts,
-                        colorPalettes
+                        colorHelpers
                       },
                       value
                     )};">
@@ -254,22 +255,23 @@ export default {
 
       displayToggles: null,
       colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
-      colorPalettes // need to reference here to make accessible to templates
+      colorPalettes, // need to reference here to make accessible to templates
+      colorHelpers // need to reference here to make accessible to templates
     }
   },
 
   computed: {
     basemapScene: ({ basemap }) => {
-      return { ...getBasemapScene(basemap), ...{ global: { colorFunctions } } };
+      return {
+        ...getBasemapScene(basemap),
+        ...{ global: { colorFunctions } }
+      };
     },
 
     featurePropRows: ({ feature }) => feature && buildFeatureRows(feature.properties),
 
-    featurePropPalette: ({ featurePropPaletteName, featurePropPaletteFlip }) => {
-      if (featurePropPaletteFlip) {
-        return Array.from(colorPalettes[featurePropPaletteName]).reverse(); // copy and reverse palette
-      }
-      return colorPalettes[featurePropPaletteName]; // return original/unmodified palette
+    featurePropPalette: ({ featurePropPaletteName }) => {
+      return colorPalettes[featurePropPaletteName];
     },
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
@@ -415,6 +417,7 @@ export default {
         changed.tagFilterQueryParam ||
         changed.featureProp ||
         changed.featurePropPalette ||
+        changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
         changed.featurePropMin ||
         changed.featurePropMax // ||

@@ -36,15 +36,7 @@ const colorFunctions = {
       }
 
       var ratio = (delta === 0 ? 1 : Math.max(Math.min(1 - ((max - number) / delta), 1), 0));
-      var viridis = Math.round(ratio * 255);
-      var color = palette[viridis];
-
-      try {
-        return `rgb(${color.map(c => c * 255).join(', ')})`;
-      }
-      catch(e) {
-        return 'rgba(128, 128, 128, 0.5)';
-      }
+      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
     }
   },
 
@@ -62,18 +54,36 @@ const colorFunctions = {
       }
 
       var ratio = Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0);
-      var viridis = Math.round(ratio * 255);
-      var color = palette[viridis];
-
-      try {
-        return `rgb(${color.map(c => c * 255).join(', ')})`;
-      }
-      catch (e) {
-        return 'rgba(128, 128, 128, 0.5)';
-      }
+      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
     }
   }
 
+};
+
+const colorHelpers = {
+  getPaletteColor: function getPaletteColor (palette, value, alpha = 1, flip = false) {
+    try {
+      value = Math.max(Math.min(value, 1), 0); // clamp to 0-1
+
+      if (flip) {
+        value = 1 - value; // optionally flip palette
+      }
+
+      // function-based palette
+      if (typeof palette === 'function') {
+        return palette(value, alpha);
+      }
+      // array-based palette
+      else {
+        const index = Math.round(value * (palette.length-1));
+        const color = palette[index];
+        return `rgba(${color.map(c => c * 255).join(', ')}, ${alpha})`;
+      }
+    }
+    catch (e) {
+      return 'rgba(128, 128, 128, 0.5)';
+    }
+  }
 };
 
 function colorHash (value) {

@@ -5130,6 +5130,16 @@ const colorPalettes = {
       0.998364,
       0.644924
     ]
-  ]
+  ],
+
+  "temperature": function (value, alpha) {
+    const hsl = 240 - Math.round((1 - value) * 240);
+    return `hsla(${hsl}, 100%, 50%, ${alpha})`;
+  },
+
+  "red-purple-blue": function (value, alpha) {
+    const hsl = 240 + Math.round((1 - value) * 120);
+    return `hsla(${hsl}, 100%, 50%, ${alpha})`;
+  },
 
 };
