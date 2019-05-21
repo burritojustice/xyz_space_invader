@@ -180,7 +180,7 @@
       <input type="radio" name="and_or" value="and" bind:group='tagFilterAndOr'>and<br>
     <p>
   </div>
-  <div id="tag_list" class="panel">
+  <div id="tag_panel" class="panel">
     <span style="color:blue;" on:click="toggleTagFilterViewport()">
       {#if tagFilterViewport}
         [show all tags seen]
@@ -198,7 +198,11 @@
     <span style="color:blue;" on:click="toggleTagSort()">
       [sort by {nextTagSort}]
     </span>
-    <p id="tags">
+    <div id="tags">
+      <div>
+        <input id="tag_search" type="text" bind:value="tagFilterSearch" placeholder="Filter tags" on:keydown="event.stopPropagation()">
+      </div>
+
       <!-- The JSON.stringify gives Svelte a way to uniquely identify the full tag info.
         This ensures that the correct checkboxes stay checked when the list is re-ordered
         (for instance when tag counts change). See https://svelte.technology/guide#keyed-each-blocks.
@@ -214,7 +218,7 @@
       {#if tagDisplayList.length > 500}
         <i>Displaying the top 500 tags of {tagDisplayList.length} total</i>
       {/if}
-    </p>
+    </div>
   </div>
 </div>
 
@@ -253,6 +257,7 @@ export default {
       tagFilterViewport: false,
       tagFilterAt: false,
       tagSort: 'count',
+      tagFilterSearch: '', // set these to empty strings (not null) to get placeholder text in input
 
       numFeaturesInViewport: null,
       uniqueTagsSeen: new Set(),
@@ -307,14 +312,22 @@ export default {
     numFeatureTagsInViewport: ({ tagsWithCountsInViewport }) => tagsWithCountsInViewport.reduce((acc, cur) => acc + cur[1], 0),
 
     // build the list of tags for display with checkboxes
-    tagDisplayList: ({ tagsWithCountsInViewport, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, uniqueTagsSeen }) => {
+    tagDisplayList: ({ tagsWithCountsInViewport, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, tagFilterSearch, uniqueTagsSeen }) => {
       const tagCountMap = new Map();
-      const tagFilterFunc = tag => tagFilterAt ? tag.includes('@') : true; // remove tags without an @ if desired
+
+      // optional filters
+      // e.g. remove tags without an @ if desired, or text search
+      const tagFilterFunc = tag => {
+        const at = tagFilterAt ? tag.includes('@') : true;
+        const search = (tagFilterSearch && tagFilterSearch.length >= 3) ? tag.includes(tagFilterSearch) : true;
+        return at && search;
+      };
 
       // add any tags that are selected, but not currently in the viewport
       // this also handles cases where an impossible tag combo is selected (postcode 98125 AND postcode 98122),
       // but we want those tags to still show up in the list so they can be de-selected
-      tagFilterList.forEach(tag => tagCountMap.set(tag, 0)); // note this ignores the @-only filter
+      // note this ignores filters to ensure these tags can always be seen/de-selected
+      tagFilterList.forEach(tag => tagCountMap.set(tag, 0));
 
       // add all uniquely seen tags that aren't currently in the viewport
       if (!tagFilterViewport) {
@@ -767,9 +780,15 @@ function hashString (string) {
     right: 0;
   }
 
-  #tag_list {
+  #tag_panel {
     overflow: auto;
     flex: 1 1 auto;
+  }
+
+  #tag_search {
+    width: 305px;
+    margin: 4px 0px;
+    padding: 2px;
   }
 
   .dot {
