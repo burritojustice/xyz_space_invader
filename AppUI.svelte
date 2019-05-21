@@ -210,6 +210,10 @@
         </label>
         <br>
       {/each}
+
+      {#if tagDisplayList.length > 500}
+        <i>Displaying the top 500 tags of {tagDisplayList.length} total</i>
+      {/if}
     </p>
   </div>
 </div>
@@ -347,8 +351,6 @@ export default {
           return a[1] < b[1] ? 1 : -1;
         });
       }
-
-      tagCounts = tagCounts.slice(0, 500); // limit to top 500 tags
 
       return tagCounts;
     },
