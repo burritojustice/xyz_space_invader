@@ -40,7 +40,7 @@ const colorFunctions = {
       var color = palette[viridis];
 
       try {
-        return `rgb(${color.map(c => c * 255).join(', ') + ',' + 0.75})`;
+        return `rgb(${color.map(c => c * 255).join(', ')} + ', 0.75')`;
       }
       catch(e) {
         return 'rgba(128, 128, 128, 0.5)';
