@@ -305,28 +305,27 @@ export default {
     // build the list of tags for display with checkboxes
     tagDisplayList: ({ tagsWithCountsInViewport, tagSort, tagFilterList, tagFilterViewport, tagFilterAt, uniqueTagsSeen }) => {
       const tagCountMap = new Map();
+      const tagFilterFunc = tag => tagFilterAt ? tag.includes('@') : true; // remove tags without an @ if desired
 
       // add any tags that are selected, but not currently in the viewport
       // this also handles cases where an impossible tag combo is selected (postcode 98125 AND postcode 98122),
       // but we want those tags to still show up in the list so they can be de-selected
-      tagFilterList.forEach(tag => tagCountMap.set(tag, 0));
+      tagFilterList.forEach(tag => tagCountMap.set(tag, 0)); // note this ignores the @-only filter
 
       // add all uniquely seen tags that aren't currently in the viewport
       if (!tagFilterViewport) {
-        uniqueTagsSeen.forEach(tag => tagCountMap.set(tag, 0));
-      }
-
-      // remove tags without an @ if desired
-      let tagFilter = () => true;
-      if (tagFilterAt) {
-        tagCounts = tagCounts.filter(tag => tag[0].includes('@'));
-        tagFilter = ([tag]) => tag.includes('@');
+        uniqueTagsSeen
+          .forEach(tag => {
+            if (tagFilterFunc(tag)) {
+              tagCountMap.set(tag, 0);
+            }
+          });
       }
 
       // add tags currently in the viewport
       tagsWithCountsInViewport
-        .filter(tagFilter)
-        .forEach(([k, v]) => tagCountMap.set(k, v));
+        .filter(([tag]) => tagFilterFunc(tag))
+        .forEach(([tag, count]) => tagCountMap.set(tag, count));
 
       // convert to array entries for sorting
       let tagCounts = [...tagCountMap.entries()];
