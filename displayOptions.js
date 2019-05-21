@@ -14,7 +14,7 @@ const displayOptions = {
 
   // Feature colors
   colors: {
-    values: ['xray', 'range', 'rank', 'property', 'hash'],
+    values: ['xray', 'property', 'hash', 'range', 'rank'],
 
     apply: (scene, value, { featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropValueCounts }) => {
       scene.global.colorMode = value;
