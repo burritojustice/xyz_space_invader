@@ -50,6 +50,7 @@ global:
         }
 
     property_hash_name: TRAJUNCTYP
+    prop: x
 
     var_property_color_hash: |
         function(){
@@ -207,29 +208,20 @@ layers:
                         else{color = [1,0,0,0.5]}
                         return color
                     }
-                # color: |
-                #     function(){
-                #         var pi = 3.14159
-                #         var zoom = pi - $zoom/20
-                #         var opacity = Math.cos(zoom)
-                #         return [1,0,0,opacity]
-                #     }
                 size: 6px
-                # size: |
-                #     function(){
-                #         return feature.location.count()
-                #         }
-                text:
-                    optional: true
-                    font:
-                        fill: red
-                        size: 12px
-                        stroke:
-                            color: white
-                            width: 2px
                 outline:
                     color: [1,1,0,0.2]
                     width: .1px
+                text:
+                    text_source: global.prop
+                    optional: true
+                    font:
+                        fill: yellow
+                        size: 12px
+                        stroke:
+                            color: black
+                            width: 2px
+
     _xyz_lines:
         filter: {$geometry: line}
         # enabled: false
@@ -248,34 +240,23 @@ layers:
                         else{color = [1,1,0,0.3]}
                         return color
                         }
-                # color: white
-                # color: global.color_hash
-                # outline: global.highlight
+
                 width: 4px
                 order: 2000
-                # size: 5px
-                # size: |
-                #     function(){
-                #         return 30 - (feature.scalerank * 4)
-                #         }
                 text:
-                    # text_source: NAME
+                    text_source: global.prop
+                    optional: true
                     font:
                         fill: yellow
                         size: 12px
-
-
+                        stroke:
+                            color: black
+                            width: 2px
 
     _xyz_polygons:
         filter: {$geometry: polygon}
         # enabled: false
         data: {source: _xyzspace}
-        # filter: |
-        #     function(){
-        #         if (feature.min_zoom){
-        #             if(feature.min_zoom < $zoom){return true}
-        #             }
-        #         }
         _outlines:
             # enabled: false
             draw:
@@ -302,20 +283,12 @@ layers:
                 # color: global.color_hash
                 width: 2px
                 order: 300
-                # size: 5px
-                # size: |
-                #     function(){
-                #         return 30 - (feature.scalerank * 4)
-                #         }
-#             text:
-# #                text_source: label
-#                 text_source: |
-#                     function(){
-#                         return feature.name || feature.NAME
-#                     }
-#                 font:
-#                     fill: grey
-#                     size: 12px
-#                     stroke:
-#                         color: black
-#                         width: 2px
+                text:
+                    text_source: global.prop
+                    optional: true
+                    font:
+                        fill: yellow
+                        size: 12px
+                        stroke:
+                            color: black
+                            width: 2px
