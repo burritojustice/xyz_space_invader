@@ -92,11 +92,10 @@
   appUI.on('loadSpace', ({ spaceId, token }) => {
     if (mapStartLocation == null) {
       console.log('no url hash, getting bbox');
-      getBbox({ spaceId, token });
+      getStats({ spaceId, token });
     } else {
       console.log('using url hash', mapStartLocation);
-      map.setView([mapStartLocation.lat,mapStartLocation.lng],mapStartLocation.zoom);
-      getStats({ spaceId, token });
+      getStats({ spaceId, token, mapStartLocation });
     }
   });
 
@@ -209,7 +208,7 @@
     }
   }
 
-  async function getStats({ spaceId, token }) {
+  async function getStats({ spaceId, token, mapStartLocation }) {
     // Get stats endpoint
     var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
     const stats = await fetch(url).then(r => r.json());
@@ -218,20 +217,33 @@
     var bbox = stats.bbox.value
     console.log('map start location:', mapStartLocation)
     console.log('bbox',bbox)
-    if (mapStartLocation){
-    // if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
-      if (
-        ((mapStartLocation.lat < bbox[1]) || (mapStartLocation.lat > bbox[3]))
-        ||
-        ((mapStartLocation.lng < bbox[0]) || (mapStartLocation.lng > bbox[2]))
-      ){
-        console.log('map start location outside bbox')
-        var corner1 = L.latLng(bbox[1],bbox[0]),
-        corner2 = L.latLng(bbox[3],bbox[2])
-        bounds = L.latLngBounds(corner1, corner2)
-        map.fitBounds(bounds)
-        }
+
+    // check for all zero bbox
+    if ((bbox[0] == 0) && (bbox[1] == 0) && (bbox[2] == 0) && (bbox[3] == 0)) {
+      console.log('zeros')
+      bbox = [-45, -45, 45, 45]
     }
+
+    let fitBounds = false;
+    if (mapStartLocation) {
+      // if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
+      if (mapStartLocation.lat < bbox[1] || mapStartLocation.lat > bbox[3] ||
+          mapStartLocation.lng < bbox[0] || mapStartLocation.lng > bbox[2]) {
+        console.log('map start location outside bbox');
+        fitBounds = true;
+      }
+      else {
+        map.setView([mapStartLocation.lat, mapStartLocation.lng], mapStartLocation.zoom);
+      }
+    }
+
+    if (fitBounds) {
+      const sw = L.latLng(bbox[1], bbox[0]);
+      const ne = L.latLng(bbox[3], bbox[2]);
+      const bounds = L.latLngBounds(sw, ne);
+      map.fitBounds(bounds);
+    }
+
     var spaceSize = stats.byteSize.value
     var spaceCount = stats.count.value
     var calcSize = (spaceSize/1024/1024)
@@ -252,33 +264,13 @@
 
     // update UI
     appUI.set({
-      // spaceId,
       spaceInfo: {
         title: spaceInfo.title,
         description: spaceInfo.description,
         numFeatures: spaceCount,
         dataSize: calcSize
       },
-      // token
     });
-  }
-
-  function getBbox({ spaceId, token }) {
-    var url = 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/statistics' + '?access_token=' + token
-    fetch(url).then((response) => response.json()).then(function(data) {
-      var bbox = data.bbox.value
-      // check for all zero bbox
-      if ((bbox[0] == 0) && (bbox[1] == 0) && (bbox[2] == 0) && (bbox[3] == 0)){
-        console.log('zeros')
-        bbox = [-45,-45,45,45]
-        }
-      console.log(bbox)
-      var sw = L.latLng(bbox[1],bbox[0]),
-      ne = L.latLng(bbox[3],bbox[2])
-      bounds = L.latLngBounds(sw, ne)
-      map.fitBounds(bounds);
-      getStats({ spaceId, token })
-    })
   }
 
   // query Tangram viewport tiles, and update UI data (tag and property counts, etc.)
