@@ -248,12 +248,12 @@
     var spaceCount = stats.count.value
     var calcSize = (spaceSize/1024/1024)
     console.log(spaceSize,'KB',calcSize)
-    if (calcSize < 1000){
+    if (calcSize < 1000) {
       calcSize = calcSize.toFixed(1) + ' MB'
-      }
-    else{
+    }
+    else {
       calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
-      }
+    }
 
     // Get space endpoint
     var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
@@ -270,6 +270,9 @@
         numFeatures: spaceCount,
         dataSize: calcSize
       },
+
+      // seed with top tags from stats endpoint
+      uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.tag)])
     });
   }
 
