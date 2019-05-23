@@ -320,7 +320,7 @@ export default {
       const tagFilterFunc = tag => {
         const at = tagFilterAt ? tag.includes('@') : true;
         const search = (tagFilterSearch && tagFilterSearch.length >= 3) ? tag.includes(tagFilterSearch) : true;
-        return at && search;
+        return (at && search) || tagFilterList.indexOf(tag) > -1; // always include selected tags
       };
 
       // add any tags that are selected, but not currently in the viewport
