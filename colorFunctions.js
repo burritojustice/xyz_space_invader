@@ -53,7 +53,7 @@ const colorFunctions = {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
 
-      var ratio = Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0);
+      var ratio = (counts.length <= 1 ? 1 : Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0));
       return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
     }
   }
