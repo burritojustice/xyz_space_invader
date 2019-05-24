@@ -9,24 +9,31 @@ global:
         color: [0,0,0,0.25]
         width: 2px
 
+    # replaced by app JS, used to look-up feature props that may be nested,
+    # and we don't want to re-parse the
+    lookupFeatureProp: function(feature) { return null; }
+
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
       function () {
-        if (global.colorFunctions[global.colorMode]) {
-          if (global.colorFunctions[global.colorMode].useProperty) {
-            return global.colorFunctions[global.colorMode].color(
-              feature[global.colorState.featureProp],
-              global.colorState
-            );
-          }
-          else {
-            return global.colorFunctions[global.colorMode].color(
-              feature,
-              global.colorState
-            );
+        try {
+          if (global.colorFunctions[global.colorMode]) {
+            if (global.colorFunctions[global.colorMode].useProperty) {
+              return global.colorFunctions[global.colorMode].color(
+                global.lookupFeatureProp(feature),
+                global.colorState
+              );
+            }
+            else {
+              return global.colorFunctions[global.colorMode].color(
+                feature,
+                global.colorState
+              );
+            }
           }
         }
+        catch(e) { } // fallthrough to default color on exception
         return 'rgba(127, 127, 127, .5)';
       }
 

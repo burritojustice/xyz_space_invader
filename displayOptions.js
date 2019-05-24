@@ -16,16 +16,24 @@ const displayOptions = {
   colors: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
 
-    apply: (scene, value, { featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
+    apply: (scene, value, { featurePropStack, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
       scene.global.colorMode = value;
       scene.global.colorState = {
-        featureProp, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
+        featurePropStack, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
         colorHelpers
       };
 
+      if (featurePropStack) {
+        // custom JS tangram function to access nested properties efficiently
+        scene.global.lookupFeatureProp =
+          `function(feature) {
+            return feature${featurePropStack.map(k => '[\'' + k + '\']').join('')};
+          }`;
+      }
+
       // use color mode color calc function if one exists, and a feature property is selected if required
       if (colorFunctions[value] && colorFunctions[value].color &&
-          (featureProp || !colorFunctions[value].useProperty)) {
+          (featurePropStack || !colorFunctions[value].useProperty)) {
 
         scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.featureColorDynamic;
         scene.layers._xyz_lines.draw._lines.color = scene.global.featureColorDynamic;

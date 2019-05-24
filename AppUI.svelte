@@ -48,7 +48,7 @@
         {#each featurePropRows as r}
           <tr
             class:active="r.prop === featureProp"
-            on:click="setFeatureProp(r.prop)"
+            on:click="setFeatureProp(r.propStack)"
           >
           <td>{@html formatFeatureRow(r)}</td>
           </tr>
@@ -107,7 +107,7 @@
           <span style="color:blue;" on:click="toggleFeaturePropValueSort()">
             [sort by {nextFeaturePropValueSort}]
           </span>
-          <span style="color:blue;" id="clear_color_properties" on:click="set({ featureProp: null })">clear filter</span>
+          <span style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</span>
         </div>
       {:else}
         <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
@@ -132,7 +132,6 @@
                       // so we have to pass the props we need one by one
                       {
                         displayToggles,
-                        featureProp,
                         featurePropMin,
                         featurePropMax,
                         featurePropPalette,
@@ -235,7 +234,7 @@ export default {
       spaceInfo: null,
 
       feature: null,
-      featureProp: null,
+      featurePropStack: null,
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropValueSort: 'count',
@@ -276,6 +275,9 @@ export default {
         ...{ global: { colorFunctions } }
       };
     },
+
+    // un-nest selected feature property name
+    featureProp: ({ featurePropStack }) => featurePropStack && featurePropStack.join('.'),
 
     featurePropRows: ({ feature }) => feature && buildFeatureRows(feature.properties),
 
@@ -382,7 +384,7 @@ export default {
       }
     },
 
-    queryParams: ({ spaceId, token, basemap, displayToggles, featureProp, featurePropPaletteName, featurePropPaletteFlip, tagFilterQueryParam }) => {
+    queryParams: ({ spaceId, token, basemap, displayToggles, featurePropStack, featurePropPaletteName, featurePropPaletteFlip, tagFilterQueryParam }) => {
       const params = new URLSearchParams();
 
       if (spaceId) {
@@ -403,8 +405,10 @@ export default {
         params.set('tags', tagFilterQueryParam);
       }
 
-      if (featureProp) {
-        params.set('property', featureProp);
+      if (featurePropStack) {
+        // escape dot notation in property names
+        // make sure to call toString to handle numbers, etc.
+        params.set('property', featurePropStack.map(s => s.toString().replace(/\./g, '\\\.')).join('.'));
       }
 
       params.set('palette', featurePropPaletteName);
@@ -429,7 +433,7 @@ export default {
 
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
-        changed.featureProp ||
+        changed.featurePropStack ||
         changed.featurePropPalette ||
         changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
@@ -518,12 +522,18 @@ export default {
         featurePropPaletteName = params.palette;
       }
 
+      // parse selected feature property
+      const featurePropStack = params.property && params.property
+        .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
+        .split('.')
+        .map(s => s.replace(/__DELIMITER__/g, '.'));
+
       this.set({
         spaceId,
         token,
         basemap,
         displayToggles: toggles,
-        featureProp: params.property,
+        featurePropStack,
         featurePropPaletteName,
         featurePropPaletteFlip: (params.paletteFlip === 'true'),
         tagFilterList,
@@ -555,7 +565,7 @@ export default {
       }
     },
 
-    setFeatureProp(featureProp) {
+    setFeatureProp(featurePropStack) {
       // if selecting a feature property and current color mode isn't property-specific,
       // automatically change to the 'property' color mode
       const displayToggles = this.get().displayToggles;
@@ -564,7 +574,7 @@ export default {
         colors = 'property';
       }
 
-      this.set({ featureProp, displayToggles: { ...displayToggles, colors } });
+      this.set({ featurePropStack, displayToggles: { ...displayToggles, colors } });
     },
 
     toggleBasemap() {
@@ -684,21 +694,21 @@ function defaultDisplayOptionValue(p) {
   return displayOptions[p] && displayOptions[p].values[0];
 }
 
-function buildFeatureRows(obj, level = -1, prop = null, rows = []) {
+function buildFeatureRows(obj, level = -1, prop = null, propStack = [], rows = []) {
   if (Array.isArray(obj)) {
     if (prop) {
-      rows.push({ level, obj, prop }); // header row
+      rows.push({ level, obj, prop: propStack.join('.'), propStack }); // header row
     }
-    obj.forEach((x, i) => buildFeatureRows(x, level + 1, prop, rows));
+    obj.forEach((x, i) => buildFeatureRows(x, level + 1, i, [...propStack, i], rows));
   } else if (typeof obj === 'object' && obj != null) {
     if (prop) {
-      rows.push({ level, obj, prop }); // header row
+      rows.push({ level, obj, prop: propStack.join('.'), propStack }); // header row
     }
     for (var prop in obj) {
-      buildFeatureRows(obj[prop], level + 1, prop, rows);
+      buildFeatureRows(obj[prop], level + 1, prop, [...propStack, prop], rows);
     }
   } else {
-    rows.push({ level, obj, prop, value: obj });
+    rows.push({ level, obj, prop: propStack.join('.'), value: obj, propStack });
   }
   return rows;
 }

@@ -308,9 +308,9 @@
   }
 
   function updateViewportProperties(features) { // for feature prop
-    const prop = appUI.get().featureProp;
+    const propStack = appUI.get().featurePropStack;
 
-    if (!prop) {
+    if (!propStack || propStack.length === 0) {
       appUI.set({
         featurePropCount: null,
         featurePropValueCounts: null,
@@ -329,7 +329,10 @@
     }
 
     // grab the feature properties from Tangram's viewport tiles
-    const propsViewport = features.map(x => x.properties[prop]);
+    const propsViewport = features.map(f => {
+      // property may be nested, propStack is an array of successive level of property names
+      return propStack.reduce((obj, prop) => obj && obj[prop] !== undefined ? obj[prop] : null, f.properties);
+    });
 
     // convert to numbers to get min/max
     var vals = propsViewport
