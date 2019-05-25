@@ -17,10 +17,10 @@ export const displayOptions = {
   colors: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
 
-    apply: (scene, value, { featurePropStack, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
+    apply: (scene, value, { featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
       scene.global.colorMode = value;
       scene.global.colorState = {
-        featurePropStack, featurePropMin, featurePropMax, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
+        featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
         colorHelpers
       };
 

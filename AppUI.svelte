@@ -87,30 +87,47 @@
           {/if}
 
         </div>
-      {/if}
 
-      {#if featureProp && featurePropCount != null}
-        <div style="margin: 5px 0 5px 0;">
-          {featurePropCount} unique values of <i>{featureProp}</i> in viewport<br>
-          {#if featurePropMin != null}
-            min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}<br>
-            μ: {featurePropMean.toFixed(2)},
-            σ: {featurePropStdDev.toFixed(2)},
-            {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
-            <pre>{featurePropHistogram}</pre>
-          {:else}
-            no min/max (no numeric values found)
-          {/if}
-        </div>
+        {#if featureProp && featurePropCount != null}
+          <div style="margin: 5px 0 5px 0;">
+            {featurePropCount} unique values of <i>{featureProp}</i> in viewport<br>
+            {#if featurePropMin != null}
+              min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}<br>
+              μ: {featurePropMean.toFixed(2)},
+              σ: {featurePropStdDev.toFixed(2)},
+              {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
 
-        <div>
-          <span style="color:blue;" on:click="toggleFeaturePropValueSort()">
-            [sort by {nextFeaturePropValueSort}]
-          </span>
-          <span style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</span>
-        </div>
-      {:else}
-        <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
+              {#if showFeaturePropRangeLimit(displayToggles.colors)}
+                <div>
+                  Limit values:
+                  <select ref:featurePropRangeFilter on:change="setFeaturePropRangeFilter(this.value)">
+                    <option value="0">all</option>
+                    <option value="4">sigma 4</option>
+                    <option value="3">sigma 3</option>
+                    <option value="2">sigma 2</option>
+                    <option value="1">sigma 1</option>
+                    <option value="custom">custom</option>
+                  </select>
+                  <input class="range_filter" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="setFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                  <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="setFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                </div>
+              {/if}
+
+              <pre>{featurePropHistogram}</pre>
+            {:else}
+              no min/max (no numeric values found)
+            {/if}
+          </div>
+
+          <div>
+            <span style="color:blue;" on:click="toggleFeaturePropValueSort()">
+              [sort by {nextFeaturePropValueSort}]
+            </span>
+            <span style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</span>
+          </div>
+        {:else}
+          <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
+        {/if}
       {/if}
     </p>
 
@@ -132,8 +149,8 @@
                       // so we have to pass the props we need one by one
                       {
                         displayToggles,
-                        featurePropMin,
-                        featurePropMax,
+                        featurePropMinFilter,
+                        featurePropMaxFilter,
                         featurePropPalette,
                         featurePropPaletteFlip,
                         featurePropValueCounts,
@@ -245,6 +262,8 @@ export default {
       featurePropPaletteFlip: false,
       featurePropMin: null,
       featurePropMax: null,
+      featurePropMinFilterInput: '', // use empty string to get input placeholder
+      featurePropMaxFilterInput: '', // use empty string to get input placeholder
       featurePropMean: null,
       featurePropMedian: null,
       featurePropStdDev: null,
@@ -423,6 +442,7 @@ export default {
   },
 
   onstate({ changed, current, previous }) {
+    // update globally seen tags
     if (changed.uniqueTagsInViewport) {
       this.set({
         uniqueTagsSeen: new Set([...current.uniqueTagsSeen, ...current.uniqueTagsInViewport])
@@ -440,16 +460,8 @@ export default {
         changed.featurePropPalette ||
         changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
-        changed.featurePropMin ||
-        changed.featurePropMax // ||
-        // changed.featurePropMedian ||
-        // changed.featurePropMean ||
-        // changed.featurePropStdDev ||
-        // changed.featurePropSigma ||
-        // changed.featurePropSigmaFloor ||
-        // changed.featurePropSigmaCeiling
-      ) {
-
+        changed.featurePropMinFilter ||
+        changed.featurePropMaxFilter) {
       this.fire('updateScene', current);
     }
 
@@ -466,6 +478,17 @@ export default {
       this.fire('updateQueryString', current);
     }
 
+  },
+
+  onupdate({ changed, current, previous }) {
+    // note: svelte lifecycle hooks require this check to be in onupdate, but the others to be in onstate,
+    // to ensure the filtered min/max values are properly calculated and UI updated when the underlying
+    // feature min/max values change. Not entirely sure why, but calling this method to update from
+    // within onstate doesn't cause a second state event to pickup the changes to featurePropMinFilter
+    // and featurePropMaxFilter
+    if (changed.featurePropMin || changed.featurePropMax) {
+      this.setFeaturePropRangeFilter();
+    }
   },
 
   methods: {
@@ -580,6 +603,58 @@ export default {
       this.set({ featurePropStack, displayToggles: { ...displayToggles, colors } });
     },
 
+    setFeaturePropRangeFilter(filter) {
+      if (!this.refs.featurePropRangeFilter) {
+        return; // not ready yet
+      }
+
+      const { featurePropMin, featurePropMax, featurePropMinFilterInput, featurePropMaxFilterInput, featurePropMean, featurePropStdDev } = this.get();
+
+      // if new filter value not specified, keep current one and just update filtered min/max
+      filter = filter != null ? filter : this.refs.featurePropRangeFilter.value;
+
+      if (filter === 'custom') { // update min/max based on custom values
+        this.refs.featurePropRangeFilter.value = 'custom'; // make sure dropdown is set to custom
+        this.debounceFeaturePropRangeCustom({ filter, featurePropMinFilterInput, featurePropMaxFilterInput });
+      }
+
+      else { // update min/max based on dropdown value
+        const sigmaFilter = parseInt(filter);
+
+        if (typeof sigmaFilter === 'number' && sigmaFilter > 0) {
+          const min = Math.max(featurePropMin, parseFloat((featurePropMean - (featurePropStdDev * sigmaFilter)).toFixed(2)));
+          const max = Math.min(featurePropMax, parseFloat((featurePropMean + (featurePropStdDev * sigmaFilter)).toFixed(2)));
+
+          this.set({
+            featurePropMinFilter: min, featurePropMaxFilter: max,
+            featurePropMinFilterInput: min, featurePropMaxFilterInput: max
+          });
+        }
+        else { // no filter / "all"
+          this.set({
+            featurePropMinFilter: featurePropMin, featurePropMaxFilter: featurePropMax,
+            featurePropMinFilterInput: featurePropMin, featurePropMaxFilterInput: featurePropMax
+          });
+        }
+      }
+    },
+
+    // for debouncing custom range updates (don't want them updaitng on every key press)
+    debounceFeaturePropRangeCustom: debounce(
+      function ({ filter, featurePropMinFilterInput, featurePropMaxFilterInput }) {
+        let min = parseFloat(featurePropMinFilterInput);
+        if (typeof min === 'number' && !isNaN(min)) {
+          this.set({ featurePropMinFilter: min });
+        }
+
+        let max = parseFloat(featurePropMaxFilterInput);
+        if (typeof max === 'number' && !isNaN(max)) {
+          this.set({ featurePropMaxFilter: max });
+        }
+      },
+      500 // milliseconds to wait on input before updating
+    ),
+
     toggleBasemap() {
       this.set({ basemap: getNextBasemap(this.get().basemap) });
     },
@@ -670,6 +745,10 @@ export default {
       return colorFunctions[colors] && colorFunctions[colors].usePalette;
     },
 
+    showFeaturePropRangeLimit(colors) {
+      return colorFunctions[colors] && colorFunctions[colors].limitRange;
+    },
+
     formatFeaturePropValueColor(state, value) {
       const colors = state.displayToggles.colors;
       if (colorFunctions[colors]) {
@@ -731,6 +810,21 @@ function hashString (string) {
     return hash;
 }
 
+// https://davidwalsh.name/javascript-debounce-function
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
 
 </script>
 
@@ -802,6 +896,10 @@ function hashString (string) {
     width: 305px;
     margin: 4px 0px;
     padding: 2px;
+  }
+
+  .range_filter {
+    width: 45px;
   }
 
   .dot {
