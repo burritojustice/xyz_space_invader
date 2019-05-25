@@ -24,10 +24,11 @@ export const colorFunctions = {
   range: {
     useProperty: true,
     usePalette: true,
+    limitRange: true,
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
-      var min = colorState.featurePropMin;
-      var max = colorState.featurePropMax;
+      var min = colorState.featurePropMinFilter;
+      var max = colorState.featurePropMaxFilter;
       var delta = max - min;
       var number = parseFloat(value);
 
