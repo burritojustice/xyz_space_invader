@@ -331,7 +331,6 @@ function updateViewportProperties(features) { // for feature prop
     console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
 
     // calculating sigmas and ranges using standard deviations
-
     sigma = {
       floor: mean - stdDev,
       ceiling: mean + stdDev
@@ -347,51 +346,6 @@ function updateViewportProperties(features) { // for feature prop
     sigma.outside = vals.length - sigma.count
 
     console.log(sigma)
-
-    // here we count things for quantiles ()
-    var range = max - min
-    var quantile = 10
-    var step = range / quantile
-    var bucket = []
-
-    // add up the things in each bucket
-
-    for (var i = 0; i < quantile; i++) {
-      bucket[i] = vals.reduce((total,amount) => {
-        if ((amount > (step * i)+min) && (amount <= (step * (i+1))+ min)){
-          total += 1
-        }
-        return total
-        },1);
-    }
-
-    console.log(step,bucket)
-
-    var quantileMax = Math.max(...bucket);
-    var quantilePercent = bucket.map(x => x/quantileMax);
-
-    console.log("quantilePercent",quantilePercent)
-
-    var quantileChart = 'histogram: ' + quantile + ' buckets, ' + step.toFixed(1) + ' wide\n'
-    quantilePercent.forEach((x,index) =>  {
-      var count = bucket[index].toString()
-      var width = 10
-      var columns = Math.ceil(x*width)
-      var spacing = ' '.repeat(width - columns)
-      var row = count.padStart(6,' ') + 'x | '
-      for (var i = 0; i < columns ; i++) {
-        row = row + '*'
-        if (i == (columns-1)){
-          var suffix = spacing + ' | ' + (index*step + min).toFixed(0) + '->' + ((index+1)*step + min).toFixed(0)
-          row = row + suffix + '\n'
-        }
-        }
-      quantileChart += row
-    })
-
-    console.log(quantileChart)
-
-
   } //endif
 
   // count up the number of each unique property value
@@ -422,6 +376,5 @@ function updateViewportProperties(features) { // for feature prop
     featurePropSigma: sigma.percent,
     featurePropSigmaFloor: sigma.floor,
     featurePropSigmaCeiling: sigma.ceiling,
-    featurePropHistogram: quantileChart
   });
 }
