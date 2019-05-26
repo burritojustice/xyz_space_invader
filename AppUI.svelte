@@ -270,7 +270,6 @@ export default {
       featurePropSigma: null,
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
-      featurePropHistogram: null,
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
@@ -406,6 +405,55 @@ export default {
       }
     },
 
+    // build histogram text-chart
+    featurePropHistogram: ({ featurePropMinFilter, featurePropMaxFilter, featurePropValueCounts }) => {
+      if (!featurePropValueCounts) {
+        return;
+      }
+
+      const featurePropMin = featurePropMinFilter;
+      const featurePropMax = featurePropMaxFilter;
+
+      // here we count things for quantiles ()
+      const range = featurePropMax - featurePropMin;
+      const quantile = 10;
+      const step = range / quantile;
+
+      // add up the things in each bucket
+      const bucket = [];
+      for (let i = 0; i < quantile; i++) {
+        bucket[i] = featurePropValueCounts.reduce((total, [value, count]) => {
+          if ((value > (step * i) + featurePropMin) && (value <= (step * (i+1)) + featurePropMin)) {
+            total += count;
+          }
+          return total;
+         }, 1);
+      }
+
+      const quantileMax = Math.max(...bucket);
+      const quantilePercent = bucket.map(x => x / quantileMax);
+      let chart = 'histogram: ' + quantile + ' buckets, ' + step.toFixed(1) + ' wide\n';
+
+      quantilePercent.forEach((x, index) =>  {
+        const count = bucket[index].toString();
+        const width = 10;
+        const columns = Math.ceil(x*width);
+        const spacing = ' '.repeat(width - columns);
+        let row = count.padStart(6,' ') + 'x | ';
+
+        for (let i = 0; i < columns ; i++) {
+          row = row + '*';
+          if (i == (columns-1)){
+            const suffix = spacing + ' | ' + (index*step + featurePropMin).toFixed(0) + '->' + ((index+1)*step + featurePropMin).toFixed(0);
+            row = row + suffix + '\n';
+          }
+        }
+        chart += row;
+      });
+
+      return chart;
+    },
+
     queryParams: ({ spaceId, token, basemap, displayToggles, featurePropStack, featurePropPaletteName, featurePropPaletteFlip, tagFilterQueryParam }) => {
       const params = new URLSearchParams();
 
@@ -463,6 +511,13 @@ export default {
         changed.featurePropMinFilter ||
         changed.featurePropMaxFilter) {
       this.fire('updateScene', current);
+    }
+
+    // special handling for color mode
+    if (changed.displayToggles &&
+        current.displayToggles &&
+        !showFeaturePropRangeLimit(current.displayToggles.colors)) {
+      this.setFeaturePropRangeFilter(0); // reset non-range-limited color mode to all values
     }
 
     // mark space as loaded
@@ -604,11 +659,15 @@ export default {
     },
 
     setFeaturePropRangeFilter(filter) {
-      if (!this.refs.featurePropRangeFilter) {
-        return; // not ready yet
-      }
-
       const { featurePropMin, featurePropMax, featurePropMinFilterInput, featurePropMaxFilterInput, featurePropMean, featurePropStdDev } = this.get();
+
+      if (!this.refs.featurePropRangeFilter) { // not in range mode or UI not ready yet
+        this.set({
+          featurePropMinFilter: featurePropMin, featurePropMaxFilter: featurePropMax,
+          featurePropMinFilterInput: featurePropMin, featurePropMaxFilterInput: featurePropMax
+        });
+        return;
+      }
 
       // if new filter value not specified, keep current one and just update filtered min/max
       filter = filter != null ? filter : this.refs.featurePropRangeFilter.value;
@@ -745,9 +804,7 @@ export default {
       return colorFunctions[colors] && colorFunctions[colors].usePalette;
     },
 
-    showFeaturePropRangeLimit(colors) {
-      return colorFunctions[colors] && colorFunctions[colors].limitRange;
-    },
+    showFeaturePropRangeLimit, // reference here to make available to as template helper
 
     formatFeaturePropValueColor(state, value) {
       const colors = state.displayToggles.colors;
@@ -770,6 +827,10 @@ export default {
       return (v != null && typeof v === 'object') ? JSON.stringify(v) : v;
     }
   }
+}
+
+function showFeaturePropRangeLimit(colors) {
+  return colorFunctions[colors] && colorFunctions[colors].limitRange;
 }
 
 function defaultDisplayOptionValue(p) {
