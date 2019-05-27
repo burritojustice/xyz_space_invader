@@ -1,15 +1,19 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import sourcemaps from 'rollup-plugin-sourcemaps';
 import svelte from 'rollup-plugin-svelte';
 
 export default {
-    input: 'AppUI.svelte',
+    input: 'index.js',
     output: {
-      file: 'AppUI.js',
+      file: 'dist/index.js',
       format: 'umd',
-      name: 'AppUI'
+      // sourcemap: 'inline',
+      sourcemap: true,
+      name: 'XYZSpaceInvader'
     },
     plugins: [
+      sourcemaps(),
       resolve(),
       commonjs(),
       svelte({
@@ -21,14 +25,11 @@ export default {
 
         // Extract CSS into a separate file (recommended).
         // See note below
-        // css: function (css) {
-        //   console.log(css.code); // the concatenated CSS
-        //   console.log(css.map); // a sourcemap
-
-        //   // creates `main.css` and `main.css.map` — pass `false`
-        //   // as the second argument if you don't want the sourcemap
-        //   css.write('public/main.css');
-        // },
+        css: function (css) {
+          // creates `main.css` and `main.css.map` — pass `false`
+          // as the second argument if you don't want the sourcemap
+          css.write('dist/index.css');
+        },
       })
     ]
 };
