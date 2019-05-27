@@ -126,16 +126,14 @@ function makeLayer(scene_obj) {
 
 function applySpace({ spaceId, token }) {
   if (spaceId && token) {
-    _.merge(scene_config, {
-      sources: {
-        _xyzspace: {
-          url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
-          url_params: {
-            access_token: token
-          }
-        }
+    scene_config.sources._xyzspace = {
+      ...scene_config.sources._xyzspace,
+      url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
+      url_params: {
+        ...scene_config.sources._xyzspace.url_params,
+        access_token: token
       }
-    });
+    };
   }
 }
 
@@ -149,16 +147,12 @@ function applyDisplayOptions(uiState) {
 }
 
 function applyTags({ tagFilterQueryParam }) {
-  _.merge(scene_config, {
-    sources: {
-      _xyzspace: {
-        url_params: { tags: tagFilterQueryParam }
-      }
-    }
-  });
+  scene_config.sources._xyzspace.url_params = {
+    ...scene_config.sources._xyzspace.url_params,
+    tags: tagFilterQueryParam
+  };
 
-  // remove tags param if no tags - do this after merge above, to ensure the full object path exists
-  // (created by merge if doesn't exists already)
+  // remove tags param if no tags - do this after adding above, to ensure the full object path exists
   if (!tagFilterQueryParam) {
     delete scene_config.sources._xyzspace.url_params.tags;
   }
