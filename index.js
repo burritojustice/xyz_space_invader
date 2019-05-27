@@ -1,3 +1,5 @@
+import FileSaver from 'file-saver';
+
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 
@@ -122,6 +124,15 @@ function makeLayer(scene_obj) {
   });
 
   layer.addTo(map);
+
+  // setup screenshot event
+  document.addEventListener('keydown', ({ key }) => {
+    if (key == "s") { // take screenshot
+      layer.scene.screenshot().then(function (screenshot) {
+        FileSaver.saveAs(screenshot.blob, `invader-${(new URLSearchParams(appUI.get().queryParams))}.png`);
+      });
+    }
+  });
 
   window.layer = layer; // debugging
   window.scene = layer.scene;  // debugging
