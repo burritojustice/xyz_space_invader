@@ -1,6 +1,6 @@
 # dev/build process
 node_modules
-AppUI.js
+dist
 
 # MacOS
 .DS_Store
