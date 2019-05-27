@@ -33,6 +33,8 @@ const appUI = new AppUI({
   target: document.getElementById('ui')
 });
 
+window.appUI = appUI; // debugging
+
 // Handle UI events affecting Tangram scene
 appUI.on('loadScene', ({ basemapScene }) => {
   loadScene(basemapScene);
