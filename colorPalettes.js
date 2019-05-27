@@ -1,4 +1,4 @@
-const colorPalettes = {
+export const colorPalettes = {
 
   "viridis": [
     [

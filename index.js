@@ -1,4 +1,5 @@
 import AppUI from './AppUI.svelte';
+import { displayOptions } from './displayOptions';
 
 var query;
 var layer;

@@ -1,10 +1,8 @@
-// export { getBasemapScene, nextBasemapIndex };
-
-function getBasemapScene(basemap) {
+export function getBasemapScene(basemap) {
   return basemaps[basemap];
 }
 
-function getBasemapName(basemap) {
+export function getBasemapName(basemap) {
   // if the basemap looks like a number, return name from by index number
   // this is mostly for backwards compatibility, could be removed in future
   const index = parseInt(basemap);
@@ -16,11 +14,11 @@ function getBasemapName(basemap) {
   return basemap;
 }
 
-function getDefaultBasemapName() {
+export function getDefaultBasemapName() {
   return Object.keys(basemaps)[0];
 }
 
-function getNextBasemap(basemap) {
+export function getNextBasemap(basemap) {
   // return (index + 1) % Object.keys(basemaps).length;
   const names = Object.keys(basemaps);
   const index = names.indexOf(basemap);
@@ -30,7 +28,7 @@ function getNextBasemap(basemap) {
   return names[0]; // otherwise just return first basemap
 }
 
-const basemaps = {
+export const basemaps = {
   'refill-dark': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',

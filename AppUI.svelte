@@ -223,7 +223,10 @@
 
 <script>
 
-// import displayOptions from './displayOptions';
+import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
+import { colorPalettes } from './colorPalettes';
+import { colorFunctions, colorHelpers } from './colorFunctions';
+import { displayOptions } from './displayOptions';
 
 export default {
   data() {

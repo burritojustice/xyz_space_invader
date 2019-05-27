@@ -1,5 +1,5 @@
 
-const colorFunctions = {
+export const colorFunctions = {
   xray: {
     useProperty: false,
     usePalette: false,
@@ -60,7 +60,7 @@ const colorFunctions = {
 
 };
 
-const colorHelpers = {
+export const colorHelpers = {
   getPaletteColor: function getPaletteColor (palette, value, alpha = 1, flip = false) {
     try {
       value = Math.max(Math.min(value, 1), 0); // clamp to 0-1
