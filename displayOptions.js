@@ -1,5 +1,6 @@
-// export default {
-const displayOptions = {
+import { colorFunctions } from './colorFunctions';
+
+export const displayOptions = {
 
   // Buildings on/off
   buildings: {
