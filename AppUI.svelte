@@ -100,7 +100,7 @@
               {#if showFeaturePropRangeLimit(displayToggles.colors)}
                 <div>
                   Limit values:
-                  <select ref:featurePropRangeFilter on:change="setFeaturePropRangeFilter(this.value)">
+                  <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
                     <option value="0">all</option>
                     <option value="4">sigma 4</option>
                     <option value="3">sigma 3</option>
@@ -108,8 +108,8 @@
                     <option value="1">sigma 1</option>
                     <option value="custom">custom</option>
                   </select>
-                  <input class="range_filter" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="setFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
-                  <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="setFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                  <input class="range_filter" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                  <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
                 </div>
               {/if}
 
@@ -299,6 +299,29 @@ export default {
 
     // un-nest selected feature property name
     featureProp: ({ featurePropStack }) => featurePropStack && featurePropStack.join('.'),
+
+    // apply range filters if needed
+    featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
+      // only use if color mode supports range filter
+      if (displayToggles && showFeaturePropRangeLimit(displayToggles.colors)) {
+        const val = parseFloat(featurePropMinFilterInput);
+        if (typeof val === 'number' && !isNaN(val)) {
+          return val;
+        }
+      }
+      return featurePropMin;
+    },
+
+    featurePropMaxFilter: ({ displayToggles, featurePropMax, featurePropMaxFilterInput }) => {
+      // only use if color mode supports range filter
+      if (displayToggles && showFeaturePropRangeLimit(displayToggles.colors)) {
+        const val = parseFloat(featurePropMaxFilterInput);
+        if (typeof val === 'number' && !isNaN(val)) {
+          return val;
+        }
+      }
+      return featurePropMax;
+    },
 
     featurePropRows: ({ feature }) => feature && buildFeatureRows(feature.properties),
 
@@ -497,6 +520,11 @@ export default {
       });
     }
 
+    // update range filter when underlying data changes
+    if (changed.featurePropMin || changed.featurePropMax) {
+      this.updateFeaturePropRangeFilter();
+    }
+
     // Apply Tangram scene updates based on state change
     if (changed.basemapScene) {
       this.fire('loadScene', current);
@@ -513,13 +541,6 @@ export default {
       this.fire('updateScene', current);
     }
 
-    // special handling for color mode
-    if (changed.displayToggles &&
-        current.displayToggles &&
-        !showFeaturePropRangeLimit(current.displayToggles.colors)) {
-      this.setFeaturePropRangeFilter(0); // reset non-range-limited color mode to all values
-    }
-
     // mark space as loaded
     // used to hide UI during load (maybe replace with promise)
     if (changed.spaceInfo && current.spaceInfo) {
@@ -533,17 +554,6 @@ export default {
       this.fire('updateQueryString', current);
     }
 
-  },
-
-  onupdate({ changed, current, previous }) {
-    // note: svelte lifecycle hooks require this check to be in onupdate, but the others to be in onstate,
-    // to ensure the filtered min/max values are properly calculated and UI updated when the underlying
-    // feature min/max values change. Not entirely sure why, but calling this method to update from
-    // within onstate doesn't cause a second state event to pickup the changes to featurePropMinFilter
-    // and featurePropMaxFilter
-    if (changed.featurePropMin || changed.featurePropMax) {
-      this.setFeaturePropRangeFilter();
-    }
   },
 
   methods: {
@@ -658,26 +668,27 @@ export default {
       this.set({ featurePropStack, displayToggles: { ...displayToggles, colors } });
     },
 
-    setFeaturePropRangeFilter(filter) {
-      const { featurePropMin, featurePropMax, featurePropMinFilterInput, featurePropMaxFilterInput, featurePropMean, featurePropStdDev } = this.get();
+    updateFeaturePropRangeFilter(filter = null) {
+      const {
+        featurePropRangeFilter,
+        featurePropMin,
+        featurePropMax,
+        featurePropMean,
+        featurePropStdDev
+      } = this.get();
 
-      if (!this.refs.featurePropRangeFilter) { // not in range mode or UI not ready yet
+      // update filter type if one specified, or keep existing
+      if (filter == null) {
+        filter = featurePropRangeFilter; // use existing filter
+      }
+      else {
         this.set({
-          featurePropMinFilter: featurePropMin, featurePropMaxFilter: featurePropMax,
-          featurePropMinFilterInput: featurePropMin, featurePropMaxFilterInput: featurePropMax
+          featurePropRangeFilter: filter // set new filter
         });
-        return;
       }
 
-      // if new filter value not specified, keep current one and just update filtered min/max
-      filter = filter != null ? filter : this.refs.featurePropRangeFilter.value;
-
-      if (filter === 'custom') { // update min/max based on custom values
-        this.refs.featurePropRangeFilter.value = 'custom'; // make sure dropdown is set to custom
-        this.debounceFeaturePropRangeCustom({ filter, featurePropMinFilterInput, featurePropMaxFilterInput });
-      }
-
-      else { // update min/max based on dropdown value
+      // derive min/max values if needed (values specified manually in custom mode)
+      if (filter !== 'custom') {
         const sigmaFilter = parseInt(filter);
 
         if (typeof sigmaFilter === 'number' && sigmaFilter > 0) {
@@ -685,34 +696,16 @@ export default {
           const max = Math.min(featurePropMax, parseFloat((featurePropMean + (featurePropStdDev * sigmaFilter)).toFixed(2)));
 
           this.set({
-            featurePropMinFilter: min, featurePropMaxFilter: max,
             featurePropMinFilterInput: min, featurePropMaxFilterInput: max
           });
         }
         else { // no filter / "all"
           this.set({
-            featurePropMinFilter: featurePropMin, featurePropMaxFilter: featurePropMax,
             featurePropMinFilterInput: featurePropMin, featurePropMaxFilterInput: featurePropMax
           });
         }
       }
     },
-
-    // for debouncing custom range updates (don't want them updaitng on every key press)
-    debounceFeaturePropRangeCustom: debounce(
-      function ({ filter, featurePropMinFilterInput, featurePropMaxFilterInput }) {
-        let min = parseFloat(featurePropMinFilterInput);
-        if (typeof min === 'number' && !isNaN(min)) {
-          this.set({ featurePropMinFilter: min });
-        }
-
-        let max = parseFloat(featurePropMaxFilterInput);
-        if (typeof max === 'number' && !isNaN(max)) {
-          this.set({ featurePropMaxFilter: max });
-        }
-      },
-      500 // milliseconds to wait on input before updating
-    ),
 
     toggleBasemap() {
       this.set({ basemap: getNextBasemap(this.get().basemap) });
@@ -869,22 +862,6 @@ function hashString (string) {
         hash |= 0; // Convert to 32bit integer
     }
     return hash;
-}
-
-// https://davidwalsh.name/javascript-debounce-function
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function() {
-    var context = this, args = arguments;
-    var later = function() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
 }
 
 </script>
