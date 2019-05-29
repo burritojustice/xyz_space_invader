@@ -97,7 +97,7 @@
               σ: {featurePropStdDev.toFixed(2)},
               {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
 
-              {#if showFeaturePropRangeLimit(displayToggles.colors)}
+              {#if useFeaturePropRangeLimit(displayToggles.colors)}
                 <div>
                   Limit values:
                   <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
@@ -303,7 +303,7 @@ export default {
     // apply range filters if needed
     featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
       // only use if color mode supports range filter
-      if (displayToggles && showFeaturePropRangeLimit(displayToggles.colors)) {
+      if (displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
         const val = parseFloat(featurePropMinFilterInput);
         if (typeof val === 'number' && !isNaN(val)) {
           return val;
@@ -314,7 +314,7 @@ export default {
 
     featurePropMaxFilter: ({ displayToggles, featurePropMax, featurePropMaxFilterInput }) => {
       // only use if color mode supports range filter
-      if (displayToggles && showFeaturePropRangeLimit(displayToggles.colors)) {
+      if (displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
         const val = parseFloat(featurePropMaxFilterInput);
         if (typeof val === 'number' && !isNaN(val)) {
           return val;
@@ -477,7 +477,17 @@ export default {
       return chart;
     },
 
-    queryParams: ({ spaceId, token, basemap, displayToggles, featurePropStack, featurePropPaletteName, featurePropPaletteFlip, tagFilterQueryParam }) => {
+    queryParams: ({
+        spaceId, token, basemap,
+        displayToggles,
+        featurePropStack,
+        featurePropPaletteName, featurePropPaletteFlip,
+        featurePropRangeFilter,
+        featurePropMinFilterInput,
+        featurePropMaxFilterInput,
+        tagFilterQueryParam
+      }) => {
+
       const params = new URLSearchParams();
 
       if (spaceId) {
@@ -507,6 +517,15 @@ export default {
       params.set('palette', featurePropPaletteName);
       params.set('paletteFlip', featurePropPaletteFlip);
 
+      // save range filter (if current color mode supports it)
+      if (featurePropRangeFilter && useFeaturePropRangeLimit(displayToggles.colors)) {
+        params.set('rangeFilter', featurePropRangeFilter);
+        if (featurePropRangeFilter === 'custom') {
+          params.set('rangeFilterMin', featurePropMinFilterInput);
+          params.set('rangeFilterMax', featurePropMaxFilterInput);
+        }
+      }
+
       return params;
     }
 
@@ -518,11 +537,6 @@ export default {
       this.set({
         uniqueTagsSeen: new Set([...current.uniqueTagsSeen, ...current.uniqueTagsInViewport])
       });
-    }
-
-    // update range filter when underlying data changes
-    if (changed.featurePropMin || changed.featurePropMax) {
-      this.updateFeaturePropRangeFilter();
     }
 
     // Apply Tangram scene updates based on state change
@@ -553,7 +567,16 @@ export default {
     if (changed.queryParams) {
       this.fire('updateQueryString', current);
     }
+  },
 
+  onupdate({ changed, current }) {
+    // update range filter when underlying data changes
+    // note: svelte needs this in onupdate instead of onstate because of interdependencies when calling a
+    // set() from inside onstate that triggers another set(); these issues are reportedly fixed in v3,
+    // separating this check out into onupdate for now
+    if (changed.featurePropMin || changed.featurePropMax) {
+      this.updateFeaturePropRangeFilter();
+    }
   },
 
   methods: {
@@ -566,23 +589,23 @@ export default {
       const token = params.token || '';
 
       // parse out display option toggles
-      const toggles = {};
+      const displayToggles = {};
       for (const p in params) {
         if (displayOptions[p]) {
           if (displayOptions[p].parse) {
             // parse display options values (e.g. convert strings to numbers, etc.)
-            toggles[p] = displayOptions[p].parse(params[p]);
+            displayToggles[p] = displayOptions[p].parse(params[p]);
           }
           else {
-            toggles[p] = params[p];
+            displayToggles[p] = params[p];
           }
         }
       }
 
       // set default values for display options
       for (const p in displayOptions) {
-        if (toggles[p] == null) {
-          toggles[p] = defaultDisplayOptionValue(p);
+        if (displayToggles[p] == null) {
+          displayToggles[p] = defaultDisplayOptionValue(p);
         }
       }
 
@@ -608,30 +631,45 @@ export default {
         basemap = getDefaultBasemapName();
       }
 
-      let featurePropPaletteName = this.get().featurePropPaletteName;
-      if (colorPalettes[params.palette]) {
-        featurePropPaletteName = params.palette;
-      }
-
       // parse selected feature property
       const featurePropStack = params.property && params.property
         .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
         .split('.')
         .map(s => s.replace(/__DELIMITER__/g, '.'));
 
+      // parse color palette
+      const featurePropPaletteFlip = (params.paletteFlip === 'true');
+      let featurePropPaletteName = this.get().featurePropPaletteName;
+      if (colorPalettes[params.palette]) {
+        featurePropPaletteName = params.palette;
+      }
+
+      // parse min/max range filter
+      const featurePropRangeFilter = params.rangeFilter;
+      let { featurePropMinFilterInput, featurePropMaxFilterInput } = this.get();
+      if (featurePropRangeFilter === 'custom') {
+        featurePropMinFilterInput = params.rangeFilterMin;
+        featurePropMaxFilterInput = params.rangeFilterMax;
+      }
+
+      // set all params
       this.set({
         spaceId,
         token,
         basemap,
-        displayToggles: toggles,
+        displayToggles,
         featurePropStack,
         featurePropPaletteName,
-        featurePropPaletteFlip: (params.paletteFlip === 'true'),
+        featurePropPaletteFlip,
+        featurePropRangeFilter,
+        featurePropMinFilterInput,
+        featurePropMaxFilterInput,
         tagFilterList,
         tagFilterAndOr
       });
 
       this.updateSpace(false);
+      this.updateFeaturePropRangeFilter();
     },
 
     updateSpace(loadScene) {
@@ -691,7 +729,8 @@ export default {
       if (filter !== 'custom') {
         const sigmaFilter = parseInt(filter);
 
-        if (typeof sigmaFilter === 'number' && sigmaFilter > 0) {
+        if (typeof sigmaFilter === 'number' && sigmaFilter > 0 &&
+            featurePropMin != null && featurePropMax != null) { // require a min/max to be set
           const min = Math.max(featurePropMin, parseFloat((featurePropMean - (featurePropStdDev * sigmaFilter)).toFixed(2)));
           const max = Math.min(featurePropMax, parseFloat((featurePropMean + (featurePropStdDev * sigmaFilter)).toFixed(2)));
 
@@ -797,7 +836,7 @@ export default {
       return colorFunctions[colors] && colorFunctions[colors].usePalette;
     },
 
-    showFeaturePropRangeLimit, // reference here to make available to as template helper
+    useFeaturePropRangeLimit, // reference here to make available to as template helper
 
     formatFeaturePropValueColor(state, value) {
       const colors = state.displayToggles.colors;
@@ -822,7 +861,7 @@ export default {
   }
 }
 
-function showFeaturePropRangeLimit(colors) {
+function useFeaturePropRangeLimit(colors) {
   return colorFunctions[colors] && colorFunctions[colors].limitRange;
 }
 
