@@ -48,7 +48,7 @@
         {#each featurePropRows as r}
           <tr
             class:active="r.prop === featureProp"
-            on:click="setFeatureProp(r.propStack)"
+            on:click="setFeatureProp(r.prop !== featureProp ? r.propStack : null)"
           >
           <td>{@html formatFeatureRow(r)}</td>
           </tr>
