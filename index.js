@@ -3,10 +3,10 @@ import FileSaver from 'file-saver';
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 
-var query;
-var layer;
-var scene_config
-var map, hash, popup;
+let query;
+let layer;
+let scene_config
+let map, hash, tooltip;
 
 // grab query parameters from the url and assign them to globals
 query = new URLSearchParams(document.location.search);
@@ -22,8 +22,8 @@ if (url_hash.length == 3) {
 }
 
 map = L.map('map', {boxZoom: false});
-  hash = new L.Hash(map);
-  popup = L.popup();
+hash = new L.Hash(map);
+tooltip = L.tooltip();
 
 // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
 map.setView([37.7,-122.4], 2);
@@ -104,14 +104,37 @@ function makeLayer(scene_obj) {
     scene: scene_obj,
     attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
     events: {
-      hover: function({ feature }) {
+      hover: ({ feature, leaflet_event }) => {
         if (feature && feature.source_name === '_xyzspace') {
-          // let the UI know we're hovering over a new feature
-          appUI.set({ feature: feature });
+          const { featureProp, featurePropStack } = appUI.get();
+          const props = feature.proeprties;
+          const content = [
+              ['id', feature.properties.id],
+              ['name', feature.properties.name],
+              [featureProp, lookupProperty(feature.properties, featurePropStack)]
+            ]
+            .filter(x => x[1]) // only include props that had values
+            .map(([k, v]) => `<b>${k}:</b> ${v}`)
+            .join('<br>');
+
+          tooltip.setContent(content);
+          layer.openTooltip(leaflet_event.latlng);
         }
+        else {
+          layer.closeTooltip();
+        }
+      },
+      click: ({ feature }) => {
+        // select new feature in UI
+        appUI.set({ feature: feature });
       }
-    }
+    },
+    selectionRadius: 5
   });
+
+  // setup tooltip for hover content
+  layer.bindTooltip(tooltip);
+  map.on('zoom,mouseout', () => layer.closeTooltip()); // close tooltip when zooming
 
   // setup Tangram event listeners
   layer.scene.subscribe({
