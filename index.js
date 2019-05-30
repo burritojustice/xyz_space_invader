@@ -70,6 +70,11 @@ appUI.on('updateQueryString', ({ queryParams }) => {
 // Initialize UI with query string params
 appUI.setFromQueryParams(query);
 
+// lookup value of a nested feature property
+function lookupProperty(properties, propStack) {
+  return propStack && propStack.reduce((obj, prop) => obj && obj[prop] !== undefined ? obj[prop] : null, properties);
+}
+
 // apply updates to scene based on current display options
 function updateScene(uiState) {
   // configure data source for XYZ space
@@ -293,10 +298,7 @@ function updateViewportProperties(features) { // for feature prop
   }
 
   // grab the feature properties from Tangram's viewport tiles
-  const propsViewport = features.map(f => {
-    // property may be nested, propStack is an array of successive level of property names
-    return propStack.reduce((obj, prop) => obj && obj[prop] !== undefined ? obj[prop] : null, f.properties);
-  });
+  const propsViewport = features.map(f => lookupProperty(f.properties, propStack));
 
   // convert to numbers to get min/max
   var vals = propsViewport

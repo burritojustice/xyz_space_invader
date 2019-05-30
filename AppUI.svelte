@@ -298,7 +298,7 @@ export default {
     },
 
     // un-nest selected feature property name
-    featureProp: ({ featurePropStack }) => featurePropStack && featurePropStack.join('.'),
+    featureProp: ({ featurePropStack }) => formatPropStack(featurePropStack),
 
     // apply range filters if needed
     featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
@@ -869,21 +869,37 @@ function defaultDisplayOptionValue(p) {
   return displayOptions[p] && displayOptions[p].values[0];
 }
 
+// format nested property name stack with dot (object) and bracket (array) notation
+function formatPropStack(propStack) {
+  return propStack &&
+    propStack
+      .map((p, i) => {
+        const n = parseInt(p);
+        if (typeof n === 'number' && !isNaN(n)) {
+          return `[${p}]`;
+        }
+        else {
+          return `${i > 0 ? '.' : ''}${p}`;
+        }
+      })
+      .join('');
+}
+
 function buildFeatureRows(obj, level = -1, prop = null, propStack = [], rows = []) {
   if (Array.isArray(obj)) {
     if (prop) {
-      rows.push({ level, obj, prop: propStack.join('.'), propStack }); // header row
+      rows.push({ level, obj, prop: formatPropStack(propStack), propStack }); // header row
     }
     obj.forEach((x, i) => buildFeatureRows(x, level + 1, i, [...propStack, i], rows));
   } else if (typeof obj === 'object' && obj != null) {
     if (prop) {
-      rows.push({ level, obj, prop: propStack.join('.'), propStack }); // header row
+      rows.push({ level, obj, prop: formatPropStack(propStack), propStack }); // header row
     }
     for (var prop in obj) {
       buildFeatureRows(obj[prop], level + 1, prop, [...propStack, prop], rows);
     }
   } else {
-    rows.push({ level, obj, prop: propStack.join('.'), value: obj, propStack });
+    rows.push({ level, obj, prop: formatPropStack(propStack), value: obj, propStack });
   }
   return rows;
 }
