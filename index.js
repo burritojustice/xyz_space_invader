@@ -107,15 +107,17 @@ function makeLayer(scene_obj) {
       hover: ({ feature, leaflet_event }) => {
         if (feature && feature.source_name === '_xyzspace') {
           const { featureProp, featurePropStack } = appUI.get();
-          const props = feature.proeprties;
-          const content = [
+          const props = [
               ['id', feature.properties.id],
               ['name', feature.properties.name],
-              [featureProp, lookupProperty(feature.properties, featurePropStack)]
+              [featureProp, lookupProperty(feature.properties, featurePropStack) || 'null']
             ]
-            .filter(x => x[1]) // only include props that had values
+            .filter(x => x[0] && x[1]) // only include props that had values
             .map(([k, v]) => `<b>${k}:</b> ${v}`)
             .join('<br>');
+
+          const numProps = Object.keys(feature.properties).length;
+          const content = `${props}${props !== '' ? '<br>' : ''}<i>Click to see all ${numProps} properties</i>`;
 
           tooltip.setContent(content);
           layer.openTooltip(leaflet_event.latlng);
@@ -126,7 +128,7 @@ function makeLayer(scene_obj) {
       },
       click: ({ feature }) => {
         // select new feature in UI
-        appUI.set({ feature: feature });
+        appUI.set({ feature });
       }
     },
     selectionRadius: 5
