@@ -30,7 +30,7 @@ export const colorFunctions = {
       var min = colorState.featurePropMinFilter;
       var max = colorState.featurePropMaxFilter;
       var delta = max - min;
-      var number = parseFloat(value);
+      var number = colorState.colorHelpers.parseNumber(value);
 
       if (min == null || max == null || typeof number !== 'number' || isNaN(number)) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
@@ -61,7 +61,13 @@ export const colorFunctions = {
 
 };
 
+// These functions are included in the Tangram global scene state, and therefore can be
+// called by the color functions above (references to any non-global functions get lost when the
+// scene is serialized and sent to the worker -- the functions must be self-contained and only
+// reference Tangram globals, feature properties, and other predefined variables).
 export const colorHelpers = {
+  parseNumber, // referenced here to provide access to Tangram
+
   getPaletteColor: function getPaletteColor (palette, value, alpha = 1, flip = false) {
     try {
       value = Math.max(Math.min(value, 1), 0); // clamp to 0-1
@@ -87,6 +93,7 @@ export const colorHelpers = {
   }
 };
 
+// Compute a color by hashing a value
 function colorHash (value) {
   if (typeof value !== 'string') {
     value = (value === undefined ? 'undefined' : JSON.stringify(value));
@@ -105,4 +112,17 @@ function colorHash (value) {
   }
   var color = 'hsla(' + hash + ', 100%, 50%, 0.75)';
   return color;
+}
+
+// More robust number parsing, try to get a floating point or integer value from a string
+export function parseNumber (value) {
+  if (value == null || typeof value === 'number') { // don't bother parsing these
+    return value;
+  }
+
+  const m = value.match(/[-+]?([0-9]+,?)*\.?[0-9]+/); // get floating point or integer via regex
+  const num = parseFloat(m && m[0].replace(/,/g, '')); // strip commas, e.g. '1,500' => '1500' (NB only works for US-style numbers)
+  if (typeof num === 'number' && !isNaN(num)) {
+    return num;
+  }
 }

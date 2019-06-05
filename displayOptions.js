@@ -21,7 +21,7 @@ export const displayOptions = {
       scene.global.colorMode = value;
       scene.global.colorState = {
         featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
-        colorHelpers
+        colorHelpers // include color helper functions in Tangram global state
       };
 
       if (featurePropStack) {

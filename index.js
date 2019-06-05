@@ -2,6 +2,7 @@ import FileSaver from 'file-saver';
 
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
+import { parseNumber } from './colorFunctions';
 
 let query;
 let layer;
@@ -327,7 +328,7 @@ function updateViewportProperties(features) { // for feature prop
 
   // convert to numbers to get min/max
   var vals = propsViewport
-    .map(parseFloat)
+    .map(parseNumber)
     .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity);
 
   let min, max, mean, median, stdDev;

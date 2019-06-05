@@ -242,7 +242,7 @@
 
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
 import { colorPalettes } from './colorPalettes';
-import { colorFunctions, colorHelpers } from './colorFunctions';
+import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
 import { displayOptions } from './displayOptions';
 
 export default {
@@ -304,7 +304,7 @@ export default {
     featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
       // only use if color mode supports range filter
       if (displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
-        const val = parseFloat(featurePropMinFilterInput);
+        const val = parseNumber(featurePropMinFilterInput);
         if (typeof val === 'number' && !isNaN(val)) {
           return val;
         }
@@ -315,7 +315,7 @@ export default {
     featurePropMaxFilter: ({ displayToggles, featurePropMax, featurePropMaxFilterInput }) => {
       // only use if color mode supports range filter
       if (displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
-        const val = parseFloat(featurePropMaxFilterInput);
+        const val = parseNumber(featurePropMaxFilterInput);
         if (typeof val === 'number' && !isNaN(val)) {
           return val;
         }
@@ -334,8 +334,8 @@ export default {
         // copy and re-sort on value (descending) if needed
         return Array.from(featurePropValueCounts).sort((a, b) => {
           // try to get a number
-          let an = parseFloat(a[0]);
-          let bn = parseFloat(b[0]);
+          let an = parseNumber(a[0]);
+          let bn = parseNumber(b[0]);
 
           // sort nulls and NaNs to the bottom
           an = (an == null || isNaN(an)) ? -Infinity : an;
