@@ -36,8 +36,7 @@ Click on a GeoJSON property to get a count and range of values in the viewport, 
 
 ## Local installation
 
-XYZ Space Invader uses [Svelte](https://svelte.dev/). If installing locally, you will need to generate the AppUI.js using
-
-`npm run build`
+- the first time: `npm install`
+- then `npm start` afterwards
 
 Netlify will automatically generate this if you make a branch in this repo.
