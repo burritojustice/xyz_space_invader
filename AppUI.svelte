@@ -363,7 +363,6 @@ export default {
 
       // optional filters
       // e.g. remove tags without an @ if desired, or text search
-      console.log('tag',tag)
       const tagFilterFunc = tag => {
         const at = tagFilterAt ? tag.includes('@') : true;
         const search = (tagFilterSearch && tagFilterSearch.length >= 3) ? tag.includes(tagFilterSearch) : true;
