@@ -267,7 +267,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     },
 
     // seed with top tags from stats endpoint
-    uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.tag)])
+    uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)])
   });
 }
 
