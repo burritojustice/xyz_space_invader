@@ -535,7 +535,7 @@ export default {
     // update globally seen tags
     if (changed.uniqueTagsInViewport) {
       this.set({
-        uniqueTagsSeen: new Set([...current.uniqueTagsSeen, ...current.uniqueTagsInViewport])
+        uniqueTagsSeen: new Set([...current.uniqueTagsSeen, ...current.uniqueTagsInViewport].filter(x => x))
       });
     }
 
