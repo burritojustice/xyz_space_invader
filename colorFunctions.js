@@ -25,6 +25,7 @@ export const colorFunctions = {
     useProperty: true,
     usePalette: true,
     limitRange: true,
+    defaultSort: 'values',
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
       var min = colorState.featurePropMinFilter;
@@ -45,6 +46,7 @@ export const colorFunctions = {
   rank: {
     useProperty: true,
     usePalette: true,
+    defaultSort: 'count',
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
       var counts = (colorState.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls

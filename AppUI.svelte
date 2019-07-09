@@ -35,8 +35,6 @@
           <tr>
             <td on:click='toggleBasemap()'>basemap:</td>
             <td>{basemap}</td>
-            <td on:click='toggleDisplayOption("colors")'>colors:</td>
-            <td>{displayToggles.colors}</td>
           </tr>
         </table>
       {/if}
@@ -64,7 +62,7 @@
       {#if displayToggles}
         <div>
           <span>
-            <select bind:value="displayToggles.colors">
+            <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
               {#each colorModes as mode}
                 <option value="{mode}">{mode}</option>
               {/each}
@@ -680,6 +678,9 @@ export default {
 
       this.updateSpace(false);
       this.updateFeaturePropRangeFilter();
+      if (featurePropValueSort == null) {
+        this.updateFeaturePropValueSort();
+      }
     },
 
     updateSpace(loadScene) {
@@ -714,6 +715,15 @@ export default {
       }
 
       this.set({ featurePropStack, displayToggles: { ...displayToggles, colors } });
+    },
+
+    updateFeaturePropValueSort() {
+      // set default sort type (if there is one) for feature property color mode
+      const displayToggles = this.get().displayToggles;
+      let colors = displayToggles.colors;
+      if (colorFunctions[colors] && colorFunctions[colors].defaultSort) {
+        this.set({ featurePropValueSort: colorFunctions[colors].defaultSort });
+      }
     },
 
     updateFeaturePropRangeFilter(filter = null) {
