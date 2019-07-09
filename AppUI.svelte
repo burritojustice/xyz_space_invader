@@ -330,6 +330,10 @@ export default {
     },
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
+      if (!featurePropValueCounts) {
+        return [];
+      }
+
       if (featurePropValueSort === 'values') {
         // copy and re-sort on value (descending) if needed
         return Array.from(featurePropValueCounts).sort((a, b) => {
@@ -485,6 +489,7 @@ export default {
         featurePropRangeFilter,
         featurePropMinFilterInput,
         featurePropMaxFilterInput,
+        featurePropValueSort,
         tagFilterQueryParam
       }) => {
 
@@ -525,6 +530,8 @@ export default {
           params.set('rangeFilterMax', featurePropMaxFilterInput);
         }
       }
+
+      params.set('sort', featurePropValueSort);
 
       return params;
     }
@@ -652,6 +659,8 @@ export default {
         featurePropMaxFilterInput = params.rangeFilterMax;
       }
 
+      const featurePropValueSort = params.sort || 'count';
+
       // set all params
       this.set({
         spaceId,
@@ -664,6 +673,7 @@ export default {
         featurePropRangeFilter,
         featurePropMinFilterInput,
         featurePropMaxFilterInput,
+        featurePropValueSort,
         tagFilterList,
         tagFilterAndOr
       });
