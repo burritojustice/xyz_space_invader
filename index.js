@@ -294,7 +294,7 @@ function updateViewportTags(features) {  // for tags
             tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
             return tagCounts;
           }, {}))
-    .sort((a, b) => b[1] - a[1]);
+    .sort((a, b) => b[1] > a[1] ? 1 : (b[1] > a[1] ? -1 : 0));
 
   appUI.set({
     numFeaturesInViewport: features.length,
@@ -389,7 +389,19 @@ function updateViewportProperties(features) { // for feature prop
   // sort the list of properties by count
   const sortedPropCounts = Array.from(propCounts.entries()).sort((a, b) => {
     const d = b[1] - a[1];
-    return d !== 0 ? d : b[0] - a[0];
+    if (d !== 0) {
+      return d;
+    }
+
+    if (a < b) {
+      return -1;
+    }
+    else if (b < a) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
   });
 
   // update UI

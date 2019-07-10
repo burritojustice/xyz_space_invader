@@ -408,13 +408,13 @@ export default {
           if (a[0] === b[0]) {
             return a[1] < b[1] ? 1 : -1;
           }
-          return a[0] > b[0] ? 1 : -1;
+          return a[0] < b[0] ? 1 : (a[0] > b[0] ? -1 : 0);
         });
       }
       else if (tagSort === 'count') {
         tagCounts.sort((a, b) => {
           if (a[1] === b[1]) {
-            return a[0] > b[0] ? 1 : -1;
+            return a[0] < b[0] ? 1 : (a[0] > b[0] ? -1 : 0);
           }
           return a[1] < b[1] ? 1 : -1;
         });
