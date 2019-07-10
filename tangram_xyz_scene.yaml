@@ -13,6 +13,25 @@ global:
     lookupFeatureProp: function(feature) { return null; }
     lookupFeatureLabelProp: function(feature) { return null; }
 
+    # simple color by feature color property, or fallback to geometry type
+    featureColorDefault: |
+        function() {
+            var color;
+            if (feature.color) {
+                color = feature.color
+            }
+            else if ($geometry === 'point') {
+              color = [1, 0, 0, 0.5];
+            }
+            else if ($geometry === 'line') {
+              color = [1, 1, 0, 0.3];
+            }
+            else if ($geometry === 'polygon') {
+              color = [1, 0, 1, 0.3];
+            }
+            return color;
+        }
+
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
@@ -37,24 +56,26 @@ global:
         return 'rgba(127, 127, 127, .5)';
       }
 
-    # simple color by feature color property, or fallback to geometry type
-    featureColorDefault: |
-        function() {
-            var color;
-            if (feature.color) {
-                color = feature.color
-            }
-            else if ($geometry === 'point') {
-              color = [1, 0, 0, 0.5];
-            }
-            else if ($geometry === 'line') {
-              color = [1, 1, 0, 0.3];
-            }
-            else if ($geometry === 'polygon') {
-              color = [1, 0, 1, 0.3];
-            }
-            return color;
+    # for some color modes, sort features by currently selected value so they match the palette order
+    featureSortTransform: |
+      function (layer, _, tile) {
+        var colorFunc = global.colorFunctions[global.colorMode];
+
+        function getFeatureValue(f) {
+          return colorFunc.index(global.lookupFeatureProp(f.properties), global.colorState);
         }
+
+        try {
+          // if the color mode has an index function, use it to sort features
+          if (colorFunc.index) {
+            //console.log('*** resorting...', tile.coords);
+            layer.features.sort((a, b) => getFeatureValue(a) - getFeatureValue(b));
+            //console.log('*** resorted', tile.coords);
+          }
+        }
+        catch(e) { } // fallthrough to default color on exception
+        return layer;
+      }
 
     # optionally hide feature values that are above or below the current filter range
     featureFilterOutliers: |
@@ -89,8 +110,9 @@ global:
           return global.lookupFeatureLabelProp(feature);
         }
 
-# sources:
-#     _xyzspace: # this source is created at run-time based on XYZ space
+sources:
+    _xyzspace: # this source is created at run-time based on XYZ space
+        transform: global.featureSortTransform
 
 styles:
     _points:
