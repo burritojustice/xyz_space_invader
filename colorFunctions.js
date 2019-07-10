@@ -8,19 +8,28 @@ export const colorFunctions = {
     usePalette: true,
     limitRange: true,
     defaultSort: 'values',
-    color: function (value, colorState) {
-      var palette = colorState.featurePropPalette;
+    index: function (value, colorState) {
+      // produces a value between 0-1 for the current feature value
       var min = colorState.featurePropMinFilter;
       var max = colorState.featurePropMaxFilter;
       var delta = max - min;
       var number = colorState.colorHelpers.parseNumber(value);
 
       if (min == null || max == null || typeof number !== 'number' || isNaN(number)) {
-        return 'rgba(128, 128, 128, 0.25)'; // handle null/undefined values
+        return null;
       }
 
       var ratio = (delta === 0 ? 1 : Math.max(Math.min(1 - ((max - number) / delta), 1), 0));
-      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
+      return ratio;
+    },
+    color: function (value, colorState) {
+      // returns a color for the palette and feature value
+      var palette = colorState.featurePropPalette;
+      var index = this.index(value, colorState); // index into palette
+      if (index == null) {
+        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+      }
+      return colorState.colorHelpers.getPaletteColor(palette, index, 0.75, colorState.featurePropPaletteFlip);
     }
   },
 
@@ -30,13 +39,14 @@ export const colorFunctions = {
     useProperty: true,
     usePalette: true,
     defaultSort: 'count',
-    color: function (value, colorState) {
+    index: function (value, colorState) {
+      // produces a value between 0-1 for the current feature value
       var palette = colorState.featurePropPalette;
       var counts = (colorState.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
       var rank = counts.findIndex(c => c[0] === value);
 
       if (rank === -1) {
-        return 'rgba(128, 128, 128, 0.25)'; // handle null/undefined values
+        return null;
       }
 
       var ratio; // number from 0-1 that maps to the palette color index to use
@@ -55,8 +65,16 @@ export const colorFunctions = {
         ratio = (counts.length <= 1 ? 1 : Math.max(Math.min(1 - (rank / (counts.length - 1)), 1), 0));
       }
 
-      // var ratio = (counts.length <= 1 ? 1 : Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0));
-      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
+      return ratio;
+    },
+    color: function (value, colorState) {
+      // returns a color for the palette and feature value
+      var palette = colorState.featurePropPalette;
+      var index = this.index(value, colorState); // index into palette
+      if (index == null) {
+        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+      }
+      return colorState.colorHelpers.getPaletteColor(palette, index, 0.75, colorState.featurePropPaletteFlip);
     }
   },
 
