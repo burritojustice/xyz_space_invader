@@ -33,8 +33,14 @@
             <td>{displayToggles.outlines}</td>
           </tr>
           <tr>
-            <td on:click='toggleBasemap()'>basemap:</td>
-            <td>{basemap}</td>
+            <td>basemap:</td>
+            <td>
+              <select bind:value="basemap">
+                {#each Object.keys(basemaps) as basemap}
+                  <option value="{basemap}">{basemap}</option>
+                {/each}
+              </select>
+            </td>
           </tr>
         </table>
       {/if}
@@ -283,7 +289,8 @@ export default {
       displayToggles: null,
       colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
       colorPalettes, // need to reference here to make accessible to templates
-      colorHelpers // need to reference here to make accessible to templates
+      colorHelpers, // need to reference here to make accessible to templates
+      basemaps, // need to reference here to make accessible to templates
     }
   },
 
@@ -766,10 +773,6 @@ export default {
       }
     },
 
-    toggleBasemap() {
-      this.set({ basemap: getNextBasemap(this.get().basemap) });
-    },
-
     toggleDisplayOption(prop) {
       const displayToggles = this.get().displayToggles;
 
@@ -815,7 +818,7 @@ export default {
       // w = put polygons under water
 
       if (key == "m") { // toggle basemap
-        this.toggleBasemap();
+        this.set({ basemap: getNextBasemap(this.get().basemap) });
       }
       else {
         if (key == "b") { // toggle buildings
