@@ -262,6 +262,7 @@ export default {
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropValueSort: 'count',
+      featurePropNumericThreshold: 80, // minimum % of values that mst be numeric to support range, etc.
       featurePropPaletteName: 'viridisInferno', // TODO: move palette to import
       featurePropPaletteFlip: false,
       featurePropMin: null,
@@ -354,6 +355,18 @@ export default {
         });
       }
       return featurePropValueCounts; // return original/unmodified values
+    },
+
+    featurePropMostlyNumeric: ({ featurePropValueCounts, featurePropNumericThreshold }) => {
+      if (!featurePropValueCounts) {
+        return false;
+      }
+
+      const numeric = featurePropValueCounts
+        .map(v => parseNumber(v[0]))
+        .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity)
+        .length;
+      return numeric / featurePropValueCounts.length >= (featurePropNumericThreshold/100);
     },
 
     featurePropValueCountHash: ({ featurePropValueCounts }) => hashString(JSON.stringify(featurePropValueCounts)),
