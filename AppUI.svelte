@@ -263,6 +263,7 @@ export default {
       featurePropValueCounts: null,
       featurePropValueSort: 'count',
       featurePropNumericThreshold: 80, // minimum % of values that mst be numeric to support range, etc.
+      featurePropCheckNumeric: null, // the property name that was active when we last checked for numeric-ness
       featurePropPaletteName: 'viridisInferno', // TODO: move palette to import
       featurePropPaletteFlip: false,
       featurePropMin: null,
@@ -595,12 +596,32 @@ export default {
   },
 
   onupdate({ changed, current }) {
-    // update range filter when underlying data changes
-    // note: svelte needs this in onupdate instead of onstate because of interdependencies when calling a
-    // set() from inside onstate that triggers another set(); these issues are reportedly fixed in v3,
+    // note: svelte needs these checks in onupdate instead of onstate because of interdependencies when
+    // calling a set() from inside onstate that triggers another set(); these issues are reportedly fixed in v3,
     // separating this check out into onupdate for now
+
+    // update range filter when underlying data changes
     if (changed.featurePropMin || changed.featurePropMax) {
       this.updateFeaturePropRangeFilter();
+    }
+
+    // additional checks when feature property values update
+    if (changed.featurePropValueCountHash &&
+        current.displayToggles != null &&
+        current.featurePropCheckNumeric !== current.featureProp) {
+
+        // if color 'range' mode is active, check if values are sufficiently numeric, and if so,
+        // automatically switch to 'rank' mode instead (no use using range controls for non-numeric data)
+        let colors = current.displayToggles.colors;
+        if (!current.featurePropMostlyNumeric && colors === 'range') {
+          colors = 'rank';
+        }
+
+        this.set({
+          featurePropCheckNumeric: current.featureProp, // record that we last ran the check for this property name
+          displayToggles: { ...current.displayToggles, colors }
+        });
+        this.updateFeaturePropValueSort();
     }
   },
 
@@ -734,7 +755,10 @@ export default {
         colors = 'property';
       }
 
-      this.set({ featurePropStack, displayToggles: { ...displayToggles, colors } });
+      this.set({
+        featurePropStack,
+        displayToggles: { ...displayToggles, colors }
+      });
     },
 
     updateFeaturePropValueSort() {
