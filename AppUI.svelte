@@ -102,7 +102,7 @@
               {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
 
               {#if useFeaturePropRangeLimit(displayToggles.colors)}
-                <div>
+                <div style="margin-bottom: 5px;">
                   Limit values:
                   <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
                     <option value="0">all</option>

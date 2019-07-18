@@ -1,30 +1,44 @@
-<pre>
-  {histogram}
-</pre>
+<div>
+  <div>histogram: {numQuantiles} buckets, {step.toFixed(1)} wide</div>
+  <table style="width: 100%">
+    {#each quantiles as { from, to, count, percent }}
+      <tr>
+        <td>{count}x</td>
+          <td style="width: 65%">
+            <div style="width: {percent}%; height: 15px;
+              background: linear-gradient(90deg, lightblue, darkblue);">&nbsp;</div>
+          </td>
+          <td style="width: 35%">{from} ⇢ {to}</td>
+        </tr>
+    {/each}
+  </table>
+</div>
 
 <script>
 
 export default {
+  data() {
+    return {
+      numQuantiles: 10,
+      minFilter: null,
+      maxFilter: null
+    }
+  },
+
   computed: {
-    // build histogram text-chart
-    histogram: ({ minFilter, maxFilter, valueCounts }) => {
-      if (!valueCounts) {
-        return;
+    range: ({ minFilter, maxFilter }) => maxFilter - minFilter,
+    step: ({ numQuantiles, range }) => range / numQuantiles,
+
+    quantiles: ({ numQuantiles, minFilter, range, step, valueCounts }) => {
+      if (!valueCounts || !range) {
+        return [];
       }
-
-      const featurePropMin = minFilter;
-      const featurePropMax = maxFilter;
-
-      // here we count things for quantiles ()
-      const range = featurePropMax - featurePropMin;
-      const quantile = 10;
-      const step = range / quantile;
 
       // add up the things in each bucket
       const bucket = [];
-      for (let i = 0; i < quantile; i++) {
+      for (let i = 0; i < numQuantiles; i++) {
         bucket[i] = valueCounts.reduce((total, [value, count]) => {
-          if ((value > (step * i) + featurePropMin) && (value <= (step * (i+1)) + featurePropMin)) {
+          if ((value > (step * i) + minFilter) && (value <= (step * (i+1)) + minFilter)) {
             total += count;
           }
           return total;
@@ -33,26 +47,22 @@ export default {
 
       const quantileMax = Math.max(...bucket);
       const quantilePercent = bucket.map(x => x / quantileMax);
-      let chart = 'histogram: ' + quantile + ' buckets, ' + step.toFixed(1) + ' wide\n';
 
-      quantilePercent.forEach((x, index) =>  {
+      return quantilePercent.map((x, index) =>  {
         const count = bucket[index].toString();
-        const width = 10;
-        const columns = Math.ceil(x*width);
-        const spacing = ' '.repeat(width - columns);
-        let row = count.padStart(6,' ') + 'x | ';
+        const columns = Math.ceil(x*numQuantiles);
 
-        for (let i = 0; i < columns ; i++) {
-          row = row + '*';
-          if (i == (columns-1)){
-            const suffix = spacing + ' | ' + (index*step + featurePropMin).toFixed(0) + '->' + ((index+1)*step + featurePropMin).toFixed(0);
-            row = row + suffix + '\n';
-          }
-        }
-        chart += row;
+        const from = (index*step + minFilter).toFixed(0);
+        const to = ((index+1)*step + minFilter).toFixed(0);
+        const percent = columns / numQuantiles * 100;
+
+        return {
+          from,
+          to,
+          count,
+          percent
+        };
       });
-
-      return chart;
     }
   }
 };
