@@ -26,8 +26,7 @@ export default {
     return {
       numQuantiles: 10,
       minFilter: null,
-      maxFilter: null,
-      parseNumber // passthrough for template
+      maxFilter: null
     }
   },
 
