@@ -121,25 +121,7 @@
                 minFilter={featurePropMinFilter}
                 maxFilter={featurePropMaxFilter}
                 valueCounts={sortedFeaturePropValueCounts}
-                valueColors={
-                  displayToggles.colors === 'range' &&
-                  sortedFeaturePropValueCounts.map(([value]) => {
-                    return formatFeaturePropValueColor(
-                      // NOTE: seems there's no way to pass the whole svelte state here,
-                      // so we have to pass the props we need one by one
-                      {
-                        displayToggles,
-                        featurePropMinFilter,
-                        featurePropMaxFilter,
-                        featurePropPalette,
-                        featurePropPaletteFlip,
-                        featurePropValueCounts,
-                        colorHelpers
-                      },
-                      value
-                    )
-                  })
-                }
+                valueColors={displayToggles.colors === 'range' ? sortedFeaturePropValueColors : []}
               />
 
             {:else}
@@ -165,27 +147,13 @@
           <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
         </thead>
         <tbody>
-          {#each sortedFeaturePropValueCounts as [value, count]}
+          {#each sortedFeaturePropValueCounts as [value, count], i }
             <tr>
               <td style="width: 15px;text-align: right;">{count}</td>
               <td style="width: 15px;">
                 <!-- uses color calc code shared with tangram-->
                 {#if showFeaturePropColorSwatch(displayToggles.colors)}
-                  <span class="dot" style="background-color: {
-                    formatFeaturePropValueColor(
-                      // NOTE: seems there's no way to pass the whole svelte state here,
-                      // so we have to pass the props we need one by one
-                      {
-                        displayToggles,
-                        featurePropMinFilter,
-                        featurePropMaxFilter,
-                        featurePropPalette,
-                        featurePropPaletteFlip,
-                        featurePropValueCounts,
-                        colorHelpers
-                      },
-                      value
-                    )};">
+                  <span class="dot" style="background-color: {sortedFeaturePropValueColors[i]};">
                   </span>
                 {/if}
               </td>
@@ -384,6 +352,32 @@ export default {
         });
       }
       return featurePropValueCounts; // return original/unmodified values
+    },
+
+    sortedFeaturePropValueColors: ({
+      displayToggles, sortedFeaturePropValueCounts,
+      // these props are needed for the color palette functions
+      featurePropMinFilter, featurePropMaxFilter,
+      featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
+
+      if (!displayToggles) {
+        return [];
+      }
+
+      return sortedFeaturePropValueCounts.map(([value]) => {
+        return formatFeaturePropValueColor(
+          {
+            displayToggles,
+            featurePropMinFilter,
+            featurePropMaxFilter,
+            featurePropPalette,
+            featurePropPaletteFlip,
+            featurePropValueCounts,
+            colorHelpers
+          },
+          value
+        )
+      })
     },
 
     featurePropMostlyNumeric: ({ featurePropValueCounts, featurePropNumericThreshold }) => {
@@ -864,7 +858,7 @@ export default {
       }
     }
 
-},
+  },
 
   helpers: {
     showFeaturePropColorSwatch(colors) {
@@ -876,14 +870,6 @@ export default {
     },
 
     useFeaturePropRangeLimit, // reference here to make available to as template helper
-
-    formatFeaturePropValueColor(state, value) {
-      const colors = state.displayToggles.colors;
-      if (colorFunctions[colors]) {
-        return colorFunctions[colors].color(value, state);
-      }
-      return 'rgba(127, 127, 127, .5)';
-    },
 
     formatFeatureRow(r) {
       const indent = 4;
@@ -906,6 +892,14 @@ function useFeaturePropRangeLimit(colors) {
 
 function defaultDisplayOptionValue(p) {
   return displayOptions[p] && displayOptions[p].values[0];
+}
+
+function formatFeaturePropValueColor(state, value) {
+  const colors = state.displayToggles.colors;
+  if (colorFunctions[colors]) {
+    return colorFunctions[colors].color(value, state);
+  }
+  return 'rgba(127, 127, 127, .5)';
 }
 
 // format nested property name stack with dot (object) and bracket (array) notation
