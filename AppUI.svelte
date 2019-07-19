@@ -117,7 +117,31 @@
                 </div>
               {/if}
 
-              <FeaturePropHistogram minFilter={featurePropMinFilter} maxFilter={featurePropMaxFilter} valueCounts={featurePropValueCounts} />
+              <FeaturePropHistogram
+                minFilter={featurePropMinFilter}
+                maxFilter={featurePropMaxFilter}
+                valueCounts={sortedFeaturePropValueCounts}
+                valueColors={
+                  displayToggles.colors === 'range' &&
+                  sortedFeaturePropValueCounts.map(([value]) => {
+                    return formatFeaturePropValueColor(
+                      // NOTE: seems there's no way to pass the whole svelte state here,
+                      // so we have to pass the props we need one by one
+                      {
+                        displayToggles,
+                        featurePropMinFilter,
+                        featurePropMaxFilter,
+                        featurePropPalette,
+                        featurePropPaletteFlip,
+                        featurePropValueCounts,
+                        colorHelpers
+                      },
+                      value
+                    )
+                  })
+                }
+              />
+
             {:else}
               no min/max (no numeric values found)
             {/if}
