@@ -117,12 +117,14 @@
                 </div>
               {/if}
 
-              <FeaturePropHistogram
-                minFilter={featurePropMinFilter}
-                maxFilter={featurePropMaxFilter}
-                valueCounts={sortedFeaturePropValueCounts}
-                valueColors={displayToggles.colors === 'range' ? sortedFeaturePropValueColors : []}
-              />
+              {#if featurePropMostlyNumeric}
+                <FeaturePropHistogram
+                  minFilter={featurePropMinFilter}
+                  maxFilter={featurePropMaxFilter}
+                  valueCounts={sortedFeaturePropValueCounts}
+                  valueColors={displayToggles.colors === 'range' ? sortedFeaturePropValueColors : []}
+                />
+              {/if}
 
             {:else}
               no min/max (no numeric values found)
