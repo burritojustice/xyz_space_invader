@@ -102,7 +102,7 @@
               {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
 
               {#if useFeaturePropRangeLimit(displayToggles.colors)}
-                <div style="margin-bottom: 5px;">
+                <div>
                   Limit values:
                   <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
                     <option value="0">all</option>
@@ -115,16 +115,21 @@
                   <input class="range_filter" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
                   <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
                 </div>
-              {/if}
 
-              {#if featurePropMostlyNumeric}
-                <FeaturePropHistogram
-                  minFilter={featurePropMinFilter}
-                  maxFilter={featurePropMaxFilter}
-                  valueCounts={sortedFeaturePropValueCounts}
-                  valueColors={displayToggles.colors === 'range' ? sortedFeaturePropValueColors : []}
-                />
-              {/if}
+                <label style="margin-bottom: 5px;">
+                  <input type="checkbox" bind:checked="featurePropHideOutliers">
+                  Hide outliers
+                </label>
+
+                {#if featurePropMostlyNumeric}
+                  <FeaturePropHistogram
+                    minFilter={featurePropMinFilter}
+                    maxFilter={featurePropMaxFilter}
+                    valueCounts={sortedFeaturePropValueCounts}
+                    valueColors={displayToggles.colors === 'range' ? sortedFeaturePropValueColors : []}
+                  />
+                {/if}
+            {/if}
 
             {:else}
               no min/max (no numeric values found)
@@ -484,6 +489,7 @@ export default {
         featurePropMinFilterInput,
         featurePropMaxFilterInput,
         featurePropValueSort,
+        featurePropHideOutliers,
         tagFilterQueryParam
       }) => {
 
@@ -526,6 +532,7 @@ export default {
       }
 
       params.set('sort', featurePropValueSort);
+      params.set('hideOutliers', featurePropHideOutliers);
 
       return params;
     }
@@ -552,7 +559,8 @@ export default {
         changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
         changed.featurePropMinFilter ||
-        changed.featurePropMaxFilter) {
+        changed.featurePropMaxFilter ||
+        changed.featurePropHideOutliers) {
       this.fire('updateScene', current);
     }
 
@@ -674,6 +682,7 @@ export default {
       }
 
       const featurePropValueSort = params.sort || 'count';
+      const featurePropHideOutliers = (params.hideOutliers === 'true');
 
       // set all params
       this.set({
@@ -688,6 +697,7 @@ export default {
         featurePropMinFilterInput,
         featurePropMaxFilterInput,
         featurePropValueSort,
+        featurePropHideOutliers,
         tagFilterList,
         tagFilterAndOr
       });

@@ -56,6 +56,21 @@ global:
             return color;
         }
 
+    # optionally hide feature values that are above or below the current filter range
+    featureFilterOutliers: |
+        function() {
+          if (global.colorState.featurePropHideOutliers && global.colorFunctions[global.colorMode]) {
+            if (global.colorFunctions[global.colorMode].useProperty) {
+              var value = global.lookupFeatureProp(feature);
+              if (value < global.colorState.featurePropMinFilter ||
+                  value > global.colorState.featurePropMaxFilter+1) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }
+
     property_hash_name: TRAJUNCTYP
     prop: x
 
@@ -199,7 +214,10 @@ styles:
 layers:
 
     _xyz_dots:
-        filter: {$geometry: point}
+        filter:
+          all:
+            - $geometry: point
+            - global.featureFilterOutliers
         # enabled: false
         data: {source: _xyzspace}
         draw:
@@ -230,10 +248,11 @@ layers:
                             width: 2px
 
     _xyz_lines:
-        filter: {$geometry: line}
-        # enabled: false
+        filter:
+          all:
+            - $geometry: line
+            - global.featureFilterOutliers
         data: {source: _xyzspace}
-        # filter: {kind: point}
         draw:
             _lines:
                 interactive: true
@@ -261,8 +280,10 @@ layers:
                             width: 2px
 
     _xyz_polygons:
-        filter: {$geometry: polygon}
-        # enabled: false
+        filter:
+          all:
+            - $geometry: polygon
+            - global.featureFilterOutliers
         data: {source: _xyzspace}
         _outlines:
             # enabled: false
