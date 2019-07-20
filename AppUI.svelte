@@ -898,7 +898,7 @@ function defaultDisplayOptionValue(p) {
 
 function formatFeaturePropValueColor(state, value) {
   const colors = state.displayToggles.colors;
-  if (colorFunctions[colors]) {
+  if (colorFunctions[colors] && colorFunctions[colors].color) {
     return colorFunctions[colors].color(value, state);
   }
   return 'rgba(127, 127, 127, .5)';
