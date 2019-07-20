@@ -61,7 +61,7 @@ global:
         function() {
           if (global.colorState.featurePropHideOutliers && global.colorFunctions[global.colorMode]) {
             if (global.colorFunctions[global.colorMode].useProperty) {
-              var value = global.lookupFeatureProp(feature);
+              var value = global.colorState.colorHelpers.parseNumber(global.lookupFeatureProp(feature));
               if (value < global.colorState.featurePropMinFilter ||
                   value > global.colorState.featurePropMaxFilter+1) {
                 return false;
