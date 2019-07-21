@@ -148,13 +148,21 @@
       {/if}
     </p>
 
-    <table id="prop_stats">
-      {#if featureProp && featurePropValueCounts}
+    {#if featureProp && featurePropValueCounts}
+      <div style="margin: 5px 0 5px 0;">
+        {#if sortedFeaturePropValueCounts.length <= 50}
+          Top values for <i>{featureProp}</i> in viewport:
+        {:else}
+          Top 50 of {sortedFeaturePropValueCounts.length} values for <i>{featureProp}</i> in viewport:
+        {/if}
+      </div>
+
+      <table id="prop_stats">
         <thead>
           <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
         </thead>
         <tbody>
-          {#each sortedFeaturePropValueCounts as [value, count], i }
+          {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
             <tr>
               <td style="width: 15px;text-align: right;">{count}</td>
               <td style="width: 15px;">
@@ -168,8 +176,8 @@
             </tr>
           {/each}
         </tbody>
-      {/if}
-    </table>
+      </table>
+    {/if}
   </div>
 </div>
 
