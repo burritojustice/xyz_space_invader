@@ -172,11 +172,11 @@ function makeLayer(scene_obj) {
 function applySpace({ spaceId, token }) {
   if (spaceId && token) {
     scene_config.sources._xyzspace = {
-      ...scene_config.sources._xyzspace,
+      type: 'GeoJSON',
       url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
       url_params: {
-        ...scene_config.sources._xyzspace.url_params,
-        access_token: token
+        access_token: token,
+        clip: true
       }
     };
   }
