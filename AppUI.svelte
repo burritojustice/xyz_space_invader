@@ -118,7 +118,7 @@
 
                 <label style="margin-bottom: 5px;">
                   <input type="checkbox" bind:checked="featurePropHideOutliers">
-                  Hide outliers
+                  Hide values outside range
                 </label>
 
                 {#if featurePropMostlyNumeric}
