@@ -137,9 +137,6 @@
           </div>
 
           <div>
-            <span style="color:blue;" on:click="toggleFeaturePropValueSort()">
-              [sort by {nextFeaturePropValueSort}]
-            </span>
             <span style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</span>
           </div>
         {:else}
@@ -151,10 +148,15 @@
     {#if featureProp && featurePropValueCounts}
       <div style="margin: 5px 0 5px 0;">
         {#if sortedFeaturePropValueCounts.length <= 50}
-          Top values for <i>{featureProp}</i> in viewport:
+          Top values for <i>{featureProp}</i> by
         {:else}
-          Top 50 of {sortedFeaturePropValueCounts.length} values for <i>{featureProp}</i> in viewport:
+          Top 50 of {sortedFeaturePropValueCounts.length} values for <i>{featureProp}</i> by
         {/if}
+
+        <select bind:value="featurePropValueSort">
+          <option>count</option>
+          <option>values</option>
+        </select>
       </div>
 
       <table id="prop_stats">
@@ -404,8 +406,6 @@ export default {
     },
 
     featurePropValueCountHash: ({ featurePropValueCounts }) => hashString(JSON.stringify(featurePropValueCounts)),
-
-    nextFeaturePropValueSort: ({ featurePropValueSort }) => (featurePropValueSort === 'count' ? 'values' : 'count'),
 
     nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
 
@@ -814,10 +814,6 @@ export default {
       }
 
       this.set({ displayToggles });
-    },
-
-    toggleFeaturePropValueSort() {
-      this.set({ featurePropValueSort: this.get().nextFeaturePropValueSort });
     },
 
     toggleTagSort() {
