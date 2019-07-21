@@ -65,7 +65,7 @@
 
   <div id="colors" class="panel">
     <p id="colorProperties">
-      {#if displayToggles}
+      {#if featureProp && featurePropCount != null}
         <div>
           <span>
             <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
@@ -92,67 +92,60 @@
 
         </div>
 
-        {#if featureProp && featurePropCount != null}
-          <div style="margin: 5px 0 5px 0;">
-            {featurePropCount} unique values of <i>{featureProp}</i> in viewport<br>
-            {#if featurePropMin != null}
-              min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}<br>
+        <div style="margin: 5px 0 5px 0;">
+          <div>{featurePropCount} unique values of <i>{featureProp}</i> in viewport</div>
+
+          {#if featurePropMin != null}
+            <div>min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}</div>
+            <div>
               μ: {featurePropMean.toFixed(2)},
               σ: {featurePropStdDev.toFixed(2)},
               {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
+            </div>
+          {/if}
 
-              {#if useFeaturePropRangeLimit(displayToggles.colors)}
-                <div>
-                  Limit values:
-                  <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
-                    <option value="0">all</option>
-                    <option value="4">sigma 4</option>
-                    <option value="3">sigma 3</option>
-                    <option value="2">sigma 2</option>
-                    <option value="1">sigma 1</option>
-                    <option value="custom">custom</option>
-                  </select>
-                  <input class="range_filter" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
-                  <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
-                </div>
+          <div style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</div>
 
-                <label style="margin-bottom: 5px;">
-                  <input type="checkbox" bind:checked="featurePropHideOutliers">
-                  Hide values outside range
-                </label>
+          {#if featurePropMin != null}
+            {#if useFeaturePropRangeLimit(displayToggles.colors)}
+              <div>
+                Limit values:
+                <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
+                  <option value="0">all</option>
+                  <option value="4">sigma 4</option>
+                  <option value="3">sigma 3</option>
+                  <option value="2">sigma 2</option>
+                  <option value="1">sigma 1</option>
+                  <option value="custom">custom</option>
+                </select>
+                <input class="range_filter" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+              </div>
 
-                {#if featurePropMostlyNumeric}
-                  <FeaturePropHistogram
-                    minFilter={featurePropMinFilter}
-                    maxFilter={featurePropMaxFilter}
-                    valueCounts={sortedFeaturePropValueCounts}
-                    valueColorFunction={featurePropValueColorFunction}
-                  />
-                {/if}
+              <label style="margin-bottom: 5px;">
+                <input type="checkbox" bind:checked="featurePropHideOutliers">
+                Hide values outside range
+              </label>
+
+              {#if featurePropMostlyNumeric}
+                <FeaturePropHistogram
+                  minFilter={featurePropMinFilter}
+                  maxFilter={featurePropMaxFilter}
+                  valueCounts={sortedFeaturePropValueCounts}
+                  valueColorFunction={featurePropValueColorFunction}
+                />
+              {/if}
             {/if}
-
-            {:else}
-              no min/max (no numeric values found)
-            {/if}
-          </div>
-
-          <div>
-            <span style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</span>
-          </div>
-        {:else}
-          <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
-        {/if}
+          {/if}
+        </div>
+      {:else}
+        <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
       {/if}
     </p>
 
     {#if featureProp && featurePropValueCounts}
       <div style="margin: 5px 0 5px 0;">
-        {#if sortedFeaturePropValueCounts.length <= 50}
-          Top values for <i>{featureProp}</i> by
-        {:else}
-          Top 50 of {sortedFeaturePropValueCounts.length} values for <i>{featureProp}</i> by
-        {/if}
-
+        Top values for <i>{featureProp}</i> by
         <select bind:value="featurePropValueSort">
           <option>count</option>
           <option>values</option>
@@ -179,6 +172,11 @@
           {/each}
         </tbody>
       </table>
+
+      {#if sortedFeaturePropValueCounts.length > 50}
+        <i>{sortedFeaturePropValueCounts.length - 50} more {sortedFeaturePropValueCounts.length - 50 > 1 ? 'values' : 'value'} for {featureProp} not shown</i>
+      {/if}
+
     {/if}
   </div>
 </div>
