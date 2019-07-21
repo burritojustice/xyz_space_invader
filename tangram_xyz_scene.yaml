@@ -224,6 +224,7 @@ layers:
             points:
                 interactive: true
                 collide: false
+                blend_order: 0 # put our points under the basemap labels
                 color: |
                     function(){
                         var color
