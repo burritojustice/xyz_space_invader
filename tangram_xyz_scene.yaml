@@ -71,15 +71,8 @@ global:
           return true;
         }
 
-sources:
-    _xyzspace:
-        url: https://xyz.api.here.com/hub/spaces/cacVJZ1K/tile/web/{z}_{x}_{y}
-        type: GeoJSON
-        url_params:
-            access_token: AVoxWfIDYgZOr4zOaUV3urg
-            # tags: YOUR_TAG
-            # limit: 50000 #
-            clip: true
+# sources:
+#     _xyzspace: # this source is created at run-time based on XYZ space
 
 styles:
     _points:
