@@ -54,6 +54,7 @@ export default {
     outsideRange: ({ minFilter, maxFilter, valueCounts }) => {
       let below = 0, above = 0;
       valueCounts.forEach(([value, count]) => {
+        value = parseNumber(value);
         if (value < minFilter) {
           below += count;
         }
@@ -74,6 +75,7 @@ export default {
       const bucket = [];
       for (let i = 0; i < numQuantiles; i++) {
         bucket[i] = valueCounts.reduce((total, [value, count]) => {
+          value = parseNumber(value);
           if ((value >= (step * i) + minFilter) && (value < (step * (i+1)) + minFilter)) {
             total += count;
           }
