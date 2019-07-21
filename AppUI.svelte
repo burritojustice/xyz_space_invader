@@ -126,7 +126,7 @@
                     minFilter={featurePropMinFilter}
                     maxFilter={featurePropMaxFilter}
                     valueCounts={sortedFeaturePropValueCounts}
-                    valueColors={displayToggles.colors === 'range' ? sortedFeaturePropValueColors : []}
+                    valueColorFunction={featurePropValueColorFunction}
                   />
                 {/if}
             {/if}
@@ -168,7 +168,7 @@
               <td style="width: 15px;">
                 <!-- uses color calc code shared with tangram-->
                 {#if showFeaturePropColorSwatch(displayToggles.colors)}
-                  <span class="dot" style="background-color: {sortedFeaturePropValueColors[i]};">
+                  <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
                   </span>
                 {/if}
               </td>
@@ -297,8 +297,8 @@ export default {
 
       displayToggles: null,
       colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
-      colorPalettes, // need to reference here to make accessible to templates
-      colorHelpers, // need to reference here to make accessible to templates
+      colorPalettes, // need to reference here to make accessible to templates and tangram functions
+      colorHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
     }
   },
@@ -369,30 +369,26 @@ export default {
       return featurePropValueCounts; // return original/unmodified values
     },
 
-    sortedFeaturePropValueColors: ({
-      displayToggles, sortedFeaturePropValueCounts,
-      // these props are needed for the color palette functions
+    // function to calculate color for a feature prop value, based on current selection state
+    featurePropValueColorFunction: ({
+      displayToggles,
       featurePropMinFilter, featurePropMaxFilter,
       featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
 
-      if (!displayToggles) {
-        return [];
-      }
-
-      return sortedFeaturePropValueCounts.map(([value]) => {
-        return formatFeaturePropValueColor(
-          {
-            displayToggles,
-            featurePropMinFilter,
-            featurePropMaxFilter,
-            featurePropPalette,
-            featurePropPaletteFlip,
-            featurePropValueCounts,
-            colorHelpers
-          },
-          value
-        )
-      })
+      return (value) => {
+        const colors = displayToggles.colors;
+        if (colorFunctions[colors] && colorFunctions[colors].color) {
+          return colorFunctions[colors].color(
+            value, {
+              displayToggles,
+              featurePropMinFilter, featurePropMaxFilter,
+              featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
+              colorHelpers
+            }
+          );
+        }
+        return 'rgba(127, 127, 127, .5)';
+      };
     },
 
     featurePropMostlyNumeric: ({ featurePropValueCounts, featurePropNumericThreshold }) => {

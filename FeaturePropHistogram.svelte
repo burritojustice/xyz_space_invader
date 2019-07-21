@@ -65,7 +65,7 @@ export default {
     },
 
     // calculate buckets for data by range and number of quantiles
-    quantiles: ({ numQuantiles, minFilter, range, step, valueCounts, valueColors }) => {
+    quantiles: ({ numQuantiles, minFilter, range, step, valueCounts, valueColorFunction }) => {
       if (!valueCounts || !range) {
         return [];
       }
@@ -88,12 +88,12 @@ export default {
         const count = bucket[index];
         const columns = Math.ceil(x*numQuantiles);
 
-        const from = (index*step + minFilter);//.toFixed(0);
-        const to = ((index+1)*step + minFilter);//.toFixed(0);
+        const from = (index*step + minFilter);
+        const to = ((index+1)*step + minFilter);
         const percent = columns / numQuantiles * 100;
 
-        const fromColor = valueColors ? valueColors[valueCounts.findIndex(([v]) => from >= parseNumber(v))] : null;
-        const toColor = valueColors ? valueColors[valueCounts.findIndex(([v]) => to >= parseNumber(v))] : null;
+        const fromColor = valueColorFunction(from);
+        const toColor = valueColorFunction(to);
 
         return {
           from,
