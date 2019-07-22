@@ -47,19 +47,18 @@
     </p>
   </div>
   <div id="properties" class="panel">
-    {#if feature}
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
-        {#each featurePropRows as r}
-          <tr
-            class:active="r.prop === featureProp"
-            on:click="setFeatureProp(r.prop !== featureProp ? r.propStack : null)"
-          >
-          <td>{@html formatFeatureRow(r)}</td>
+        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+          <tr class:active="prop === featureProp">
+            <td>
+              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
+              {prop}
+            </td>
           </tr>
         {/each}
       </table>
-    {:else}
-      Interact with map to see properties.<br>Click on a property value to generate unique colors.
     {/if}
   </div>
 
@@ -895,14 +894,6 @@ export default {
 
     useFeaturePropRangeLimit, // reference here to make available to as template helper
 
-    formatFeatureRow(r) {
-      const indent = 4;
-      let t = Array(r.level * indent).fill('&nbsp;').join('');
-      if (r.prop !== undefined) t += r.prop + ': ';
-      if (r.value !== undefined) t += r.value;
-      return t;
-    },
-
     maybeStringifyObject(v) {
       // stringify objects, otherwise just return original object
       return (v != null && typeof v === 'object') ? JSON.stringify(v) : v;
@@ -924,25 +915,6 @@ function formatFeaturePropValueColor(state, value) {
     return colorFunctions[colors].color(value, state);
   }
   return 'rgba(127, 127, 127, .5)';
-}
-
-function buildFeatureRows(obj, level = -1, prop = null, propStack = [], rows = []) {
-  if (Array.isArray(obj)) {
-    if (prop) {
-      rows.push({ level, obj, prop: formatPropStack(propStack), propStack }); // header row
-    }
-    obj.forEach((x, i) => buildFeatureRows(x, level + 1, i, [...propStack, i], rows));
-  } else if (typeof obj === 'object' && obj != null) {
-    if (prop) {
-      rows.push({ level, obj, prop: formatPropStack(propStack), propStack }); // header row
-    }
-    for (var prop in obj) {
-      buildFeatureRows(obj[prop], level + 1, prop, [...propStack, prop], rows);
-    }
-  } else {
-    rows.push({ level, obj, prop: formatPropStack(propStack), value: obj, propStack });
-  }
-  return rows;
 }
 
 function hashString (string) {
