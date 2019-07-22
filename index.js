@@ -101,6 +101,10 @@ function loadScene(scene_obj) {
 
 // initialize Tangram leaflet layer, and load the scene for the first time
 function makeLayer(scene_obj) {
+  // initial placeholder access token, replaced after space has loaded
+  // TODO: refactor to avoid loading tiles until we have the final token
+  scene_obj.global.xyz_access_token = scene_obj.global.xyz_access_token || 'Qz2TvilK6PhGZSu9K-yGkA';
+
   layer = Tangram.leafletLayer({
     scene: scene_obj,
     attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
@@ -171,6 +175,9 @@ function makeLayer(scene_obj) {
 
 function applySpace({ spaceId, token }) {
   if (spaceId && token) {
+    // token is used for XYZ space and basemap tiles
+    scene_config.global.xyz_access_token = token;
+
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
       url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
