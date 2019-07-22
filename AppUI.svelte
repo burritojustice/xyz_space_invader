@@ -255,6 +255,7 @@ import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNe
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
 import { displayOptions } from './displayOptions';
+import { parseNestedObject, formatPropStack } from './utils';
 
 export default {
   data() {
@@ -294,6 +295,8 @@ export default {
 
       numFeaturesInViewport: null,
       uniqueTagsSeen: new Set(),
+
+      uniqueFeaturePropsSeen: new Map(),
 
       displayToggles: null,
       colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
@@ -341,7 +344,7 @@ export default {
       return featurePropMax;
     },
 
-    featurePropRows: ({ feature }) => feature && buildFeatureRows(feature.properties),
+    featurePropRows: ({ feature }) => feature && parseNestedObject(feature.properties),
 
     featurePropPalette: ({ featurePropPaletteName }) => {
       return colorPalettes[featurePropPaletteName];
@@ -408,6 +411,13 @@ export default {
     nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
 
     uniqueTagsInViewport: ({ tagsWithCountsInViewport }) => new Set(tagsWithCountsInViewport.map(v => v[0])),
+
+    sortedUniqueFeaturePropsSeen: ({ uniqueFeaturePropsSeen }) => {
+      // alphabetical sort, but with @ properties at bottom
+      return Array.from(uniqueFeaturePropsSeen.keys())
+        .sort((a, b) => a[0] === '@' ? 1 : b[0] === '@' ? -1 : a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0)
+        .map(prop => [prop, uniqueFeaturePropsSeen.get(prop)]);
+    },
 
     numFeatureTagsInViewport: ({ tagsWithCountsInViewport }) => tagsWithCountsInViewport.reduce((acc, cur) => acc + cur[1], 0),
 
@@ -914,22 +924,6 @@ function formatFeaturePropValueColor(state, value) {
     return colorFunctions[colors].color(value, state);
   }
   return 'rgba(127, 127, 127, .5)';
-}
-
-// format nested property name stack with dot (object) and bracket (array) notation
-function formatPropStack(propStack) {
-  return propStack &&
-    propStack
-      .map((p, i) => {
-        const n = parseInt(p);
-        if (typeof n === 'number' && !isNaN(n)) {
-          return `[${p}]`;
-        }
-        else {
-          return `${i > 0 ? '.' : ''}${p}`;
-        }
-      })
-      .join('');
 }
 
 function buildFeatureRows(obj, level = -1, prop = null, propStack = [], rows = []) {
