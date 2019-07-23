@@ -51,7 +51,7 @@
       <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
         {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-          <tr class:active="prop === featureProp">
+          <tr class:active="prop === featureProp" on:click="setFeatureProp(prop !== featureProp ? propStack : null)">
             <td>
               {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
               {prop}
