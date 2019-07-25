@@ -113,16 +113,15 @@ function makeLayer(scene_obj) {
     attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
     events: {
       hover: ({ feature, leaflet_event: { latlng }, changed }) => {
+        // preview feature via hover, currently NOT synced to app UI
         if (pinnedFeature) {
           return;
         }
 
-        const featureInfo = buildFeatureInfo(feature, { summary: true });
+        const featureInfo = buildFeatureInfo(feature, { pinned: false });
         if (featureInfo) {
           if (changed) {
-            // tooltip.setContent(featureInfo);
             popup.setContent(featureInfo);
-            // layer.openTooltip(latlng);
           }
 
           if (!popup.isOpen()) {
@@ -133,21 +132,17 @@ function makeLayer(scene_obj) {
           }
         }
         else {
-          // layer.closeTooltip();
           layer.closePopup();
         }
       },
       click: ({ feature, leaflet_event: { latlng }, changed }) => {
-        // select new feature in UI
-        // if (JSON.stringify(appUI.get().feature) !== JSON.stringify(feature)) {
+        // select new feature, syncs to app UI
         if (!pinnedFeature) {
-          const featureInfo = buildFeatureInfo(feature, { summary: false });
+          const featureInfo = buildFeatureInfo(feature, { pinned: true });
           if (featureInfo) {
             pinnedFeature = feature;
 
-            // tooltip.setContent(featureInfo);
             popup.setContent(featureInfo);
-            // layer.openTooltip(latlng);
             if (!popup.isOpen()) {
               layer.openPopup(latlng);
             }
@@ -161,7 +156,6 @@ function makeLayer(scene_obj) {
         // de-select feature
         else {
           pinnedFeature = null;
-          // layer.closeTooltip();
           layer.closePopup();
           appUI.set({ feature: null });
         }
@@ -485,7 +479,7 @@ function updateViewportProperties(features) { // for feature prop
 }
 
 // TODO: move this to svelte for easier template management
-function buildFeatureInfo(feature, { summary } = {}) {
+function buildFeatureInfo(feature, { pinned } = {}) {
   if (feature && feature.source_name === '_xyzspace') {
     const { featureProp, featurePropStack } = appUI.get();
 
@@ -497,33 +491,32 @@ function buildFeatureInfo(feature, { summary } = {}) {
       .filter(x => x[0] && x[1]) // only include props that had values
 
     let extendedProps = [];
-    if (!summary) {
+    if (pinned) {
       extendedProps = Object.entries(feature.properties)
         .filter(([p]) => ['id', 'name', featureProp].indexOf(p) === -1)
         .filter(x => x[0] && x[1]); // only include props that had values
     }
 
-    let propContent = summaryProps
-      .map(([k, v]) => `<b>${k}:</b> ${v}`)
-      .join('<br>');
+    return `
+      <div style="${pinned ? 'height: 200px; overflow-y: scroll; overflow-x: hidden;' : ''}">
+        ${summaryProps
+            .map(([prop, value]) => `
+              <b>${prop}:</b> ${value}
+              <br>`)
+            .join('')
+        }
 
-    if (extendedProps.length > 0) {
-      if (propContent.length > 0) {
-        propContent += '<hr>';
-      }
+        ${extendedProps && summaryProps ? `<hr>` : ''}
+        ${extendedProps
+            .map(([prop, value]) => `
+              <b>${prop}:</b> ${value}
+              <br>`)
+            .join('')
+        }
 
-      propContent += extendedProps
-        .map(([k, v]) => `<b>${k}:</b> ${v}`)
-        .join('<br>');
-    }
-
-    const numProps = Object.keys(feature.properties).length;
-    const content = `
-      <div style="${summary !== true ? 'height: 200px; overflow-y: scroll; overflow-x: hidden;' : ''}">
-      ${propContent}${propContent !== '' ? '<br>' : ''}
-      ${summary ? `<i>Click to see all ${numProps} properties</i>` : ''}
-      </div>
-    `;
-    return content;
+        ${!pinned && feature ?
+          `<i>Click to see all ${Object.keys(feature.properties).length} properties</i>` : ''
+        }
+      </div>`;
   }
 }
