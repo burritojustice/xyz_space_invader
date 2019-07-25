@@ -502,13 +502,13 @@ function buildFeatureInfo(feature, { pinned } = {}) {
     }
 
     return `
-      <div style="${pinned ? 'height: 200px; overflow-y: scroll; overflow-x: hidden;' : ''}">
+      <div style="${pinned ? 'height: 200px; overflow: auto;' : ''}">
         <table>
         ${summaryProps
           .map(([prop, value, propStack]) => `
             <tr>
               <td style="width: 50px;"><b>${Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}${prop}</b></td>
-              <td>${value}</td>
+              <td style="word-break: break-all;">${value}</td>
             </tr>`)
           .join('')
         }
@@ -519,7 +519,7 @@ function buildFeatureInfo(feature, { pinned } = {}) {
           .map(([prop, value, propStack]) => `
             <tr>
               <td style="width: 50px;"><b>${Array((propStack.length - 1) * 1).fill('&nbsp;').join('')}${prop}</b></td>
-              <td>${value}</td>
+              <td style="word-break: break-all;">${value}</td>
             </tr>`)
           .join('')
         }
