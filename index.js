@@ -114,7 +114,7 @@ function makeLayer(scene_obj) {
     events: {
       hover: ({ feature, leaflet_event: { latlng }, changed }) => {
         // preview feature via hover, currently NOT synced to app UI
-        if (pinnedFeature) {
+        if (appUI.get().feature) {
           return;
         }
 
@@ -137,11 +137,9 @@ function makeLayer(scene_obj) {
       },
       click: ({ feature, leaflet_event: { latlng }, changed }) => {
         // select new feature, syncs to app UI
-        if (!pinnedFeature) {
+        if (!appUI.get().feature) {
           const featureInfo = buildFeatureInfo(feature, { pinned: true });
           if (featureInfo) {
-            pinnedFeature = feature;
-
             popup.setContent(featureInfo);
             if (!popup.isOpen()) {
               layer.openPopup(latlng);
@@ -155,7 +153,6 @@ function makeLayer(scene_obj) {
         }
         // de-select feature
         else {
-          pinnedFeature = null;
           layer.closePopup();
           appUI.set({ feature: null });
         }
@@ -171,16 +168,12 @@ function makeLayer(scene_obj) {
   // always clear pinned feature on close (e.g. maybe user manually closed with X button)
   layer.on('popupclose', e => {
     if (e.popup === popup) {
-      pinnedFeature = null;
       appUI.set({ feature: null });
     }
   });
 
-  // map.on('zoom,mouseout', () => layer.closeTooltip()); // close tooltip when zooming
   map.on('zoom mouseout', () => {
-    // pinnedFeature = null;
-    // layer.closeTooltip();
-    if (!pinnedFeature) {
+    if (!appUI.get().feature) {
       layer.closePopup();
     }
   }); // close tooltip when zooming
