@@ -39,8 +39,8 @@ const appUI = new AppUI({
 window.appUI = appUI; // debugging
 
 // Handle UI events affecting Tangram scene
-appUI.on('loadScene', ({ basemapScene }) => {
-  loadScene(basemapScene);
+appUI.on('loadScene', state => {
+  loadScene(state);
 });
 
 appUI.on('updateScene', state => {
@@ -89,22 +89,23 @@ function updateScene(uiState) {
 }
 
 // load a new scene basemap (first creating the leaflet and tangram layers if needed)
-function loadScene(scene_obj) {
+function loadScene({ basemapScene, token }) {
+  // token is used for XYZ space and basemap tiles
+  // defaults to initial placeholder access token if needed, replaced after space has loaded
+  basemapScene.global.xyz_access_token = token || 'Qz2TvilK6PhGZSu9K-yGkA';
+  basemapScene.global.sdk_api_key = 'DpCrhQqsR2igQPEINRTfcw'; // default Nextzen API key for terrain tiles
+
   if (layer == null) {
     // if the Tangram layer doesn't exist yet, initialize it and load the scene for the first time
-    makeLayer(scene_obj);
+    makeLayer(basemapScene);
   }
   else {
-    scene.load(scene_obj);
+    scene.load(basemapScene);
   }
 }
 
 // initialize Tangram leaflet layer, and load the scene for the first time
 function makeLayer(scene_obj) {
-  // initial placeholder access token, replaced after space has loaded
-  // TODO: refactor to avoid loading tiles until we have the final token
-  scene_obj.global.xyz_access_token = scene_obj.global.xyz_access_token || 'Qz2TvilK6PhGZSu9K-yGkA';
-
   layer = Tangram.leafletLayer({
     scene: scene_obj,
     attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
@@ -175,9 +176,6 @@ function makeLayer(scene_obj) {
 
 function applySpace({ spaceId, token }) {
   if (spaceId && token) {
-    // token is used for XYZ space and basemap tiles
-    scene_config.global.xyz_access_token = token;
-
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
       url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
