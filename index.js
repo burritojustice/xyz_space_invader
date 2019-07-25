@@ -343,10 +343,23 @@ function updateViewportTags(features) {  // for tags
 }
 
 function updateViewportProperties(features) { // for feature prop
+  // first get all unique properties for features in viewport, combined with those previously seen
+  const { uniqueFeaturePropsSeen } = appUI.get();
+  features.forEach(feature => {
+    const components = parseNestedObject(feature.properties)
+      .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
+      .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip features we already know about
+      .forEach(p => {
+        uniqueFeaturePropsSeen.set(p.prop, p.propStack);
+      });
+  });
+
+  // then get feature values based on currently selected property
   const propStack = appUI.get().featurePropStack;
 
   if (!propStack || propStack.length === 0) {
     appUI.set({
+      uniqueFeaturePropsSeen,
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropMin: null,
@@ -362,17 +375,6 @@ function updateViewportProperties(features) { // for feature prop
     });
     return;
   }
-
-  // get all unique properties for features in viewport, combined with those previously seen
-  const { uniqueFeaturePropsSeen } = appUI.get();
-  features.forEach(feature => {
-    const components = parseNestedObject(feature.properties)
-      .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
-      .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip features we already know about
-      .forEach(p => {
-        uniqueFeaturePropsSeen.set(p.prop, p.propStack);
-      });
-  });
 
   // grab the selected feature properties from Tangram's viewport tiles
   const propsViewport = features.map(f => lookupProperty(f.properties, propStack));
