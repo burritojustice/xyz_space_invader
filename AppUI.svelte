@@ -525,7 +525,7 @@ export default {
       params.set('paletteFlip', featurePropPaletteFlip);
 
       // save range filter (if current color mode supports it)
-      if (featurePropRangeFilter && useFeaturePropRangeLimit(displayToggles.colors)) {
+      if (featurePropRangeFilter && displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
         params.set('rangeFilter', featurePropRangeFilter);
         if (featurePropRangeFilter === 'custom') {
           params.set('rangeFilterMin', featurePropMinFilterInput);
@@ -580,13 +580,17 @@ export default {
     }
   },
 
-  onupdate({ changed, current }) {
+  onupdate({ changed, current, previous }) {
     // note: svelte needs these checks in onupdate instead of onstate because of interdependencies when
     // calling a set() from inside onstate that triggers another set(); these issues are reportedly fixed in v3,
     // separating this check out into onupdate for now
 
+    // reset range filter to 'all' when selected property changes
+    if (changed.featureProp && previous && previous.featureProp && current.featurePropRangeFilter === 'custom') {
+      this.updateFeaturePropRangeFilter(0); // zero = use all values / no range limiting
+    }
     // update range filter when underlying data changes
-    if (changed.featurePropMin || changed.featurePropMax) {
+    else if (changed.featurePropMin || changed.featurePropMax) {
       this.updateFeaturePropRangeFilter();
     }
 
@@ -772,7 +776,7 @@ export default {
       }
       else {
         this.set({
-          featurePropRangeFilter: filter // set new filter
+          featurePropRangeFilter: filter.toString() // set new filter
         });
       }
 
