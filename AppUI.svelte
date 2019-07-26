@@ -248,6 +248,13 @@
   </div>
 </div>
 
+<!-- feature popup content, hidden in the main UI and synced to the Leaflet popup -->
+<div style="display: none">
+  <div id="popupContent">
+    <FeaturePopup feature={feature} featureProp={featureProp} featurePropStack={featurePropStack} featurePinned={featurePinned} />
+  </div>
+</div>
+
 <script>
 
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
@@ -307,7 +314,8 @@ export default {
   },
 
   components: {
-    FeaturePropHistogram: './FeaturePropHistogram.svelte'
+    FeaturePropHistogram: './FeaturePropHistogram.svelte',
+    FeaturePopup: './FeaturePopup.svelte'
   },
 
   computed: {
@@ -621,6 +629,17 @@ export default {
           displayToggles: { ...current.displayToggles, colors }
         });
         this.updateFeaturePropValueSort();
+    }
+
+    // tell map to update popup content when it changes
+    // (this is in svelte onupdate because it fires after the DOM has been updated with new content)
+    if (changed.feature ||
+        changed.featureProp ||
+        changed.featurePropStack ||
+        changed.featurePinned) {
+      if (current.feature) {
+        this.fire('updatePopup');
+      }
     }
   },
 
