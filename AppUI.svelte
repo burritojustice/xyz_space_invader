@@ -63,36 +63,13 @@
   </div>
 
   <div id="colors" class="panel">
-    <p id="colorProperties">
+    <div id="colorProperties">
       {#if featureProp && featurePropCount != null}
-        <div>
-          <span>
-            <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
-              {#each colorModes as mode}
-                <option value="{mode}">{mode}</option>
-              {/each}
-            </select>
-          </span>
-
-          {#if showFeaturePropPalette(displayToggles.colors)}
-            <span>
-              <select bind:value="featurePropPaletteName">
-                {#each Object.keys(colorPalettes) as palette}
-                  <option value="{palette}">{palette}</option>
-                {/each}
-              </select>
-            </span>
-
-            <label>
-              <input type="checkbox" bind:checked="featurePropPaletteFlip">
-              Flip
-            </label>
-          {/if}
-
-        </div>
+        Analyzing property <b>{featureProp}</b>
+        <!-- <button on:click="set({ featurePropStack: null })">remove</button> -->
 
         <div style="margin: 5px 0 5px 0;">
-          <div>{featurePropCount} unique values of <i>{featureProp}</i> in viewport</div>
+          <div>{featurePropCount} unique values in the viewport</div>
 
           {#if featurePropMin != null}
             <div>min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}</div>
@@ -102,8 +79,31 @@
               {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
             </div>
           {/if}
+        </div>
 
-          <div style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</div>
+        <div>
+          Visualize features by
+          <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
+            {#each colorModes as mode}
+              <option value="{mode}">{colorFunctions[mode].label || mode}</option>
+            {/each}
+          </select>
+        </div>
+
+        {#if showFeaturePropPalette(displayToggles.colors)}
+          <div>
+            Color palette
+            <select bind:value="featurePropPaletteName">
+              {#each Object.keys(colorPalettes) as palette}
+                <option value="{palette}">{palette}</option>
+              {/each}
+            </select>
+
+            <label>
+              <input type="checkbox" bind:checked="featurePropPaletteFlip">
+              Flip
+            </label>
+          </div>
 
           {#if featurePropMin != null}
             {#if useFeaturePropRangeLimit(displayToggles.colors)}
@@ -136,15 +136,15 @@
               {/if}
             {/if}
           {/if}
-        </div>
+        {/if}
       {:else}
-        <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
+        Select a feature property to analyze from the list above.
       {/if}
-    </p>
+    </div>
 
     {#if featureProp && featurePropValueCounts}
       <div style="margin: 5px 0 5px 0;">
-        Top values for <i>{featureProp}</i> by
+        Top values by
         <select bind:value="featurePropValueSort">
           <option>count</option>
           <option>values</option>
@@ -299,6 +299,7 @@ export default {
 
       displayToggles: null,
       colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
+      colorFunctions, // need to reference here to make accessible to templates and tangram functions
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
       colorHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
