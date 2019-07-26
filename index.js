@@ -197,6 +197,7 @@ function applyDisplayOptions(uiState) {
 }
 
 function applyTags({ tagFilterQueryParam }) {
+  scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
   scene_config.sources._xyzspace.url_params = {
     ...scene_config.sources._xyzspace.url_params,
     tags: tagFilterQueryParam
