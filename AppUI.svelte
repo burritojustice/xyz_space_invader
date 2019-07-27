@@ -51,7 +51,7 @@
       <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
         {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-          <tr class:active="prop === featureProp" on:click="setFeatureProp(prop !== featureProp ? propStack : null)">
+          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
             <td>
               {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
               {prop}
@@ -275,11 +275,11 @@
       featurePropStack={featurePropStack}
       featurePinned={featurePinned}
       featurePropValue={featurePropValue}
-      on:selectProp="set({
+      on:selectProp="setFeatureProp({
         featurePropStack: (event.prop !== featureProp ? event.propStack : null),
         featurePropValue: null
       })"
-      on:selectValue="set({
+      on:selectValue="setFeatureProp({
         featurePropStack: event.propStack,
         featurePropValue: (event.value !== featurePropValue ? event.value : null)
       })"
@@ -808,7 +808,7 @@ export default {
       }
     },
 
-    setFeatureProp(featurePropStack) {
+    setFeatureProp({ featurePropStack, featurePropValue }) {
       // if selecting a feature property and current color mode isn't property-specific,
       // automatically change to the 'property' color mode
       const displayToggles = this.get().displayToggles;
@@ -819,6 +819,7 @@ export default {
 
       this.set({
         featurePropStack,
+        featurePropValue,
         displayToggles: { ...displayToggles, colors }
       });
     },
