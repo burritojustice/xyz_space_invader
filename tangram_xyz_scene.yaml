@@ -71,6 +71,18 @@ global:
           return true;
         }
 
+    # optionally filter by specific property/value combination
+    featureFilterSelectedValue: |
+        function() {
+          if (global.colorState.featurePropStack != null && global.colorState.featurePropValue != null) {
+            var value = global.lookupFeatureProp(feature);
+            if (value !== global.colorState.featurePropValue) {
+              return false;
+            }
+          }
+          return true;
+        }
+
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
@@ -107,6 +119,7 @@ layers:
           all:
             - $geometry: point
             - global.featureFilterOutliers
+            - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
             points:
@@ -133,6 +146,7 @@ layers:
           all:
             - $geometry: line
             - global.featureFilterOutliers
+            - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
             _lines:
@@ -146,6 +160,7 @@ layers:
           all:
             - $geometry: polygon
             - global.featureFilterOutliers
+            - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         _outlines:
             draw:

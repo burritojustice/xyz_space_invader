@@ -26,7 +26,7 @@ if (url_hash.length == 3) {
 map = L.map('map', {boxZoom: false});
 hash = new L.Hash(map);
 tooltip = L.tooltip();
-popup = L.popup({ autoPan: false });
+popup = L.popup({ autoPan: false, closeButton: true });
 
 // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
 map.setView([37.7,-122.4], 2);
@@ -110,7 +110,7 @@ function loadScene({ basemapScene, token }) {
 function makeLayer(scene_obj) {
   // sync popup content from svelte UI component when it changes
   appUI.on('updatePopup', () => {
-    popup.setContent(document.querySelector('#ui #popupContent').innerHTML);
+    popup.setContent(document.querySelector('#ui #popupContent'));
   });
 
   layer = Tangram.leafletLayer({
@@ -168,13 +168,14 @@ function makeLayer(scene_obj) {
   // always clear pinned feature on close (e.g. maybe user manually closed with X button)
   layer.on('popupclose', e => {
     if (e.popup === popup) {
-      appUI.set({ feature: null });
+      appUI.set({ feature: null, featurePinned: false });
     }
   });
 
   map.on('zoom mouseout', () => {
     if (!appUI.get().feature) {
       layer.closePopup();
+      appUI.set({ feature: null, featurePinned: false });
     }
   }); // close tooltip when zooming
 

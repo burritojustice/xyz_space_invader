@@ -65,8 +65,21 @@
   <div id="colors" class="panel">
     <div id="colorProperties">
       {#if featureProp && featurePropCount != null}
-        Analyzing property <b>{featureProp}</b>
-        <!-- <button on:click="set({ featurePropStack: null })">remove</button> -->
+        <div>
+          <span class="active">
+            Analyzing property <b>{featureProp}</b>
+            <button on:click="set({ featurePropStack: null })" style="background: none; border: none;">❌</button>
+          </span>
+        </div>
+
+        {#if featurePropValue != null}
+          <div>
+            <span class="active">
+              Only showing value <b>{featurePropValue}</b>
+              <button on:click="set({ featurePropValue: null })" style="background: none; border: none;">❌</button>
+            </span>
+          </div>
+        {/if}
 
         <div style="margin: 5px 0 5px 0;">
           <div>{featurePropCount} unique values in the viewport</div>
@@ -166,7 +179,12 @@
                   </span>
                 {/if}
               </td>
-              <td>{maybeStringifyObject(value)}</td>
+              <td
+                class="value_row"
+                class:active="featurePropValue != null && value == featurePropValue"
+                on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
+                {maybeStringifyObject(value)}
+              </td>
             </tr>
           {/each}
         </tbody>
@@ -250,8 +268,22 @@
 
 <!-- feature popup content, hidden in the main UI and synced to the Leaflet popup -->
 <div style="display: none">
-  <div id="popupContent">
-    <FeaturePopup feature={feature} featureProp={featureProp} featurePropStack={featurePropStack} featurePinned={featurePinned} />
+  <div id="popupContent" style="margin-top: 18px;">
+    <FeaturePopup
+      feature={feature}
+      featureProp={featureProp}
+      featurePropStack={featurePropStack}
+      featurePinned={featurePinned}
+      featurePropValue={featurePropValue}
+      on:selectProp="set({
+        featurePropStack: (event.prop !== featureProp ? event.propStack : null),
+        featurePropValue: null
+      })"
+      on:selectValue="set({
+        featurePropStack: event.propStack,
+        featurePropValue: (event.value !== featurePropValue ? event.value : null)
+      })"
+    />
   </div>
 </div>
 
@@ -504,6 +536,7 @@ export default {
         spaceId, token, basemap,
         displayToggles,
         featurePropStack,
+        featurePropValue,
         featurePropPaletteName, featurePropPaletteFlip,
         featurePropRangeFilter,
         featurePropMinFilterInput,
@@ -537,6 +570,10 @@ export default {
         // escape dot notation in property names
         // make sure to call toString to handle numbers, etc.
         params.set('property', featurePropStack.map(s => s.toString().replace(/\./g, '\\\.')).join('.'));
+      }
+
+      if (featurePropValue) {
+        params.set('value', featurePropValue);
       }
 
       params.set('palette', featurePropPaletteName);
@@ -575,6 +612,7 @@ export default {
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
         changed.featurePropStack ||
+        changed.featurePropValue ||
         changed.featurePropPalette ||
         changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
@@ -701,6 +739,9 @@ export default {
         .split('.')
         .map(s => s.replace(/__DELIMITER__/g, '.'));
 
+      // parse selected property value
+      const featurePropValue = params.value;
+
       // parse color palette
       const featurePropPaletteFlip = (params.paletteFlip === 'true');
       let featurePropPaletteName = this.get().featurePropPaletteName;
@@ -726,6 +767,7 @@ export default {
         basemap,
         displayToggles,
         featurePropStack,
+        featurePropValue,
         featurePropPaletteName,
         featurePropPaletteFlip,
         featurePropRangeFilter,
@@ -999,7 +1041,7 @@ function hashString (string) {
   }
 
   #properties tr.active {
-    background-color: rgba(175, 175, 175, 0.75);
+    background-color: lightyellow;
   }
 
   #colors {
@@ -1036,6 +1078,14 @@ function hashString (string) {
     border-radius: 50%;
     display: inline-block;
     vertical-align: bottom;
+  }
+
+  .value_row:hover {
+    background-color: rgba(240, 240, 240, 0.75);
+  }
+
+  .active {
+    background-color: lightyellow; padding: 3px;
   }
 
 </style>
