@@ -1,27 +1,8 @@
 
 export const colorFunctions = {
-  xray: {
-    useProperty: false,
-    usePalette: false,
-    // no color function is defined, default one will be used
-  },
-
-  // color by hash of entire
-  hash: {
-    useProperty: false,
-    usePalette: false,
-    color: colorHash
-  },
-
-  // color by hash of specific property
-  property: {
-    useProperty: true,
-    usePalette: false,
-    color: colorHash,
-  },
-
   // color by value of specific property, in provided min/max range
   range: {
+    label: 'value range',
     useProperty: true,
     usePalette: true,
     limitRange: true,
@@ -44,6 +25,7 @@ export const colorFunctions = {
 
   // color by value of specific property, based on frequency of values
   rank: {
+    label: 'value rank',
     useProperty: true,
     usePalette: true,
     defaultSort: 'count',
@@ -59,7 +41,30 @@ export const colorFunctions = {
       var ratio = (counts.length <= 1 ? 1 : Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0));
       return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
     }
-  }
+  },
+
+  // color by hash of specific property
+  property: {
+    label: 'property hash',
+    useProperty: true,
+    usePalette: false,
+    color: colorHash,
+  },
+
+  // color by hash of entire
+  hash: {
+    label: 'feature hash',
+    useProperty: false,
+    usePalette: false,
+    color: colorHash
+  },
+
+  xray: {
+    label: 'geometry type',
+    useProperty: false,
+    usePalette: false,
+    // no color function is defined, default one will be used
+  },
 
 };
 

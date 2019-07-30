@@ -47,53 +47,42 @@
     </p>
   </div>
   <div id="properties" class="panel">
-    {#if feature}
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
-        {#each featurePropRows as r}
-          <tr
-            class:active="r.prop === featureProp"
-            on:click="setFeatureProp(r.prop !== featureProp ? r.propStack : null)"
-          >
-          <td>{@html formatFeatureRow(r)}</td>
+        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
+            <td>
+              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
+              {prop}
+            </td>
           </tr>
         {/each}
       </table>
-    {:else}
-      Interact with map to see properties.<br>Click on a property value to generate unique colors.
     {/if}
   </div>
 
   <div id="colors" class="panel">
-    <p id="colorProperties">
+    <div id="colorProperties">
       {#if featureProp && featurePropCount != null}
         <div>
-          <span>
-            <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
-              {#each colorModes as mode}
-                <option value="{mode}">{mode}</option>
-              {/each}
-            </select>
+          <span class="active">
+            Analyzing property <b>{featureProp}</b>
+            <button on:click="set({ featurePropStack: null })" style="background: none; border: none;">❌</button>
           </span>
-
-          {#if showFeaturePropPalette(displayToggles.colors)}
-            <span>
-              <select bind:value="featurePropPaletteName">
-                {#each Object.keys(colorPalettes) as palette}
-                  <option value="{palette}">{palette}</option>
-                {/each}
-              </select>
-            </span>
-
-            <label>
-              <input type="checkbox" bind:checked="featurePropPaletteFlip">
-              Flip
-            </label>
-          {/if}
-
         </div>
 
+        {#if featurePropValue != null}
+          <div>
+            <span class="active">
+              Only showing value <b>{featurePropValue}</b>
+              <button on:click="set({ featurePropValue: null })" style="background: none; border: none;">❌</button>
+            </span>
+          </div>
+        {/if}
+
         <div style="margin: 5px 0 5px 0;">
-          <div>{featurePropCount} unique values of <i>{featureProp}</i> in viewport</div>
+          <div>{featurePropCount} unique values in the viewport</div>
 
           {#if featurePropMin != null}
             <div>min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}</div>
@@ -103,8 +92,31 @@
               {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
             </div>
           {/if}
+        </div>
 
-          <div style="color:blue;" id="clear_color_properties" on:click="set({ featurePropStack: null })">clear filter</div>
+        <div>
+          Visualize features by
+          <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
+            {#each colorModes as mode}
+              <option value="{mode}">{colorFunctions[mode].label || mode}</option>
+            {/each}
+          </select>
+        </div>
+
+        {#if showFeaturePropPalette(displayToggles.colors)}
+          <div>
+            Color palette
+            <select bind:value="featurePropPaletteName">
+              {#each Object.keys(colorPalettes) as palette}
+                <option value="{palette}">{palette}</option>
+              {/each}
+            </select>
+
+            <label>
+              <input type="checkbox" bind:checked="featurePropPaletteFlip">
+              Flip
+            </label>
+          </div>
 
           {#if featurePropMin != null}
             {#if useFeaturePropRangeLimit(displayToggles.colors)}
@@ -137,15 +149,15 @@
               {/if}
             {/if}
           {/if}
-        </div>
+        {/if}
       {:else}
-        <div style="margin: 5px 0 5px 0;">click on property value for unique colors</div>
+        Select a feature property to analyze from the list above.
       {/if}
-    </p>
+    </div>
 
     {#if featureProp && featurePropValueCounts}
       <div style="margin: 5px 0 5px 0;">
-        Top values for <i>{featureProp}</i> by
+        Top values by
         <select bind:value="featurePropValueSort">
           <option>count</option>
           <option>values</option>
@@ -167,7 +179,12 @@
                   </span>
                 {/if}
               </td>
-              <td>{maybeStringifyObject(value)}</td>
+              <td
+                class="value_row"
+                class:active="featurePropValue != null && value == featurePropValue"
+                on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
+                {maybeStringifyObject(value)}
+              </td>
             </tr>
           {/each}
         </tbody>
@@ -249,12 +266,34 @@
   </div>
 </div>
 
+<!-- feature popup content, hidden in the main UI and synced to the Leaflet popup -->
+<div style="display: none">
+  <div id="popupContent" style="margin-top: 18px;">
+    <FeaturePopup
+      feature={feature}
+      featureProp={featureProp}
+      featurePropStack={featurePropStack}
+      featurePinned={featurePinned}
+      featurePropValue={featurePropValue}
+      on:selectProp="setFeatureProp({
+        featurePropStack: (event.prop !== featureProp ? event.propStack : null),
+        featurePropValue: null
+      })"
+      on:selectValue="setFeatureProp({
+        featurePropStack: event.propStack,
+        featurePropValue: (event.value !== featurePropValue ? event.value : null)
+      })"
+    />
+  </div>
+</div>
+
 <script>
 
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
 import { displayOptions } from './displayOptions';
+import { parseNestedObject, formatPropStack } from './utils';
 
 export default {
   data() {
@@ -295,8 +334,11 @@ export default {
       numFeaturesInViewport: null,
       uniqueTagsSeen: new Set(),
 
+      uniqueFeaturePropsSeen: new Map(),
+
       displayToggles: null,
       colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
+      colorFunctions, // need to reference here to make accessible to templates and tangram functions
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
       colorHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
@@ -304,7 +346,8 @@ export default {
   },
 
   components: {
-    FeaturePropHistogram: './FeaturePropHistogram.svelte'
+    FeaturePropHistogram: './FeaturePropHistogram.svelte',
+    FeaturePopup: './FeaturePopup.svelte'
   },
 
   computed: {
@@ -341,7 +384,7 @@ export default {
       return featurePropMax;
     },
 
-    featurePropRows: ({ feature }) => feature && buildFeatureRows(feature.properties),
+    featurePropRows: ({ feature }) => feature && parseNestedObject(feature.properties),
 
     featurePropPalette: ({ featurePropPaletteName }) => {
       return colorPalettes[featurePropPaletteName];
@@ -408,6 +451,13 @@ export default {
     nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
 
     uniqueTagsInViewport: ({ tagsWithCountsInViewport }) => new Set(tagsWithCountsInViewport.map(v => v[0])),
+
+    sortedUniqueFeaturePropsSeen: ({ uniqueFeaturePropsSeen }) => {
+      // alphabetical sort, but with @ properties at bottom
+      return Array.from(uniqueFeaturePropsSeen.keys())
+        .sort((a, b) => a[0] === '@' ? 1 : b[0] === '@' ? -1 : a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0)
+        .map(prop => [prop, uniqueFeaturePropsSeen.get(prop)]);
+    },
 
     numFeatureTagsInViewport: ({ tagsWithCountsInViewport }) => tagsWithCountsInViewport.reduce((acc, cur) => acc + cur[1], 0),
 
@@ -486,6 +536,7 @@ export default {
         spaceId, token, basemap,
         displayToggles,
         featurePropStack,
+        featurePropValue,
         featurePropPaletteName, featurePropPaletteFlip,
         featurePropRangeFilter,
         featurePropMinFilterInput,
@@ -519,6 +570,10 @@ export default {
         // escape dot notation in property names
         // make sure to call toString to handle numbers, etc.
         params.set('property', featurePropStack.map(s => s.toString().replace(/\./g, '\\\.')).join('.'));
+      }
+
+      if (featurePropValue) {
+        params.set('value', featurePropValue);
       }
 
       params.set('palette', featurePropPaletteName);
@@ -557,6 +612,7 @@ export default {
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
         changed.featurePropStack ||
+        changed.featurePropValue ||
         changed.featurePropPalette ||
         changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
@@ -611,6 +667,17 @@ export default {
           displayToggles: { ...current.displayToggles, colors }
         });
         this.updateFeaturePropValueSort();
+    }
+
+    // tell map to update popup content when it changes
+    // (this is in svelte onupdate because it fires after the DOM has been updated with new content)
+    if (changed.feature ||
+        changed.featureProp ||
+        changed.featurePropStack ||
+        changed.featurePinned) {
+      if (current.feature) {
+        this.fire('updatePopup');
+      }
     }
   },
 
@@ -672,6 +739,9 @@ export default {
         .split('.')
         .map(s => s.replace(/__DELIMITER__/g, '.'));
 
+      // parse selected property value
+      const featurePropValue = params.value;
+
       // parse color palette
       const featurePropPaletteFlip = (params.paletteFlip === 'true');
       let featurePropPaletteName = this.get().featurePropPaletteName;
@@ -697,6 +767,7 @@ export default {
         basemap,
         displayToggles,
         featurePropStack,
+        featurePropValue,
         featurePropPaletteName,
         featurePropPaletteFlip,
         featurePropRangeFilter,
@@ -737,7 +808,7 @@ export default {
       }
     },
 
-    setFeatureProp(featurePropStack) {
+    setFeatureProp({ featurePropStack, featurePropValue }) {
       // if selecting a feature property and current color mode isn't property-specific,
       // automatically change to the 'property' color mode
       const displayToggles = this.get().displayToggles;
@@ -748,6 +819,7 @@ export default {
 
       this.set({
         featurePropStack,
+        featurePropValue,
         displayToggles: { ...displayToggles, colors }
       });
     },
@@ -885,14 +957,6 @@ export default {
 
     useFeaturePropRangeLimit, // reference here to make available to as template helper
 
-    formatFeatureRow(r) {
-      const indent = 4;
-      let t = Array(r.level * indent).fill('&nbsp;').join('');
-      if (r.prop !== undefined) t += r.prop + ': ';
-      if (r.value !== undefined) t += r.value;
-      return t;
-    },
-
     maybeStringifyObject(v) {
       // stringify objects, otherwise just return original object
       return (v != null && typeof v === 'object') ? JSON.stringify(v) : v;
@@ -914,41 +978,6 @@ function formatFeaturePropValueColor(state, value) {
     return colorFunctions[colors].color(value, state);
   }
   return 'rgba(127, 127, 127, .5)';
-}
-
-// format nested property name stack with dot (object) and bracket (array) notation
-function formatPropStack(propStack) {
-  return propStack &&
-    propStack
-      .map((p, i) => {
-        const n = parseInt(p);
-        if (typeof n === 'number' && !isNaN(n)) {
-          return `[${p}]`;
-        }
-        else {
-          return `${i > 0 ? '.' : ''}${p}`;
-        }
-      })
-      .join('');
-}
-
-function buildFeatureRows(obj, level = -1, prop = null, propStack = [], rows = []) {
-  if (Array.isArray(obj)) {
-    if (prop) {
-      rows.push({ level, obj, prop: formatPropStack(propStack), propStack }); // header row
-    }
-    obj.forEach((x, i) => buildFeatureRows(x, level + 1, i, [...propStack, i], rows));
-  } else if (typeof obj === 'object' && obj != null) {
-    if (prop) {
-      rows.push({ level, obj, prop: formatPropStack(propStack), propStack }); // header row
-    }
-    for (var prop in obj) {
-      buildFeatureRows(obj[prop], level + 1, prop, [...propStack, prop], rows);
-    }
-  } else {
-    rows.push({ level, obj, prop: formatPropStack(propStack), value: obj, propStack });
-  }
-  return rows;
 }
 
 function hashString (string) {
@@ -1013,7 +1042,7 @@ function hashString (string) {
   }
 
   #properties tr.active {
-    background-color: rgba(175, 175, 175, 0.75);
+    background-color: lightyellow;
   }
 
   #colors {
@@ -1050,6 +1079,14 @@ function hashString (string) {
     border-radius: 50%;
     display: inline-block;
     vertical-align: bottom;
+  }
+
+  .value_row:hover {
+    background-color: rgba(240, 240, 240, 0.75);
+  }
+
+  .active {
+    background-color: lightyellow; padding: 3px;
   }
 
 </style>

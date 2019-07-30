@@ -3,11 +3,12 @@ import FileSaver from 'file-saver';
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 import { parseNumber } from './colorFunctions';
+import { parseNestedObject } from './utils';
 
 let query;
 let layer;
 let scene_config
-let map, hash, tooltip;
+let map, hash, tooltip, popup;
 
 // grab query parameters from the url and assign them to globals
 query = new URLSearchParams(document.location.search);
@@ -25,6 +26,7 @@ if (url_hash.length == 3) {
 map = L.map('map', {boxZoom: false});
 hash = new L.Hash(map);
 tooltip = L.tooltip();
+popup = L.popup({ autoPan: false, closeButton: true });
 
 // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
 map.setView([37.7,-122.4], 2);
@@ -106,35 +108,54 @@ function loadScene({ basemapScene, token }) {
 
 // initialize Tangram leaflet layer, and load the scene for the first time
 function makeLayer(scene_obj) {
+  // sync popup content from svelte UI component when it changes
+  appUI.on('updatePopup', () => {
+    popup.setContent(document.querySelector('#ui #popupContent'));
+  });
+
   layer = Tangram.leafletLayer({
     scene: scene_obj,
     attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
     events: {
-      hover: ({ feature, leaflet_event }) => {
+      hover: ({ feature, leaflet_event: { latlng }, changed }) => {
+        // preview feature via hover, currently NOT synced to app UI
+        if (appUI.get().featurePinned) {
+          return;
+        }
+
         if (feature && feature.source_name === '_xyzspace') {
-          const { featureProp, featurePropStack } = appUI.get();
-          const props = [
-              ['id', feature.properties.id],
-              ['name', feature.properties.name],
-              [featureProp, lookupProperty(feature.properties, featurePropStack) || 'null']
-            ]
-            .filter(x => x[0] && x[1]) // only include props that had values
-            .map(([k, v]) => `<b>${k}:</b> ${v}`)
-            .join('<br>');
+          appUI.set({ feature, featurePinned: false });
 
-          const numProps = Object.keys(feature.properties).length;
-          const content = `${props}${props !== '' ? '<br>' : ''}<i>Click to see all ${numProps} properties</i>`;
-
-          tooltip.setContent(content);
-          layer.openTooltip(leaflet_event.latlng);
+          if (!popup.isOpen()) {
+            layer.openPopup(latlng);
+          }
+          else {
+            popup.setLatLng(latlng);
+          }
         }
         else {
-          layer.closeTooltip();
+          layer.closePopup();
         }
       },
-      click: ({ feature }) => {
-        // select new feature in UI
-        appUI.set({ feature });
+      click: ({ feature, leaflet_event: { latlng }, changed }) => {
+        // select new feature, syncs to app UI
+        if (!appUI.get().featurePinned) {
+          if (feature && feature.source_name === '_xyzspace') {
+            if (!popup.isOpen()) {
+              layer.openPopup(latlng);
+            }
+            else {
+              popup.setLatLng(latlng);
+            }
+
+            appUI.set({ feature, featurePinned: true });
+          }
+        }
+        // de-select feature
+        else {
+          layer.closePopup();
+          appUI.set({ feature: null, featurePinned: false });
+        }
       }
     },
     selectionRadius: 5
@@ -142,7 +163,21 @@ function makeLayer(scene_obj) {
 
   // setup tooltip for hover content
   layer.bindTooltip(tooltip);
-  map.on('zoom,mouseout', () => layer.closeTooltip()); // close tooltip when zooming
+  layer.bindPopup(popup);
+
+  // always clear pinned feature on close (e.g. maybe user manually closed with X button)
+  layer.on('popupclose', e => {
+    if (e.popup === popup) {
+      appUI.set({ feature: null, featurePinned: false });
+    }
+  });
+
+  map.on('zoom mouseout', () => {
+    if (!appUI.get().feature) {
+      layer.closePopup();
+      appUI.set({ feature: null, featurePinned: false });
+    }
+  }); // close tooltip when zooming
 
   // setup Tangram event listeners
   layer.scene.subscribe({
@@ -309,10 +344,23 @@ function updateViewportTags(features) {  // for tags
 }
 
 function updateViewportProperties(features) { // for feature prop
+  // first get all unique properties for features in viewport, combined with those previously seen
+  const { uniqueFeaturePropsSeen } = appUI.get();
+  features.forEach(feature => {
+    const components = parseNestedObject(feature.properties)
+      .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
+      .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip features we already know about
+      .forEach(p => {
+        uniqueFeaturePropsSeen.set(p.prop, p.propStack);
+      });
+  });
+
+  // then get feature values based on currently selected property
   const propStack = appUI.get().featurePropStack;
 
   if (!propStack || propStack.length === 0) {
     appUI.set({
+      uniqueFeaturePropsSeen,
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropMin: null,
@@ -329,7 +377,7 @@ function updateViewportProperties(features) { // for feature prop
     return;
   }
 
-  // grab the feature properties from Tangram's viewport tiles
+  // grab the selected feature properties from Tangram's viewport tiles
   const propsViewport = features.map(f => lookupProperty(f.properties, propStack));
 
   // convert to numbers to get min/max
@@ -412,6 +460,7 @@ function updateViewportProperties(features) { // for feature prop
 
   // update UI
   appUI.set({
+    uniqueFeaturePropsSeen,
     featurePropCount: propCounts.size,
     featurePropValueCounts: sortedPropCounts,
     featurePropMin: min,
