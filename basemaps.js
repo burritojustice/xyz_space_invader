@@ -153,7 +153,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },  
-  'xyz-elevation-stripes': {
+  'xyz-elev-stripes': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-elevation-stripes-bw/master/scene.yaml',
       'tangram_xyz_scene.yaml'
@@ -164,7 +164,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
-  'xyz-elevation-dash': {
+  'xyz-elev-dash': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-elevation-dash/master/scene.yaml',
       'tangram_xyz_scene.yaml'
@@ -175,7 +175,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },  
-  'xyz-elevation-dash-brick': {
+  'xyz-elev-dash-brick': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-elevation-dash-brick/master/scene.yaml',
       'tangram_xyz_scene.yaml'
@@ -186,7 +186,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },  
-  'xyz-elevation-dots': {
+  'xyz-elev-dots': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-elevation-dots/master/scene.yaml',
       'tangram_xyz_scene.yaml'
