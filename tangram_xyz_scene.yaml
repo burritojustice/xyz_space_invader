@@ -160,7 +160,7 @@ layers:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
-              repeat_group: function() { return $id || JSON.stringify(feature) }
+              repeat_group: function() { return $id }
               font: global.featureLabelFont # set by the basemap
 
     _xyz_polygons:
@@ -186,6 +186,6 @@ layers:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
-              repeat_group: function() { return $id || JSON.stringify(feature) }
+              repeat_group: function() { return $id }
               repeat_distance: 700px # allow polygon labels to repeat over a longish distance
               font: global.featureLabelFont # set by the basemap
