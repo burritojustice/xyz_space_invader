@@ -6,6 +6,7 @@
 
 .propRow > td:hover {
   background-color: rgba(240, 240, 240, 0.75);
+  cursor: pointer;
 }
 
 .propRow > td.active {
