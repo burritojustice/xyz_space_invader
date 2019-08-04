@@ -64,6 +64,7 @@
 
   <div id="colors" class="panel">
     <div id="colorProperties">
+      <!-- Selected feature property and value info -->
       {#if featureProp && featurePropCount != null}
         <div>
           <span class="active">
@@ -93,16 +94,24 @@
             </div>
           {/if}
         </div>
+      {/if}
 
+      <!-- Color mode selector -->
+      {#if displayToggles}
         <div>
           Visualize features by
           <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
             {#each colorModes as mode}
-              <option value="{mode}">{colorFunctions[mode].label || mode}</option>
+              {#if featureProp || !colorModeUsesProperty(mode)}
+                <option value="{mode}">{colorFunctions[mode].label || mode}</option>
+              {/if}
             {/each}
           </select>
         </div>
+      {/if}
 
+      <!-- Color palette and range filters -->
+      {#if featureProp && featurePropCount != null}
         {#if showFeaturePropPalette(displayToggles.colors)}
           <div>
             Color palette
@@ -150,11 +159,27 @@
             {/if}
           {/if}
         {/if}
-      {:else}
-        Select a feature property to analyze from the list above.
       {/if}
     </div>
 
+    <!-- Label property selector -->
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px;">Label features by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
+          <option value=""></option>
+          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+            <option value="{JSON.stringify(propStack)}">{prop}</option>
+          {/each}
+        </select>
+      </div>
+    {/if}
+
+    {#if !(featureProp && featurePropCount != null)}
+      Select a feature property to analyze, from the property list above or by clicking on an individual feature.
+    {/if}
+
+    <!-- Top values list -->
     {#if featureProp && featurePropValueCounts}
       <div style="margin: 5px 0 5px 0;">
         Top values by
@@ -174,7 +199,7 @@
               <td style="width: 15px;text-align: right;">{count}</td>
               <td style="width: 15px;">
                 <!-- uses color calc code shared with tangram-->
-                {#if showFeaturePropColorSwatch(displayToggles.colors)}
+                {#if colorModeUsesProperty(displayToggles.colors)}
                   <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
                   </span>
                 {/if}
@@ -388,6 +413,11 @@ export default {
 
     featurePropPalette: ({ featurePropPaletteName }) => {
       return colorPalettes[featurePropPaletteName];
+    },
+
+    // label prop stack is JSON stringified for easier svelte prop sync and query string handling
+    featureLabelPropStack: ({ displayToggles }) => {
+      return (displayToggles && displayToggles.label) ? JSON.parse(displayToggles.label) : null;
     },
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
@@ -947,7 +977,7 @@ export default {
   },
 
   helpers: {
-    showFeaturePropColorSwatch(colors) {
+    colorModeUsesProperty(colors) {
       return colorFunctions[colors] && colorFunctions[colors].useProperty;
     },
 

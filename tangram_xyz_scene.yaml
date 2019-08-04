@@ -9,9 +9,9 @@ global:
         color: [0,0,0,0.25]
         width: 2px
 
-    # replaced by app JS, used to look-up feature props that may be nested,
-    # and we don't want to re-parse the
+    # replaced by app JS, used to look-up feature props that may be nested
     lookupFeatureProp: function(feature) { return null; }
+    lookupFeatureLabelProp: function(feature) { return null; }
 
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
@@ -83,6 +83,19 @@ global:
           return true;
         }
 
+    # used for dynamic text_source on feature labels
+    featureLabelText: |
+        function() {
+          return global.lookupFeatureLabelProp(feature);
+        }
+
+    featureLabelFont:
+        fill: yellow
+        size: 12px
+        stroke:
+            color: black
+            width: 2px
+
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
@@ -131,15 +144,11 @@ layers:
                 outline:
                     color: [1,1,0,0.2]
                     width: .1px
-                # text:
-                #     text_source: global.prop
-                #     optional: true
-                #     font:
-                #         fill: yellow
-                #         size: 12px
-                #         stroke:
-                #             color: black
-                #             width: 2px
+                text:
+                    visible: false # updated by JS app at run-time
+                    text_source: global.featureLabelText
+                    optional: true
+                    font: global.featureLabelFont
 
     _xyz_lines:
         filter:
@@ -154,6 +163,12 @@ layers:
                 color: global.featureColorDefault
                 width: 4px
                 order: 2000
+            text:
+              visible: false # updated by JS app at run-time
+              text_source: global.featureLabelText
+              # unique repeat group per feature, to avoid culling of labels with same values
+              repeat_group: function() { return $id || JSON.stringify(feature) }
+              font: global.featureLabelFont
 
     _xyz_polygons:
         filter:
@@ -174,3 +189,10 @@ layers:
                 color: global.featureColorDefault
                 width: 2px
                 order: 300
+            text:
+              visible: false # updated by JS app at run-time
+              text_source: global.featureLabelText
+              # unique repeat group per feature, to avoid culling of labels with same values
+              repeat_group: function() { return $id || JSON.stringify(feature) }
+              repeat_distance: 700px # allow polygon labels to repeat over a longish distance
+              font: global.featureLabelFont

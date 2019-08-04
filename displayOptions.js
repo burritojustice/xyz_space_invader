@@ -13,6 +13,34 @@ export const displayOptions = {
     }
   },
 
+  // Feature label property
+  label: {
+    values: [],
+    apply: (scene, value, { featureLabelPropStack }) => {
+      scene.global.labelState = {
+        featureLabelPropStack
+      };
+
+      if (featureLabelPropStack) {
+        // custom JS tangram function to access nested properties efficiently
+        scene.global.lookupFeatureLabelProp =
+          `function(feature) {
+              return feature${featureLabelPropStack.map(k => '[\'' + k + '\']').join('')};
+            }`;
+
+        // show/hide labels
+        scene.layers._xyz_dots.draw.points.text.visible = true;
+        scene.layers._xyz_polygons.draw.text.visible = true;
+        scene.layers._xyz_lines.draw.text.visible = true;
+      }
+      else {
+        scene.layers._xyz_dots.draw.points.text.visible = false;
+        scene.layers._xyz_polygons.draw.text.visible = false;
+        scene.layers._xyz_lines.draw.text.visible = false;
+      }
+    }
+  },
+
   // Feature colors
   colors: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
