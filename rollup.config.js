@@ -1,6 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
+import postcss from 'rollup-plugin-postcss';
 import svelte from 'rollup-plugin-svelte';
 
 export default {
@@ -16,6 +17,9 @@ export default {
       sourcemaps(),
       resolve(),
       commonjs(),
+      postcss({
+        plugins: []
+      }),
       svelte({
         // By default, all .svelte and .html files are compiled
         extensions: ['.svelte'],

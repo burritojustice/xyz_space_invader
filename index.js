@@ -1,3 +1,6 @@
+import L from 'leaflet';
+import 'leaflet-hash';
+import 'leaflet/dist/leaflet.css';
 import FileSaver from 'file-saver';
 
 import AppUI from './AppUI.svelte';
@@ -115,6 +118,7 @@ function makeLayer(scene_obj) {
 
   layer = Tangram.leafletLayer({
     scene: scene_obj,
+    leaflet: L,
     attribution: '<a href="https://github.com/tangrams/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://explore.xyz.here.com/">HERE XYZ</a>',
     events: {
       hover: ({ feature, leaflet_event: { latlng }, changed }) => {
