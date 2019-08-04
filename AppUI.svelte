@@ -377,10 +377,14 @@ export default {
 
   computed: {
     basemapScene: ({ basemap }) => {
-      return {
-        ...getBasemapScene(basemap),
-        ...{ global: { colorFunctions } }
-      };
+      const scene = getBasemapScene(basemap);
+      if (scene) {
+        scene.global = {
+          ...scene.global,
+          colorFunctions
+        };
+      }
+      return scene;
     },
 
     // un-nest selected feature property name

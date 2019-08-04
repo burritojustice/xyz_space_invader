@@ -89,13 +89,6 @@ global:
           return global.lookupFeatureLabelProp(feature);
         }
 
-    featureLabelFont:
-        fill: yellow
-        size: 12px
-        stroke:
-            color: black
-            width: 2px
-
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
@@ -148,7 +141,7 @@ layers:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
                     optional: true
-                    font: global.featureLabelFont
+                    font: global.featureLabelFont # set by the basemap
 
     _xyz_lines:
         filter:
@@ -168,7 +161,7 @@ layers:
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
               repeat_group: function() { return $id || JSON.stringify(feature) }
-              font: global.featureLabelFont
+              font: global.featureLabelFont # set by the basemap
 
     _xyz_polygons:
         filter:
@@ -195,4 +188,4 @@ layers:
               # unique repeat group per feature, to avoid culling of labels with same values
               repeat_group: function() { return $id || JSON.stringify(feature) }
               repeat_distance: 700px # allow polygon labels to repeat over a longish distance
-              font: global.featureLabelFont
+              font: global.featureLabelFont # set by the basemap

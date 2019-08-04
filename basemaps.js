@@ -41,6 +41,28 @@ const xyzTilezenSourceOverride = {
   }
 };
 
+// each basemap can reference one of these font presets for labels, or define its own inline instead
+const labelFontPresets = {
+  // for dark basemaps
+  dark: {
+    fill: [.9, .9, .1],
+    size: '12px',
+    stroke: {
+      color: 'black',
+      width: '4px'
+    }
+  },
+  // for light basemaps
+  light: {
+    fill: 'darkred',
+    size: '12px',
+    stroke: {
+      color: 'white',
+      width: '4px'
+    }
+  }
+};
+
 export const basemaps = {
   'refill-dark': {
     import: [
@@ -50,6 +72,9 @@ export const basemaps = {
       // 'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
       'tangram_xyz_scene.yaml'
     ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
     layers: {
       _xyz_lines: { draw: { _lines: { color: 'global.featureColorDefault' } } },
       _xyz_dots: { draw: { points: { color: 'global.featureColorDefault' } } }
@@ -63,6 +88,9 @@ export const basemaps = {
       'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
       'tangram_xyz_scene.yaml'
     ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
     ...xyzTilezenSourceOverride
   },
   'dots': {
@@ -70,6 +98,9 @@ export const basemaps = {
       'https://raw.githubusercontent.com/sensescape/xyz-dots/master/scene.yaml',
       'tangram_xyz_scene.yaml'
     ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
     layers: {
       _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
@@ -81,6 +112,9 @@ export const basemaps = {
       'https://raw.githubusercontent.com/sensescape/xyz-pixel/master/scene.yaml',
       'tangram_xyz_scene.yaml'
     ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
     layers: {
       _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
@@ -92,12 +126,18 @@ export const basemaps = {
       'https://www.nextzen.org/carto/walkabout-style/walkabout-style.zip',
       'tangram_xyz_scene.yaml'
     ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
     ...xyzTilezenSourceOverride
   },
   'none': {
     import: [
       'tangram_xyz_scene.yaml'
     ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
     scene: {
       background: {
         color: [0, 0, 0]
@@ -110,6 +150,9 @@ export const basemaps = {
       'tangram_xyz_scene.yaml',
       'satellite.yaml',
     ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
     ...xyzTilezenSourceOverride
   }
 };
