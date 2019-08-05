@@ -2,7 +2,7 @@
 
 <div id="controls_left" class="controls">
   <div id="spaces" class="panel">
-    <p id="space_info">
+    <div id="space_info">
       {#if spaceInfo}
         {spaceId}: {spaceInfo.title}<br>
         {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>
@@ -12,8 +12,8 @@
         <input type="text" placeholder="enter an XYZ token" bind:value='token'>
         <button on:click="updateSpace(true)">Show XYZ Space</button>
       {/if}
-    </p>
-    <p id="style_info">
+    </div>
+    <div id="style_info" class:hideOnMobile="isMobile">
       {#if displayToggles}
         <table>
           <tr>
@@ -44,9 +44,9 @@
           </tr>
         </table>
       {/if}
-    </p>
+    </div>
   </div>
-  <div id="properties" class="panel">
+  <div id="properties" class="panel" class:hideOnMobile="isMobile">
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
@@ -82,7 +82,7 @@
           </div>
         {/if}
 
-        <div style="margin: 5px 0 5px 0;">
+        <div style="margin: 5px 0 5px 0;" class:hideOnMobile="isMobile">
           <div>{featurePropCount} unique values in the viewport</div>
 
           {#if featurePropMin != null}
@@ -98,7 +98,7 @@
 
       <!-- Color mode selector -->
       {#if displayToggles}
-        <div>
+        <div class:hideOnMobile="isMobile">
           Visualize features by
           <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
             {#each colorModes as mode}
@@ -113,7 +113,7 @@
       <!-- Color palette and range filters -->
       {#if featureProp && featurePropCount != null}
         {#if showFeaturePropPalette(displayToggles.colors)}
-          <div>
+          <div class:hideOnMobile="isMobile">
             Color palette
             <select bind:value="featurePropPaletteName">
               {#each Object.keys(colorPalettes) as palette}
@@ -129,7 +129,7 @@
 
           {#if featurePropMin != null}
             {#if useFeaturePropRangeLimit(displayToggles.colors)}
-              <div>
+              <div class:hideOnMobile="isMobile">
                 Limit values:
                 <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
                   <option value="0">all</option>
@@ -143,7 +143,7 @@
                 <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
               </div>
 
-              <label style="margin-bottom: 5px;">
+              <label style="margin-bottom: 5px;" class:hideOnMobile="isMobile">
                 <input type="checkbox" bind:checked="featurePropHideOutliers">
                 Hide values outside range
               </label>
@@ -181,49 +181,50 @@
 
     <!-- Top values list -->
     {#if featureProp && featurePropValueCounts}
-      <div style="margin: 5px 0 5px 0;">
-        Top values by
-        <select bind:value="featurePropValueSort">
-          <option>count</option>
-          <option>values</option>
-        </select>
+      <div class:hideOnMobile="isMobile">
+        <div style="margin: 5px 0 5px 0;">
+          Top values by
+          <select bind:value="featurePropValueSort">
+            <option>count</option>
+            <option>values</option>
+          </select>
+        </div>
+
+        <table id="prop_stats">
+          <thead>
+            <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
+          </thead>
+          <tbody>
+            {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
+              <tr>
+                <td style="width: 15px;text-align: right;">{count}</td>
+                <td style="width: 15px;">
+                  <!-- uses color calc code shared with tangram-->
+                  {#if colorModeUsesProperty(displayToggles.colors)}
+                    <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
+                    </span>
+                  {/if}
+                </td>
+                <td
+                  class="value_row"
+                  class:active="featurePropValue != null && value == featurePropValue"
+                  on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
+                  {maybeStringifyObject(value)}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+
+        {#if sortedFeaturePropValueCounts.length > 50}
+          <i>{sortedFeaturePropValueCounts.length - 50} more {sortedFeaturePropValueCounts.length - 50 > 1 ? 'values' : 'value'} for {featureProp} not shown</i>
+        {/if}
       </div>
-
-      <table id="prop_stats">
-        <thead>
-          <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
-        </thead>
-        <tbody>
-          {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
-            <tr>
-              <td style="width: 15px;text-align: right;">{count}</td>
-              <td style="width: 15px;">
-                <!-- uses color calc code shared with tangram-->
-                {#if colorModeUsesProperty(displayToggles.colors)}
-                  <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
-                  </span>
-                {/if}
-              </td>
-              <td
-                class="value_row"
-                class:active="featurePropValue != null && value == featurePropValue"
-                on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
-                {maybeStringifyObject(value)}
-              </td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-
-      {#if sortedFeaturePropValueCounts.length > 50}
-        <i>{sortedFeaturePropValueCounts.length - 50} more {sortedFeaturePropValueCounts.length - 50 > 1 ? 'values' : 'value'} for {featureProp} not shown</i>
-      {/if}
-
     {/if}
   </div>
 </div>
 
-<div id="controls_right" class="controls">
+<div id="controls_right" class="controls" class:hideOnMobile="isMobile">
   <div id="tag_summary" class="panel">
     <table id="tag_stats">
       {#if numFeaturesInViewport}
@@ -235,19 +236,19 @@
       <tr><td>unique tags in viewport</td><td>{uniqueTagsInViewport.size}</td></tr>
       <tr><td>unique tags seen</td><td>{uniqueTagsSeen.size}</td></tr>
     </table>
-    <p id="tags_filtered">
+    <div id="tags_filtered">
       filtering by tags:<br>
       {#if tagFilterList.length > 0}
         {tagFilterList.join(', ')}
       {:else}
         <i>no tags filtered<br><br></i>
       {/if}
-    </p>
-    <p style="color:blue;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</p>
-    <p id="and_or">
+    </div>
+    <div style="color:blue;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</div>
+    <div id="and_or">
       <input type="radio" g="and_or" value="or" bind:group='tagFilterAndOr'>or
       <input type="radio" name="and_or" value="and" bind:group='tagFilterAndOr'>and<br>
-    <p>
+    </div>
   </div>
   <div id="tag_panel" class="panel">
     <span style="color:blue;" on:click="toggleTagFilterViewport()">
@@ -314,6 +315,8 @@
 
 <script>
 
+import L from 'leaflet';
+
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
@@ -327,6 +330,8 @@ export default {
       spaceId: '',
       token: '',
       spaceInfo: null,
+
+      isMobile: L.Browser.mobile,
 
       feature: null,
       featurePropStack: null,
@@ -1044,7 +1049,7 @@ function hashString (string) {
 
   .panel {
     margin: 5px;
-    padding: 0.5em;
+    padding: 5px;
     background-color: rgba(200, 200, 200, 0.75);
     border: 1px solid black;
     border-radius: 3px;
@@ -1121,6 +1126,10 @@ function hashString (string) {
 
   .active {
     background-color: lightyellow; padding: 3px;
+  }
+
+  .hideOnMobile {
+    display: none;
   }
 
 </style>
