@@ -129,7 +129,7 @@
 
           {#if featurePropMin != null}
             {#if useFeaturePropRangeLimit(displayToggles.colors)}
-              <div class="hideOnMobile">
+              <div>
                 Limit values:
                 <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
                   <option value="0">all</option>
@@ -137,13 +137,13 @@
                   <option value="3">sigma 3</option>
                   <option value="2">sigma 2</option>
                   <option value="1">sigma 1</option>
-                  <option value="custom">custom</option>
+                  <option value="custom" class="hideOnMobile">custom</option>
                 </select>
-                <input class="range_filter" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
-                <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                <input class="range_filter hideOnMobile" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                <input class="range_filter hideOnMobile" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
               </div>
 
-              <label style="margin-bottom: 5px;" class="hideOnMobile">
+              <label style="margin-bottom: 5px;">
                 <input type="checkbox" bind:checked="featurePropHideOutliers">
                 Hide values outside range
               </label>
