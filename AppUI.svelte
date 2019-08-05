@@ -1,6 +1,6 @@
 <svelte:window on:keydown="handleKeyPress(event)" />
 
-<div id="controls_left" class="controls">
+<div id="controls_left" class="column">
   <div id="spaces" class="panel">
     <div id="space_info">
       {#if spaceInfo}
@@ -13,7 +13,7 @@
         <button on:click="updateSpace(true)">Show XYZ Space</button>
       {/if}
     </div>
-    <div id="style_info" class:hideOnMobile="isMobile">
+    <div id="style_info" class="hideOnMobile">
       {#if displayToggles}
         <table>
           <tr>
@@ -46,7 +46,7 @@
       {/if}
     </div>
   </div>
-  <div id="properties" class="panel" class:hideOnMobile="isMobile">
+  <div id="properties" class="panel hideOnMobile">
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
@@ -62,7 +62,7 @@
     {/if}
   </div>
 
-  <div id="colors" class="panel">
+  <div id="colors" class="panel hideOnMobilePortrait">
     <div id="colorProperties">
       <!-- Selected feature property and value info -->
       {#if featureProp && featurePropCount != null}
@@ -82,7 +82,7 @@
           </div>
         {/if}
 
-        <div style="margin: 5px 0 5px 0;" class:hideOnMobile="isMobile">
+        <div style="margin: 5px 0 5px 0;" class="hideOnMobile">
           <div>{featurePropCount} unique values in the viewport</div>
 
           {#if featurePropMin != null}
@@ -98,7 +98,7 @@
 
       <!-- Color mode selector -->
       {#if displayToggles}
-        <div class:hideOnMobile="isMobile">
+        <div>
           Visualize features by
           <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
             {#each colorModes as mode}
@@ -113,7 +113,7 @@
       <!-- Color palette and range filters -->
       {#if featureProp && featurePropCount != null}
         {#if showFeaturePropPalette(displayToggles.colors)}
-          <div class:hideOnMobile="isMobile">
+          <div class="hideOnMobile">
             Color palette
             <select bind:value="featurePropPaletteName">
               {#each Object.keys(colorPalettes) as palette}
@@ -129,7 +129,7 @@
 
           {#if featurePropMin != null}
             {#if useFeaturePropRangeLimit(displayToggles.colors)}
-              <div class:hideOnMobile="isMobile">
+              <div class="hideOnMobile">
                 Limit values:
                 <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
                   <option value="0">all</option>
@@ -143,7 +143,7 @@
                 <input class="range_filter" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
               </div>
 
-              <label style="margin-bottom: 5px;" class:hideOnMobile="isMobile">
+              <label style="margin-bottom: 5px;" class="hideOnMobile">
                 <input type="checkbox" bind:checked="featurePropHideOutliers">
                 Hide values outside range
               </label>
@@ -181,7 +181,7 @@
 
     <!-- Top values list -->
     {#if featureProp && featurePropValueCounts}
-      <div class:hideOnMobile="isMobile">
+      <div class="hideOnMobile">
         <div style="margin: 5px 0 5px 0;">
           Top values by
           <select bind:value="featurePropValueSort">
@@ -197,7 +197,7 @@
           <tbody>
             {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
               <tr>
-                <td style="width: 15px;text-align: right;">{count}</td>
+                <td style="width: 15px; text-align: right;">{count}</td>
                 <td style="width: 15px;">
                   <!-- uses color calc code shared with tangram-->
                   {#if colorModeUsesProperty(displayToggles.colors)}
@@ -224,7 +224,7 @@
   </div>
 </div>
 
-<div id="controls_right" class="controls" class:hideOnMobile="isMobile">
+<div id="controls_right" class="column hideOnMobile">
   <div id="tag_summary" class="panel">
     <table id="tag_stats">
       {#if numFeaturesInViewport}
@@ -315,8 +315,6 @@
 
 <script>
 
-import L from 'leaflet';
-
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
@@ -330,8 +328,6 @@ export default {
       spaceId: '',
       token: '',
       spaceInfo: null,
-
-      isMobile: L.Browser.mobile,
 
       feature: null,
       featurePropStack: null,
@@ -1038,13 +1034,14 @@ function hashString (string) {
 
 <style>
 
-  .controls {
+  .column {
     position: absolute;
     z-index: 1000;
     min-height: 100vh;
     max-height: 100vh;
     display: flex;
     flex-direction: column;
+    width: 300px;
   }
 
   .panel {
@@ -1055,10 +1052,6 @@ function hashString (string) {
     border-radius: 3px;
     color: black;
     box-shadow: 2px 2px 2px black;
-  }
-
-  #controls_left {
-    width: 300px;
   }
 
   #space_info {
@@ -1091,7 +1084,6 @@ function hashString (string) {
   }
 
   #controls_right {
-    width: 350px;
     right: 0;
   }
 
@@ -1101,7 +1093,7 @@ function hashString (string) {
   }
 
   #tag_search {
-    width: 305px;
+    width: calc(100% - 8px);
     margin: 4px 0px;
     padding: 2px;
   }
@@ -1128,8 +1120,33 @@ function hashString (string) {
     background-color: lightyellow; padding: 3px;
   }
 
-  .hideOnMobile {
-    display: none;
+  /* mobile styles at the end for higher precedence */
+
+  /* mobile (any orientation) */
+  @media (max-width: 960px) {
+    .hideOnMobile {
+      display: none;
+    }
+
+    /* columns are narrower */
+    .column {
+      width: 240px;
+    }
+  }
+
+  /* mobile in portrait */
+  @media (max-width: 960px) and (orientation: portrait) {
+    .hideOnMobilePortrait {
+      display: none;
+    }
+
+    /* left column fills whole screen */
+    #controls_left {
+      width: 100%;
+      /* unset flexbox full height that will block user input */
+      min-height: unset;
+      max-height: unset;
+    }
   }
 
 </style>

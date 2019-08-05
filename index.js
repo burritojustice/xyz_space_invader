@@ -26,16 +26,13 @@ if (url_hash.length == 3) {
   };
 }
 
-map = L.map('map', { boxZoom: false, zoomControl: !L.Browser.mobile });
+map = L.map('map', { boxZoom: false, zoomControl: false });
 hash = new L.Hash(map);
 tooltip = L.tooltip();
 popup = L.popup({ autoPan: false, closeButton: true });
 
 // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
 map.setView([37.7,-122.4], 2);
-if (map.zoomControl) {
-  map.zoomControl.setPosition('bottomright');
-}
 
 // Initialize App UI
 const appUI = new AppUI({
