@@ -349,7 +349,7 @@ function updateViewportProperties(features) { // for feature prop
   // first get all unique properties for features in viewport, combined with those previously seen
   const { uniqueFeaturePropsSeen } = appUI.get();
   features.forEach(feature => {
-    const components = parseNestedObject(feature.properties)
+    parseNestedObject(feature.properties)
       .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
       .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip features we already know about
       .forEach(p => {
