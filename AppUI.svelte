@@ -422,7 +422,12 @@ export default {
 
     // label prop stack is JSON stringified for easier svelte prop sync and query string handling
     featureLabelPropStack: ({ displayToggles }) => {
-      return (displayToggles && displayToggles.label) ? JSON.parse(displayToggles.label) : null;
+      try {
+        return (displayToggles && displayToggles.label) ? JSON.parse(displayToggles.label) : null;
+      }
+      catch (e) {
+        return null;
+      }
     },
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
