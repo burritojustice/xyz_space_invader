@@ -121,6 +121,92 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
+  'xyz-pixel-dark': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-pixel-dark/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+    'xyz-pixel-pastel': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-pixel-pastel/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+  'xyz-bw-texture': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/bw-texture/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+  'xyz-grid': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-grid/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+  'xyz-grid-dark': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-grid-dark/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+  'xyz-grid-color': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-grid-color/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },  
+  
+  
   'walkabout': {
     import: [
       'https://www.nextzen.org/carto/walkabout-style/walkabout-style.zip',
