@@ -169,38 +169,38 @@ export const displayOptions = {
     }
   },
   
-  // Roads on/off
-  roads: {
-    parse: parseInt,
-    values: [1, 0],
-    apply: (scene, value) => {
-      if (scene.layers.roads) {
-        scene.layers.roads.enabled = (value === 1);
-      }
-
-      if (scene.layers.pois) {
-        scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
-      }
-    }
-  },
-
+//  // Roads on/off
 //   roads: {
 //     parse: parseInt,
-//     values: [1, 0, 2],
+//     values: [1, 0],
 //     apply: (scene, value) => {
-//       if (value === 0) {
-//         scene.layers.roads.enabled = 'false';
+//       if (scene.layers.roads) {
+//         scene.layers.roads.enabled = (value === 1);
 //       }
-//       else if (value === 1) {
-//         scene.layers.roads.enabled = 'true';
-//         scene.layers.roads.draw.lines.visible = true;
-//       }
-//       else if (value === 2) { // just labels, no lines
-//         scene.layers.roads.enabled = 'true';
-//         scene.layers.roads.draw.lines.visible = false;
+
+//       if (scene.layers.pois) {
+//         scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
 //       }
 //     }
 //   },
+
+  roads: {
+    parse: parseInt,
+    values: [1, 0, 2],
+    apply: (scene, value) => {
+      if (value === 0) {
+        scene.layers.roads.enabled = 'false';
+      }
+      else if (value === 1) {
+        scene.layers.roads.enabled = 'true';
+        scene.layers.roads.draw.lines.visible = true;
+      }
+      else if (value === 2) { 
+        scene.layers.roads.enabled = 'true';
+        scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
+      }
+    }
+  },
   
 
   // Water under/over
