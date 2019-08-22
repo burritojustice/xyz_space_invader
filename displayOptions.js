@@ -169,20 +169,38 @@ export const displayOptions = {
     }
   },
   
-  // Roads on/off
+//   // Roads on/off
+//   roads: {
+//     parse: parseInt,
+//     values: [1, 0],
+//     apply: (scene, value) => {
+//       if (scene.layers.roads) {
+//         scene.layers.roads.enabled = (value === 1);
+//       }
+
+//       if (scene.layers.pois) {
+//         scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
+//       }
+//     }
+//   },
+
   roads: {
     parse: parseInt,
-    values: [1, 0],
+    values: [1, 0, 2],
     apply: (scene, value) => {
-      if (scene.layers.roads) {
-        scene.layers.roads.enabled = (value === 1);
+      if (value === 0) {
+        scene.layers.roads.enabled = 'false';
       }
-
-      if (scene.layers.pois) {
-        scene.layers.pois.enabled = (value === 1); // to handle exit numbers
+      else if (value === 1) {
+        scene.layers.roads.enabled = 'true';
+      }
+      else if (value === 2) { // just labels, no geometry
+        scene.layers.roads.enabled = 'true';
+        scene.layers.roads = "filter":{"not":{"kind":"ferry"}},"z":{"y":{"no_lines":{"draw":{"lines":{"width":"0px"}}}}}
       }
     }
   },
+  
 
   // Water under/over
   water: {
