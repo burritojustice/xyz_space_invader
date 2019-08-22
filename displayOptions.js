@@ -196,8 +196,7 @@ export const displayOptions = {
       }
       else if (value === 2) { // just labels, no geometry
         scene.layers.roads.enabled = 'true';
-        scene.layers.roads = "filter":{"not":{"kind":"ferry"}},"z":{"y":{"no_lines":{"draw":{"lines":{"width":"0px"}}}}}
-      }
+        scene.config.layers.roads.draw.lines.visible = false      }
     }
   },
   
