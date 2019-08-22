@@ -23,6 +23,8 @@
             <td>{displayToggles.buildings}</td>
             <td on:click='toggleDisplayOption("water")'>water:</td>
             <td>{displayToggles.water}</td>
+            <td on:click='toggleDisplayOption("labels")'>places:</td>
+            <td>{displayToggles.places}</td>
           </tr>
           <tr>
             <td on:click='toggleDisplayOption("points")'>points:</td>
@@ -986,6 +988,9 @@ export default {
           this.toggleDisplayOption('roads');
         }
         else if (key == "w") { // put polygons under water
+          this.toggleDisplayOption('water');
+        }
+        else if (key == "control") { // put polygons under water
           this.toggleDisplayOption('water');
         }
       }
