@@ -975,7 +975,7 @@ export default {
         else if (key == "l") { // make lines smaller
           this.toggleDisplayOption('lines');
         }
-        else if (key == "n") { // make lines smaller
+        else if (key == "n") { // hide places
           this.toggleDisplayOption('places');
         }
         else if (key == "o") { // toggle polygon outlines
@@ -988,9 +988,6 @@ export default {
           this.toggleDisplayOption('roads');
         }
         else if (key == "w") { // put polygons under water
-          this.toggleDisplayOption('water');
-        }
-        else if (key == "control") { // put polygons under water
           this.toggleDisplayOption('water');
         }
       }
