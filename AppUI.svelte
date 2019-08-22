@@ -32,6 +32,8 @@
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
           </tr>
+      </table>
+      <table>
           <tr>
             <td>basemap:</td>
             <td>
