@@ -948,9 +948,9 @@ export default {
 
     handleKeyPress({ key }) {
       // b = toggle buildings
-      // c = toggle colors (color hash of all properties, pretty good but some chance of bordering features getting a similar color)
       // h = toggle lines and dot highlights
       // l = colors good for a light basemap
+      // n = names on map
       // o = toggle polygon outlines
       // p = make dots bigger
       // r = toggle roads
@@ -964,11 +964,17 @@ export default {
         if (key == "b") { // toggle buildings
           this.toggleDisplayOption('buildings');
         }
-        else if (key == "c") { // color hash each feature
-          this.toggleDisplayOption('colors');
-        }
+//         else if (key == "c") { // color hash each feature // removed this, interferes with copy
+//           this.toggleDisplayOption('colors');
+//         }
         else if (key == "h") { // highlight colors and make points bigger
           this.toggleDisplayOption('highlight');
+        }
+        else if (key == "l") { // make lines smaller
+          this.toggleDisplayOption('lines');
+        }
+        else if (key == "n") { // make lines smaller
+          this.toggleDisplayOption('places');
         }
         else if (key == "o") { // toggle polygon outlines
           this.toggleDisplayOption('outlines');
@@ -978,9 +984,6 @@ export default {
         }
         else if (key == "r") { // toggle roads
           this.toggleDisplayOption('roads');
-        }
-        else if (key == "l") { // make lines smaller
-          this.toggleDisplayOption('lines');
         }
         else if (key == "w") { // put polygons under water
           this.toggleDisplayOption('water');
