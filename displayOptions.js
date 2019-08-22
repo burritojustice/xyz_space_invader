@@ -12,6 +12,7 @@ export const displayOptions = {
       }
     }
   },
+  
 
   // Feature label property
   label: {
@@ -88,15 +89,15 @@ export const displayOptions = {
         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
-      else if (value === 1) { // big
-        scene.layers._xyz_dots.draw.points.size = '16px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-      }
-      else if (value === 2) { // smaller
+      else if (value === 1) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
+      }
+      else if (value === 2) { // big
+        scene.layers._xyz_dots.draw.points.size = '16px';
+        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
       else if (value === 3) { // medium
         scene.layers._xyz_dots.draw.points.size = '12px';
@@ -130,9 +131,11 @@ export const displayOptions = {
     apply: (scene, value) => {
       if (value === 1) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
       else {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
+        scene.layers._xyz_dots.draw.points.outline.width = '0px';
       }
     }
   },
@@ -154,7 +157,18 @@ export const displayOptions = {
       }
     }
   },
-
+  
+  // places on/off
+  places: {
+    parse: parseInt,
+    values: [1, 0],
+    apply: (scene, value) => {
+      if (scene.layers.places) {
+        scene.layers.places.enabled = (value === 1);
+      }
+    }
+  },
+  
   // Roads on/off
   roads: {
     parse: parseInt,
