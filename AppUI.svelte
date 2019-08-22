@@ -1071,7 +1071,7 @@ function hashString (string) {
 
   #properties {
     overflow: auto;
-    height: 200vh;
+    height: 150vh;
 
 /*     flex: 1 1 0; */
   }
