@@ -1071,7 +1071,9 @@ function hashString (string) {
 
   #properties {
     overflow: auto;
-    flex: 1 1 0;
+    height: 200vh;
+
+/*     flex: 1 1 0; */
   }
 
   #properties table {
@@ -1098,8 +1100,7 @@ function hashString (string) {
 
   #tag_panel {
     overflow: auto;
-/*     flex: 1 1 auto; */
-    height: 200vh;
+    flex: 1 1 auto;
   }
 
   #tag_search {
