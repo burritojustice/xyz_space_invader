@@ -48,21 +48,7 @@
       {/if}
     </div>
   </div>
-  <div id="properties" class="panel hideOnMobile">
-    {#if sortedUniqueFeaturePropsSeen.length > 0}
-      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
-      <table>
-        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
-            <td>
-              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
-              {prop}
-            </td>
-          </tr>
-        {/each}
-      </table>
-    {/if}
-  </div>
+
 
   <div id="colors" class="panel hideOnMobilePortrait">
     <div id="colorProperties">
@@ -291,6 +277,22 @@
         <i>Displaying the top 500 tags of {tagDisplayList.length} total</i>
       {/if}
     </div>
+  </div>
+  <!-- testing moving the properties -->
+  <div id="properties" class="panel hideOnMobile">
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
+      <table>
+        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
+            <td>
+              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
+              {prop}
+            </td>
+          </tr>
+        {/each}
+      </table>
+    {/if}
   </div>
 </div>
 
