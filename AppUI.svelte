@@ -23,7 +23,7 @@
             <td>{displayToggles.buildings}</td>
             <td on:click='toggleDisplayOption("water")'>water:</td>
             <td>{displayToggles.water}</td>
-            <td on:click='toggleDisplayOption("labels")'>places:</td>
+            <td on:click='toggleDisplayOption("places")'>places:</td>
             <td>{displayToggles.places}</td>
           </tr>
           <tr>
