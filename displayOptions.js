@@ -193,10 +193,12 @@ export const displayOptions = {
       }
       else if (value === 1) {
         scene.layers.roads.enabled = 'true';
+        scene.layers.roads.draw.lines.visible = true;
       }
-      else if (value === 2) { // just labels, no geometry
+      else if (value === 2) { // just labels, no lines
         scene.layers.roads.enabled = 'true';
-        scene.layers.roads.draw.lines.visible = false      }
+        scene.layers.roads.draw.lines.visible = false;
+      }
     }
   },
   
