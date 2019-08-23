@@ -64,7 +64,7 @@ const labelFontPresets = {
 };
 
 export const basemaps = {
-  'refill-dark': {
+  'mapzen-refill-dark': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
       'https://www.nextzen.org/carto/refill-style/themes/color-gray-gold.zip',
@@ -81,7 +81,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
-  'refill': {
+  'mapzen-refill': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
       'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
@@ -93,7 +93,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
-  'dots': {
+  'xyz-dots': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-dots/master/scene.yaml',
       'tangram_xyz_scene.yaml'
@@ -107,7 +107,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
-  'pixel': {
+  'xyz-pixel': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-pixel/master/scene.yaml',
       'tangram_xyz_scene.yaml'
@@ -207,7 +207,7 @@ export const basemaps = {
   },  
   
   
-  'walkabout': {
+  'mapzen-walkabout': {
     import: [
       'https://www.nextzen.org/carto/walkabout-style/walkabout-style.zip',
       'tangram_xyz_scene.yaml'
