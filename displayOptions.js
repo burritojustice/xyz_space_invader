@@ -191,11 +191,11 @@ export const displayOptions = {
     values: [1, 0],
     apply: (scene, value) => {
       if (value === 0) {
-        scene.layers.roads.enabled = 'false';
+        scene.layers.roads.enabled = false;
         console.log('enabled false')
       }
       else if (value === 1) {
-        scene.layers.roads.enabled = 'true';
+        scene.layers.roads.enabled = true;
 //         scene.layers.roads.draw.lines.visible = true;
         console.log('enabled true')
       }
