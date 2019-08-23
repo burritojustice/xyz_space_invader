@@ -186,24 +186,19 @@ export const displayOptions = {
 
   roads: {
     parse: parseInt,
-//     values: [1, 0, 2],
-
-    values: [1, 0],
+    values: [1, 0, 2],
     apply: (scene, value) => {
       if (value === 0) {
         scene.layers.roads.enabled = false;
-        console.log('enabled false')
       }
       else if (value === 1) {
         scene.layers.roads.enabled = true;
-//         scene.layers.roads.draw.lines.visible = true;
-        console.log('enabled true')
+        scene.layers.roads.draw.lines.visible = true;
       }
-//       else if (value === 2) { 
-// //        scene.layers.roads.enabled = 'true';
-//         scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
-//         console.log('visible false')
-//       }
+      else if (value === 2) { 
+        scene.layers.roads.enabled = 'true';
+        scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
+      }
     }
   },
   
