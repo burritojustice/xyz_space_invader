@@ -23,6 +23,8 @@
             <td>{displayToggles.buildings}</td>
             <td on:click='toggleDisplayOption("water")'>water:</td>
             <td>{displayToggles.water}</td>
+            <td on:click='toggleDisplayOption("places")'>places:</td>
+            <td>{displayToggles.places}</td>
           </tr>
           <tr>
             <td on:click='toggleDisplayOption("points")'>points:</td>
@@ -32,6 +34,8 @@
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
           </tr>
+      </table>
+      <table>
           <tr>
             <td>basemap:</td>
             <td>
@@ -46,21 +50,7 @@
       {/if}
     </div>
   </div>
-  <div id="properties" class="panel hideOnMobile">
-    {#if sortedUniqueFeaturePropsSeen.length > 0}
-      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
-      <table>
-        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
-            <td>
-              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
-              {prop}
-            </td>
-          </tr>
-        {/each}
-      </table>
-    {/if}
-  </div>
+
 
   <div id="colors" class="panel hideOnMobilePortrait">
     <div id="colorProperties">
@@ -289,6 +279,22 @@
         <i>Displaying the top 500 tags of {tagDisplayList.length} total</i>
       {/if}
     </div>
+  </div>
+  <!-- testing moving the properties -->
+  <div id="properties" class="panel hideOnMobile">
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
+      <table>
+        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
+            <td>
+              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
+              {prop}
+            </td>
+          </tr>
+        {/each}
+      </table>
+    {/if}
   </div>
 </div>
 
@@ -944,9 +950,9 @@ export default {
 
     handleKeyPress({ key }) {
       // b = toggle buildings
-      // c = toggle colors (color hash of all properties, pretty good but some chance of bordering features getting a similar color)
       // h = toggle lines and dot highlights
       // l = colors good for a light basemap
+      // n = names on map
       // o = toggle polygon outlines
       // p = make dots bigger
       // r = toggle roads
@@ -960,11 +966,17 @@ export default {
         if (key == "b") { // toggle buildings
           this.toggleDisplayOption('buildings');
         }
-        else if (key == "c") { // color hash each feature
-          this.toggleDisplayOption('colors');
-        }
+//         else if (key == "c") { // color hash each feature // removed this, interferes with copy
+//           this.toggleDisplayOption('colors');
+//         }
         else if (key == "h") { // highlight colors and make points bigger
           this.toggleDisplayOption('highlight');
+        }
+        else if (key == "l") { // make lines smaller
+          this.toggleDisplayOption('lines');
+        }
+        else if (key == "n") { // hide places
+          this.toggleDisplayOption('places');
         }
         else if (key == "o") { // toggle polygon outlines
           this.toggleDisplayOption('outlines');
@@ -974,9 +986,6 @@ export default {
         }
         else if (key == "r") { // toggle roads
           this.toggleDisplayOption('roads');
-        }
-        else if (key == "l") { // make lines smaller
-          this.toggleDisplayOption('lines');
         }
         else if (key == "w") { // put polygons under water
           this.toggleDisplayOption('water');
@@ -1067,7 +1076,9 @@ function hashString (string) {
 
   #properties {
     overflow: auto;
-    flex: 1 1 0;
+    height: 150vh;
+
+/*     flex: 1 1 0; */
   }
 
   #properties table {

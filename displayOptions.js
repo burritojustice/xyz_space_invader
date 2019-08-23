@@ -12,6 +12,7 @@ export const displayOptions = {
       }
     }
   },
+  
 
   // Feature label property
   label: {
@@ -88,15 +89,15 @@ export const displayOptions = {
         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
-      else if (value === 1) { // big
-        scene.layers._xyz_dots.draw.points.size = '16px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-      }
-      else if (value === 2) { // smaller
+      else if (value === 1) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
+      }
+      else if (value === 2) { // big
+        scene.layers._xyz_dots.draw.points.size = '16px';
+        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
       else if (value === 3) { // medium
         scene.layers._xyz_dots.draw.points.size = '12px';
@@ -130,9 +131,11 @@ export const displayOptions = {
     apply: (scene, value) => {
       if (value === 1) {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
       else {
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
+        scene.layers._xyz_dots.draw.points.outline.width = '0px';
       }
     }
   },
@@ -154,21 +157,58 @@ export const displayOptions = {
       }
     }
   },
-
-  // Roads on/off
-  roads: {
+  
+  // places on/off
+  places: {
     parse: parseInt,
     values: [1, 0],
     apply: (scene, value) => {
-      if (scene.layers.roads) {
-        scene.layers.roads.enabled = (value === 1);
-      }
-
-      if (scene.layers.pois) {
-        scene.layers.pois.enabled = (value === 1); // to handle exit numbers
+      if (scene.layers.places) {
+        scene.layers.places.enabled = (value === 1);
       }
     }
   },
+  
+//  // Roads on/off
+//   roads: {
+//     parse: parseInt,
+//     values: [1, 0],
+//     apply: (scene, value) => {
+//       if (scene.layers.roads) {
+//         scene.layers.roads.enabled = (value === 1);
+//       }
+
+//       if (scene.layers.pois) {
+//         scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
+//       }
+//     }
+//   },
+
+  roads: {
+    parse: parseInt,
+    values: [1, 0, 2],
+    apply: (scene, value) => {
+      if (scene.layers.roads) {
+        if (value === 0) {
+          scene.layers.roads.enabled = false;
+          if (scene.layers.pois) {
+            scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
+          }
+        }
+        else if (value === 1) {
+          scene.layers.roads.enabled = true;
+          scene.layers.roads.draw.lines.visible = true;
+        }
+        else if (value === 2) { 
+          scene.layers.roads.enabled = 'true';
+          scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
+          if (scene.layers.pois) {
+            scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
+          }
+        }
+      }
+  },
+  
 
   // Water under/over
   water: {
