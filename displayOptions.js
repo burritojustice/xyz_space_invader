@@ -186,7 +186,9 @@ export const displayOptions = {
 
   roads: {
     parse: parseInt,
-    values: [1, 0, 2],
+//     values: [1, 0, 2],
+
+    values: [1, 0],
     apply: (scene, value) => {
       if (value === 0) {
         scene.layers.roads.enabled = 'false';
@@ -197,11 +199,11 @@ export const displayOptions = {
         scene.layers.roads.draw.lines.visible = true;
         console.log('enabled true')
       }
-      else if (value === 2) { 
-        scene.layers.roads.enabled = 'true';
-        scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
-        console.log('visible false')
-      }
+//       else if (value === 2) { 
+// //        scene.layers.roads.enabled = 'true';
+//         scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
+//         console.log('visible false')
+//       }
     }
   },
   
