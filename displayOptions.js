@@ -207,6 +207,7 @@ export const displayOptions = {
           }
         }
       }
+    }
   },
   
 
@@ -222,6 +223,5 @@ export const displayOptions = {
         scene.layers._xyz_polygons.draw._polygons_inlay.order = 300;
       }
     }
-  },
-
-};
+  }
+}
