@@ -196,7 +196,7 @@ export const displayOptions = {
       }
       else if (value === 1) {
         scene.layers.roads.enabled = 'true';
-        scene.layers.roads.draw.lines.visible = true;
+//         scene.layers.roads.draw.lines.visible = true;
         console.log('enabled true')
       }
 //       else if (value === 2) { 
