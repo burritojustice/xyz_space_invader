@@ -229,7 +229,7 @@
     <div id="tags_filtered">
       filtering by tags:<br>
       {#if tagFilterList.length > 0}
-        {tagFilterList.join(', ')}<br>
+        {tagFilterList.join(', ')}<br><br>
       {:else}
         <i>no tags filtered<br><br></i>
       {/if}
