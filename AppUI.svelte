@@ -166,7 +166,7 @@
     {/if}
 
     {#if !(featureProp && featurePropCount != null)}
-      Select a feature property to analyze, from the property list above or by clicking on an individual feature.
+      Select a feature property to analyze, from the property list or by clicking on an individual feature.
     {/if}
 
     <!-- Top values list -->
