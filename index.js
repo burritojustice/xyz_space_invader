@@ -305,7 +305,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   
   // check for hexbins
   console.log(spaceInfo)
-  if (spaceInfo.client.hexbinSpaceId)){
+  if (spaceInfo.client.hexbinSpaceId){
     hexbin.spaceId = spaceInfo.client.hexbinSpaceId
     var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbin.spaceId}?access_token=${token}`;
     const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
