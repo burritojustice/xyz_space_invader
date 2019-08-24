@@ -12,6 +12,7 @@ let query;
 let layer;
 let scene_config
 let map, hash, tooltip, popup;
+let hexbins = {};
 
 // grab query parameters from the url and assign them to globals
 query = new URLSearchParams(document.location.search);
@@ -296,10 +297,23 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
+  
 
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
-
+  
+  
+  // check for hexbins
+  console.log(spaceInfo)
+  if (spaceInfo.client.hexbinSpaceId)){
+    hexbin.spaceId = spaceInfo.client.hexbinSpaceId
+    var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbin.spaceId}?access_token=${token}`;
+    const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
+    hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels
+    hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes
+    console.log(hexbin)
+  }
+  
   // update UI
   appUI.set({
     spaceInfo: {
