@@ -311,9 +311,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
     hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
     hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
-    console.log(hexbin);
+    console.log('hexbins!',hexbin);
     // quick dumb hack to try to swap spaceID to hexbins
     spaceId = hexbin.spaceId
+    console.log('hexbin spaceId test','space ID', spaceId, "hexbin target", hexbin.spaceId, "source",hexbin.sourceSpaceId)
   }
   
   // update UI
