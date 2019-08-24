@@ -313,8 +313,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
     console.log('hexbins!',hexbin);
     // quick dumb hack to try to swap spaceID to hexbins
-    spaceId = hexbin.spaceId
-    console.log('hexbin spaceId test','space ID', spaceId, "hexbin target", hexbin.spaceId, "source",hexbin.sourceSpaceId)
+//     spaceId = hexbin.spaceId
+//     console.log('hexbin spaceId test','space ID', spaceId, "hexbin target", hexbin.spaceId, "source",hexbin.sourceSpaceId)
   }
   
   // update UI
