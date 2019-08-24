@@ -303,15 +303,17 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
   
   
-  // check for hexbins
-  console.log(spaceInfo)
+  // check for hexbins, if they exist, create the hexbin object
   if (spaceInfo.client.hexbinSpaceId){
-    hexbin.spaceId = spaceInfo.client.hexbinSpaceId
+    hexbin.sourceSpaceId = spaceId;
+    hexbin.spaceId = spaceInfo.client.hexbinSpaceId;
     var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbin.spaceId}?access_token=${token}`;
     const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
-    hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels
-    hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes
-    console.log(hexbin)
+    hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
+    hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
+    console.log(hexbin);
+    // quick dumb hack to try to swap spaceID to hexbins
+    spaceID = hexbin.spaceId
   }
   
   // update UI
