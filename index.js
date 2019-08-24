@@ -303,13 +303,19 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   
   
   // check for hexbins, if they exist, create a hexbin object
+  const hexbinInfo = {}
+  hexbinInfo.spaceId = null
   if (spaceInfo.client.hexbinSpaceId){
-    scene.hexbin = {}
-    scene.hexbin.spaceId = spaceInfo.client.hexbinSpaceId;
-    var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${scene.hexbin.spaceId}?access_token=${token}`;
+    scene.hexbin = {} // <-- I thought I could store the hexbin info in the scene object and get to it anywhere but...
+    scene.hexbin.spaceId = spaceInfo.client.hexbinSpaceId; // guess we can't see scene in the AppUI? hmm
+    // hexbinSpaceId = spaceInfo.client.hexbinSpaceId;
+    hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
+    var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
     const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
     scene.hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
+    hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
     scene.hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
+    hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
     console.log('hexbins!',scene.hexbin);
   }
   
@@ -319,7 +325,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       title: spaceInfo.title,
       description: spaceInfo.description,
       numFeatures: spaceCount,
-      dataSize: calcSize
+      dataSize: calcSize,
+      hexbin: spaceInfo.client.hexbinSpaceId
     },
 
     // seed with top tags from stats endpoint
