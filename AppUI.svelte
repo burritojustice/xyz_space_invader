@@ -166,7 +166,7 @@
     {/if}
 
     {#if !(featureProp && featurePropCount != null)}
-      Select a feature property to analyze, from the property list above or by clicking on an individual feature.
+      Select a feature property to analyze, from the property list or by clicking on an individual feature.
     {/if}
 
     <!-- Top values list -->
@@ -229,7 +229,7 @@
     <div id="tags_filtered">
       filtering by tags:<br>
       {#if tagFilterList.length > 0}
-        {tagFilterList.join(', ')}
+        {tagFilterList.join(', ')}<br><br>
       {:else}
         <i>no tags filtered<br><br></i>
       {/if}
@@ -1077,8 +1077,7 @@ function hashString (string) {
   #properties {
     overflow: auto;
     height: 150vh;
-
-/*     flex: 1 1 0; */
+    flex: 1 1 auto;
   }
 
   #properties table {
@@ -1105,7 +1104,7 @@ function hashString (string) {
 
   #tag_panel {
     overflow: auto;
-    flex: 1 1 auto;
+    flex: 1 1 150vh;
   }
 
   #tag_search {
