@@ -211,6 +211,7 @@ export const displayOptions = {
   },
 
   // toggle hexbins
+  
   hexbins: {
     parse: parseInt,
     values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
@@ -220,16 +221,18 @@ export const displayOptions = {
         scene.sources._xyzspace.url_params.tags = '';
       }
       else if (value === 1) {
-        console.log('hexbins via',scene.hexbin);
+        console.log('hexbins via',hexbinInfo.spaceId);
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate hexbin tag
         scene.sources._xyzspace.url_params.tags = 'zoom13_hexbin';
+        console.log(scene.sources._xyzspace.url_params.tags)
       }
       else if (value === 2) {
-        console.log('centroids via',scene.hexbin);
+        console.log('centroids via',hexbinInfo.spaceId);
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate centroid tag
         scene.sources._xyzspace.url_params.tags = 'zoom13_centroid'
+        console.log(scene.sources._xyzspace.url_params.tags)
       }
     }
   },
