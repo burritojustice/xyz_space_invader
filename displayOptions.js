@@ -214,9 +214,9 @@ export const displayOptions = {
   hexbins: {
     parse: parseInt,
     values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
-    apply: (scene, value, { hexbinInfo, spaceInfo }) => {
+    apply: (scene, value, { hexbinInfo, spaceId }) => {
       if (value === 0) {
-        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceInfo.spaceId}/tile/web/{z}_{x}_{y}`;
+        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
         scene.sources._xyzspace.url_params.tags = '';
       }
       else if (value === 1) {
