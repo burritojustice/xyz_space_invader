@@ -33,6 +33,8 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
+            <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
+            <td>{displayToggles.hexbins}</td>            
           </tr>
       </table>
       <table>
@@ -989,6 +991,9 @@ export default {
         }
         else if (key == "w") { // put polygons under water
           this.toggleDisplayOption('water');
+        }
+        else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
+          this.toggleDisplayOption('hexbins');
         }
       }
     }
