@@ -12,7 +12,7 @@ let query;
 let layer;
 let scene_config
 let map, hash, tooltip, popup;
-let hexbins = {}; 
+let hexbin = {}; 
 
 // grab query parameters from the url and assign them to globals
 query = new URLSearchParams(document.location.search);
