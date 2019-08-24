@@ -12,7 +12,6 @@ let query;
 let layer;
 let scene_config
 let map, hash, tooltip, popup;
-let hexbin = {}; 
 
 // grab query parameters from the url and assign them to globals
 query = new URLSearchParams(document.location.search);
@@ -303,18 +302,15 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
   
   
-  // check for hexbins, if they exist, create the hexbin object
+  // check for hexbins, if they exist, create a hexbin object
   if (spaceInfo.client.hexbinSpaceId){
-    hexbin.sourceSpaceId = spaceId;
-    hexbin.spaceId = spaceInfo.client.hexbinSpaceId;
+    scene.hexbin = {}
+    scene.hexbin.spaceId = spaceInfo.client.hexbinSpaceId;
     var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbin.spaceId}?access_token=${token}`;
     const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
-    hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
-    hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
-    console.log('hexbins!',hexbin);
-    // quick dumb hack to try to swap spaceID to hexbins
-//     spaceId = hexbin.spaceId
-//     console.log('hexbin spaceId test','space ID', spaceId, "hexbin target", hexbin.spaceId, "source",hexbin.sourceSpaceId)
+    scene.hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
+    scene.hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
+    console.log('hexbins!',scene.hexbin);
   }
   
   // update UI
