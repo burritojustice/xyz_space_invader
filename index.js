@@ -326,7 +326,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       description: spaceInfo.description,
       numFeatures: spaceCount,
       dataSize: calcSize,
-      hexbin: spaceInfo.client.hexbinSpaceId
+//       hexbin: spaceInfo.client.hexbinSpaceId
     },
 
     // seed with top tags from stats endpoint
