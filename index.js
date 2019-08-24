@@ -306,7 +306,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   if (spaceInfo.client.hexbinSpaceId){
     scene.hexbin = {}
     scene.hexbin.spaceId = spaceInfo.client.hexbinSpaceId;
-    var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbin.spaceId}?access_token=${token}`;
+    var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${scene.hexbin.spaceId}?access_token=${token}`;
     const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
     scene.hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
     scene.hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
