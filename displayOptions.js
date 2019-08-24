@@ -214,7 +214,8 @@ export const displayOptions = {
   hexbins: {
     parse: parseInt,
     values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
-    apply: (scene, value,spaceId,hexbin) => {
+    apply: (scene,value,spaceId,hexbin) => {
+      console.log(spaceId,hexbin);
       if (value === 0) {
         scene.config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
         scene.config.sources._xyzspace.sources._xyzspace.url_params.tags = '';
