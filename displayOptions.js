@@ -220,13 +220,13 @@ export const displayOptions = {
         scene.config.sources._xyzspace.sources._xyzspace.url_params.tags = '';
       }
       else if (value === 1) {
-        console.log('hexbins via',scene.hexbin.spaceId);
+        console.log('hexbins via',scene.hexbin);
         scene.config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${scene.hexbin.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate hexbin tag
         scene.config.sources._xyzspace.sources._xyzspace.url_params.tags = 'zoom13_hexbin';
       }
       else if (value === 2) {
-        console.log('centroids via',scene.hexbin.spaceId);
+        console.log('centroids via',scene.hexbin);
         scene.config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${scene.hexbin.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate centroid tag
         scene.config.sources._xyzspace.sources._xyzspace.url_params.tags = 'zoom13_centroid'
