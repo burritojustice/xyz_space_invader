@@ -6,7 +6,10 @@
       {#if spaceInfo}
         {spaceId}: {spaceInfo.title}<br>
         {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>
-        {spaceInfo.description}
+        {spaceInfo.description}<br>
+        {#if hexbinInfo}
+          hexbins: {hexbinInfo.spaceId}, z {hexbinInfo.zoomLevels}
+        {/if}
       {:elseif !spaceLoading}
         <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
         <input type="text" placeholder="enter an XYZ token" bind:value='token'>
