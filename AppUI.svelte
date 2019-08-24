@@ -1104,7 +1104,7 @@ function hashString (string) {
 
   #tag_panel {
     overflow: auto;
-    flex: 1 1 auto;
+    flex: 1 0 auto;
   }
 
   #tag_search {
