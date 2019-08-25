@@ -216,7 +216,6 @@ export const displayOptions = {
     parse: parseInt,
     values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
     apply: (scene, value, { hexbinInfo, spaceId, tagFilterList }) => {
-      console.log('hexbin input',hexbinInfo, spaceId, tagFilterList)
       if (value === 0) {
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
         scene.sources._xyzspace.url_params.tags = '';
@@ -226,14 +225,14 @@ export const displayOptions = {
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate hexbin tag
 //         scene.sources._xyzspace.url_params.tags = 'zoom13_hexbin';
-        tagFilterList = 'zoom13_hexbin';
+        { tagFilterList } = 'zoom13_hexbin';
         console.log(scene.sources._xyzspace.url_params)
       }
       else if (value === 2) {
         console.log('centroids via',hexbinInfo.spaceId);
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate centroid tag
-        tagFilterList = 'zoom13_centroid';
+        { tagFilterList } = 'zoom13_centroid';
 //         scene.sources._xyzspace.url_params.tags = 'zoom13_centroid'
         console.log(scene.sources._xyzspace.url_params)
       }
