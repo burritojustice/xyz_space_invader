@@ -107,6 +107,20 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
+  'xyz-dots-dark': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-dots-dark/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
   'xyz-pixel': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-pixel/master/scene.yaml',
