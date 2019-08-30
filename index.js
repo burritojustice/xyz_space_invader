@@ -307,10 +307,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   hexbinInfo.spaceId = null
   if (spaceInfo.client){
     if (spaceInfo.client.hexbinSpaceId){
-      scene.hexbin = {} // <-- I thought I could store the hexbin info in the scene object and get to it anywhere but...
-      scene.hexbin.spaceId = spaceInfo.client.hexbinSpaceId; // guess we can't see scene in the AppUI? hmm
+      scene.hexbin = {} // <-- is this a good way to store the hexbin info?
+      scene.hexbin.spaceId = spaceInfo.client.hexbinSpaceId; 
       // hexbinSpaceId = spaceInfo.client.hexbinSpaceId;
-      hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
+      hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId; // or should we do it like this? 
       var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
       const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
       scene.hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
@@ -321,44 +321,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     }
   }
   
-  // toggle hexbins / centroids
 
-var hexbinState = 0
-
-document.addEventListener('keydown', ({ key }) => {
-  if (key == "x") { 
-    toggleHexbins()
-  }
-});
-  
-function toggleHexbins(){
-//     parse: parseInt,
-//     values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
-//     apply: (scene, value, { hexbinInfo, spaceId, tagFilterList }) => {
-      if (hexbinState === 2) {
-        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
-        scene.sources._xyzspace.url_params.tags = '';
-        hexbinState = 0
-      }
-      else if (hexbinState === 0) {
-        console.log('tagFilterList',{tagFilterList})
-        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
-        // will need to grab current zoom and generate appropriate hexbin tag
-//         scene.sources._xyzspace.url_params.tags = 'zoom13_hexbin';
-        { tagFilterList } = ['zoom13_hexbin']; 
-        console.log(scene.sources._xyzspace.url_params)
-      }
-      else if (hexbinState === 1) {
-        console.log('tagFilterList',{tagFilterList})
-        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
-        // will need to grab current zoom and generate appropriate centroid tag
-        { tagFilterList } = ['zoom13_centroid'];
-//         scene.sources._xyzspace.url_params.tags = 'zoom13_centroid'
-        console.log(scene.sources._xyzspace.url_params)
-      }
-//     }
-
-}
   
   
   
@@ -399,7 +362,7 @@ function updateViewportTags(features) {  // for tags
   })
 
   const tagsWithCountsInViewport =
-    Object.entries(
+    Object.entries(g
       features
         .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
         .reduce((tagCounts, tag) => {
