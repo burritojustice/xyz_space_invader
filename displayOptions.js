@@ -226,7 +226,7 @@ export const displayOptions = {
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate hexbin tag
 //         scene.sources._xyzspace.url_params.tags = 'zoom13_hexbin';
-        { tagFilterList } = ['zoom13_hexbin']; 
+        tagFilterList = ['zoom13_hexbin']; 
         updateScene(appUI.get())
         console.log(tagFilterList)
       }
@@ -234,7 +234,7 @@ export const displayOptions = {
         console.log('tagFilterList',{tagFilterList})
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate centroid tag
-        { tagFilterList } = ['zoom13_centroid'];
+        tagFilterList  = ['zoom13_centroid'];
         updateScene(appUI.get())
 //         scene.sources._xyzspace.url_params.tags = 'zoom13_centroid'
         console.log(tagFilterList)
