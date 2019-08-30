@@ -362,7 +362,7 @@ function updateViewportTags(features) {  // for tags
   })
 
   const tagsWithCountsInViewport =
-    Object.entries(g
+    Object.entries(
       features
         .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
         .reduce((tagCounts, tag) => {
