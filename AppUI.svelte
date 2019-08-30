@@ -997,6 +997,8 @@ export default {
         }
         else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
           this.toggleDisplayOption('hexbins');
+          this.loadScene();
+          
         }
       }
     }
