@@ -219,14 +219,12 @@ export const displayOptions = {
       if (value === 0) {
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
         tagFilterList = [];
-        updateScene();
       }
       else if (value === 1) {
         console.log('tagFilterList',{tagFilterList})
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate hexbin tag
         tagFilterList = ['zoom13_hexbin']; 
-        updateScene();
         console.log(tagFilterList)
       }
       else if (value === 2) {
@@ -234,7 +232,6 @@ export const displayOptions = {
         scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
         // will need to grab current zoom and generate appropriate centroid tag
         tagFilterList  = ['zoom13_centroid'];
-        updateScene();
         console.log(tagFilterList)
       }
     }
