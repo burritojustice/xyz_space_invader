@@ -37,7 +37,7 @@
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
             <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
-            <td>{displayToggles.hexbins}</td>            
+            <td>{displayToggles.hexbins}</td>
           </tr>
       </table>
       <table>
@@ -339,6 +339,7 @@ export default {
       spaceId: '',
       token: '',
       spaceInfo: null,
+      hexbinInfo: {},
 
       feature: null,
       featurePropStack: null,
@@ -662,6 +663,7 @@ export default {
 
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
+        changed.hexbinInfo ||
         changed.featurePropStack ||
         changed.featurePropValue ||
         changed.featurePropPalette ||
@@ -997,8 +999,6 @@ export default {
         }
         else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
           this.toggleDisplayOption('hexbins');
-          this.loadScene();
-          
         }
       }
     }

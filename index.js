@@ -211,11 +211,14 @@ function makeLayer(scene_obj) {
   window.scene = layer.scene;  // debugging
 }
 
-function applySpace({ spaceId, token }) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }) {
   if (spaceId && token) {
+    // choose main space, or hexbins space
+    const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
-      url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
       url_params: {
         access_token: token,
         clip: true
@@ -233,15 +236,24 @@ function applyDisplayOptions(uiState) {
   }
 }
 
-function applyTags({ tagFilterQueryParam }) {
+function applyTags({ tagFilterQueryParam, displayToggles: { hexbins } = {} }) {
+  // choose selected main space tags, or hexbin-specific tag
+  let activeTags = tagFilterQueryParam;
+  if (hexbins === 1) {
+    activeTags = 'zoom13_hexbin';
+  }
+  else if (hexbins === 2) {
+    activeTags = 'zoom13_centroid';
+  }
+
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
   scene_config.sources._xyzspace.url_params = {
     ...scene_config.sources._xyzspace.url_params,
-    tags: tagFilterQueryParam
+    tags: activeTags
   };
 
   // remove tags param if no tags - do this after adding above, to ensure the full object path exists
-  if (!tagFilterQueryParam) {
+  if (!activeTags) {
     delete scene_config.sources._xyzspace.url_params.tags;
   }
 }
@@ -296,36 +308,26 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
-  
+
 
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
-  
-  
+
+
   // check for hexbins, if they exist, create a hexbin object
-  const hexbinInfo = {}
-  hexbinInfo.spaceId = null
-  if (spaceInfo.client){
-    if (spaceInfo.client.hexbinSpaceId){
-      scene.hexbin = {} // <-- is this a good way to store the hexbin info?
-      scene.hexbin.spaceId = spaceInfo.client.hexbinSpaceId; 
-      // hexbinSpaceId = spaceInfo.client.hexbinSpaceId;
-      hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId; // or should we do it like this? 
-      var hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
-      const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
-      scene.hexbin.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
-      hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
-      scene.hexbin.cellSizes = hexbinSpaceInfo.client.cellSizes;
-      hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
-      console.log('hexbins!',scene.hexbin);
+  const hexbinInfo = {};
+  if (spaceInfo.client) {
+    if (spaceInfo.client.hexbinSpaceId) {
+      hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
+      const hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
+      try {
+        const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
+        hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
+        hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
+      } catch(e) {} // in case hexbin space doesn't exist or fails to load
     }
   }
-  
 
-  
-  
-  
-  
   // update UI
   appUI.set({
     spaceInfo: {
@@ -334,12 +336,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       numFeatures: spaceCount,
       dataSize: calcSize,
     },
-    
-    hexbinInfo: {
-      spaceId: hexbinInfo.spaceId,
-      zoomLevels: hexbinInfo.zoomLevels,
-      cellSizes: hexbinInfo.cellSizes
-    },
+
+    hexbinInfo,
 
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))

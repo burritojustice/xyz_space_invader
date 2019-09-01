@@ -12,7 +12,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
 
   // Feature label property
   label: {
@@ -157,7 +157,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
   // places on/off
   places: {
     parse: parseInt,
@@ -168,7 +168,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
 //  // Roads on/off
 //   roads: {
 //     parse: parseInt,
@@ -199,7 +199,7 @@ export const displayOptions = {
           scene.layers.roads.enabled = true;
           scene.layers.roads.draw.lines.visible = true;
         }
-        else if (value === 2) { 
+        else if (value === 2) {
           scene.layers.roads.enabled = 'true';
           scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
           if (scene.layers.pois) {
@@ -210,34 +210,12 @@ export const displayOptions = {
     }
   },
 
-  // toggle hexbins 
-  
+  // toggle hexbins
   hexbins: {
     parse: parseInt,
-    values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids 
-    apply: (scene, value, { hexbinInfo, spaceId, tagFilterList }) => {
-      if (value === 0) {
-        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
-        scene.sources._xyzspace.url_params.tags = '';
-        tagFilterList = [];
-      }
-      else if (value === 1) {
-        console.log('tagFilterList',{tagFilterList})
-        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
-        // will need to grab current zoom and generate appropriate hexbin tag
-        this.set({ tagFilterList}) = ['zoom13_hexbin'];  // <- this isn't updating the tag list, missing something here
-//         scene.sources._xyzspace.url_params.tags = 'zoom13_hexbin';
-        console.log(tagFilterList);
-      }
-      else if (value === 2) {
-        console.log('tagFilterList',{tagFilterList})
-        scene.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}/tile/web/{z}_{x}_{y}`;
-        // will need to grab current zoom and generate appropriate centroid tag
-        tagFilterList  = ['zoom13_centroid'];
-//         scene.sources._xyzspace.url_params.tags = 'zoom13_hexbin';
-        console.log(tagFilterList);
-      }
-    }
+    values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
   },
 
   // Water under/over
