@@ -236,7 +236,7 @@ function applyDisplayOptions(uiState) {
   }
 }
 
-function applyTags({ tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins } = {} }) {
+function applyTags({ tagFilterQueryParam, { hexbinInfo }, displayToggles: { hexbins } = {} }) {
   // choose selected main space tags, or hexbin-specific tag
   let activeTags = tagFilterQueryParam;
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
