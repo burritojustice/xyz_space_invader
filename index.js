@@ -239,11 +239,31 @@ function applyDisplayOptions(uiState) {
 function applyTags({ tagFilterQueryParam, displayToggles: { hexbins } = {} }) {
   // choose selected main space tags, or hexbin-specific tag
   let activeTags = tagFilterQueryParam;
+  var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
   if (hexbins === 1) {
     activeTags = 'zoom13_hexbin';
   }
   else if (hexbins === 2) {
-    activeTags = 'zoom13_centroid';
+    var hexbinZoomArray = hexbinInfo.zoomLevel.split(",");
+    var hexbinZoomMax = Math.max(...hexbinZoomArray)
+    var hexbinZoomMin = Math.min(...hexbinZoomArray)
+    console.log(currentZoom,zoomCentroidTag,hexbinZoomMin,hexbinZoomMax)
+    
+    if (hexbinZoomArray.includes(currentZoom)){
+      activeTags = 'zoom' + currentZoom + '_centroid';
+    }
+    else if (currentZoom > hexbinZoomMax) {
+      // when you zoom in past hexbinZoomMax, show raw points, need to switch to original space (is this the best way?)
+      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      activeTags = tagFilterQueryParam;
+    }
+    else if (currentZoom < hexbinZoomMin) {
+      // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points
+      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      activeTags = tagFilterQueryParam;
+      console.log("beyond hexbin range, low level zoom! performance may suffer")
+    }
+//     activeTags = 'zoom13_centroid';
   }
 
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
