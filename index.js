@@ -252,7 +252,7 @@ function applyTags({ tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins 
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
     console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
     
-    if (hexbinZoomArray.includes(currentZoom)){
+    if (hexbinZoomArray.includes(currentZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
       activeTags = 'zoom' + currentZoom + '_centroid';
       console.log('centroid tags',activeTags)
     }
