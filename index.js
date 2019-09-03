@@ -256,7 +256,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
       // when you zoom in past hexbinZoomMax, maybe we want show the raw points? but showing hexbinZoomMax right now
 //       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
 //       activeTags = tagFilterQueryParam;
-      activeTags = 'zoom' + hexbinZoomMin + '_hexbin';
+      activeTags = 'zoom' + hexbinZoomMax + '_hexbin';
 
       console.log(currentZoom + ">" + hexbinZoomMax);
     }
