@@ -250,7 +250,7 @@ function applyTags({ tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins 
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
-    console.log(currentZoom,hexbinZoomMin,hexbinZoomMax)
+    console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
     
     if (hexbinZoomArray.includes(currentZoom)){
       activeTags = 'zoom' + currentZoom + '_centroid';
