@@ -260,8 +260,8 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
       console.log(currentZoom,">",hexbinZoomMax);
     }
     else if (currentZoom < hexbinZoomMin) {
-      // what should we do when we zoom out beyond the hexbinZoomMin? maybe not draw anything? imagine 10 million points
-      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points. show hexbinZoomMin for now
+//       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = 'zoom' + hexbinZoomMin + '_hexbin'; // if in hexbin mode and zoomed way out, show what we've got
       console.log("beyond hexbin range, showing widest")
     }
@@ -286,8 +286,8 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
       console.log(currentZoom,">",hexbinZoomMax);
     }
     else if (currentZoom < hexbinZoomMin) {
-      // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points
-      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points. show hexbinZoomMin for now
+//       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = 'zoom' + hexbinZoomMin + '_centroid'; // if in hexbin mode and zoomed way out, show what we've got
       console.log("beyond hexbin range, showing widest")
     }
