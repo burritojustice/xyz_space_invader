@@ -236,7 +236,7 @@ function applyDisplayOptions(uiState) {
   }
 }
 
-function applyTags({ tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins } = {} }) {
+function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins } = {} }) {
   // choose selected main space tags, or hexbin-specific tag
   let activeTags = tagFilterQueryParam;
   console.log("hexbinInfo:",hexbinInfo)
