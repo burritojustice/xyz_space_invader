@@ -242,19 +242,22 @@ function applyTags({ tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins 
   console.log("hexbinInfo:",hexbinInfo)
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
   if (hexbins === 1) {
+    // drawing hexbins
     activeTags = 'zoom13_hexbin';
   }
   else if (hexbins === 2) {
-    var hexbinZoomArray = hexbinInfo.zoomLevel.split(",");
+    // drawing centroids
+    var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
-    console.log(currentZoom,zoomCentroidTag,hexbinZoomMin,hexbinZoomMax)
+    console.log(currentZoom,hexbinZoomMin,hexbinZoomMax)
     
     if (hexbinZoomArray.includes(currentZoom)){
       activeTags = 'zoom' + currentZoom + '_centroid';
     }
     else if (currentZoom > hexbinZoomMax) {
-      // when you zoom in past hexbinZoomMax, show raw points, need to switch to original space (is this the best way?)
+      
+      // when you zoom in past hexbinZoomMax, show raw points, need to switch back to original space (is this the best way?)
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = tagFilterQueryParam;
     }
