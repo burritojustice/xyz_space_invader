@@ -253,11 +253,12 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
       console.log('centroid tags',activeTags)
     }
     else if (currentZoom > hexbinZoomMax) { 
-      // when you zoom in past hexbinZoomMax, show raw points, need to switch back to original space (is this the best way?)
-      // looks like we need to trigger tags upon zoom
-      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
-      activeTags = tagFilterQueryParam;
-      console.log(currentZoom,">",hexbinZoomMax);
+      // when you zoom in past hexbinZoomMax, maybe we want show the raw points? but showing hexbinZoomMax right now
+//       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+//       activeTags = tagFilterQueryParam;
+      activeTags = 'zoom' + hexbinZoomMin + '_hexbin';
+
+      console.log(currentZoom + ">" + hexbinZoomMax);
     }
     else if (currentZoom < hexbinZoomMin) {
       // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points. show hexbinZoomMin for now
@@ -279,8 +280,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
       console.log('centroid tags',activeTags)
     }
     else if (currentZoom > hexbinZoomMax) { 
-      // when you zoom in past hexbinZoomMax, show raw points, need to switch back to original space (is this the best way?)
-      // looks like we need to trigger tags upon zoom?
+      // when you zoom in past hexbinZoomMax, switch from centroids to raw points, need to switch back to original space (is this the best way?)
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = tagFilterQueryParam;
       console.log(currentZoom,">",hexbinZoomMax);
