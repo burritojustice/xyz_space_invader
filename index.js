@@ -262,8 +262,8 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     else if (currentZoom < hexbinZoomMin) {
       // what should we do when we zoom out beyond the hexbinZoomMin? maybe not draw anything? imagine 10 million points
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
-      activeTags = 'x'; // not a great way to filter data, I know
-      console.log("beyond hexbin range, low level zoom! performance may suffer")
+      activeTags = 'zoom' + hexbinZoomMin + '_hexbin'; // if in hexbin mode and zoomed way out, show what we've got
+      console.log("beyond hexbin range, showing widest")
     }
 //     activeTags = 'zoom13_hexbin';
   }
@@ -280,7 +280,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
     else if (currentZoom > hexbinZoomMax) { 
       // when you zoom in past hexbinZoomMax, show raw points, need to switch back to original space (is this the best way?)
-      // looks like we need to trigger tags upon zoom
+      // looks like we need to trigger tags upon zoom?
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = tagFilterQueryParam;
       console.log(currentZoom,">",hexbinZoomMax);
@@ -288,8 +288,8 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     else if (currentZoom < hexbinZoomMin) {
       // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
-      activeTags = 'x'; // not a great way to filter data, I know
-      console.log("beyond hexbin range, low level zoom! performance may suffer")
+      activeTags = 'zoom' + hexbinZoomMin + '_centroid'; // if in hexbin mode and zoomed way out, show what we've got
+      console.log("beyond hexbin range, showing widest")
     }
 //     activeTags = 'zoom13_centroid';
   }
