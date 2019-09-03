@@ -243,7 +243,29 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
   if (hexbins === 1) {
     // drawing hexbins
-    activeTags = 'zoom13_hexbin';
+    var hexbinZoomArray = hexbinInfo.zoomLevels
+    var hexbinZoomMax = Math.max(...hexbinZoomArray)
+    var hexbinZoomMin = Math.min(...hexbinZoomArray)
+    console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
+    
+    if (hexbinZoomArray.includes(currentZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
+      activeTags = 'zoom' + currentZoom + '_hexbin';
+      console.log('centroid tags',activeTags)
+    }
+    else if (currentZoom > hexbinZoomMax) { 
+      // when you zoom in past hexbinZoomMax, show raw points, need to switch back to original space (is this the best way?)
+      // looks like we need to trigger tags upon zoom
+      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      activeTags = tagFilterQueryParam;
+      console.log(currentZoom,">",hexbinZoomMax);
+    }
+    else if (currentZoom < hexbinZoomMin) {
+      // what should we do when we zoom out beyond the hexbinZoomMin? maybe not draw anything? imagine 10 million points
+      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      activeTags = 'x'; // not a great way to filter data, I know
+      console.log("beyond hexbin range, low level zoom! performance may suffer")
+    }
+//     activeTags = 'zoom13_hexbin';
   }
   else if (hexbins === 2) {
     // drawing centroids
@@ -266,7 +288,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     else if (currentZoom < hexbinZoomMin) {
       // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
-      activeTags = tagFilterQueryParam;
+      activeTags = 'x'; // not a great way to filter data, I know
       console.log("beyond hexbin range, low level zoom! performance may suffer")
     }
 //     activeTags = 'zoom13_centroid';
