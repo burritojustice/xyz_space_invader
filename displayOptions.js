@@ -12,7 +12,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
 
   // Feature label property
   label: {
@@ -157,7 +157,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
   // places on/off
   places: {
     parse: parseInt,
@@ -168,7 +168,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
 //  // Roads on/off
 //   roads: {
 //     parse: parseInt,
@@ -199,7 +199,7 @@ export const displayOptions = {
           scene.layers.roads.enabled = true;
           scene.layers.roads.draw.lines.visible = true;
         }
-        else if (value === 2) { 
+        else if (value === 2) {
           scene.layers.roads.enabled = 'true';
           scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
           if (scene.layers.pois) {
@@ -209,7 +209,14 @@ export const displayOptions = {
       }
     }
   },
-  
+
+  // toggle hexbins
+  hexbins: {
+    parse: parseInt,
+    values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
 
   // Water under/over
   water: {

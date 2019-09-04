@@ -211,11 +211,14 @@ function makeLayer(scene_obj) {
   window.scene = layer.scene;  // debugging
 }
 
-function applySpace({ spaceId, token }) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }) {
   if (spaceId && token) {
+    // choose main space, or hexbins space
+    const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
-      url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
       url_params: {
         access_token: token,
         clip: true
@@ -233,15 +236,73 @@ function applyDisplayOptions(uiState) {
   }
 }
 
-function applyTags({ tagFilterQueryParam }) {
+function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins } = {} }) {
+  // choose selected main space tags, or hexbin-specific tag
+  let activeTags = tagFilterQueryParam;
+  console.log("hexbinInfo:",hexbinInfo)
+  var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
+  if (hexbins === 1) {
+    // drawing hexbins
+    var hexbinZoomArray = hexbinInfo.zoomLevels
+    var hexbinZoomMax = Math.max(...hexbinZoomArray)
+    var hexbinZoomMin = Math.min(...hexbinZoomArray)
+    console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
+    
+    if (hexbinZoomArray.includes(currentZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
+      activeTags = 'zoom' + currentZoom + '_hexbin';
+      console.log('centroid tags',activeTags)
+    }
+    else if (currentZoom > hexbinZoomMax) { 
+      // when you zoom in past hexbinZoomMax, maybe we want show the raw points? but showing hexbinZoomMax right now
+//       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+//       activeTags = tagFilterQueryParam;
+      activeTags = 'zoom' + hexbinZoomMax + '_hexbin';
+
+      console.log(currentZoom + ">" + hexbinZoomMax);
+    }
+    else if (currentZoom < hexbinZoomMin) {
+      // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points. show hexbinZoomMin for now
+//       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      activeTags = 'zoom' + hexbinZoomMin + '_hexbin'; // if in hexbin mode and zoomed way out, show what we've got
+      console.log("beyond hexbin range, showing widest")
+    }
+//     activeTags = 'zoom13_hexbin';
+  }
+  else if (hexbins === 2) {
+    // drawing centroids
+    var hexbinZoomArray = hexbinInfo.zoomLevels
+    var hexbinZoomMax = Math.max(...hexbinZoomArray)
+    var hexbinZoomMin = Math.min(...hexbinZoomArray)
+    console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
+    var overZoom = currentZoom + 1
+    
+    if (hexbinZoomArray.includes(overZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
+      activeTags = 'zoom' + overZoom + '_centroid';
+      console.log('centroid tags',activeTags)
+    }
+    else if (overZoom > hexbinZoomMax) { 
+      // when you zoom in past hexbinZoomMax, switch from centroids to raw points, need to switch back to original space (is this the best way?)
+      scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      activeTags = tagFilterQueryParam;
+      console.log(overZoom,">",hexbinZoomMax);
+    }
+    else if (overZoom < hexbinZoomMin) {
+      // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points. show hexbinZoomMin for now
+//       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
+      activeTags = 'zoom' + hexbinZoomMin + '_centroid'; // if in hexbin mode and zoomed way out, show what we've got
+      console.log("beyond hexbin range, showing widest")
+    }
+//     activeTags = 'zoom13_centroid';
+  }
+
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
   scene_config.sources._xyzspace.url_params = {
     ...scene_config.sources._xyzspace.url_params,
-    tags: tagFilterQueryParam
+    tags: activeTags
   };
 
   // remove tags param if no tags - do this after adding above, to ensure the full object path exists
-  if (!tagFilterQueryParam) {
+  if (!activeTags) {
     delete scene_config.sources._xyzspace.url_params.tags;
   }
 }
@@ -297,8 +358,24 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
 
+
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
+
+
+  // check for hexbins, if they exist, create a hexbin object
+  const hexbinInfo = {};
+  if (spaceInfo.client) {
+    if (spaceInfo.client.hexbinSpaceId) {
+      hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
+      const hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
+      try {
+        const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
+        hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
+        hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
+      } catch(e) {} // in case hexbin space doesn't exist or fails to load
+    }
+  }
 
   // update UI
   appUI.set({
@@ -306,8 +383,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       title: spaceInfo.title,
       description: spaceInfo.description,
       numFeatures: spaceCount,
-      dataSize: calcSize
+      dataSize: calcSize,
     },
+
+    hexbinInfo,
 
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))
