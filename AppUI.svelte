@@ -7,7 +7,7 @@
         {spaceId}: {spaceInfo.title}<br>
         {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>
         {spaceInfo.description}<br>
-        {#if hexbinInfo}
+        {#if hexbinInfo.spaceId}
           hexbins: {hexbinInfo.spaceId}, z {hexbinInfo.zoomLevels}
         {/if}
       {:elseif !spaceLoading}
@@ -36,8 +36,10 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
-            <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
-            <td>{displayToggles.hexbins}</td>
+            {#if hexbinInfo.spaceId}
+              <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
+              <td>{displayToggles.hexbins}</td>
+            {/if}
           </tr>
       </table>
       <table>
