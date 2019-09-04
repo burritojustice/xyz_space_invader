@@ -6,10 +6,7 @@
       {#if spaceInfo}
         {spaceId}: {spaceInfo.title}<br>
         {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>
-        {spaceInfo.description}<br>
-        {#if hexbinInfo}
-          hexbins: {hexbinInfo.spaceId}, z {hexbinInfo.zoomLevels}
-        {/if}
+        {spaceInfo.description}
       {:elseif !spaceLoading}
         <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
         <input type="text" placeholder="enter an XYZ token" bind:value='token'>
@@ -36,8 +33,6 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
-            <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
-            <td>{displayToggles.hexbins}</td>
           </tr>
       </table>
       <table>
@@ -339,7 +334,6 @@ export default {
       spaceId: '',
       token: '',
       spaceInfo: null,
-      hexbinInfo: {},
 
       feature: null,
       featurePropStack: null,
@@ -663,7 +657,6 @@ export default {
 
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
-        changed.hexbinInfo ||
         changed.featurePropStack ||
         changed.featurePropValue ||
         changed.featurePropPalette ||
@@ -996,9 +989,6 @@ export default {
         }
         else if (key == "w") { // put polygons under water
           this.toggleDisplayOption('water');
-        }
-        else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
-          this.toggleDisplayOption('hexbins');
         }
       }
     }
