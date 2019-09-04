@@ -274,18 +274,19 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
     console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
+    var overZoom = currentZoom + 1
     
-    if (hexbinZoomArray.includes(currentZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
-      activeTags = 'zoom' + currentZoom + '_centroid';
+    if (hexbinZoomArray.includes(overZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
+      activeTags = 'zoom' + overZoom + '_centroid';
       console.log('centroid tags',activeTags)
     }
-    else if (currentZoom > hexbinZoomMax) { 
+    else if (overZoom > hexbinZoomMax) { 
       // when you zoom in past hexbinZoomMax, switch from centroids to raw points, need to switch back to original space (is this the best way?)
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = tagFilterQueryParam;
-      console.log(currentZoom,">",hexbinZoomMax);
+      console.log(overZoom,">",hexbinZoomMax);
     }
-    else if (currentZoom < hexbinZoomMin) {
+    else if (overZoom < hexbinZoomMin) {
       // what should we do when we zoom out beyond the hexbinZoomMin? imagine 10 million points. show hexbinZoomMin for now
 //       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = 'zoom' + hexbinZoomMin + '_centroid'; // if in hexbin mode and zoomed way out, show what we've got
