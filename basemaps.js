@@ -205,7 +205,20 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },  
-  
+  'xyz-elevation-dots': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-elevation-dots/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },    
   
   'mapzen-walkabout': {
     import: [
