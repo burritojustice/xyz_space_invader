@@ -91,7 +91,7 @@ export const colorHelpers = {
       else {
         const index = Math.round(value * (palette.length-1));
         const color = palette[index];
-        return `rgba(${color.map(c => c * 255).join(', ')}, ${alpha})`;
+        return `rgba(${color.map(c => Math.floor(c * 255)).join(', ')}, ${alpha})`;
       }
     }
     catch (e) {
