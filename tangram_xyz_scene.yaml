@@ -156,6 +156,9 @@ layers:
                 color: global.featureColorDefault
                 width: 4px
                 order: 2000
+                outline:
+                   color: null
+                   width: null
             text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
