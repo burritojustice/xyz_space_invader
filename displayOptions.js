@@ -152,11 +152,13 @@ export const displayOptions = {
         scene.layers._xyz_dots.draw.points.outline.width = '0px';
       }
       else if (value === 1) { // 1 px default outline
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px'; // polygons have a default aqua outline
         scene.layers._xyz_lines.draw._lines.outline = {}
         scene.layers._xyz_lines.draw._lines.outline.width = '1px';
         scene.layers._xyz_lines.draw._lines.outline.color = [.5,.5,.5,.5]; 
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.color = [.5,.5,.5,.5];
+     
       }
       else if (value === 2) { // white outlines
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
