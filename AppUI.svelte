@@ -975,9 +975,6 @@ export default {
         if (key == "b") { // toggle buildings
           this.toggleDisplayOption('buildings');
         }
-//         else if (key == "c") { // color hash each feature // removed this, interferes with copy
-//           this.toggleDisplayOption('colors');
-//         }
         else if (key == "h") { // highlight colors and make points bigger
           this.toggleDisplayOption('highlight');
         }
@@ -993,7 +990,7 @@ export default {
         else if (key == "p") { // make points bigger
           this.toggleDisplayOption('points');
         }
-        else if (key == "r") { // toggle roads
+        else if (key == "v") { // toggle roads -- v for via! (changed from r because of cmd-r reload)
           this.toggleDisplayOption('roads');
         }
         else if (key == "w") { // put polygons under water
