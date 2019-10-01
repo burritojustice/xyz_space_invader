@@ -148,7 +148,7 @@ export const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4, 5],
+    values: [0, 1, 2, 3],
     apply: (scene, value) => {
       if (value === 0) { // no outline
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
@@ -156,9 +156,9 @@ export const displayOptions = {
         scene.layers._xyz_lines.draw._lines.outline.width = '0px';
         scene.layers._xyz_dots.draw.points.outline.width = '0px';
       }
-      else if (value === 1) { // 1 px default outline
+      else if (value === 1) { // subtle grey polygons
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px'; // polygons have a default aqua outline
-        scene.layers._xyz_polygons._outlines.draw._lines.color = [.5,.5,.5,.55]; 
+        scene.layers._xyz_polygons._outlines.draw._lines.color = [.5,.5,.5,.5]; 
 //         scene.layers._xyz_lines.draw._lines.outline = {}
         scene.layers._xyz_lines.draw._lines.outline.width = '1px';
         scene.layers._xyz_lines.draw._lines.outline.color = [.5,.5,.5,.5]; 
@@ -184,24 +184,26 @@ export const displayOptions = {
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
         scene.layers._xyz_dots.draw.points.outline.color = [0,0,0,0.75];
       }
-      else if (value === 4) { // magenta outlines
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
-        scene.layers._xyz_polygons._outlines.draw._lines.color = [1,0,1,0.75];
-//         scene.layers._xyz_lines.draw._lines.outline = {}
-        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
-        scene.layers._xyz_lines.draw._lines.outline.color = [1,0,1,0.75];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1,0,1,0.75];
-      }
-      else if (value === 5) { // aqua outlines
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
-        scene.layers._xyz_polygons._outlines.draw._lines.color = [0,1,1,0.75];
-//         scene.layers._xyz_lines.draw._lines.outline = {'width': '1px','color': [0,1,1,0.75]}
-        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
-        scene.layers._xyz_lines.draw._lines.outline.color = [0,1,1,0.75];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-        scene.layers._xyz_dots.draw.points.outline.color = [0,1,1,0.75];
-      }
+      
+// magenta & teal look good on polygons but bad on lines and points, will figure how more options for polygons later
+//       else if (value === 4) { // magenta outlines 
+//         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+//         scene.layers._xyz_polygons._outlines.draw._lines.color = [1,0,1,0.75];
+// //         scene.layers._xyz_lines.draw._lines.outline = {}
+//         scene.layers._xyz_lines.draw._lines.outline.width = '1px';
+//         scene.layers._xyz_lines.draw._lines.outline.color = [1,0,1,0.75];
+//         scene.layers._xyz_dots.draw.points.outline.width = '1px';
+//         scene.layers._xyz_dots.draw.points.outline.color = [1,0,1,0.75];
+//       }
+//       else if (value === 5) { // aqua outlines
+//         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+//         scene.layers._xyz_polygons._outlines.draw._lines.color = [0,1,1,0.75];
+// //         scene.layers._xyz_lines.draw._lines.outline = {'width': '1px','color': [0,1,1,0.75]}
+//         scene.layers._xyz_lines.draw._lines.outline.width = '1px';
+//         scene.layers._xyz_lines.draw._lines.outline.color = [0,1,1,0.75];
+//         scene.layers._xyz_dots.draw.points.outline.width = '1px';
+//         scene.layers._xyz_dots.draw.points.outline.color = [0,1,1,0.75];
+//       }
     }
   },
 
