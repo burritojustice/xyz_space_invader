@@ -959,7 +959,6 @@ export default {
 
     handleKeyPress({ key }) {
       // b = toggle buildings
-      // h = toggle lines and dot highlights
       // l = colors good for a light basemap
       // n = names on map
       // o = toggle polygon outlines
@@ -975,8 +974,7 @@ export default {
         if (key == "b") { // toggle buildings
           this.toggleDisplayOption('buildings');
         }
-        else if (key == "h") { // highlight colors and make points bigger
-          this.toggleDisplayOption('highlight');
+
         }
         else if (key == "l") { // make lines smaller
           this.toggleDisplayOption('lines');
