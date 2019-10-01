@@ -148,7 +148,7 @@ export const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1, 2, 3],
+    values: [0, 1, 2, 3, 4, 5],
     apply: (scene, value) => {
       if (value === 0) { // no outline
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
