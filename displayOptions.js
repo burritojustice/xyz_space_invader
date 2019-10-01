@@ -82,28 +82,33 @@ export const displayOptions = {
   // Point sizes
   points: {
     parse: parseInt,
-    values: [0, 1, 2, 3],
+    values: [0, 1, 2, 3, 4],
     apply: (scene, value) => {
       if (value === 0) { // small
         scene.layers._xyz_dots.draw.points.size = '6px';
-        scene.layers._xyz_dots.draw.points.outline.color = null;
+//         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
       else if (value === 1) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
-        scene.layers._xyz_dots.draw.points.outline.color = null;
+//         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
-      else if (value === 2) { // big
+      else if (value === 2) { // bigger
         scene.layers._xyz_dots.draw.points.size = '16px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+//         scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
-      else if (value === 3) { // medium
+      else if (value === 3) { // big
         scene.layers._xyz_dots.draw.points.size = '12px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+//         scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
+       else if (value === 4) { // medium
+        scene.layers._xyz_dots.draw.points.size = '0px';
+//         scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+      }     
     }
   },
 
@@ -179,6 +184,24 @@ export const displayOptions = {
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
         scene.layers._xyz_dots.draw.points.outline.color = [0,0,0,0.75];
       }
+      else if (value === 4) { // magenta outlines
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_polygons._outlines.draw._lines.color = [1,0,1,0.75];
+        scene.layers._xyz_lines.draw._lines.outline = {}
+        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
+        scene.layers._xyz_lines.draw._lines.outline.color = [1,0,1,0.75];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.color = [1,0,1,0.75];
+      }
+      else if (value === 5) { // aqua outlines
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_polygons._outlines.draw._lines.color = [0,1,1,0.75];
+        scene.layers._xyz_lines.draw._lines.outline = {}
+        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
+        scene.layers._xyz_lines.draw._lines.outline.color = [0,1,1,0.75];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.color = [0,1,1,0.75];
+      }
     }
   },
 
@@ -210,21 +233,6 @@ export const displayOptions = {
       }
     }
   },
-
-//  // Roads on/off
-//   roads: {
-//     parse: parseInt,
-//     values: [1, 0],
-//     apply: (scene, value) => {
-//       if (scene.layers.roads) {
-//         scene.layers.roads.enabled = (value === 1);
-//       }
-
-//       if (scene.layers.pois) {
-//         scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
-//       }
-//     }
-//   },
 
   roads: {
     parse: parseInt,
