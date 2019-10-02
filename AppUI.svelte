@@ -9,6 +9,10 @@
         {spaceInfo.description}<br>
         {#if hexbinInfo.spaceId}
           hexbins: {hexbinInfo.spaceId}, z {hexbinInfo.zoomLevels}
+          <table><tr>
+              <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
+              <td>{displayToggles.hexbins}</td>
+          </tr></table>
         {/if}
       {:elseif !spaceLoading}
         <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
@@ -36,10 +40,10 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
-            {#if hexbinInfo.spaceId}
+<!--             {#if hexbinInfo.spaceId}
               <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
               <td>{displayToggles.hexbins}</td>
-            {/if}
+            {/if} -->
           </tr>
       </table>
       <table>
