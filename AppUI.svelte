@@ -974,18 +974,16 @@ export default {
         if (key == "b") { // toggle buildings
           this.toggleDisplayOption('buildings');
         }
-
-        }
         else if (key == "l") { // make lines smaller
           this.toggleDisplayOption('lines');
         }
         else if (key == "n") { // hide places
           this.toggleDisplayOption('places');
         }
-        else if (key == "o") { // toggle polygon outlines
+        else if (key == "o") { // toggle outlines
           this.toggleDisplayOption('outlines');
         }
-        else if (key == "p") { // make points bigger
+        else if (key == "p") { // change point size
           this.toggleDisplayOption('points');
         }
         else if (key == "v") { // toggle roads -- v for via! (changed from r because of cmd-r reload)
