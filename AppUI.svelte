@@ -342,15 +342,14 @@ export default {
       token: '',
       spaceInfo: null,
       hexbinInfo: {},
-
       feature: null,
       featurePropStack: null,
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropValueSort: 'count',
-      featurePropNumericThreshold: 80, // minimum % of values that mst be numeric to support range, etc.
+      featurePropNumericThreshold: 80, // minimum % of values that must be numeric to support range, etc.
       featurePropCheckNumeric: null, // the property name that was active when we last checked for numeric-ness
-      featurePropPaletteName: 'viridisInferno', // TODO: move palette to import
+      featurePropPaletteName: 'viridis', // TODO: move palette to import
       featurePropPaletteFlip: false,
       featurePropMin: null,
       featurePropMax: null,
