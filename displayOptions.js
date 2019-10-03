@@ -86,27 +86,22 @@ export const displayOptions = {
     apply: (scene, value) => {
       if (value === 0) { // small
         scene.layers._xyz_dots.draw.points.size = '6px';
-//         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
       else if (value === 1) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
-//         scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
       else if (value === 2) { // bigger
-        scene.layers._xyz_dots.draw.points.size = '16px';
-//         scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+        scene.layers._xyz_dots.draw.points.size = '15px';
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
       else if (value === 3) { // big
         scene.layers._xyz_dots.draw.points.size = '12px';
-//         scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
        else if (value === 4) { // medium
-        scene.layers._xyz_dots.draw.points.size = '0px';
-//         scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+        scene.layers._xyz_dots.draw.points.size = '9px';
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }     
     }
