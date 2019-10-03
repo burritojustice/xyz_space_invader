@@ -34,11 +34,6 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
-<!--             {#if hexbinInfo.spaceId}
-              <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
-              <td>{displayToggles.hexbins}</td>
-            {/if} -->
-           
           </tr>
       </table>
       <table>
@@ -52,14 +47,14 @@
               </select>
             </td>
           </tr>
-        </table>
         {#if hexbinInfo.spaceId}
             <tr>
-              <td on:click='toggleDisplayOption("hexbins")'>hexbins: mode {displayToggles.hexbins}</td>
+              <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
             </tr><tr>
               <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
             </tr>
         {/if}
+        </table>
       {/if}
     </div>
   </div>
