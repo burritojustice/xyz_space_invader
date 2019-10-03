@@ -241,7 +241,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
   let activeTags = tagFilterQueryParam;
   console.log("hexbinInfo:",hexbinInfo)
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
-  if (hexbins === 1) {
+  if (hexbins === 'hexagons') {
     // drawing hexbins
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
@@ -268,7 +268,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
 //     activeTags = 'zoom13_hexbin';
   }
-  else if (hexbins === 2) {
+  else if (hexbins === 'centroids') {
     // drawing centroids
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
@@ -345,8 +345,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 
   var spaceSize = stats.byteSize.value
   var spaceCount = stats.count.value
+  
   var calcSize = (spaceSize/1024/1024)
-  console.log(spaceSize,'KB',calcSize)
+  console.log(spaceSize,'KB',calcSize,featureSize)
+  
   if (calcSize < 1000) {
     calcSize = calcSize.toFixed(1) + ' MB'
   }
@@ -354,6 +356,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
   }
 
+  var featureSize = spaceSize/spaceCount/1024 // KB per feature
+  featureSize = featureSize.toFixed(1) + ' KB'
+  
+  
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
@@ -384,6 +390,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       description: spaceInfo.description,
       numFeatures: spaceCount,
       dataSize: calcSize,
+      featureSize: featureSize
     },
 
     hexbinInfo,
