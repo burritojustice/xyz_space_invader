@@ -8,10 +8,11 @@
         {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>
         {spaceInfo.description}<br>
         {#if hexbinInfo.spaceId}
-          hexbins: {hexbinInfo.spaceId}, z {hexbinInfo.zoomLevels}
-          <table><tr>
-              <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
-              <td>{displayToggles.hexbins}</td>
+          <table>
+            <tr>
+              <td on:click='toggleDisplayOption("hexbins")'>hexbins available: showing {displayToggles.hexbins}</td></tr>
+            <tr>
+              <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
           </tr></table>
         {/if}
       {:elseif !spaceLoading}
