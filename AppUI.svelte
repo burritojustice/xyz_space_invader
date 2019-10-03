@@ -47,14 +47,16 @@
               </select>
             </td>
           </tr>
+      </table>
         {#if hexbinInfo.spaceId}
-            <tr>
-              <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
-            </tr><tr>
-              <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
-            </tr>
+      <table>
+          <tr>
+            <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
+          </tr><tr>
+            <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
+          </tr>
+      </table>
         {/if}
-        </table>
       {/if}
     </div>
   </div>
