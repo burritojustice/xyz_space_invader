@@ -54,11 +54,13 @@ export const displayOptions = {
       };
 
       if (featurePropStack) {
+        console.log(featurePropStack)
         // custom JS tangram function to access nested properties efficiently
         scene.global.lookupFeatureProp =
           `function(feature) {
             return feature${featurePropStack.map(k => '[\'' + k + '\']').join('')};
           }`;
+        
       }
 
       // use color mode color calc function if one exists, and a feature property is selected if required
