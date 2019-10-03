@@ -241,7 +241,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
   let activeTags = tagFilterQueryParam;
   console.log("hexbinInfo:",hexbinInfo)
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
-  if (hexbins === 'hexagons') {
+  if (hexbins === 1) {
     // drawing hexbins
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
@@ -268,13 +268,13 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
 //     activeTags = 'zoom13_hexbin';
   }
-  else if (hexbins === 'centroids') {
+  else if (hexbins === 2) {
     // drawing centroids
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
     console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
-    var overZoom = currentZoom + 1
+    var overZoom = currentZoom + 1 //centroids fron one zoom level down look better
     
     if (hexbinZoomArray.includes(overZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
       activeTags = 'zoom' + overZoom + '_centroid';
