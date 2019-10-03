@@ -5,7 +5,7 @@
     <div id="space_info">
       {#if spaceInfo}
         {spaceId}: {spaceInfo.title}<br>
-        {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>
+        {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature<br>
         {spaceInfo.description}<br>
         {#if hexbinInfo.spaceId}
           <table>
