@@ -36,6 +36,15 @@
             <td>{displayToggles.outlines}</td>
           </tr>
       </table>
+        {#if hexbinInfo.spaceId}
+      <table>
+          <tr>
+            <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
+          </tr><tr>
+            <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
+          </tr>
+      </table>
+        {/if}
       <table>
           <tr>
             <td>basemap:</td>
@@ -48,15 +57,7 @@
             </td>
           </tr>
       </table>
-        {#if hexbinInfo.spaceId}
-      <table>
-          <tr>
-            <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
-          </tr><tr>
-            <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
-          </tr>
-      </table>
-        {/if}
+
       {/if}
     </div>
   </div>
