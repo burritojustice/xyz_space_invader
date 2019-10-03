@@ -7,21 +7,14 @@
         {spaceId}: {spaceInfo.title}<br>
         {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature<br>
         {spaceInfo.description}<br>
-        {#if hexbinInfo.spaceId}
-          <table>
-            <tr>
-              <td on:click='toggleDisplayOption("hexbins")'>hexbins available: showing {displayToggles.hexbins}</td></tr>
-            <tr>
-              <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
-          </tr></table>
-        {/if}
       {:elseif !spaceLoading}
         <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
         <input type="text" placeholder="enter an XYZ token" bind:value='token'>
         <button on:click="updateSpace(true)">Show XYZ Space</button>
       {/if}
     </div>
-    <div id="style_info" class="hideOnMobile">
+<!--     <div id="style_info" class="hideOnMobile"> -->
+    <div id="style_info">
       {#if displayToggles}
         <table>
           <tr>
@@ -44,6 +37,13 @@
 <!--             {#if hexbinInfo.spaceId}
               <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
               <td>{displayToggles.hexbins}</td>
+        {#if hexbinInfo.spaceId}
+            <tr>
+              <td on:click='toggleDisplayOption("hexbins")'>hexbins: mode {displayToggles.hexbins}</td>
+            </tr><tr>
+              <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
+            </tr>
+        {/if}
             {/if} -->
           </tr>
       </table>
