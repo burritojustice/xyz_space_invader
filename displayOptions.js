@@ -247,7 +247,7 @@ export const displayOptions = {
   // toggle hexbins
   hexbins: {
     parse: parseInt,
-    values: ['source', 'hexagons', 'centroids'], // 0 = source, 1 = hexbins, 2 = centroids
+    values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
