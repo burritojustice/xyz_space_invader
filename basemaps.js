@@ -203,7 +203,78 @@ export const basemaps = {
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
-  },    
+  },  
+  'xyz-studio-spring-soft': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-studio-spring-soft/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+  'xyz-studio-spring-bright': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-studio-spring-bright/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+  'xyz-studio-miami-day': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-studio-miami-day/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },
+   'xyz-studio-light': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-studio-light/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  }, 
+    'xyz-studio-dark': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-studio-dark/master/scene.yaml',
+      'tangram_xyz_scene.yaml'
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    layers: {
+      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
+    },
+    ...xyzTilezenSourceOverride
+  },  
+  
   'mapzen-refill-dark': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
