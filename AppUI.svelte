@@ -37,14 +37,8 @@
 <!--             {#if hexbinInfo.spaceId}
               <td on:click='toggleDisplayOption("hexbins")'>hexbins:</td>
               <td>{displayToggles.hexbins}</td>
-        {#if hexbinInfo.spaceId}
-            <tr>
-              <td on:click='toggleDisplayOption("hexbins")'>hexbins: mode {displayToggles.hexbins}</td>
-            </tr><tr>
-              <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
-            </tr>
-        {/if}
             {/if} -->
+           
           </tr>
       </table>
       <table>
@@ -59,6 +53,13 @@
             </td>
           </tr>
         </table>
+        {#if hexbinInfo.spaceId}
+            <tr>
+              <td on:click='toggleDisplayOption("hexbins")'>hexbins: mode {displayToggles.hexbins}</td>
+            </tr><tr>
+              <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
+            </tr>
+        {/if}
       {/if}
     </div>
   </div>
