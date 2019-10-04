@@ -1036,7 +1036,7 @@ function formatFeaturePropValueColor(state, value) {
   if (colorFunctions[colors] && colorFunctions[colors].color) {
     return colorFunctions[colors].color(value, state);
   }
-  return 'rgba(127, 127, 127, .5)';
+  return 'rgba(127, 127, 127, .15)';
 }
 
 function hashString (string) {
