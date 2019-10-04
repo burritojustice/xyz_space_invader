@@ -162,6 +162,7 @@ export const displayOptions = {
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
         scene.layers._xyz_dots.draw.points.outline.color = [0,0,0,0.75];
       }
+      // TODO take point fill color, assign assign as point outline color, and remove fill entirely
     }
   },
 
@@ -178,7 +179,7 @@ export const displayOptions = {
 
   roads: {
     parse: parseInt,
-    values: [1, 0, 2],
+    values: [1, 0, 2], // 1 = on, 0 = off, 2 = just road labels, no lines
     apply: (scene, value) => {
       if (scene.layers.roads) {
         if (value === 0) {
