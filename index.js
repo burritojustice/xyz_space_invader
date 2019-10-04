@@ -239,7 +239,6 @@ function applyDisplayOptions(uiState) {
 function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins } = {} }) {
   // choose selected main space tags, or hexbin-specific tag
   let activeTags = tagFilterQueryParam;
-  console.log("hexbinInfo:",hexbinInfo)
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
   if (hexbins === 1) {
     // drawing hexbins
