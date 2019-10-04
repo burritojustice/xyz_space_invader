@@ -34,7 +34,7 @@ global:
           }
         }
         catch(e) { } // fallthrough to default color on exception
-        return 'rgba(127, 127, 127, .5)';
+        return 'rgba(127, 127, 127, .25)';
       }
 
     # simple color by feature color property, or fallback to geometry type
