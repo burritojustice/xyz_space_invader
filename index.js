@@ -56,10 +56,10 @@ appUI.on('updateScene', state => {
 // Load info on a new XYZ space
 appUI.on('loadSpace', ({ spaceId, token }) => {
   if (mapStartLocation == null) {
-    console.log('no url hash, getting bbox');
+//     console.log('no url hash, getting bbox');
     getStats({ spaceId, token });
   } else {
-    console.log('using url hash', mapStartLocation);
+//     console.log('using url hash', mapStartLocation);
     getStats({ spaceId, token, mapStartLocation });
   }
 });
@@ -245,7 +245,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
-    console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
+//     console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
     
     if (hexbinZoomArray.includes(currentZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
       activeTags = 'zoom' + currentZoom + '_hexbin';
@@ -497,7 +497,7 @@ function updateViewportProperties(features) { // for feature prop
 
     stdDev = Math.sqrt(avgSquareDiff);
 
-    console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
+//     console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
 
     // calculating sigmas and ranges using standard deviations
     sigma = {
@@ -514,7 +514,7 @@ function updateViewportProperties(features) { // for feature prop
     sigma.percent = 100 - sigma.count / vals.length
     sigma.outside = vals.length - sigma.count
 
-    console.log(sigma)
+//     console.log(sigma)
   } //endif
 
   // count up the number of each unique property value
