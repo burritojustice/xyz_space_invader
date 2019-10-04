@@ -52,9 +52,9 @@ export const displayOptions = {
         featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue,
         colorHelpers // include color helper functions in Tangram global state
       };
+      console.log('featurePropStack',featurePropStack)
 
       if (featurePropStack) {
-        console.log(featurePropStack)
         // custom JS tangram function to access nested properties efficiently
         scene.global.lookupFeatureProp =
           `function(feature) {
