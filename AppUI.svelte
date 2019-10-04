@@ -6,7 +6,7 @@
       {#if spaceInfo}
         {spaceInfo.title}<br>
         {spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature<br>
-      <x style="font-size:8px;">{spaceInfo.description}</x><br>
+      <x style="font-size:10px;">{spaceInfo.description}</x><br>
       {:elseif !spaceLoading}
         <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
         <input type="text" placeholder="enter an XYZ token" bind:value='token'>
