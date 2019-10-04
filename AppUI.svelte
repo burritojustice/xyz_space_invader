@@ -487,7 +487,9 @@ export default {
             }
           );
         }
-        return 'rgba(127, 127, 127, .5)';
+//         return 'rgba(127, 127, 127, .5)';
+        return 'rgba(127, 127, 127, .15)'; // color for null values?
+
       };
     },
 
