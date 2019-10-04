@@ -487,8 +487,7 @@ export default {
             }
           );
         }
-//         return 'rgba(127, 127, 127, .5)';
-        return 'rgba(127, 127, 127, .15)'; // color for null values?
+        return 'rgba(127, 127, 127, .25)'; // color for null values?
 
       };
     },
@@ -1036,7 +1035,7 @@ function formatFeaturePropValueColor(state, value) {
   if (colorFunctions[colors] && colorFunctions[colors].color) {
     return colorFunctions[colors].color(value, state);
   }
-  return 'rgba(127, 127, 127, .15)';
+  return 'rgba(127, 127, 127, .25)';
 }
 
 function hashString (string) {
