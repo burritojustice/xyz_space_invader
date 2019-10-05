@@ -211,14 +211,11 @@ function makeLayer(scene_obj) {
   window.scene = layer.scene;  // debugging
 }
 
-function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }) {
+function applySpace({ spaceId, token }) {
   if (spaceId && token) {
-    // choose main space, or hexbins space
-    const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
-      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
+      url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
       url_params: {
         access_token: token,
         clip: true
@@ -294,14 +291,15 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
 //     activeTags = 'zoom13_centroid';
   }
 
+function applyTags({ tagFilterQueryParam }) {
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
   scene_config.sources._xyzspace.url_params = {
     ...scene_config.sources._xyzspace.url_params,
-    tags: activeTags
+    tags: tagFilterQueryParam
   };
 
   // remove tags param if no tags - do this after adding above, to ensure the full object path exists
-  if (!activeTags) {
+  if (!tagFilterQueryParam) {
     delete scene_config.sources._xyzspace.url_params.tags;
   }
 }
@@ -363,24 +361,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
 
-
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
-
-
-  // check for hexbins, if they exist, create a hexbin object
-  const hexbinInfo = {};
-  if (spaceInfo.client) {
-    if (spaceInfo.client.hexbinSpaceId) {
-      hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
-      const hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
-      try {
-        const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
-        hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
-        hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
-      } catch(e) {} // in case hexbin space doesn't exist or fails to load
-    }
-  }
 
   // update UI
   appUI.set({
@@ -391,8 +373,6 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       dataSize: calcSize,
       featureSize: featureSize
     },
-
-    hexbinInfo,
 
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))

@@ -669,7 +669,6 @@ export default {
 
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
-        changed.hexbinInfo ||
         changed.featurePropStack ||
         changed.featurePropValue ||
         changed.featurePropPalette ||
@@ -995,9 +994,6 @@ export default {
         }
         else if (key == "w") { // put polygons under water
           this.toggleDisplayOption('water');
-        }
-        else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
-          this.toggleDisplayOption('hexbins');
         }
       }
     }

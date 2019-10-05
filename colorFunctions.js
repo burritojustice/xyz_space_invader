@@ -38,7 +38,23 @@ export const colorFunctions = {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
 
-      var ratio = (counts.length <= 1 ? 1 : Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0));
+      var ratio; // number from 0-1 that maps to the palette color index to use
+
+      if (palette.assignment === 'categorical') {
+        // optional categorical assigment
+        if (rank < palette.values.length) {
+          ratio = rank / (palette.values.length-1); // assign the top values to a single color
+        }
+        else {
+          return 'rgba(255, 255, 255, 0.75)'; // bucket the remaining values as white
+        }
+      }
+      else {
+        // by default, interpolate through palette values
+        ratio = (counts.length <= 1 ? 1 : Math.max(Math.min(1 - (rank / (counts.length - 1)), 1), 0));
+      }
+
+      // var ratio = (counts.length <= 1 ? 1 : Math.max(Math.min(1 - (rank / (counts.length-1)), 1), 0));
       return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
     }
   },
@@ -89,9 +105,9 @@ export const colorHelpers = {
       }
       // array-based palette
       else {
-        const index = Math.round(value * (palette.length-1));
-        const color = palette[index];
-        return `rgba(${color.map(c => c * 255).join(', ')}, ${alpha})`;
+        const index = Math.round(value * (palette.values.length-1));
+        const color = palette.values[index];
+        return `rgba(${color.map(c => Math.floor(c * 255)).join(', ')}, ${alpha})`;
       }
     }
     catch (e) {
