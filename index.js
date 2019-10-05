@@ -537,6 +537,6 @@ function updateViewportProperties(features) { // for feature prop
     featurePropStdDev: stdDev,
     featurePropSigma: sigma.percent,
     featurePropSigmaFloor: sigma.floor,
-    featurePropSigmaCeiling: sigma.ceiling,
+    featurePropSigmaCeiling: sigma.ceiling
   });
 }
