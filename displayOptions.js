@@ -26,7 +26,10 @@ export const displayOptions = {
         // custom JS tangram function to access nested properties efficiently
         scene.global.lookupFeatureLabelProp =
           `function(feature) {
-              return feature${featureLabelPropStack.map(k => '[\'' + k + '\']').join('')};
+              try {
+                return feature${featureLabelPropStack.map(k => '[\'' + k + '\']').join('')};
+              }
+              catch(e) { return null; } // catches cases where some features lack nested property, or other errors
             }`;
 
         // show/hide labels
