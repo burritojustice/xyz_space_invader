@@ -290,17 +290,14 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
 //     activeTags = 'zoom13_centroid';
   }
-}
 
-function applyTags({ tagFilterQueryParam }) {
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
   scene_config.sources._xyzspace.url_params = {
     ...scene_config.sources._xyzspace.url_params,
-    tags: tagFilterQueryParam
+    tags: activeTags
   };
-
   // remove tags param if no tags - do this after adding above, to ensure the full object path exists
-  if (!tagFilterQueryParam) {
+  if (!activeTags) {
     delete scene_config.sources._xyzspace.url_params.tags;
   }
 }
