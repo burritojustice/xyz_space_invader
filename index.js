@@ -211,11 +211,14 @@ function makeLayer(scene_obj) {
   window.scene = layer.scene;  // debugging
 }
 
-function applySpace({ spaceId, token }) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }) {
   if (spaceId && token) {
+    // choose main space, or hexbins space
+    const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
-      url: 'https://xyz.api.here.com/hub/spaces/' + spaceId + '/tile/web/{z}_{x}_{y}',
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
       url_params: {
         access_token: token,
         clip: true
@@ -243,12 +246,12 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
 //     console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
-    
+
     if (hexbinZoomArray.includes(currentZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
       activeTags = 'zoom' + currentZoom + '_hexbin';
       console.log('centroid tags',activeTags)
     }
-    else if (currentZoom > hexbinZoomMax) { 
+    else if (currentZoom > hexbinZoomMax) {
       // when you zoom in past hexbinZoomMax, maybe we want show the raw points? but showing hexbinZoomMax right now
 //       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
 //       activeTags = tagFilterQueryParam;
@@ -271,12 +274,12 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     var hexbinZoomMin = Math.min(...hexbinZoomArray)
     console.log(currentZoom,hexbinZoomMin,hexbinZoomMax,hexbinZoomArray)
     var overZoom = currentZoom + 1 //centroids fron one zoom level down look better
-    
+
     if (hexbinZoomArray.includes(overZoom.toString())){ // hexbins in zoom array are strings, not numbers. maybe better to just compare min and max but there might be zooms levels between that don't have hexbins
       activeTags = 'zoom' + overZoom + '_centroid';
       console.log('centroid tags',activeTags)
     }
-    else if (overZoom > hexbinZoomMax) { 
+    else if (overZoom > hexbinZoomMax) {
       // when you zoom in past hexbinZoomMax, switch from centroids to raw points, need to switch back to original space (is this the best way?)
       scene_config.sources._xyzspace.url = `https://xyz.api.here.com/hub/spaces/${spaceId}/tile/web/{z}_{x}_{y}`;
       activeTags = tagFilterQueryParam;
@@ -340,10 +343,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 
   var spaceSize = stats.byteSize.value
   var spaceCount = stats.count.value
-  
+
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
-  
+
   if (calcSize < 1000) {
     calcSize = calcSize.toFixed(1) + ' MB'
   }
@@ -353,14 +356,28 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 
   var featureSize = spaceSize/spaceCount/1024 // KB per feature
   featureSize = featureSize.toFixed(1) + ' KB'
-  
-  
+
+
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
 
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
+
+  // check for hexbins, if they exist, create a hexbin object
+  const hexbinInfo = {};
+  if (spaceInfo.client) {
+    if (spaceInfo.client.hexbinSpaceId) {
+      hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
+      const hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
+      try {
+        const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
+        hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
+        hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
+      } catch (e) { } // in case hexbin space doesn't exist or fails to load
+    }
+  }
 
   // update UI
   appUI.set({
@@ -371,6 +388,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       dataSize: calcSize,
       featureSize: featureSize
     },
+
+    hexbinInfo,
 
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))

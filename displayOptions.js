@@ -12,7 +12,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
 
   // Feature label property
   label: {
@@ -66,7 +66,7 @@ export const displayOptions = {
             }
             catch(e) { return null; } // catches cases where some features lack nested property, or other errors
           }`;
-        
+
       }
 
       // use color mode color calc function if one exists, and a feature property is selected if required
@@ -111,7 +111,7 @@ export const displayOptions = {
        else if (value === 4) { // medium
         scene.layers._xyz_dots.draw.points.size = '9px';
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
-      }     
+      }
     }
   },
 
@@ -131,7 +131,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
   // Outlines
   outlines: {
     parse: parseInt,
@@ -145,12 +145,12 @@ export const displayOptions = {
       }
       else if (value === 1) { // subtle grey polygons
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px'; // polygons have a default aqua outline
-        scene.layers._xyz_polygons._outlines.draw._lines.color = [.5,.5,.5,.5]; 
+        scene.layers._xyz_polygons._outlines.draw._lines.color = [.5,.5,.5,.5];
         scene.layers._xyz_lines.draw._lines.outline.width = '1px';
-        scene.layers._xyz_lines.draw._lines.outline.color = [.5,.5,.5,.5]; 
+        scene.layers._xyz_lines.draw._lines.outline.color = [.5,.5,.5,.5];
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
         scene.layers._xyz_dots.draw.points.outline.color = [.5,.5,.5,.5];
-     
+
       }
       else if (value === 2) { // white outlines
         scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
@@ -171,7 +171,7 @@ export const displayOptions = {
       // TODO take point fill color, assign assign as point outline color, and remove fill entirely
     }
   },
-  
+
   // places on/off
   places: {
     parse: parseInt,
@@ -198,7 +198,7 @@ export const displayOptions = {
           scene.layers.roads.enabled = true;
           scene.layers.roads.draw.lines.visible = true;
         }
-        else if (value === 2) { 
+        else if (value === 2) {
           scene.layers.roads.enabled = 'true';
           scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
           if (scene.layers.pois) {
@@ -208,7 +208,14 @@ export const displayOptions = {
       }
     }
   },
-  
+
+  // toggle hexbins
+  hexbins: {
+    parse: parseInt,
+    values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
 
   // Water under/over
   water: {
