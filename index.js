@@ -290,6 +290,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
 //     activeTags = 'zoom13_centroid';
   }
+}
 
 function applyTags({ tagFilterQueryParam }) {
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
