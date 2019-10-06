@@ -55,13 +55,7 @@ appUI.on('updateScene', state => {
 
 // Load info on a new XYZ space
 appUI.on('loadSpace', ({ spaceId, token }) => {
-  if (mapStartLocation == null) {
-//     console.log('no url hash, getting bbox');
-    getStats({ spaceId, token });
-  } else {
-//     console.log('using url hash', mapStartLocation);
-    getStats({ spaceId, token, mapStartLocation });
-  }
+  getStats({ spaceId, token, mapStartLocation });
 });
 
 // Handle query string updates
