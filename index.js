@@ -234,7 +234,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
   // choose selected main space tags, or hexbin-specific tag
   let activeTags = tagFilterQueryParam;
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?
-  if (hexbins === 1) {
+  if (hexbins === 1 & Object.keys(hexbinInfo).length > 0) { // ensure hexbins info exists
     // drawing hexbins
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
@@ -261,7 +261,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
 //     activeTags = 'zoom13_hexbin';
   }
-  else if (hexbins === 2) {
+  else if (hexbins === 2 && Object.keys(hexbinInfo).length > 0) { // ensure hexbins info exists
     // drawing centroids
     var hexbinZoomArray = hexbinInfo.zoomLevels
     var hexbinZoomMax = Math.max(...hexbinZoomArray)
