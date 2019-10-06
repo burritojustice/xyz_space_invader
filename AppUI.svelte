@@ -663,7 +663,8 @@ export default {
     }
 
     // Apply Tangram scene updates based on state change
-    if (changed.basemapScene) {
+    if (current.spaceInfo &&
+        (changed.basemapScene || changed.spaceInfo)) {
       this.fire('loadScene', current);
     }
 
