@@ -12,7 +12,7 @@ export const displayOptions = {
       }
     }
   },
-  
+
 
   // Feature label property
   label: {
@@ -26,7 +26,10 @@ export const displayOptions = {
         // custom JS tangram function to access nested properties efficiently
         scene.global.lookupFeatureLabelProp =
           `function(feature) {
-              return feature${featureLabelPropStack.map(k => '[\'' + k + '\']').join('')};
+              try {
+                return feature${featureLabelPropStack.map(k => '[\'' + k + '\']').join('')};
+              }
+              catch(e) { return null; } // catches cases where some features lack nested property, or other errors
             }`;
 
         // show/hide labels
@@ -52,13 +55,18 @@ export const displayOptions = {
         featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue,
         colorHelpers // include color helper functions in Tangram global state
       };
+      console.log('featurePropStack',featurePropStack)
 
       if (featurePropStack) {
         // custom JS tangram function to access nested properties efficiently
         scene.global.lookupFeatureProp =
           `function(feature) {
-            return feature${featurePropStack.map(k => '[\'' + k + '\']').join('')};
+            try {
+              return feature${featurePropStack.map(k => '[\'' + k + '\']').join('')};
+            }
+            catch(e) { return null; } // catches cases where some features lack nested property, or other errors
           }`;
+
       }
 
       // use color mode color calc function if one exists, and a feature property is selected if required
@@ -82,26 +90,26 @@ export const displayOptions = {
   // Point sizes
   points: {
     parse: parseInt,
-    values: [0, 1, 2, 3],
+    values: [0, 1, 2, 3, 4],
     apply: (scene, value) => {
       if (value === 0) { // small
         scene.layers._xyz_dots.draw.points.size = '6px';
-        scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
       else if (value === 1) { // smaller
         scene.layers._xyz_dots.draw.points.size = '3px';
-        scene.layers._xyz_dots.draw.points.outline.color = null;
         scene.layers._xyz_dots.draw.points.outline.width = null;
       }
-      else if (value === 2) { // big
-        scene.layers._xyz_dots.draw.points.size = '16px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+      else if (value === 2) { // bigger
+        scene.layers._xyz_dots.draw.points.size = '15px';
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
-      else if (value === 3) { // medium
+      else if (value === 3) { // big
         scene.layers._xyz_dots.draw.points.size = '12px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1, 1, 1, 0.5];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+      }
+       else if (value === 4) { // medium
+        scene.layers._xyz_dots.draw.points.size = '9px';
         scene.layers._xyz_dots.draw.points.outline.width = '1px';
       }
     }
@@ -127,37 +135,43 @@ export const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1],
+    values: [0, 1, 2, 3],
     apply: (scene, value) => {
-      if (value === 1) {
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-      }
-      else {
+      if (value === 0) { // no outline
         scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
+//         scene.layers._xyz_lines.draw._lines.outline = {}
+        scene.layers._xyz_lines.draw._lines.outline.width = '0px';
         scene.layers._xyz_dots.draw.points.outline.width = '0px';
       }
+      else if (value === 1) { // subtle grey polygons
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px'; // polygons have a default aqua outline
+        scene.layers._xyz_polygons._outlines.draw._lines.color = [.5,.5,.5,.5];
+        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
+        scene.layers._xyz_lines.draw._lines.outline.color = [.5,.5,.5,.5];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.color = [.5,.5,.5,.5];
+
+      }
+      else if (value === 2) { // white outlines
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_polygons._outlines.draw._lines.color = [1,1,1,0.75];
+        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
+        scene.layers._xyz_lines.draw._lines.outline.color = [1,1,1,.75];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.75];
+      }
+      else if (value === 3) { // black outlines
+        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
+        scene.layers._xyz_polygons._outlines.draw._lines.color = [0,0,0,0.75];
+        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
+        scene.layers._xyz_lines.draw._lines.outline.color = [0,0,0,0.75];
+        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        scene.layers._xyz_dots.draw.points.outline.color = [0,0,0,0.75];
+      }
+      // TODO take point fill color, assign assign as point outline color, and remove fill entirely
     }
   },
 
-  // Highlights
-  highlight: {
-    parse: parseInt,
-    values: [0, 1],
-    apply: (scene, value) => {
-      if (value === 1) {
-        scene.layers._xyz_lines.draw._lines.outline = scene.global.highlight;
-        scene.layers._xyz_dots.draw.points.size = '12px';
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '3px';
-      }
-      else {
-        scene.layers._xyz_lines.draw._lines.outline = null;
-        // scene.layers._xyz_dots.draw.points.size = '6px';
-        // scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
-      }
-    }
-  },
-  
   // places on/off
   places: {
     parse: parseInt,
@@ -168,25 +182,10 @@ export const displayOptions = {
       }
     }
   },
-  
-//  // Roads on/off
-//   roads: {
-//     parse: parseInt,
-//     values: [1, 0],
-//     apply: (scene, value) => {
-//       if (scene.layers.roads) {
-//         scene.layers.roads.enabled = (value === 1);
-//       }
-
-//       if (scene.layers.pois) {
-//         scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
-//       }
-//     }
-//   },
 
   roads: {
     parse: parseInt,
-    values: [1, 0, 2],
+    values: [1, 0, 2], // 1 = on, 0 = off, 2 = just road labels, no lines
     apply: (scene, value) => {
       if (scene.layers.roads) {
         if (value === 0) {
@@ -199,7 +198,7 @@ export const displayOptions = {
           scene.layers.roads.enabled = true;
           scene.layers.roads.draw.lines.visible = true;
         }
-        else if (value === 2) { 
+        else if (value === 2) {
           scene.layers.roads.enabled = 'true';
           scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
           if (scene.layers.pois) {
@@ -209,7 +208,14 @@ export const displayOptions = {
       }
     }
   },
-  
+
+  // toggle hexbins
+  hexbins: {
+    parse: parseInt,
+    values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
 
   // Water under/over
   water: {

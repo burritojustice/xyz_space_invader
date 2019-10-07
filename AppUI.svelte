@@ -4,16 +4,17 @@
   <div id="spaces" class="panel">
     <div id="space_info">
       {#if spaceInfo}
-        {spaceId}: {spaceInfo.title}<br>
-        {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>
-        {spaceInfo.description}
+        {spaceInfo.title}<br>
+        {spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature<br>
+      <x style="font-size:10px;">{spaceInfo.description}</x><br>
       {:elseif !spaceLoading}
         <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
         <input type="text" placeholder="enter an XYZ token" bind:value='token'>
         <button on:click="updateSpace(true)">Show XYZ Space</button>
       {/if}
     </div>
-    <div id="style_info" class="hideOnMobile">
+<!--     <div id="style_info" class="hideOnMobile"> -->
+    <div id="style_info">
       {#if displayToggles}
         <table>
           <tr>
@@ -35,6 +36,15 @@
             <td>{displayToggles.outlines}</td>
           </tr>
       </table>
+        {#if hexbinInfo.spaceId}
+      <table>
+          <tr>
+            <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
+          </tr><tr>
+            <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
+          </tr>
+      </table>
+        {/if}
       <table>
           <tr>
             <td>basemap:</td>
@@ -46,7 +56,8 @@
               </select>
             </td>
           </tr>
-        </table>
+      </table>
+
       {/if}
     </div>
   </div>
@@ -334,15 +345,15 @@ export default {
       spaceId: '',
       token: '',
       spaceInfo: null,
-
+      hexbinInfo: {},
       feature: null,
       featurePropStack: null,
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropValueSort: 'count',
-      featurePropNumericThreshold: 80, // minimum % of values that mst be numeric to support range, etc.
+      featurePropNumericThreshold: 80, // minimum % of values that must be numeric to support range, etc.
       featurePropCheckNumeric: null, // the property name that was active when we last checked for numeric-ness
-      featurePropPaletteName: 'viridisInferno', // TODO: move palette to import
+      featurePropPaletteName: 'viridis', // TODO: move palette to import
       featurePropPaletteFlip: false,
       featurePropMin: null,
       featurePropMax: null,
@@ -476,7 +487,8 @@ export default {
             }
           );
         }
-        return 'rgba(127, 127, 127, .5)';
+        return 'rgba(127, 127, 127, .25)'; // color for null values?
+
       };
     },
 
@@ -651,12 +663,14 @@ export default {
     }
 
     // Apply Tangram scene updates based on state change
-    if (changed.basemapScene) {
+    if (current.spaceInfo &&
+        (changed.basemapScene || changed.spaceInfo)) {
       this.fire('loadScene', current);
     }
 
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
+        changed.hexbinInfo ||
         changed.featurePropStack ||
         changed.featurePropValue ||
         changed.featurePropPalette ||
@@ -950,7 +964,6 @@ export default {
 
     handleKeyPress({ key }) {
       // b = toggle buildings
-      // h = toggle lines and dot highlights
       // l = colors good for a light basemap
       // n = names on map
       // o = toggle polygon outlines
@@ -966,29 +979,26 @@ export default {
         if (key == "b") { // toggle buildings
           this.toggleDisplayOption('buildings');
         }
-//         else if (key == "c") { // color hash each feature // removed this, interferes with copy
-//           this.toggleDisplayOption('colors');
-//         }
-        else if (key == "h") { // highlight colors and make points bigger
-          this.toggleDisplayOption('highlight');
-        }
         else if (key == "l") { // make lines smaller
           this.toggleDisplayOption('lines');
         }
         else if (key == "n") { // hide places
           this.toggleDisplayOption('places');
         }
-        else if (key == "o") { // toggle polygon outlines
+        else if (key == "o") { // toggle outlines
           this.toggleDisplayOption('outlines');
         }
-        else if (key == "p") { // make points bigger
+        else if (key == "p") { // change point size
           this.toggleDisplayOption('points');
         }
-        else if (key == "r") { // toggle roads
+        else if (key == "v") { // toggle roads -- v for via! (changed from r because of cmd-r reload)
           this.toggleDisplayOption('roads');
         }
         else if (key == "w") { // put polygons under water
           this.toggleDisplayOption('water');
+        }
+        else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
+          this.toggleDisplayOption('hexbins');
         }
       }
     }
@@ -1026,7 +1036,7 @@ function formatFeaturePropValueColor(state, value) {
   if (colorFunctions[colors] && colorFunctions[colors].color) {
     return colorFunctions[colors].color(value, state);
   }
-  return 'rgba(127, 127, 127, .5)';
+  return 'rgba(127, 127, 127, .25)';
 }
 
 function hashString (string) {

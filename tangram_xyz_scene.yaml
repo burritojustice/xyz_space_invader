@@ -34,7 +34,7 @@ global:
           }
         }
         catch(e) { } // fallthrough to default color on exception
-        return 'rgba(127, 127, 127, .5)';
+        return 'rgba(127, 127, 127, .25)';
       }
 
     # simple color by feature color property, or fallback to geometry type
@@ -134,9 +134,7 @@ layers:
                 blend_order: 0 # put our points under the basemap labels
                 color: global.featureColorDefault
                 size: 6px
-                outline:
-                    color: [1,1,0,0.2]
-                    width: .1px
+                outline: {}
                 text:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
@@ -156,6 +154,9 @@ layers:
                 color: global.featureColorDefault
                 width: 4px
                 order: 2000
+                outline:
+                   color: white
+                   width: 0px
             text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
