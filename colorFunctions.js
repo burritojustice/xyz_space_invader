@@ -15,7 +15,7 @@ export const colorFunctions = {
       var number = colorState.colorHelpers.parseNumber(value);
 
       if (min == null || max == null || typeof number !== 'number' || isNaN(number)) {
-        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+        return 'rgba(128, 128, 128, 0.25)'; // handle null/undefined values
       }
 
       var ratio = (delta === 0 ? 1 : Math.max(Math.min(1 - ((max - number) / delta), 1), 0));
@@ -35,7 +35,7 @@ export const colorFunctions = {
       var rank = counts.findIndex(c => c[0] === value);
 
       if (rank === -1) {
-        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+        return 'rgba(128, 128, 128, 0.25)'; // handle null/undefined values
       }
 
       var ratio; // number from 0-1 that maps to the palette color index to use
@@ -46,7 +46,7 @@ export const colorFunctions = {
           ratio = rank / (palette.values.length-1); // assign the top values to a single color
         }
         else {
-          return 'rgba(255, 255, 255, 0.75)'; // bucket the remaining values as white
+          return 'rgba(255, 255, 255, 0.5)'; // bucket the remaining values as white
         }
       }
       else {
