@@ -208,30 +208,7 @@ export const displayOptions = {
       }
     }
   },
-  
-  extrude: {
-    parse: parseInt,
-    values: [0, 1, 2]
-    apply: (scene, value) => {
-      if (value === 0) { // no extrusion
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 200;
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = false
-        scene.layers._xyz_dots.draw.points.outline.width = null;
-      }
-      else if (value === 1) { // perspective
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 2001 \\ move polygons above roads
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = 'function() {return (feature.BLDG_HT + 0 )}' // sometimes it can be a string
-        scene.config.layers._xyz_polygons._outlines.draw._lines.extrude = 'function() {return (feature.BLDG_HT + 0 )}'
-        scene.config.cameras.camera1.type = 'perspective'
-      }
-      else if (value === 2) { // isometric
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 2001 \\ move polygons above roads
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = 'function() {return (feature.BLDG_HT + 0 )}'
-        scene.config.layers._xyz_polygons._outlines.draw._lines.extrude = 'function() {return (feature.BLDG_HT + 0 )}'
-        scene.config.cameras.camera1.type = 'isometric'
-      }
-    }
-  },
+ 
 
   // toggle hexbins
   hexbins: {
