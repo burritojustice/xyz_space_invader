@@ -175,6 +175,32 @@
         </select>
       </div>
     {/if}
+    
+    <!-- Label property selector -->
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px;">Scale points by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointScale">
+          <option value=""></option>
+          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+            <option value="{JSON.stringify(propStack)}">{prop}</option>
+          {/each}
+        </select>
+      </div>
+    {/if}
+    
+    <!-- extrusion property selector -->
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px;">Extrude features by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.extrusion">
+          <option value=""></option>
+          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+            <option value="{JSON.stringify(propStack)}">{prop}</option>
+          {/each}
+        </select>
+      </div>
+    {/if}
 
     {#if !(featureProp && featurePropCount != null)}
       Select a feature property to analyze, from the property list or by clicking on an individual feature.
@@ -446,6 +472,25 @@ export default {
         return null;
       }
     },
+    
+    // point scale prop stack is JSON stringified for easier svelte prop sync and query string handling
+    featurePointScalePropStack: ({ displayToggles }) => {
+      try {
+        return (displayToggles && displayToggles.pointScale) ? JSON.parse(displayToggles.pointScale) : null;
+      }
+      catch (e) {
+        return null;
+      }
+    },
+    
+    // extrusion prop stack is JSON stringified for easier svelte prop sync and query string handling
+    featurePointScalePropStack: ({ displayToggles }) => {
+      try {
+        return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
+      }
+      catch (e) {
+        return null;
+      }
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
       if (!featurePropValueCounts) {
