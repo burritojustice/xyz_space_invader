@@ -484,7 +484,7 @@ export default {
     },
     
     // extrusion prop stack is JSON stringified for easier svelte prop sync and query string handling
-    featurePointScalePropStack: ({ displayToggles }) => {
+    featureExtrusionPropStack: ({ displayToggles }) => {
       try {
         return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
       }
