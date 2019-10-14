@@ -15,7 +15,7 @@ global:
     lookupFeatureExtrusionProp: function(feature) { return null; }
     lookupFeaturePointScaleProp: function(feature) { return null; }
 
-    # dyanmic feature coloring, using the currently defined "color mode"
+    # dynamic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
       function () {
@@ -90,6 +90,12 @@ global:
         function() {
           return global.lookupFeatureLabelProp(feature);
         }
+    # used for dynamic text_source on feature labels
+    featureExtrusion: |
+        function() {
+          return global.lookupFeatureExtrusionProp(feature);
+        }
+        
 
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
@@ -179,12 +185,14 @@ layers:
                     color: [0, 1, 1, 0.35]
                     width: 1px
                     order: 2000
+                    extrude: featureExtrusion
         draw:
             _polygons_inlay:
                 interactive: true
                 color: global.featureColorDefault
                 width: 2px
                 order: 300
+                extrude: featureExtrusion
             text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
