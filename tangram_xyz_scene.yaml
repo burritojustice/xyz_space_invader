@@ -12,6 +12,8 @@ global:
     # replaced by app JS, used to look-up feature props that may be nested
     lookupFeatureProp: function(feature) { return null; }
     lookupFeatureLabelProp: function(feature) { return null; }
+    lookupFeatureExtrusionProp: function(feature) { return null; }
+    lookupFeaturePointScaleProp: function(feature) { return null; }
 
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
