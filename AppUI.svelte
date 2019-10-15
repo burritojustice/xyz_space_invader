@@ -473,8 +473,8 @@ export default {
     // extrusion prop stack is JSON stringified for easier svelte prop sync and query string handling
     featureExtrusionPropStack: ({ displayToggles }) => {
       try {
-          console.log(displayToggles);
           if (displayToggles && displayToggles.extrusion){
+            console.log(displayToggles.extrusion);
             const val = parseNumber(JSON.parse(displayToggles.extrusion));
             console.log('extrusion:',val)
     //      return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
