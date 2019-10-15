@@ -496,6 +496,7 @@ export default {
       catch (e) {
         return null;
       }
+    },
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
       if (!featurePropValueCounts) {
