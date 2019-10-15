@@ -280,7 +280,7 @@ export const displayOptions = {
   
   extrude: {
     parse: parseInt,
-    values: [0, 1, 2]
+    values: [0, 1, 2],
     apply: (scene, value) => {
       if (value === 0) { // no extrusion
         scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 200;
