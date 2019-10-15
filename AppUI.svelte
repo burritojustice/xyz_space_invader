@@ -175,8 +175,9 @@
         </select>
       </div>
     {/if}
+
     
-    <!-- Label property selector -->
+<!--     <!-- Label property selector -->
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
         <span style="flex: 0 0 auto; margin-right: 5px;">Scale points by</span>
@@ -187,7 +188,7 @@
           {/each}
         </select>
       </div>
-    {/if}
+    {/if} -->
     
     <!-- extrusion property selector -->
     {#if sortedUniqueFeaturePropsSeen.length > 0}
@@ -473,20 +474,24 @@ export default {
       }
     },
     
-    // point scale prop stack is JSON stringified for easier svelte prop sync and query string handling
-    featurePointScalePropStack: ({ displayToggles }) => {
-      try {
-        return (displayToggles && displayToggles.pointScale) ? JSON.parse(displayToggles.pointScale) : null;
-      }
-      catch (e) {
-        return null;
-      }
-    },
+//     // point scale prop stack is JSON stringified for easier svelte prop sync and query string handling
+//     featurePointScalePropStack: ({ displayToggles }) => {
+//       try {
+//         return (displayToggles && displayToggles.pointScale) ? JSON.parse(displayToggles.pointScale) : null;
+//       }
+//       catch (e) {
+//         return null;
+//       }
+//     },
     
     // extrusion prop stack is JSON stringified for easier svelte prop sync and query string handling
     featureExtrusionPropStack: ({ displayToggles }) => {
       try {
-        return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
+        const val = parseNumber(displayToggles.extrusion);
+//      return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
+        if (typeof val === 'number' && !isNaN(val)) {
+          return val;
+        }
       }
       catch (e) {
         return null;
