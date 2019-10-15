@@ -93,6 +93,7 @@ global:
     # used for dynamic text_source on feature labels
     featureExtrusion: |
         function() {
+          console.log(global.lookupFeatureExtrusionProp(feature));
           return global.lookupFeatureExtrusionProp(feature);
         }
         
