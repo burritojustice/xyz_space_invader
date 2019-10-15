@@ -185,14 +185,14 @@ layers:
                     color: [0, 1, 1, 0.35]
                     width: 1px
                     order: 2000
-                    extrude: featureExtrusion
+                    extrude: global.featureExtrusion
         draw:
             _polygons_inlay:
                 interactive: true
                 color: global.featureColorDefault
                 width: 2px
                 order: 300
-                extrude: featureExtrusion
+                extrude: global.featureExtrusion
             text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
