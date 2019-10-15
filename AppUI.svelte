@@ -474,12 +474,15 @@ export default {
     featureExtrusionPropStack: ({ displayToggles }) => {
       console.log(displayToggles.extrusion,JSON.parse(displayToggles.extrusion));
       try {
-        const val = parseNumber(displayToggles.extrusion);
-        console.log('extrusion:',val)
-//      return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
-        if (typeof val === 'number' && !isNaN(val)) {
-          return val;
-        }
+          if (displayToggles && displayToggles.extrusion){
+            const val = parseNumber(JSON.parse(displayToggles.extrusion));
+            console.log('extrusion:',val)
+    //      return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
+            if (typeof val === 'number' && !isNaN(val)) {
+              return val;
+            }
+       }
+            
       }
       catch (e) {
         return null;
