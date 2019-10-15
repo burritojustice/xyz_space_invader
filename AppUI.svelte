@@ -476,7 +476,8 @@ export default {
           if (displayToggles && displayToggles.extrusion){
             console.log('extrusion:',displayToggles.extrusion);
             return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
-       }
+          }
+      }
       catch (e) {
         return null;
       }
