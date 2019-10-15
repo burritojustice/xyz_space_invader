@@ -58,7 +58,7 @@ export const displayOptions = {
         var extrudeProperty =
           `function(feature) {
               try {
-                return feature${featureExtrusionPropStack.map(k => '[\'' + k + '\']').join('')};
+                return feature${featureExtrusionPropStack.map(k => '[\'' + k + '\']').join('')} + 0;
               }
               catch(e) { return null; } // catches cases where some features lack nested property, or other errors
             }`;
