@@ -65,8 +65,8 @@ export const displayOptions = {
         scene.global.lookupFeatureExtrusionProp = extrudeProperty
         // show/hide labels
         scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 2001 // move polygons above roads
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = 'function() {return (feature.BLDG_HT + 0 )}' // sometimes it can be a string
-        scene.config.layers._xyz_polygons._outlines.draw._lines.extrude = 'function() {return (feature.BLDG_HT + 0 )}'
+        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = scene.global.lookupFeatureExtrusionProp
+        scene.config.layers._xyz_polygons._outlines.draw._lines.extrude = scene.global.lookupFeatureExtrusionProp
         scene.config.cameras.camera1.type = 'perspective'
       }
       else {
