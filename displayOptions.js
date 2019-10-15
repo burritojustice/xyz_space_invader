@@ -44,7 +44,76 @@ export const displayOptions = {
       }
     }
   },
+  
+  // Feature extrusion property
+  extrusion: {
+    values: [],
+    apply: (scene, value, { featureExtrusionPropStack }) => {
+      scene.global.labelState = {
+        featureExtrusionPropStack
+      };
 
+      if (featureExtrusionPropStack) {
+        // custom JS tangram function to access nested properties efficiently
+        var extrudeProperty =
+          `function(feature) {
+              try {
+                return feature${featureExtrusionPropStack.map(k => '[\'' + k + '\']').join('')};
+              }
+              catch(e) { return null; } // catches cases where some features lack nested property, or other errors
+            }`;
+        scene.global.lookupFeatureExtrusionProp = extrudeProperty
+        // show/hide labels
+        scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 2001 \\ move polygons above roads
+        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = 'function() {return (feature.BLDG_HT + 0 )}' // sometimes it can be a string
+        scene.config.layers._xyz_polygons._outlines.draw._lines.extrude = 'function() {return (feature.BLDG_HT + 0 )}'
+        scene.config.cameras.camera1.type = 'perspective'
+      }
+      else {
+        scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 200;
+        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = false
+        scene.layers._xyz_dots.draw.points.outline.width = null;
+      }
+    }
+  },
+  
+  
+  
+  
+  
+//   pointScale: {
+//     values: [],
+//     apply: (scene, value, { featurePointScalePropStack,  }) => {
+//       scene.global.pointScaleState = {
+//         featurePointScalePropStack
+//       };
+
+//       if (featurePointScalePropStack) {
+//         // custom JS tangram function to access nested properties efficiently
+//         scene.global.lookupFeatureLabelProp =
+//           `function(feature) {
+//               try {
+//                 return feature${featurePointScalePropStack.map(k => '[\'' + k + '\']').join('')};
+//               }
+//               catch(e) { return null; } // catches cases where some features lack nested property, or other errors
+//             }`;
+
+//         // show/hide labels
+//         scene.layers._xyz_dots.draw.points.text.visible = true;
+//         scene.layers._xyz_polygons.draw.text.visible = true;
+//         scene.layers._xyz_lines.draw.text.visible = true;
+//       }
+//       else {
+//         scene.layers._xyz_dots.draw.points.text.visible = false;
+//         scene.layers._xyz_polygons.draw.text.visible = false;
+//         scene.layers._xyz_lines.draw.text.visible = false;
+//       }
+//     }
+//   },
+  
+  
+  
+  
   // Feature colors
   colors: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
