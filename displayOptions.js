@@ -64,15 +64,14 @@ export const displayOptions = {
             }`;
         scene.global.lookupFeatureExtrusionProp = extrudeProperty
         // show/hide labels
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 2001 // move polygons above roads
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = scene.global.lookupFeatureExtrusionProp
-        scene.config.layers._xyz_polygons._outlines.draw._lines.extrude = scene.global.lookupFeatureExtrusionProp
-        scene.config.cameras.camera1.type = 'perspective'
+        scene.layers._xyz_polygons.draw._polygons_inlay.order = 2001 // move polygons above roads
+        scene.layers._xyz_polygons.draw._polygons_inlay.extrude = scene.global.lookupFeatureExtrusionProp
+        scene.layers._xyz_polygons._outlines.draw._lines.extrude = scene.global.lookupFeatureExtrusionProp
+        scene.cameras.camera1.type = 'perspective'
       }
       else {
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.order = 200;
-        scene.config.layers._xyz_polygons.draw._polygons_inlay.extrude = false
-        scene.layers._xyz_dots.draw.points.outline.width = null;
+        scene.layers._xyz_polygons.draw._polygons_inlay.order = 200;
+        scene.layers._xyz_polygons.draw._polygons_inlay.extrude = false
       }
     }
   },
