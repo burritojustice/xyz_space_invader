@@ -62,7 +62,7 @@ export const displayOptions = {
               }
               catch(e) { return null; } // catches cases where some features lack nested property, or other errors
             }`;
-        console.log(extrudeProperty);
+        console.log('extrudeProperty:',extrudeProperty,featureExtrusionPropStack);
         scene.global.lookupFeatureExtrusionProp = extrudeProperty;
         scene.layers._xyz_polygons.draw._polygons_inlay.order = 2001 // move polygons above roads
         scene.layers._xyz_polygons.draw._polygons_inlay.extrude = scene.global.lookupFeatureExtrusionProp;
