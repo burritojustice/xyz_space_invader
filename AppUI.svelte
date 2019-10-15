@@ -475,17 +475,9 @@ export default {
       try {
           if (displayToggles && displayToggles.extrusion){
             console.log('extrusion:',displayToggles.extrusion);
-//             const val = parseNumber(JSON.parse(displayToggles.extrusion));
-//             console.log('extrusion val:',val)
             return (displayToggles && displayToggles.extrusion) ? JSON.parse(displayToggles.extrusion) : null;
-//             if (typeof val === 'number' && !isNaN(val)) {
-//               return val;
-            }
        }
-            
-      }
       catch (e) {
-        console.log
         return null;
       }
     },
