@@ -176,20 +176,6 @@
       </div>
     {/if}
 
-    
-<!--     <!-- Label property selector -->
-    {#if sortedUniqueFeaturePropsSeen.length > 0}
-      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-        <span style="flex: 0 0 auto; margin-right: 5px;">Scale points by</span>
-        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointScale">
-          <option value=""></option>
-          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-            <option value="{JSON.stringify(propStack)}">{prop}</option>
-          {/each}
-        </select>
-      </div>
-    {/if} -->
-    
     <!-- extrusion property selector -->
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
