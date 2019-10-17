@@ -337,5 +337,15 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     ...xyzTilezenSourceOverride
+  },
+  'albers': {
+    import: [
+      'tangram_xyz_scene.yaml',
+      'albers.yaml',
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    ...xyzTilezenSourceOverride
   }
 };
