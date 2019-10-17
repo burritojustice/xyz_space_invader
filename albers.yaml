@@ -18,29 +18,24 @@ sources:
         url_params:
             access_token: global.access_token
         max_zoom: 2
-    _xyzspace:
-        # url: https://xyz.api.here.com/hub/spaces/MxDUEBlV/tile/web/{z}_{x}_{y}
+#     _xyzspace:
+#         # url: https://xyz.api.here.com/hub/spaces/MxDUEBlV/tile/web/{z}_{x}_{y}
 
-        url: https://xyz.api.here.com/hub/spaces/wF72Pj6d/tile/web/{z}_{x}_{y}
-        # url: https://xyz.api.here.com/hub/spaces/wF72Pj6d/iterate // can't searhc 
-        type: GeoJSON
-        max_zoom: 1
-        url_params:
+#         url: https://xyz.api.here.com/hub/spaces/wF72Pj6d/tile/web/{z}_{x}_{y}
+#         # url: https://xyz.api.here.com/hub/spaces/wF72Pj6d/iterate // can't searhc 
+#         type: GeoJSON
+#         max_zoom: 1
+#         url_params:
             
-            access_token: AVoxWfIDYgZOr4zOaUV3urg
-            # selection: p.SUBDI1NAME
-            # tags: track
-            # limit: 50000 #
-            clip: true
+#             access_token: AVoxWfIDYgZOr4zOaUV3urg
+#             # selection: p.SUBDI1NAME
+#             # tags: track
+#             # limit: 50000 #
+#             clip: true
 scene:
     background:
         color: white
-
-# cameras:
-#     cam:
-#         type: flat
-
-                    
+                
 layers:
 
     _xyz_dots:
@@ -65,6 +60,7 @@ layers:
                     width: 1px
                 text:
                     text_source: global.prop
+#                     style: alberstext #?
                     optional: true
                     font:
                         fill: yellow
@@ -96,7 +92,7 @@ layers:
                     width: [[5,.5px],[15,1px]]
                 width: [[5,2px],[15,3px]]
                 order: 2000
-            # alberstext:
+            # alberstext: // line labels don't work when shadered
             #     text_source: SUBDI1NAME #global.prop
             #     optional: true
             #     font:
@@ -115,53 +111,24 @@ layers:
             draw:
                 lines:
                     style: alberslines
-                    # collide: false
-                    color: [1,1,1,0.55]
-                    width: 1.5px
-                    order: 2000
+#                     # collide: false
+#                     color: [1,1,1,0.55]
+#                     width: 1.5px
+#                     order: 2000
         draw:
             #polygons:
             _polygons_inlay:
                 style: albers
-                interactive: true
-                # collide: false
-                color: |
-                    function(){
-                        var color
-                        // var winner = feature.party_regex
-                        var winner = feature['Elected Candidate/Candidat élu']
-                        // var turnout = feature['Percentage of Voter Turnout/Pourcentage de la participation électorale']
-                        
-                        //if (turnout > 70){return [1,0,0,0.5]}
-                        // if ( turnout > 60) {return [1,0,1,0.5]}
 
-                        // if ( turnout > 50) {return [0,0,1,0.5]}
-                        
-                        if (winner.includes('NDP')){
-                            return [1,.5,0,0.75]}
-                        if (winner.includes('Liberal')){
-                            return [1,0,0,0.75]} 
-                        if (winner.includes('Conservative')){
-                            return [0,0,1,0.75]}
-                        if (winner.includes('Green')){
-                            return [0,1,0,0.75]}
-                            
-                        if (winner.includes('Bloc Québécois')){
-                            return [.25,.5,1,0.75]}
-                    }
-                # color:  [1,0,1,0.3]
-                # color: global.color_hash
-                width: 2px
-                order: 300
-                text:
-                    text_source: global.prop
-                    optional: true
-                    font:
-                        fill: yellow
-                        size: 12px
-                        stroke:
-                            color: black
-                            width: 2px
+#                 text:
+#                     text_source: global.prop
+#                     optional: true
+#                     font:
+#                         fill: yellow
+#                         size: 12px
+#                         stroke:
+#                             color: black
+#                             width: 2px
 
     
     water:
@@ -235,7 +202,7 @@ layers:
         #                     width: 2px
     
     boundaries:
-        enabled: false
+#         enabled: false
         data: { source: mapzen }
         draw:
             alberslines:
@@ -259,7 +226,6 @@ layers:
                     fill: black
                     stroke: { color: white , width: 5 }
 styles:
-
     albers:
         base: polygons
         animated: true
