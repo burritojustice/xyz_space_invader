@@ -115,7 +115,8 @@ layers:
         data: { source: mapzen }
         filter: { not: { kind: [rail, ferry] } }
         draw:
-            alberslines:
+            _lines:
+                style: alberslines
                 order: 100
                 color: [0,0,0,0.5]
                 width: [[5, .5px],[15, 1px]]
@@ -141,7 +142,8 @@ layers:
 #         enabled: false
         data: { source: mapzen }
         draw:
-            alberslines:
+            _lines:
+                style: alberslines
                 order: 10
                 color: [0,0,0,0.5]
                 width: 2px
