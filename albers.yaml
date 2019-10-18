@@ -60,7 +60,7 @@ layers:
         _outlines:
             # enabled: false
             draw:
-                lines:
+                _lines:
                     style: alberslines
 
         draw:
