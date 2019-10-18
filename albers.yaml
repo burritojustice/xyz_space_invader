@@ -19,20 +19,9 @@ sources:
         url_params:
             access_token: global.access_token
         max_zoom: 2
-#     _xyzspace:
-#         # url: https://xyz.api.here.com/hub/spaces/MxDUEBlV/tile/web/{z}_{x}_{y}
-
-#         url: https://xyz.api.here.com/hub/spaces/wF72Pj6d/tile/web/{z}_{x}_{y}
-#         # url: https://xyz.api.here.com/hub/spaces/wF72Pj6d/iterate // can't searhc 
-#         type: GeoJSON
-#         max_zoom: 1
-#         url_params:
-            
-#             access_token: AVoxWfIDYgZOr4zOaUV3urg
-#             # selection: p.SUBDI1NAME
-#             # tags: track
-#             # limit: 50000 #
-#             clip: true
+    _xyzspace:
+        max_zoom: 1
+        
 scene:
     background:
         color: white
