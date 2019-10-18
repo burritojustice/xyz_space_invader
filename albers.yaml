@@ -1,4 +1,5 @@
 # Author @patriciogv - 2015
+# @burritojustice - 2019
 
 import:
     - https://tangrams.github.io/blocks/functions/aastep.yaml
@@ -43,64 +44,14 @@ layers:
         # enabled: false
         data: {source: _xyzspace}
         draw:
-            alberspoints:
-                interactive: true
-                collide: false
-                color: |
-                    function(){
-                        var color = [1,1,0,0.75]
-                        if (feature.color){
-                            color = feature.color
-                            }
-                        return color
-                    }
-                size: 6px
-                outline:
-                    color: [0,0,0,0.5]
-                    width: 1px
-                text:
-                    text_source: global.prop
-#                     style: alberstext #?
-                    optional: true
-                    font:
-                        fill: yellow
-                        size: 12px
-                        stroke:
-                            color: black
-                            width: 2px
+            style: alberspoints
 
     _xyz_lines:
         filter: {$geometry: line}
         # enabled: false
         data: {source: _xyzspace}
-        # filter: {kind: point}
         draw:
-            alberslines:
-                interactive: true
-                # collide: false
-                color: |
-                    function(){
-                        var color
-                        if (feature.color){
-                            color = feature.color
-                            }
-                        else{color = [1,0,0,0.75]}
-                        return color
-                        }
-                outline:
-                    color: [0,0,0,0.25]
-                    width: [[5,.5px],[15,1px]]
-                width: [[5,2px],[15,3px]]
-                order: 2000
-            # alberstext: // line labels don't work when shadered
-            #     text_source: SUBDI1NAME #global.prop
-            #     optional: true
-            #     font:
-            #         fill: yellow
-            #         size: 12px
-            #         stroke:
-            #             color: black
-            #             width: 2px
+            style: alberslines:
 
     _xyz_polygons:
         filter: {$geometry: polygon}
@@ -111,25 +62,10 @@ layers:
             draw:
                 lines:
                     style: alberslines
-#                     # collide: false
-#                     color: [1,1,1,0.55]
-#                     width: 1.5px
-#                     order: 2000
+
         draw:
-            #polygons:
             _polygons_inlay:
                 style: albers
-
-#                 text:
-#                     text_source: global.prop
-#                     optional: true
-#                     font:
-#                         fill: yellow
-#                         size: 12px
-#                         stroke:
-#                             color: black
-#                             width: 2px
-
     
     water:
         data: { source: mapzen }
@@ -217,9 +153,10 @@ layers:
     places:
         data: { source: mapzen }
         # filter: { kind: country }
-        filter: { name: [British Columbia, Alberta, Saskatchewan, Manitoba, Ontario, Québec, New Brunswick, Nova Scotia, Prince Edward Island, Newfoundland and Labrador, ᓄᓇᕗᑦ Nunavut, Northwest Territories, Yukon]}
+#         filter: { name: [British Columbia, Alberta, Saskatchewan, Manitoba, Ontario, Québec, New Brunswick, Nova Scotia, Prince Edward Island, Newfoundland and Labrador, ᓄᓇᕗᑦ Nunavut, Northwest Territories, Yukon]}
         draw:
-            alberstext:
+            text:
+                style: alberstext
                 buffer: 8px
                 font:
                     # typeface: Italic 10px Times
