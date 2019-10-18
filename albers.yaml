@@ -51,7 +51,7 @@ layers:
         # enabled: false
         data: {source: _xyzspace}
         draw:
-            style: alberslines:
+            style: alberslines
 
     _xyz_polygons:
         filter: {$geometry: polygon}
