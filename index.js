@@ -205,14 +205,19 @@ function makeLayer(scene_obj) {
   window.scene = layer.scene;  // debugging
 }
 
-function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, basemaps } = {} }) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-
+    var max_zoom = 18
+    if (basemaps = 'albers') {
+        max_zoom = 2 // because tiles
+    }
+        
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
       url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
+      max_zoom = max_zoom,
       url_params: {
         access_token: token,
         clip: true
