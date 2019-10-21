@@ -34,6 +34,9 @@ layers:
         data: {source: _xyzspace}
         draw:
             style: alberspoints
+            text:
+                style: alberstext
+                
 
     _xyz_lines:
         filter: {$geometry: line}
@@ -55,6 +58,8 @@ layers:
         draw:
             _polygons_inlay:
                 style: albers
+            text: 
+                style: alberstext
     
     water:
         data: { source: mapzen }
