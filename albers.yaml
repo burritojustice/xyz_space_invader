@@ -139,13 +139,13 @@ layers:
             _lines:
                 style: alberslines
                 order: 10
-                color: [0,0,0,0.5]
-                width: 2px
+                color: [0,0,0,0.25]
+                width: [[5,1px],[10,2px]]
                 outlines:
                     style: alberslines
                     # order: 9
                     color: white
-                    width: 3px
+                    width: 2px
     places:
         data: { source: mapzen }
         # filter: { kind: country }
