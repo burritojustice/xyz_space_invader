@@ -210,8 +210,8 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, bas
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
     var max_zoom = 18
-    console.log(basemaps)
-    if (basemaps = 'albers') {
+    console.log('basemap',basemaps)
+    if (basemaps == 'albers') {
         max_zoom = 2 // because tiles
     }
         
