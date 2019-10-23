@@ -58,7 +58,7 @@ layers:
 
         draw:
             _polygons_inlay:
-                style: albers
+                style: _albers_inlay
             text: 
                 style: alberstext
     
@@ -85,12 +85,12 @@ layers:
                     color: black
                     cap: round
                     width: .5px
-    earth:
-        data: { source: mapzen }
-        draw:
-            albers:
-                order: 21
-                color: white
+#     earth:
+#         data: { source: mapzen }
+#         draw:
+#             albers:
+#                 order: 21
+#                 color: white
 
     # landuse:
     #     data: { source: mapzen }
@@ -199,7 +199,9 @@ styles:
                     float phi2 = deg2rad(y2lat_m(u_map_position.y) - 10.);
 
                     position.xy = albers(lat, lon, centerlat, centerlon, phi1, phi2)*EARTH_RADIUS;
-
+    _albers_inlay:
+        base: _polygon_inlay
+        mix: albers
     alberslines:
         base: lines
         mix: albers
