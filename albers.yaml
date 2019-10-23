@@ -57,7 +57,7 @@ layers:
                     style: alberslines
 
         draw:
-            _polygons: # was _polygons_inlay:
+            _polygons_inlay:
                 style: albers
             text: 
                 style: alberstext
