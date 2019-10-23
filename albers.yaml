@@ -57,7 +57,7 @@ layers:
                     style: alberslines
 
         draw:
-            _polygons_inlay:
+            polygons: # was _polygons_inlay:
                 style: albers
             text: 
                 style: alberstext
@@ -85,14 +85,14 @@ layers:
                     color: black
                     cap: round
                     width: .5px
-    # earth:
-    #     data: { source: mapzen }
-    #     draw:
-    #         border:
-    #             order: 21
-    #             color: black
-    #             cap: round
-    #             width: 6px
+#     earth:
+#         data: { source: mapzen }
+#         draw:
+#             albers:
+#                 order: 21
+#                 color: black
+#                 cap: round
+#                 width: 6px
     # landuse:
     #     data: { source: mapzen }
     #     draw:
