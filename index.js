@@ -213,6 +213,7 @@ function applySpace({ spaceId, token, hexbinInfo, basemap, displayToggles: { hex
     console.log('basemap',basemap)
     if (basemap == 'albers') {
         max_zoom = 2 // because tiles
+        scene.view.buffer = 2
     }
         
     scene_config.sources._xyzspace = {
