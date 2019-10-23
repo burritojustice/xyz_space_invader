@@ -57,8 +57,8 @@ layers:
                     style: alberslines
 
         draw:
-            _polygons_inlay:
-                style: albers_inlay
+            polygons:
+                style: albers
             text: 
                 style: alberstext
     
@@ -199,9 +199,7 @@ styles:
                     float phi2 = deg2rad(y2lat_m(u_map_position.y) - 10.);
 
                     position.xy = albers(lat, lon, centerlat, centerlon, phi1, phi2)*EARTH_RADIUS;
-    albers_inlay:
-        base: polygons
-        mix: albers
+                    
     alberslines:
         base: lines
         mix: albers
