@@ -90,9 +90,8 @@ layers:
         draw:
             albers:
                 order: 21
-                color: black
-                cap: round
-                width: 6px
+                color: white
+
     # landuse:
     #     data: { source: mapzen }
     #     draw:
