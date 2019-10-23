@@ -1,4 +1,5 @@
-# Author @patriciogv - 2015
+# @patriciogv - 2015
+# @meetar
 # @burritojustice - 2019
 
 import:
@@ -119,19 +120,7 @@ layers:
                 #     # order: 99
                 #     color: green
                 #     width: [[5, 2.px],[15, 4px],[85, 60]]
-        # labels:
-        #     filter: {kind: [major_road,highway]}
-        #     draw:
-        #         alberstext:
-        #             # text_source: SUBDI1NAME #global.prop
-        #             optional: true
-        #             font:
-        #                 fill: grey
-        #                 size: 12px
-        #                 stroke:
-        #                     color: white
-        #                     width: 2px
-    
+
     boundaries:
 #         enabled: false
         data: { source: mapzen }
@@ -221,52 +210,52 @@ styles:
     alberstext:
         base: text
         mix: albers
-    pallete:
-        shaders:
-            blocks: 
-                global: |
-                    // Common Values 
-                    //================================
-                    float radio = 0.05;
-                    vec2 size = vec2(1.,.6);
-                    vec3 background = vec3(1.);
-                    vec3 midle = vec3(0.824, 0.812, 0.804);
-                    vec3 foreground = vec3(0.275,0.298,0.251);
-    border:
-        base: lines
-        mix: [functions-pulse, functions-aastep, pallete, alberslines]
-        texcoords: true
-        shaders:
-            blocks: 
-                color: |
-                    vec2 st = v_texcoord.xy;
-                    float pattern = aastep(.5,pulse(st.x,.7,.1)+pulse(st.x,.35,.25));
-                    color.rgb = mix(background,color.rgb,pattern);
-    b_border:
-        base: lines
-        mix: [functions-pulse, functions-aastep, pallete, alberslines]
-        texcoords: true
-        shaders:
-            blocks: 
-                color: |
-                    vec2 st = v_texcoord.xy;
-                    float pattern = aastep(.5,pulse(st.x,.5,.2));
-                    color.rgb = mix(background,color.rgb,pattern);
+#     pallete:
+#         shaders:
+#             blocks: 
+#                 global: |
+#                     // Common Values 
+#                     //================================
+#                     float radio = 0.05;
+#                     vec2 size = vec2(1.,.6);
+#                     vec3 background = vec3(1.);
+#                     vec3 midle = vec3(0.824, 0.812, 0.804);
+#                     vec3 foreground = vec3(0.275,0.298,0.251);
+#     border:
+#         base: lines
+#         mix: [functions-pulse, functions-aastep, pallete, alberslines]
+#         texcoords: true
+#         shaders:
+#             blocks: 
+#                 color: |
+#                     vec2 st = v_texcoord.xy;
+#                     float pattern = aastep(.5,pulse(st.x,.7,.1)+pulse(st.x,.35,.25));
+#                     color.rgb = mix(background,color.rgb,pattern);
+#     b_border:
+#         base: lines
+#         mix: [functions-pulse, functions-aastep, pallete, alberslines]
+#         texcoords: true
+#         shaders:
+#             blocks: 
+#                 color: |
+#                     vec2 st = v_texcoord.xy;
+#                     float pattern = aastep(.5,pulse(st.x,.5,.2));
+#                     color.rgb = mix(background,color.rgb,pattern);
                     
-    waves:
-        base: polygons
-        mix: [space-screen, pallete, patterns-stripes, albers]
-        shaders: 
-            blocks: 
-                color: |
-                    vec2 pos = getScreenNonStretchCoords();
-                    pos.y += sin(pos.x*30.)*.01;
-                    color.rgb = mix(color.rgb,background,stripes(pos*200.,.4));
-    hatch:
-        base: polygons
-        mix: [functions-aastep, pallete, patterns-stripes, space-screen, albers]
-        shaders: 
-            blocks: 
-                color: |
-                    vec2 st = getScreenNonStretchCoords();
-                    color.rgb = mix(color.rgb,background,diagonalStripes(st*300.));
+#     waves:
+#         base: polygons
+#         mix: [space-screen, pallete, patterns-stripes, albers]
+#         shaders: 
+#             blocks: 
+#                 color: |
+#                     vec2 pos = getScreenNonStretchCoords();
+#                     pos.y += sin(pos.x*30.)*.01;
+#                     color.rgb = mix(color.rgb,background,stripes(pos*200.,.4));
+#     hatch:
+#         base: polygons
+#         mix: [functions-aastep, pallete, patterns-stripes, space-screen, albers]
+#         shaders: 
+#             blocks: 
+#                 color: |
+#                     vec2 st = getScreenNonStretchCoords();
+#                     color.rgb = mix(color.rgb,background,diagonalStripes(st*300.));
