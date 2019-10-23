@@ -205,13 +205,13 @@ function makeLayer(scene_obj) {
   window.scene = layer.scene;  // debugging
 }
 
-function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }) {
+function applySpace({ spaceId, token, hexbinInfo, getBasemapName, displayToggles: { hexbins } = {} }) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
     var max_zoom = 18
-    console.log('basemap',basemap)
-    if (basemaps == 'albers') {
+    console.log('basemap',getBasemapName)
+    if (getBasemapName == 'albers') {
         max_zoom = 2 // because tiles
     }
         
