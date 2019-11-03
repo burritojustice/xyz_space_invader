@@ -310,53 +310,70 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get stats endpoint
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
   const stats = await fetch(url).then(r => r.json());
+  var error = false
+//   const stats = await fetch(url).then(r => {
+    if(res.ok) {
+      r.json()
+    } else {
+      error = r.status
+      throw Error(`Request rejected: ${r.status}`);
+    }
+  }).catch(console.error)
     // console.log(stats)
 
-  var bbox = stats.bbox.value
-  console.log('map start location:', mapStartLocation)
-  console.log('bbox',bbox)
+  var bbox = null;
+  var spaceSize = null;
+  var spaceCount = null;
+  var calcSize = null;
+  var featureSize = null;
+  if (!error){
+    var bbox = stats.bbox.value
+    console.log('map start location:', mapStartLocation)
+    console.log('bbox',bbox)
 
-  // check for all zero bbox
-  if ((bbox[0] == 0) && (bbox[1] == 0) && (bbox[2] == 0) && (bbox[3] == 0)) {
-    console.log('zeros')
-    bbox = [-45, -45, 45, 45]
-  }
+    // check for all zero bbox
+    if ((bbox[0] == 0) && (bbox[1] == 0) && (bbox[2] == 0) && (bbox[3] == 0)) {
+      console.log('zeros')
+      bbox = [-45, -45, 45, 45]
+    }
 
-  let fitBounds = false;
-  if (mapStartLocation) {
-    // if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
-    if (mapStartLocation.lat < bbox[1] || mapStartLocation.lat > bbox[3] ||
-        mapStartLocation.lng < bbox[0] || mapStartLocation.lng > bbox[2]) {
-      console.log('map start location outside bbox');
-      fitBounds = true;
+    let fitBounds = false;
+    if (mapStartLocation) {
+      // if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
+      if (mapStartLocation.lat < bbox[1] || mapStartLocation.lat > bbox[3] ||
+          mapStartLocation.lng < bbox[0] || mapStartLocation.lng > bbox[2]) {
+        console.log('map start location outside bbox');
+        fitBounds = true;
+      }
+      else {
+        map.setView([mapStartLocation.lat, mapStartLocation.lng], mapStartLocation.zoom);
+      }
+    }
+
+    if (fitBounds) {
+      const sw = L.latLng(bbox[1], bbox[0]);
+      const ne = L.latLng(bbox[3], bbox[2]);
+      const bounds = L.latLngBounds(sw, ne);
+      map.fitBounds(bounds);
+    }
+
+    var spaceSize = stats.byteSize.value
+    var spaceCount = stats.count.value
+
+    var calcSize = (spaceSize/1024/1024)
+    console.log(spaceSize,'KB',calcSize,featureSize)
+
+    if (calcSize < 1000) {
+      calcSize = calcSize.toFixed(1) + ' MB'
     }
     else {
-      map.setView([mapStartLocation.lat, mapStartLocation.lng], mapStartLocation.zoom);
+      calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
     }
+
+    var featureSize = spaceSize/spaceCount/1024 // KB per feature
+    featureSize = featureSize.toFixed(1) + ' KB'
   }
-
-  if (fitBounds) {
-    const sw = L.latLng(bbox[1], bbox[0]);
-    const ne = L.latLng(bbox[3], bbox[2]);
-    const bounds = L.latLngBounds(sw, ne);
-    map.fitBounds(bounds);
-  }
-
-  var spaceSize = stats.byteSize.value
-  var spaceCount = stats.count.value
-
-  var calcSize = (spaceSize/1024/1024)
-  console.log(spaceSize,'KB',calcSize,featureSize)
-
-  if (calcSize < 1000) {
-    calcSize = calcSize.toFixed(1) + ' MB'
-  }
-  else {
-    calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
-  }
-
-  var featureSize = spaceSize/spaceCount/1024 // KB per feature
-  featureSize = featureSize.toFixed(1) + ' KB'
+  
 
 
   // Get space endpoint
@@ -379,7 +396,12 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       } catch (e) { } // in case hexbin space doesn't exist or fails to load
     }
   }
-
+  const d = new Date();
+  const timeNow = d.getTime();
+  const spaceUpdatedAt = new Date (spaceInfo.updatedAt);
+  var timeElapsed = timeNow - spaceUpdatedAt;
+  console.log(timeNow,timeElapsed,spaceUpdatedAt);
+  const 
   // update UI
   appUI.set({
     spaceInfo: {
@@ -388,7 +410,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       numFeatures: spaceCount,
       dataSize: calcSize,
       featureSize: featureSize
-    },
+      },
 
     hexbinInfo,
 
