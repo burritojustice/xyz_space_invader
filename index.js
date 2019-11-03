@@ -309,7 +309,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
 async function getStats({ spaceId, token, mapStartLocation }) {
   // Get stats endpoint
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
-  const stats = await fetch(url).then(r => r.json());
+//   const stats = await fetch(url).then(r => r.json());
   var error = false
 //   const stats = await fetch(url).then(r => {
     if(r.ok) {
