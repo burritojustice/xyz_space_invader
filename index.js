@@ -311,7 +311,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
 //   const stats = await fetch(url).then(r => r.json());
   var error = false
-//   const stats = await fetch(url).then(r => {
+  const stats = await fetch(url).then(r => {
     if(r.ok) {
       r.json()
     } else {
