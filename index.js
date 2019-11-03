@@ -328,7 +328,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var spaceCount = null;
   var calcSize = null;
   var featureSize = null;
-  if (stats == !null){
+  
+  if (stats){
     var bbox = stats.bbox.value
     console.log('map start location:', mapStartLocation)
     console.log('bbox',bbox)
@@ -398,6 +399,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       } catch (e) { } // in case hexbin space doesn't exist or fails to load
     }
   }
+  
+  // calculate time since data was last written to the space
   const d = new Date();
   const timeNow = d.getTime();
   const spaceUpdatedAt = new Date(spaceInfo.updatedAt);
@@ -424,7 +427,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   } else if (minutesElapsed > 1) {
     timeUnitsElapsed = "updated " + minutesElapsed + " minutes ago"
   } else {
-    timeUnitsElapsed = "updated " + secondsElapsed + " seconds ago"
+    timeUnitsElapsed = "updated " + Math.round(secondsElapsed) + " seconds ago"
   }
   console.log(timeUnitsElapsed)
   // update UI
