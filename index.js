@@ -310,13 +310,14 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get stats endpoint
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
 //   const stats = await fetch(url).then(r => r.json());
-  var error = false
-  const stats = await fetch(url).then(r => {
+  var status = false
+  var stats = null
+  var stats = await fetch(url).then(r => {
     console.log(r)
     if(r.ok) {
       r.json()
     } else {
-      error = r.status
+      status = r.status
       throw Error(`Request rejected: ${r.status}`);
     }
   }).catch(console.error)
@@ -327,7 +328,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var spaceCount = null;
   var calcSize = null;
   var featureSize = null;
-  if (!error){
+  if ((status > 200) || (status < 300)){
     var bbox = stats.bbox.value
     console.log('map start location:', mapStartLocation)
     console.log('bbox',bbox)
