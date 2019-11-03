@@ -399,9 +399,17 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   }
   const d = new Date();
   const timeNow = d.getTime();
-  const spaceUpdatedAt = new Date (spaceInfo.updatedAt);
-  var timeElapsed = timeNow - spaceUpdatedAt;
-  console.log(timeNow,timeElapsed,spaceUpdatedAt);
+  const spaceUpdatedAt = new Date(spaceInfo.updatedAt);
+  const secondsElapsed = (timeNow - spaceUpdatedAt)/1000;
+  const minutesElapsed = secondsElapsed / 60
+  const hoursElapsed = secondsElapsed / 60
+  const daysElapsed = secondsElapsed / 24
+  const weeksElapsed = daysElapsed / 7
+  const monthsElapsed = daysElapsed / 30
+  console.log(secondsElapsed,minutesElapsed,hoursElapsed,daysElapsed,weeksElapsed,monthsElapsed)
+
+  
+//   console.log(timeNow,spaceUpdatedAt,timeElapsed);
   // update UI
   appUI.set({
     spaceInfo: {
