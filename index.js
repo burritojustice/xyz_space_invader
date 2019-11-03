@@ -411,19 +411,19 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   let timeUnitsElapsed
   
   if (yearsElapsed > 1){
-    timeUnitsElapsed = "updated " + yearsElapsed + " ago"
+    timeUnitsElapsed = "updated " + yearsElapsed + " years ago"
   } else if (monthsElapsed > 1) {
-    timeUnitsElapsed = "updated " + monthsElapsed + " ago"
+    timeUnitsElapsed = "updated " + monthsElapsed + " months ago"
   } else if (weeksElapsed > 1) {
-    timeUnitsElapsed = "updated " + weeksElapsed + " ago"
+    timeUnitsElapsed = "updated " + weeksElapsed + " weeks ago"
   } else if (daysElapsed > 1) {
-    timeUnitsElapsed = "updated " + daysElapsed + " ago"
+    timeUnitsElapsed = "updated " + daysElapsed + " days ago"
   } else if (hoursElapsed > 1) {
-    timeUnitsElapsed = "updated " + hoursElapsed + " ago"
+    timeUnitsElapsed = "updated " + hoursElapsed + " hours ago"
   } else if (minutesElapsed > 1) {
-    timeUnitsElapsed = "updated " + minutesElapsed + " ago"
+    timeUnitsElapsed = "updated " + minutesElapsed + " minutes ago"
   } else {
-    timeUnitsElapsed = "updated " + secondsElapsed + " ago"
+    timeUnitsElapsed = "updated " + secondsElapsed + " seconds ago"
   }
   console.log(timeUnitsElapsed)
   // update UI
