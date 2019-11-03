@@ -315,7 +315,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 //     ok = r.ok
     console.log(r)
     if(r.ok) {
-      r.json()
+      return r.json()
     } else {
       console.log("error:",r.status)
       return null;
