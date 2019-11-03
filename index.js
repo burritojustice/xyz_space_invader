@@ -432,8 +432,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   }
   console.log(timeUnitsElapsed)
   // update UI
-  let tagsFromStats = null
-  let propsFromStats = null
+  let tagsFromStats = []
+  let propsFromStats = []
   if (stats){
     tagsFromStats = ...stats.tags.value.map(t => t.key)].filter(x => x)
     propsFromStats = ...stats.properties.value.map(t => t.key)].filter(x => x)
