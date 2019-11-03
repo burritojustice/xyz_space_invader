@@ -402,7 +402,6 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   const spaceUpdatedAt = new Date (spaceInfo.updatedAt);
   var timeElapsed = timeNow - spaceUpdatedAt;
   console.log(timeNow,timeElapsed,spaceUpdatedAt);
-  const 
   // update UI
   appUI.set({
     spaceInfo: {
