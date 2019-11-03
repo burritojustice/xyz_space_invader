@@ -320,7 +320,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       throw Error(`Request rejected: ${r.status}`);
     }
   }).catch(console.error)
-    // console.log(stats)
+    console.log(stats)
 
   var bbox = null;
   var spaceSize = null;
