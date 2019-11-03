@@ -312,6 +312,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 //   const stats = await fetch(url).then(r => r.json());
   var error = false
   const stats = await fetch(url).then(r => {
+    console.log(r)
     if(r.ok) {
       r.json()
     } else {
