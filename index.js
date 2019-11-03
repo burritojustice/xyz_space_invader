@@ -311,16 +311,17 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
 //   const stats = await fetch(url).then(r => r.json());
   var ok
-  var stats = null
   var stats = await fetch(url).then(r => {
     ok = r.ok
     console.log(r)
     if(r.ok) {
       r.json()
     } else {
-      throw Error(`Request rejected: ${r.status}`);
+      console.log("error:",r.status)
+      return null;
+//       throw Error(`Request rejected: ${r.status}`);
     }
-  }).catch(console.error)
+  }) //.catch(console.error)
 //   console.log(stats)
 
   var bbox = null;
