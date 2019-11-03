@@ -400,16 +400,32 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   const d = new Date();
   const timeNow = d.getTime();
   const spaceUpdatedAt = new Date(spaceInfo.updatedAt);
-  const secondsElapsed = (timeNow - spaceUpdatedAt)/1000;
-  const minutesElapsed = secondsElapsed / 60
-  const hoursElapsed = secondsElapsed / 60
-  const daysElapsed = secondsElapsed / 24
-  const weeksElapsed = daysElapsed / 7
-  const monthsElapsed = daysElapsed / 30
-  console.log(secondsElapsed,minutesElapsed,hoursElapsed,daysElapsed,weeksElapsed,monthsElapsed)
-
+  const secondsElapsed = (timeNow - spaceUpdatedAt) / 1000;
+  const minutesElapsed = Math.round(secondsElapsed / 60)
+  const hoursElapsed = Math.round(secondsElapsed / 60 / 60)
+  const daysElapsed = Math.round(secondsElapsed / 60 / 60 / 24)
+  const weeksElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 7)
+  const monthsElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 30)
+  const yearsElapsed = (daysElapsed / 365).toFixed(1)
+  console.log(secondsElapsed,minutesElapsed,hoursElapsed,daysElapsed,weeksElapsed,monthsElapsed,yearsElapsed)
+  let timeUnitsElapsed
   
-//   console.log(timeNow,spaceUpdatedAt,timeElapsed);
+  if (yearsElapsed > 1){
+    timeUnitsElapsed = "updated " + yearsElapsed + " ago"
+  } else if (monthsElapsed > 1) {
+    timeUnitsElapsed = "updated " + monthsElapsed + " ago"
+  } else if (weeksElapsed > 1) {
+    timeUnitsElapsed = "updated " + weeksElapsed + " ago"
+  } else if (daysElapsed > 1) {
+    timeUnitsElapsed = "updated " + daysElapsed + " ago"
+  } else if (hoursElapsed > 1) {
+    timeUnitsElapsed = "updated " + hoursElapsed + " ago"
+  } else if (minutesElapsed > 1) {
+    timeUnitsElapsed = "updated " + minutesElapsed + " ago"
+  } else {
+    timeUnitsElapsed = "updated " + secondsElapsed + " ago"
+  }
+  console.log(timeUnitsElapsed)
   // update UI
   appUI.set({
     spaceInfo: {
@@ -417,7 +433,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       description: spaceInfo.description,
       numFeatures: spaceCount,
       dataSize: calcSize,
-      featureSize: featureSize
+      featureSize: featureSize,
+      updatedAt: timeUnitsElapsed
       },
 
     hexbinInfo,
