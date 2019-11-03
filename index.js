@@ -328,7 +328,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var spaceCount = null;
   var calcSize = null;
   var featureSize = null;
-  if (ok){
+  if (stats == !null){
     var bbox = stats.bbox.value
     console.log('map start location:', mapStartLocation)
     console.log('bbox',bbox)
