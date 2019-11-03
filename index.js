@@ -432,6 +432,13 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   }
   console.log(timeUnitsElapsed)
   // update UI
+  let tagsFromStats = null
+  let propsFromStats = null
+  if (stats){
+    tagsFromStats = ...stats.tags.value.map(t => t.key)].filter(x => x)
+    propsFromStats = ...stats.properties.value.map(t => t.key)].filter(x => x)
+    console.log(propsFromStats)
+  }
   appUI.set({
     spaceInfo: {
       title: spaceInfo.title,
@@ -445,7 +452,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     hexbinInfo,
 
     // seed with top tags from stats endpoint
-    uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))
+    uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, tagsFromStats)
   });
 }
 
