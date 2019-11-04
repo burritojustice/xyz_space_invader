@@ -435,8 +435,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   let tagsFromStats = []
   let propsFromStats = []
   if (stats){
-    tagsFromStats = ...stats.tags.value.map(t => t.key)
-    propsFromStats = ...stats.properties.value.map(t => t.key)
+    tagsFromStats = [...stats.tags.value.map(t => t.key)]
+    propsFromStats = [...stats.properties.value.map(t => t.key)]
     console.log(propsFromStats)
   }
   appUI.set({
