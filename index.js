@@ -383,7 +383,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
-
+  console.log(spaceInfo)
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
 
@@ -415,20 +415,21 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   console.log(secondsElapsed,minutesElapsed,hoursElapsed,daysElapsed,weeksElapsed,monthsElapsed,yearsElapsed)
   let timeUnitsElapsed
   
+  
   if (yearsElapsed > 1){
-    timeUnitsElapsed = "updated " + yearsElapsed + " years ago"
+    timeUnitsElapsed = "Space last updated " + yearsElapsed + " years ago"
   } else if (monthsElapsed > 1) {
-    timeUnitsElapsed = "updated " + monthsElapsed + " months ago"
+    timeUnitsElapsed = "Space last updated " + monthsElapsed + " months ago"
   } else if (weeksElapsed > 1) {
-    timeUnitsElapsed = "updated " + weeksElapsed + " weeks ago"
+    timeUnitsElapsed = "Space last updated " + weeksElapsed + " weeks ago"
   } else if (daysElapsed > 1) {
-    timeUnitsElapsed = "updated " + daysElapsed + " days ago"
+    timeUnitsElapsed = "Space last updated " + daysElapsed + " days ago"
   } else if (hoursElapsed > 1) {
-    timeUnitsElapsed = "updated " + hoursElapsed + " hours ago"
+    timeUnitsElapsed = "Space last updated " + hoursElapsed + " hours ago"
   } else if (minutesElapsed > 1) {
-    timeUnitsElapsed = "updated " + minutesElapsed + " minutes ago"
+    timeUnitsElapsed = "Space last updated " + minutesElapsed + " minutes ago"
   } else {
-    timeUnitsElapsed = "updated " + Math.round(secondsElapsed) + " seconds ago"
+    timeUnitsElapsed = "Space last updated " + Math.round(secondsElapsed) + " seconds ago"
   }
   console.log(timeUnitsElapsed)
   // update UI
