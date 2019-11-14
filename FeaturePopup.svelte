@@ -51,7 +51,7 @@
 
 <script>
 
-import { parseNestedObject } from './utils';
+import { parseNestedObject, lookupProperty } from './utils';
 
 export default {
   data() {
@@ -91,10 +91,5 @@ export default {
   }
 
 };
-
-// lookup value of a nested feature property
-function lookupProperty(properties, propStack) {
-  return propStack && propStack.reduce((obj, prop) => obj && obj[prop] !== undefined ? obj[prop] : null, properties);
-}
 
 </script>

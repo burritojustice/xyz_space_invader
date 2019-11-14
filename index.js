@@ -6,7 +6,7 @@ import FileSaver from 'file-saver';
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 import { parseNumber } from './colorFunctions';
-import { parseNestedObject } from './utils';
+import { parseNestedObject, lookupProperty } from './utils';
 
 let query;
 let layer;
@@ -67,11 +67,6 @@ appUI.on('updateQueryString', ({ queryParams }) => {
 
 // Initialize UI with query string params
 appUI.setFromQueryParams(query);
-
-// lookup value of a nested feature property
-function lookupProperty(properties, propStack) {
-  return propStack && propStack.reduce((obj, prop) => obj && obj[prop] !== undefined ? obj[prop] : null, properties);
-}
 
 // apply updates to scene based on current display options
 function updateScene(uiState) {

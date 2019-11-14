@@ -33,3 +33,8 @@ export function parseNestedObject(obj, level = -1, prop = null, propStack = [], 
   }
   return rows;
 }
+
+// lookup value of a nested feature property
+export function lookupProperty(properties, propStack) {
+  return propStack && propStack.reduce((obj, prop) => obj && obj[prop] !== undefined ? obj[prop] : null, properties);
+}
