@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { colorFunctions } from './colorFunctions';
 
 export const displayOptions = {
@@ -7,9 +8,7 @@ export const displayOptions = {
     parse: parseInt,
     values: [1, 0],
     apply: (scene, value) => {
-      if (scene.layers.buildings) {
-        scene.layers.buildings.enabled = (value === 1);
-      }
+      _.set(scene, 'layers.buildings.enabled', (value === 1));
     }
   },
 
@@ -18,30 +17,27 @@ export const displayOptions = {
   label: {
     values: [],
     apply: (scene, value, { featureLabelPropStack }) => {
-      scene.global.labelState = {
-        featureLabelPropStack
-      };
-
+      let showLabels;
       if (featureLabelPropStack) {
         // custom JS tangram function to access nested properties efficiently
-        scene.global.lookupFeatureLabelProp =
+        _.set(scene, 'global.lookupFeatureLabelProp',
           `function(feature) {
               try {
                 return feature${featureLabelPropStack.map(k => '[\'' + k + '\']').join('')};
               }
               catch(e) { return null; } // catches cases where some features lack nested property, or other errors
-            }`;
+            }`);
 
-        // show/hide labels
-        scene.layers._xyz_dots.draw.points.text.visible = true;
-        scene.layers._xyz_polygons.draw.text.visible = true;
-        scene.layers._xyz_lines.draw.text.visible = true;
+        showLabels = true;
       }
       else {
-        scene.layers._xyz_dots.draw.points.text.visible = false;
-        scene.layers._xyz_polygons.draw.text.visible = false;
-        scene.layers._xyz_lines.draw.text.visible = false;
+        showLabels = false;
       }
+
+      // show/hide labels
+      _.set(scene, 'layers._xyz_dots.draw.points.text.visible', showLabels);
+      _.set(scene, 'layers._xyz_polygons.draw.text.visible', showLabels);
+      _.set(scene, 'layers._xyz_lines.draw.text.visible', showLabels);
     }
   },
 
@@ -50,40 +46,40 @@ export const displayOptions = {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
 
     apply: (scene, value, { featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue, colorHelpers }) => {
-      scene.global.colorMode = value;
-      scene.global.colorState = {
+      _.set(scene, 'global.colorMode', value);
+      _.set(scene, 'global.colorState', {
         featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue,
         colorHelpers // include color helper functions in Tangram global state
-      };
-      console.log('featurePropStack',featurePropStack)
+      });
 
       if (featurePropStack) {
         // custom JS tangram function to access nested properties efficiently
-        scene.global.lookupFeatureProp =
+        _.set(scene, 'global.lookupFeatureProp',
           `function(feature) {
             try {
               return feature${featurePropStack.map(k => '[\'' + k + '\']').join('')};
             }
             catch(e) { return null; } // catches cases where some features lack nested property, or other errors
-          }`;
-
+          }`);
       }
 
-      // use color mode color calc function if one exists, and a feature property is selected if required
+      // Use color mode color calc function if one exists, and a feature property is selected if required.
+      // We need to wrap the global function in another function, because these scene settings may be applied
+      // before the global being referenced has been created yet (e.g. these changes may be merged on top of
+      // the scene with the global feature color functions). Wrapping them ensures they only need to be
+      // created by the time the scene is built (once all merging is complete).
+      let featureColorVal;
       if (colorFunctions[value] && colorFunctions[value].color &&
           (featurePropStack || !colorFunctions[value].useProperty)) {
-
-        scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.featureColorDynamic;
-        scene.layers._xyz_lines.draw._lines.color = scene.global.featureColorDynamic;
-        scene.layers._xyz_dots.draw.points.color = scene.global.featureColorDynamic;
-        // TODO: outline colors?
+        featureColorVal = 'function(){ return global.featureColorDynamic(feature, global); }';
       }
-      // otherwise use default ("xray" mode)
       else {
-        scene.layers._xyz_polygons.draw._polygons_inlay.color = scene.global.featureColorDefault;
-        scene.layers._xyz_lines.draw._lines.color = scene.global.featureColorDefault;
-        scene.layers._xyz_dots.draw.points.color = scene.global.featureColorDefault;
+        featureColorVal = 'function(){ return global.featureColorDefault(feature, global, $geometry); }';
       }
+
+      _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.color', featureColorVal);
+      _.set(scene, 'layers._xyz_lines.draw._lines.color', featureColorVal);
+      _.set(scene, 'layers._xyz_dots.draw.points.color', featureColorVal);
     }
   },
 
@@ -92,26 +88,31 @@ export const displayOptions = {
     parse: parseInt,
     values: [0, 1, 2, 3, 4],
     apply: (scene, value) => {
+      let size, outlineWidth;
+
       if (value === 0) { // small
-        scene.layers._xyz_dots.draw.points.size = '6px';
-        scene.layers._xyz_dots.draw.points.outline.width = null;
+        size = '6px';
+        outlineWidth = null;
       }
       else if (value === 1) { // smaller
-        scene.layers._xyz_dots.draw.points.size = '3px';
-        scene.layers._xyz_dots.draw.points.outline.width = null;
+        size = '3px';
+        outlineWidth = null;
       }
       else if (value === 2) { // bigger
-        scene.layers._xyz_dots.draw.points.size = '15px';
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        size = '15px';
+        outlineWidth = '1px';
       }
       else if (value === 3) { // big
-        scene.layers._xyz_dots.draw.points.size = '12px';
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        size = '12px';
+        outlineWidth = '1px';
       }
        else if (value === 4) { // medium
-        scene.layers._xyz_dots.draw.points.size = '9px';
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
+        size = '9px';
+        outlineWidth = '1px';
       }
+
+      _.set(scene, 'layers._xyz_dots.draw.points.size', size);
+      _.set(scene, 'layers._xyz_dots.draw.points.outline.width', outlineWidth);
     }
   },
 
@@ -120,15 +121,19 @@ export const displayOptions = {
     parse: parseInt,
     values: [0, 1, 2],
     apply: (scene, value) => {
+      let width;
+
       if (value === 0) {
-        scene.layers._xyz_lines.draw._lines.width = '4px';
+        width = '4px';
       }
       else if (value === 1) {
-        scene.layers._xyz_lines.draw._lines.width = '2px';
+        width = '2px';
       }
       else if (value === 2) {
-        scene.layers._xyz_lines.draw._lines.width = '1px';
+        width = '1px';
       }
+
+      _.set(scene, 'layers._xyz_lines.draw._lines.width', width);
     }
   },
 
@@ -138,35 +143,34 @@ export const displayOptions = {
     values: [0, 1, 2, 3],
     apply: (scene, value) => {
       if (value === 0) { // no outline
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '0px';
-//         scene.layers._xyz_lines.draw._lines.outline = {}
-        scene.layers._xyz_lines.draw._lines.outline.width = '0px';
-        scene.layers._xyz_dots.draw.points.outline.width = '0px';
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '0px');
+//         _.set(scene, 'layers._xyz_lines.draw._lines.outline = {}
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '0px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '0px');
       }
       else if (value === 1) { // subtle grey polygons
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px'; // polygons have a default aqua outline
-        scene.layers._xyz_polygons._outlines.draw._lines.color = [.5,.5,.5,.5];
-        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
-        scene.layers._xyz_lines.draw._lines.outline.color = [.5,.5,.5,.5];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-        scene.layers._xyz_dots.draw.points.outline.color = [.5,.5,.5,.5];
-
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '1px'); // polygons have a default aqua outlin)e
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [.5,.5,.5,.5]);
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [.5,.5,.5,.5]);
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [.5,.5,.5,.5]);
       }
       else if (value === 2) { // white outlines
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
-        scene.layers._xyz_polygons._outlines.draw._lines.color = [1,1,1,0.75];
-        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
-        scene.layers._xyz_lines.draw._lines.outline.color = [1,1,1,.75];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-        scene.layers._xyz_dots.draw.points.outline.color = [1,1,1,0.75];
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '1px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [1,1,1,0.75]);
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [1,1,1,.75]);
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [1,1,1,0.75]);
       }
       else if (value === 3) { // black outlines
-        scene.layers._xyz_polygons._outlines.draw._lines.width = '1px';
-        scene.layers._xyz_polygons._outlines.draw._lines.color = [0,0,0,0.75];
-        scene.layers._xyz_lines.draw._lines.outline.width = '1px';
-        scene.layers._xyz_lines.draw._lines.outline.color = [0,0,0,0.75];
-        scene.layers._xyz_dots.draw.points.outline.width = '1px';
-        scene.layers._xyz_dots.draw.points.outline.color = [0,0,0,0.75];
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '1px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [0,0,0,0.75]);
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [0,0,0,0.75]);
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [0,0,0,0.75]);
       }
       // TODO take point fill color, assign assign as point outline color, and remove fill entirely
     }
@@ -177,9 +181,7 @@ export const displayOptions = {
     parse: parseInt,
     values: [1, 0],
     apply: (scene, value) => {
-      if (scene.layers.places) {
-        scene.layers.places.enabled = (value === 1);
-      }
+      _.set(scene, 'layers.places.enabled', (value === 1));
     }
   },
 
@@ -187,28 +189,21 @@ export const displayOptions = {
     parse: parseInt,
     values: [1, 0, 2], // 1 = on, 0 = off, 2 = just road labels, no lines
     apply: (scene, value) => {
-      if (scene.layers.roads) {
-        if (value === 0) {
-          scene.layers.roads.enabled = false;
-          if (scene.layers.pois) {
-            scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
-          }
-        }
-        else if (value === 1) {
-          scene.layers.roads.enabled = true;
-          scene.layers.roads.draw.lines.visible = true;
-        }
-        else if (value === 2) {
-          scene.layers.roads.enabled = 'true';
-          scene.layers.roads.draw.lines.visible = false; // just labels, no geometry
-          if (scene.layers.pois) {
-            scene.layers.pois.enabled = (value === 1); // to handle road exit numbers
-          }
-        }
+      if (value === 0) {
+        _.set(scene, 'layers.roads.enabled', false);
+        _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
+      }
+      else if (value === 1) {
+        _.set(scene, 'layers.roads.enabled', true);
+        _.set(scene, 'layers.roads.draw.lines.visible', true);
+      }
+      else if (value === 2) {
+        _.set(scene, 'layers.roads.enabled', 'true');
+        _.set(scene, 'layers.roads.draw.lines.visible', false); // just labels, no geometry
+        _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
       }
     }
   },
- 
 
   // toggle hexbins
   hexbins: {
@@ -224,10 +219,10 @@ export const displayOptions = {
     values: [0, 1],
     apply: (scene, value) => {
       if (value === 0) {
-        scene.layers._xyz_polygons.draw._polygons_inlay.order = 200;
+        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 200);
       }
       else if (value === 1) {
-        scene.layers._xyz_polygons.draw._polygons_inlay.order = 300;
+        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 300);
       }
     }
   }

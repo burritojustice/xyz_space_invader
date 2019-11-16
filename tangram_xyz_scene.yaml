@@ -16,7 +16,7 @@ global:
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
-      function () {
+      function (feature, global) {
         try {
           if (global.colorFunctions[global.colorMode]) {
             if (global.colorFunctions[global.colorMode].useProperty) {
@@ -39,7 +39,7 @@ global:
 
     # simple color by feature color property, or fallback to geometry type
     featureColorDefault: |
-        function() {
+        function(feature, global, $geometry) {
             var color;
             if (feature.color) {
                 color = feature.color
@@ -132,7 +132,7 @@ layers:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
-                color: global.featureColorDefault
+                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 size: 6px
                 outline: {}
                 text:
@@ -151,7 +151,7 @@ layers:
         draw:
             _lines:
                 interactive: true
-                color: global.featureColorDefault
+                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 width: 4px
                 order: 2000
                 outline:
@@ -180,7 +180,7 @@ layers:
         draw:
             _polygons_inlay:
                 interactive: true
-                color: global.featureColorDefault
+                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 width: 2px
                 order: 300
             text:
