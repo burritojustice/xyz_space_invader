@@ -10,7 +10,6 @@ import { parseNestedObject, lookupProperty } from './utils';
 
 let query;
 let layer;
-let scene_config
 let map, hash, tooltip, popup;
 
 // grab query parameters from the url and assign them to globals
@@ -47,8 +46,8 @@ appUI.on('loadScene', state => {
 });
 
 appUI.on('updateScene', state => {
-  if (scene_config) {
-    updateScene(state);
+  if (layer && layer.scene && layer.scene.config) {
+    updateScene(state, layer.scene.config);
     scene.updateConfig();
   }
 });
@@ -69,16 +68,17 @@ appUI.on('updateQueryString', ({ queryParams }) => {
 appUI.setFromQueryParams(query);
 
 // apply updates to scene based on current display options
-function updateScene(uiState) {
+function updateScene(uiState, scene_config) {
   // configure data source for XYZ space
-  applySpace(uiState);
+  applySpace(uiState, scene_config);
 
   // display options such as point size, toggling buildings or roads on/off, etc.
-  applyDisplayOptions(uiState);
+  applyDisplayOptions(uiState, scene_config);
 
   // update the tag filter on the XYZ tiles (if the tags have changed, this will cause new tiles to load)
-  applyTags(uiState);
+  applyTags(uiState, scene_config);
 }
+window.updateScene = updateScene;
 
 // load a new scene basemap (first creating the leaflet and tangram layers if needed)
 function loadScene({ basemapScene, token }) {
@@ -175,8 +175,7 @@ function makeLayer(scene_obj) {
     load: function ({ config }) {
       // when a new scene loads (e.g. when app loads, or a new basemap is selected),
       // update with current data source and display options
-      scene_config = config;
-      updateScene(appUI.get());
+      updateScene(appUI.get(), config);
     },
     view_complete: function (e) {
       // when new tiles finish loading, update viewport counts for tags and feature properties
@@ -200,7 +199,7 @@ function makeLayer(scene_obj) {
   window.scene = layer.scene;  // debugging
 }
 
-function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }, scene_config) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
@@ -216,7 +215,7 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = 
   }
 }
 
-function applyDisplayOptions(uiState) {
+function applyDisplayOptions(uiState, scene_config) {
   for (const option in displayOptions) {
     const value = uiState.displayToggles[option];
     if (value !== undefined && displayOptions[option].apply) {
@@ -225,7 +224,7 @@ function applyDisplayOptions(uiState) {
   }
 }
 
-function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins } = {} }) {
+function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: { hexbins } = {} }, scene_config) {
   // choose selected main space tags, or hexbin-specific tag
   let activeTags = tagFilterQueryParam;
   var currentZoom = scene.view.tile_zoom; // or map.getZoom() ?

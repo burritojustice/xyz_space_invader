@@ -28,6 +28,19 @@ export function getNextBasemap(basemap) {
   return names[0]; // otherwise just return first basemap
 }
 
+// add the base path of the current page to the URL
+function addBasePath(url) {
+  let base = window.location.origin + window.location.pathname;
+  if (base.slice(-1) !== '/') {
+    base += '/';
+  }
+  return base + url;
+}
+
+// skeletal structure of Invader viz scene, merged on top of underlying basemap, extended at run-time
+// based on current viz settings
+const xyzTangramBaseScene = addBasePath('tangram_xyz_scene.yaml');
+
 // this gets merged into basemaps to change 'mapzen' vector tile source definitions to their XYZ HERE equivalent
 // TODO: this does not yet override terrain/normal tiles for hillshading
 const xyzTilezenSourceOverride = {
@@ -67,7 +80,7 @@ export const basemaps = {
   'xyz-pixel': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-pixel/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -81,7 +94,7 @@ export const basemaps = {
   'xyz-pixel-dark': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-pixel-dark/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -95,7 +108,7 @@ export const basemaps = {
   'xyz-pixel-pastel': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-pixel-pastel/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -109,7 +122,7 @@ export const basemaps = {
   'xyz-dots': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-dots/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -123,7 +136,7 @@ export const basemaps = {
   'xyz-dots-dark': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-dots-dark/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -137,7 +150,7 @@ export const basemaps = {
   'xyz-bw-texture': {
     import: [
       'https://raw.githubusercontent.com/sensescape/bw-texture/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -151,7 +164,7 @@ export const basemaps = {
   'xyz-grid': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-grid/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -165,7 +178,7 @@ export const basemaps = {
   'xyz-grid-dark': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-grid-dark/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -179,7 +192,7 @@ export const basemaps = {
   'xyz-grid-color': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-grid-color/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -189,11 +202,11 @@ export const basemaps = {
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
-  },  
+  },
   'xyz-elevation-dots': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-elevation-dots/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -203,11 +216,11 @@ export const basemaps = {
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
-  },  
+  },
   'xyz-studio-spring-soft': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-studio-spring-soft/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -221,7 +234,7 @@ export const basemaps = {
   'xyz-studio-spring-bright': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-studio-spring-bright/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -235,7 +248,7 @@ export const basemaps = {
   'xyz-studio-miami-day': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-studio-miami-day/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -249,7 +262,7 @@ export const basemaps = {
    'xyz-studio-light': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-studio-light/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -259,11 +272,11 @@ export const basemaps = {
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
-  }, 
+  },
     'xyz-studio-dark': {
     import: [
       'https://raw.githubusercontent.com/sensescape/xyz-studio-dark/master/scene.yaml',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -273,15 +286,15 @@ export const basemaps = {
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
-  },  
-  
+  },
+
   'mapzen-refill-dark': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
       'https://www.nextzen.org/carto/refill-style/themes/color-gray-gold.zip',
       'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
       // 'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -297,7 +310,7 @@ export const basemaps = {
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
       'https://www.nextzen.org/carto/refill-style/themes/label-4.zip',
       'https://www.nextzen.org/carto/refill-style/themes/terrain-shading-dark.zip',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -307,7 +320,7 @@ export const basemaps = {
   'mapzen-walkabout': {
     import: [
       'https://www.nextzen.org/carto/walkabout-style/walkabout-style.zip',
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.light
@@ -316,7 +329,7 @@ export const basemaps = {
   },
   'none': {
     import: [
-      'tangram_xyz_scene.yaml'
+      xyzTangramBaseScene
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -330,8 +343,8 @@ export const basemaps = {
   'satellite': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
-      'tangram_xyz_scene.yaml',
-      'satellite.yaml',
+      xyzTangramBaseScene,
+      addBasePath('satellite.yaml'),
     ],
     global: {
       featureLabelFont: labelFontPresets.dark

@@ -25,8 +25,8 @@ export function parseNestedObject(obj, level = -1, prop = null, propStack = [], 
     if (prop) {
       rows.push({ level, obj, prop: formatPropStack(propStack), propStack }); // header row
     }
-    for (var prop in obj) {
-      parseNestedObject(obj[prop], level + 1, prop, [...propStack, prop], rows);
+    for (const p in obj) {
+      parseNestedObject(obj[p], level + 1, p, [...propStack, p], rows);
     }
   } else {
     rows.push({ level, obj, prop: formatPropStack(propStack), value: obj, propStack });
