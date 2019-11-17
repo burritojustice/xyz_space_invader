@@ -38,3 +38,15 @@ export function parseNestedObject(obj, level = -1, prop = null, propStack = [], 
 export function lookupProperty(properties, propStack) {
   return propStack && propStack.reduce((obj, prop) => obj && obj[prop] !== undefined ? obj[prop] : null, properties);
 }
+
+// stringify an object with JSON.stringify, but include functions as strings
+export function stringifyWithFunctions (obj) {
+  if (typeof obj === 'function') {
+    return obj.toString();
+  }
+
+  return JSON.stringify(obj, function (k, v) {
+    // Convert functions to strings
+    return (typeof v === 'function') ? v.toString() : v;
+  });
+};

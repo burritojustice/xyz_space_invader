@@ -1,15 +1,16 @@
 import L from 'leaflet';
 import 'leaflet-hash';
 import 'leaflet/dist/leaflet.css';
+import yaml from 'js-yaml';
 import FileSaver from 'file-saver';
 
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 import { parseNumber } from './colorFunctions';
-import { parseNestedObject, lookupProperty } from './utils';
+import { parseNestedObject, lookupProperty, stringifyWithFunctions } from './utils';
 
 let query;
-let layer;
+let layer, scene;
 let map, hash, tooltip, popup;
 
 // grab query parameters from the url and assign them to globals
@@ -46,9 +47,18 @@ appUI.on('loadScene', state => {
 });
 
 appUI.on('updateScene', state => {
-  if (layer && layer.scene && layer.scene.config) {
-    updateScene(state, layer.scene.config);
+  if (scene && scene.initialized) {
+    updateScene(state, scene.config);
     scene.updateConfig();
+  }
+});
+
+appUI.on('exportScene', () => {
+  const state = appUI.get();
+  if (state.spaceInfo && scene && scene.initialized) {
+    const filename = `${state.spaceId} ${state.spaceInfo.title}.yaml`;
+    const yamlScene = exportScene('yaml');
+    FileSaver.saveAs(new Blob([yamlScene], { type: 'application/x-yaml' }), filename);
   }
 });
 
@@ -78,7 +88,6 @@ function updateScene(uiState, scene_config) {
   // update the tag filter on the XYZ tiles (if the tags have changed, this will cause new tiles to load)
   applyTags(uiState, scene_config);
 }
-window.updateScene = updateScene;
 
 // load a new scene basemap (first creating the leaflet and tangram layers if needed)
 function loadScene({ basemapScene, token }) {
@@ -94,6 +103,32 @@ function loadScene({ basemapScene, token }) {
   else {
     scene.load(basemapScene);
   }
+}
+
+function exportScene(format = 'json') {
+  const uiState = appUI.get();
+
+  // First do a deep copy of the basemap, preserving functions
+  const scene_config = JSON.parse(stringifyWithFunctions(uiState.basemapScene));
+
+  // Then apply viz-specific scene state
+  updateScene(uiState, scene_config);
+
+  // Modify camera to default to current view
+  const activeCamera = scene.getActiveCamera(); // get current camera for loaded scene
+  const center = map.getCenter();
+  scene_config.cameras = scene_config.cameras || {};
+  scene_config.cameras[activeCamera] = {
+    position: [center.lng, center.lat, map.getZoom()]
+  };
+
+  // Then deep copy again to ensure any compiled functions (from above step) are preserved
+  // (feature color calculations, etc. are run-time defined functions)
+  const jsonScene = JSON.parse(stringifyWithFunctions(scene_config));
+  if (format === 'yaml') {
+    return yaml.safeDump(jsonScene);
+  }
+  return jsonScene;
 }
 
 // initialize Tangram leaflet layer, and load the scene for the first time
@@ -152,6 +187,8 @@ function makeLayer(scene_obj) {
     selectionRadius: 5
   });
 
+  scene = layer.scene;
+
   // setup tooltip for hover content
   layer.bindTooltip(tooltip);
   layer.bindPopup(popup);
@@ -171,7 +208,7 @@ function makeLayer(scene_obj) {
   }); // close tooltip when zooming
 
   // setup Tangram event listeners
-  layer.scene.subscribe({
+  scene.subscribe({
     load: function ({ config }) {
       // when a new scene loads (e.g. when app loads, or a new basemap is selected),
       // update with current data source and display options
@@ -189,14 +226,14 @@ function makeLayer(scene_obj) {
   // setup screenshot event
   document.addEventListener('keydown', ({ key }) => {
     if (key == "s") { // take screenshot
-      layer.scene.screenshot().then(function (screenshot) {
+      scene.screenshot().then(function (screenshot) {
         FileSaver.saveAs(screenshot.blob, `invader-${(new URLSearchParams(appUI.get().queryParams))}.png`);
       });
     }
   });
 
   window.layer = layer; // debugging
-  window.scene = layer.scene;  // debugging
+  window.scene = scene;  // debugging
 }
 
 function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }, scene_config) {

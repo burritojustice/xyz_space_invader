@@ -47,6 +47,7 @@
         {/if}
       <table>
           <tr>
+            <!-- Basemap selector -->
             <td>basemap:</td>
             <td>
               <select bind:value="basemap">
@@ -54,6 +55,10 @@
                   <option value="{basemap}">{basemap}</option>
                 {/each}
               </select>
+            </td>
+            <!-- Export scene -->
+            <td>
+              <button on:click="fire('exportScene')">export</button>
             </td>
           </tr>
       </table>
