@@ -414,22 +414,23 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   const yearsElapsed = (daysElapsed / 365).toFixed(1)
   console.log(secondsElapsed,minutesElapsed,hoursElapsed,daysElapsed,weeksElapsed,monthsElapsed,yearsElapsed)
   let timeUnitsElapsed
+  let timeUnitsPrefix = "space last updated "
   
   
   if (yearsElapsed > 1){
-    timeUnitsElapsed = "Space last updated " + yearsElapsed + " years ago"
+    timeUnitsElapsed = timeUnitsPrefix + yearsElapsed + " years ago"
   } else if (monthsElapsed > 1) {
-    timeUnitsElapsed = "Space last updated " + monthsElapsed + " months ago"
+    timeUnitsElapsed = timeUnitsPrefix + monthsElapsed + " months ago"
   } else if (weeksElapsed > 1) {
-    timeUnitsElapsed = "Space last updated " + weeksElapsed + " weeks ago"
+    timeUnitsElapsed = timeUnitsPrefix + weeksElapsed + " weeks ago"
   } else if (daysElapsed > 1) {
-    timeUnitsElapsed = "Space last updated " + daysElapsed + " days ago"
+    timeUnitsElapsed = timeUnitsPrefix + daysElapsed + " days ago"
   } else if (hoursElapsed > 1) {
-    timeUnitsElapsed = "Space last updated " + hoursElapsed + " hours ago"
+    timeUnitsElapsed = timeUnitsPrefix + hoursElapsed + " hours ago"
   } else if (minutesElapsed > 1) {
-    timeUnitsElapsed = "Space last updated " + minutesElapsed + " minutes ago"
+    timeUnitsElapsed = timeUnitsPrefix + minutesElapsed + " minutes ago"
   } else {
-    timeUnitsElapsed = "Space last updated " + Math.round(secondsElapsed) + " seconds ago"
+    timeUnitsElapsed = timeUnitsPrefix + Math.round(secondsElapsed) + " seconds ago"
   }
   console.log(timeUnitsElapsed)
   // update UI
