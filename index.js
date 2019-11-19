@@ -404,8 +404,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // calculate time since data was last written to the space
   const d = new Date();
   const timeNow = d.getTime();
-  const spaceUpdatedAt = new Date(spaceInfo.updatedAt);
-  const secondsElapsed = (timeNow - spaceUpdatedAt) / 1000;
+  const contentUpdatedAt = new Date(spaceInfo.contentUpdatedAt);
+  const secondsElapsed = (timeNow - contentUpdatedAt) / 1000;
   const minutesElapsed = Math.round(secondsElapsed / 60)
   const hoursElapsed = Math.round(secondsElapsed / 60 / 60)
   const daysElapsed = Math.round(secondsElapsed / 60 / 60 / 24)
