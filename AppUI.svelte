@@ -34,6 +34,8 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
+            <td on:click='toggleDisplayOption("clustering")'>clustering:</td>
+            <td>{displayToggles.clustering}</td>            
           </tr>
       </table>
         {#if hexbinInfo.spaceId}
@@ -1005,6 +1007,9 @@ export default {
         else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
           this.toggleDisplayOption('hexbins');
         }
+        else if (key == "k") { // toggle server-side clustering
+          this.toggleDisplayOption('clustering');
+        }        
       }
     }
 
