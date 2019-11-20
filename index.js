@@ -257,7 +257,7 @@ function applyDisplayOptions(uiState, scene_config) {
     if (value !== undefined && displayOptions[option].apply) {
       displayOptions[option].apply(scene_config, value, uiState);
     }
-    if (displayOptions[clustering] == 1) {
+    if (displayOptions['clustering'] == 1) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
     } else {
       scene_config.sources._xyzspace.url_params.clustering = null;
