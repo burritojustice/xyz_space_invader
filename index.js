@@ -240,6 +240,8 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = 
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+    
+    
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
       url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
@@ -260,7 +262,7 @@ function applyDisplayOptions(uiState, scene_config) {
     if (displayOptions['clustering'] == 1) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
     } else {
-      scene_config.sources._xyzspace.url_params.clustering = null;
+      scene_config.sources._xyzspace.url_params.clustering = '';
     }
   }
 }
