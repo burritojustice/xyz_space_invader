@@ -439,7 +439,7 @@ function updateViewportTags(features) {  // for tags
   // grab the tags from Tangram's viewport tiles
   let tagsViewport = [];
   features.forEach(x => {
-    if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
+    if (x.properties['@ns:com:here:xyz'].tags){ // check to see if there are xyz tags
       tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
     }
   })
@@ -447,7 +447,11 @@ function updateViewportTags(features) {  // for tags
   const tagsWithCountsInViewport =
     Object.entries(
       features
-        .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
+        .flatMap(f => { 
+          if (x.properties['@ns:com:here:xyz'].tags){ // check to see if there are xyz tags
+            f.properties['@ns:com:here:xyz'].tags
+          }
+          })
         .reduce((tagCounts, tag) => {
             tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
             return tagCounts;
