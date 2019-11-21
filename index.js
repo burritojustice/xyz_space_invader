@@ -256,6 +256,7 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = 
 function applyDisplayOptions(uiState, scene_config) {
   for (const option in displayOptions) {
     const value = uiState.displayToggles[option];
+    console.log(option)
     if (value !== undefined && displayOptions[option].apply) {
       displayOptions[option].apply(scene_config, value, uiState);
     }
