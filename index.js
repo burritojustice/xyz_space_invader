@@ -439,7 +439,7 @@ function updateViewportTags(features) {  // for tags
   // grab the tags from Tangram's viewport tiles
   let tagsViewport = [];
   features.forEach(x => {
-    if (x.properties['@ns:com:here:xyz'].tags){ // check to see if there are xyz tags
+    if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
       tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
     }
   })
@@ -448,7 +448,7 @@ function updateViewportTags(features) {  // for tags
     Object.entries(
       features
         .flatMap(f => { 
-          if (x.properties['@ns:com:here:xyz'].tags){ // check to see if there are xyz tags
+          if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
             f.properties['@ns:com:here:xyz'].tags
           }
           })
