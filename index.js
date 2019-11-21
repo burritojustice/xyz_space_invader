@@ -252,10 +252,8 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
     };
     if (clustering == 1) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-      queryViewport();
     } else {
       delete scene_config.sources._xyzspace.url_params.clustering;
-      queryViewport();
     }
   }
 }
@@ -441,7 +439,9 @@ function updateViewportTags(features) {  // for tags
   // grab the tags from Tangram's viewport tiles
   let tagsViewport = [];
   features.forEach(x => {
-    tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
+    if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
+      tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
+    }
   })
 
   const tagsWithCountsInViewport =
