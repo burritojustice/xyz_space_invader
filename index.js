@@ -252,8 +252,10 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
     };
     if (clustering == 1) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      queryViewport();
     } else {
       delete scene_config.sources._xyzspace.url_params.clustering;
+      queryViewport();
     }
   }
 }
