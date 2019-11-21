@@ -448,10 +448,10 @@ function updateViewportTags(features) {  // for tags
     Object.entries(
       features
         .flatMap(f => { 
-          if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
+          if (f.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
             f.properties['@ns:com:here:xyz'].tags
           }
-          })
+        })
         .reduce((tagCounts, tag) => {
             tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
             return tagCounts;
