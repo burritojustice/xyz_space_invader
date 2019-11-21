@@ -236,7 +236,7 @@ function makeLayer(scene_obj) {
   window.scene = scene;  // debugging
 }
 
-function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }, scene_config) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clustering } = {} }, scene_config) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
@@ -249,6 +249,12 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = 
         access_token: token,
         clip: true
       }
+    if (clustering == 1) {
+      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+    } else {
+      delete scene_config.sources._xyzspace.url_params.clustering;
+    }
+      
     };
   }
 }
@@ -259,11 +265,6 @@ function applyDisplayOptions(uiState, scene_config) {
     console.log(displayOptions)
     if (value !== undefined && displayOptions[option].apply) {
       displayOptions[option].apply(scene_config, value, uiState);
-    }
-    if (displayOptions.clustering.value == 1) {
-      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-    } else {
-      delete scene_config.sources._xyzspace.url_params.clustering;
     }
   }
 }
