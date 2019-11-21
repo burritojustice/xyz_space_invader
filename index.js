@@ -248,21 +248,19 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
       url_params: {
         access_token: token,
         clip: true
-      }
+      }      
+    };
     if (clustering == 1) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
     } else {
       delete scene_config.sources._xyzspace.url_params.clustering;
     }
-      
-    };
   }
 }
 
 function applyDisplayOptions(uiState, scene_config) {
   for (const option in displayOptions) {
     const value = uiState.displayToggles[option];
-    console.log(displayOptions)
     if (value !== undefined && displayOptions[option].apply) {
       displayOptions[option].apply(scene_config, value, uiState);
     }
