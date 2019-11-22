@@ -339,9 +339,9 @@
 
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
 import { colorPalettes } from './colorPalettes';
-import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
+import { colorFunctions, colorHelpers } from './colorFunctions';
 import { displayOptions } from './displayOptions';
-import { parseNestedObject, formatPropStack } from './utils';
+import { parseNestedObject, formatPropStack, parseNumber, mostlyNumeric } from './utils';
 
 export default {
   data() {
@@ -498,15 +498,7 @@ export default {
     },
 
     featurePropMostlyNumeric: ({ featurePropValueCounts, featurePropNumericThreshold }) => {
-      if (!featurePropValueCounts) {
-        return false;
-      }
-
-      const numeric = featurePropValueCounts
-        .map(v => parseNumber(v[0]))
-        .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity)
-        .length;
-      return numeric / featurePropValueCounts.length >= (featurePropNumericThreshold/100);
+      return mostlyNumeric(featurePropValueCounts && featurePropValueCounts.map(v => v[0]), featurePropNumericThreshold);
     },
 
     featurePropValueCountHash: ({ featurePropValueCounts }) => hashString(JSON.stringify(featurePropValueCounts)),

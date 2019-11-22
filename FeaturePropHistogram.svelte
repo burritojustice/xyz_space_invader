@@ -35,7 +35,7 @@
 
 <script>
 
-import { parseNumber } from './colorFunctions';
+import { parseNumber } from './utils';
 
 export default {
   data() {
