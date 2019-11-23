@@ -509,12 +509,15 @@ export default {
       // grab the tags from Tangram's viewport tiles
       let tagsViewport = [];
       featuresInViewport.forEach(x => {
-        tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
+        if (x.properties['@ns:com:here:xyz'] && x.properties['@ns:com:here:xyz'].tags) {
+          tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags);
+        }
       })
 
       const tagsWithCountsInViewport =
         Object.entries(
           featuresInViewport
+            .filter(f => f.properties['@ns:com:here:xyz'] && f.properties['@ns:com:here:xyz'].tags)
             .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
             .reduce((tagCounts, tag) => {
                 tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
