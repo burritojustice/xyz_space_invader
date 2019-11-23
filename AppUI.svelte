@@ -755,6 +755,10 @@ export default {
         if (!current.featurePropMostlyNumeric && colors === 'range') {
           colors = 'rank';
         }
+        // or the converse
+        else if (current.featurePropMostlyNumeric && colors === 'rank') {
+          colors = 'range';
+        }
 
         this.set({
           featurePropCheckNumeric: current.featureProp, // record that we last ran the check for this property name
