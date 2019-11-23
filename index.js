@@ -429,23 +429,11 @@ async function queryViewport() {
 }
 
 function updateViewportProperties(features) { // for feature prop
-  // first get all unique properties for features in viewport, combined with those previously seen
-  const { uniqueFeaturePropsSeen } = appUI.get();
-  features.forEach(feature => {
-    parseNestedObject(feature.properties)
-      .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
-      .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip features we already know about
-      .forEach(p => {
-        uniqueFeaturePropsSeen.set(p.prop, p.propStack);
-      });
-  });
-
   // then get feature values based on currently selected property
   const propStack = appUI.get().featurePropStack;
 
   if (!propStack || propStack.length === 0) {
     appUI.set({
-      uniqueFeaturePropsSeen,
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropMin: null,
@@ -545,7 +533,6 @@ function updateViewportProperties(features) { // for feature prop
 
   // update UI
   appUI.set({
-    uniqueFeaturePropsSeen,
     featurePropCount: propCounts.size,
     featurePropValueCounts: sortedPropCounts,
     featurePropMin: min,

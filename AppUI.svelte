@@ -681,6 +681,21 @@ export default {
       });
     }
 
+    // update globally seen properties
+    if (changed.featuresInViewport) {
+      // first get all unique properties for features in viewport, combined with those previously seen
+      const uniqueFeaturePropsSeen = new Map(current.uniqueFeaturePropsSeen);
+      current.featuresInViewport.forEach(feature => {
+        parseNestedObject(feature.properties)
+          .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
+          .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip properties we already know about
+          .forEach(p => {
+            uniqueFeaturePropsSeen.set(p.prop, p.propStack);
+          });
+      });
+      this.set({ uniqueFeaturePropsSeen });
+    }
+
     // Apply Tangram scene updates based on state change
     if (current.spaceInfo &&
         (changed.basemapScene || changed.spaceInfo)) {
