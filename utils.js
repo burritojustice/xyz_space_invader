@@ -53,8 +53,12 @@ export function stringifyWithFunctions (obj) {
 
 // More robust number parsing, try to get a floating point or integer value from a string
 export function parseNumber(value) {
-  if (value == null || typeof value === 'number') { // don't bother parsing these
+  // don't bother parsing these
+  if (value == null) {
     return value;
+  }
+  else if (typeof value === 'number') {
+    return isNaN(value) ? undefined : value;
   }
 
   const m = value.match(/[-+]?([0-9]+,?)*\.?[0-9]+/); // get floating point or integer via regex
