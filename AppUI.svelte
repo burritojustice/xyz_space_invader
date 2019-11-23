@@ -233,8 +233,8 @@
 <div id="controls_right" class="column hideOnMobile">
   <div id="tag_summary" class="panel">
     <table id="tag_stats">
-      {#if numFeaturesInViewport}
-        <tr><td>features in viewport</td><td>{numFeaturesInViewport}</td></tr>
+      {#if featuresInViewport.length}
+        <tr><td>features in viewport</td><td>{featuresInViewport.length}</td></tr>
       {/if}
       {#if numFeatureTagsInViewport != null}
         <tr><td>feature tags in viewport</td><td>{numFeatureTagsInViewport}</td></tr>
@@ -379,7 +379,7 @@ export default {
       tagSort: 'count',
       tagFilterSearch: '', // set these to empty strings (not null) to get placeholder text in input
 
-      numFeaturesInViewport: null,
+      featuresInViewport: [],
       uniqueTagsSeen: new Set(),
 
       uniqueFeaturePropsSeen: new Map(),
@@ -504,6 +504,25 @@ export default {
     featurePropValueCountHash: ({ featurePropValueCounts }) => hashString(JSON.stringify(featurePropValueCounts)),
 
     nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
+
+    tagsWithCountsInViewport: ({ featuresInViewport }) => {
+      // grab the tags from Tangram's viewport tiles
+      let tagsViewport = [];
+      featuresInViewport.forEach(x => {
+        tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
+      })
+
+      const tagsWithCountsInViewport =
+        Object.entries(
+          featuresInViewport
+            .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
+            .reduce((tagCounts, tag) => {
+                tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
+                return tagCounts;
+              }, {}))
+        .sort((a, b) => b[1] > a[1] ? 1 : (b[1] > a[1] ? -1 : 0));
+      return tagsWithCountsInViewport;
+    },
 
     uniqueTagsInViewport: ({ tagsWithCountsInViewport }) => new Set(tagsWithCountsInViewport.map(v => v[0])),
 

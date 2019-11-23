@@ -424,31 +424,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 async function queryViewport() {
   const features = await scene.queryFeatures({ filter: { $source: '_xyzspace' }});
   console.log("features in viewport:", features.length);
-  updateViewportTags(features);
+  appUI.set({ featuresInViewport: features });
   updateViewportProperties(features);
-}
-
-function updateViewportTags(features) {  // for tags
-  // grab the tags from Tangram's viewport tiles
-  let tagsViewport = [];
-  features.forEach(x => {
-    tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
-  })
-
-  const tagsWithCountsInViewport =
-    Object.entries(
-      features
-        .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
-        .reduce((tagCounts, tag) => {
-            tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
-            return tagCounts;
-          }, {}))
-    .sort((a, b) => b[1] > a[1] ? 1 : (b[1] > a[1] ? -1 : 0));
-
-  appUI.set({
-    numFeaturesInViewport: features.length,
-    tagsWithCountsInViewport
-  });
 }
 
 function updateViewportProperties(features) { // for feature prop
