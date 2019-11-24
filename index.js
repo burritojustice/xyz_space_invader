@@ -6,6 +6,7 @@ import FileSaver from 'file-saver';
 
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
+import { calcFeaturePropertyStats } from './stats';
 import { parseNumber, parseNestedObject, lookupProperty, stringifyWithFunctions } from './utils';
 
 let query;
@@ -431,117 +432,19 @@ async function queryViewport() {
 function updateViewportProperties(features) { // for feature prop
   // then get feature values based on currently selected property
   const propStack = appUI.get().featurePropStack;
-
-  if (!propStack || propStack.length === 0) {
-    appUI.set({
-      featurePropCount: null,
-      featurePropValueCounts: null,
-      featurePropMin: null,
-      featurePropMax: null,
-      featurePropMedian: null,
-      featurePropMean: null,
-      featurePropStdDev: null,
-      featurePropSigma: null,
-      featurePropSigmaFloor: null,
-      featurePropSigmaCeiling: null,
-      featurePropHistogram: null
-
-    });
-    return;
-  }
-
-  // grab the selected feature properties from Tangram's viewport tiles
-  const propsViewport = features.map(f => lookupProperty(f.properties, propStack));
-
-  // convert to numbers to get min/max
-  var vals = propsViewport
-    .map(parseNumber)
-    .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity);
-
-  let min, max, mean, median, stdDev;
-  let sigma = {};
-
-  if (vals.length > 0 ) {
-    min = Math.min(...vals);
-    max = Math.max(...vals);
-
-    mean = vals.reduce((a,b) => a + b, 0) / vals.length;
-    if (vals.length % 2 === 0) {
-      median = (vals[(vals.length / 2)] + vals[(vals.length / 2) + 1]) / 2;
-    }
-    else {
-      median = vals[((vals.length + 1) / 2)]
-    }
-
-    var squareDiffs = vals.map(function(value){
-      var diff = value - mean;
-      var sqrDiff = diff * diff;
-      return sqrDiff;
-    });
-
-    var avgSquareDiff = squareDiffs.reduce((a,b) => a + b, 0) / squareDiffs.length;
-
-    stdDev = Math.sqrt(avgSquareDiff);
-
-//     console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
-
-    // calculating sigmas and ranges using standard deviations
-    sigma = {
-      floor: mean - stdDev,
-      ceiling: mean + stdDev
-    };
-
-    sigma.count = vals.reduce((total,amount) => {
-      if ((amount > sigma.floor) && (amount < sigma.ceiling)) {
-        total += 1;
-      }
-      return total;
-    }, 0);
-    sigma.percent = 100 - sigma.count / vals.length
-    sigma.outside = vals.length - sigma.count
-
-//     console.log(sigma)
-  } //endif
-
-  // count up the number of each unique property value
-  const propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
-  for (let i = 0; i < propsViewport.length; i++) {
-    const value = propsViewport[i];
-    if (propCounts.get(value) == null) {
-      propCounts.set(value, 0);
-    }
-    propCounts.set(value, propCounts.get(value) + 1);
-  }
-
-  // sort the list of properties by count
-  const sortedPropCounts = Array.from(propCounts.entries()).sort((a, b) => {
-    const d = b[1] - a[1];
-    if (d !== 0) {
-      return d;
-    }
-
-    if (a < b) {
-      return -1;
-    }
-    else if (b < a) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
-  });
+  const stats = calcFeaturePropertyStats(features, propStack);
 
   // update UI
   appUI.set({
-    featurePropCount: propCounts.size,
-    featurePropValueCounts: sortedPropCounts,
-    featurePropMin: min,
-    featurePropMax: max,
-    featurePropMedian: median,
-    featurePropMean: mean,
-    featurePropStdDev: stdDev,
-    featurePropSigma: sigma.percent,
-    featurePropSigmaFloor: sigma.floor,
-    featurePropSigmaCeiling: sigma.ceiling
+    featurePropCount: stats.uniqueCount,
+    featurePropValueCounts: stats.sortedValueCounts,
+    featurePropMin: stats.min,
+    featurePropMax: stats.max,
+    featurePropMedian: stats.median,
+    featurePropMean: stats.mean,
+    featurePropStdDev: stats.stdDev,
+    featurePropSigma: stats.sigmaPercent,
+    featurePropSigmaFloor: stats.sigmaFloor,
+    featurePropSigmaCeiling: stats.sigmaCeiling
   });
 }
