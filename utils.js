@@ -62,7 +62,7 @@ export function parseNumber(value) {
   }
 
   const m = value.match(/[-+]?([0-9]+,?)*\.?[0-9]+/); // get floating point or integer via regex
-  const num = parseFloat(m && m[0].replace(/,/g, '')); // strip commas, e.g. '1,500' => '1500' (NB only works for US-style numbers)
+  const num = parseFloat(m && m[0].replace(/[,-\/]/g, '')); // strip formatter chars, e.g. '1,500' => '1500' (NB only works for US-style numbers)
   if (typeof num === 'number' && !isNaN(num)) {
     return num;
   }
