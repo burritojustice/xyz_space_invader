@@ -87,10 +87,27 @@ export const displayOptions = {
   points: {
     parse: parseInt,
     values: [0, 1, 2, 3, 4],
-    apply: (scene, value) => {
+    apply: (scene, value, { featurePointSizePropStack, featurePointSizeRange }) => {
       let size, outlineWidth;
 
-      if (value === 0) { // small
+      // ignore explicit point size setting when a feature property is selected
+      if (featurePointSizePropStack) {
+        // custom JS tangram function to access nested properties efficiently
+        _.set(scene, 'global.lookupFeaturePointSizeProp',
+          `function(feature) {
+              try {
+                return feature${featurePointSizePropStack.map(k => '[\'' + k + '\']').join('')};
+              }
+              catch(e) { return null; } // catches cases where some features lack nested property, or other errors
+            }`);
+
+        // NOTE: placeholder / WIP size values
+        _.set(scene, 'global.featurePointSizeRange', featurePointSizeRange || [0, 10, 5, 20]);
+
+        size = `function(){ return global.featurePointSize(feature, global); }`;
+        outlineWidth = null;
+      }
+      else if (value === 0) { // small
         size = '6px';
         outlineWidth = null;
       }

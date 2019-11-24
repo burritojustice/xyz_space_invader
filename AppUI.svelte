@@ -105,7 +105,7 @@
       <!-- Color mode selector -->
       {#if displayToggles}
         <div>
-          Visualize features by
+          Color features by
           <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
             {#each colorModes as mode}
               {#if featureProp || !colorModeUsesProperty(mode)}
@@ -169,14 +169,27 @@
       {/if}
     </div>
 
-    <!-- Label property selector -->
     {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <!-- Label property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
         <span style="flex: 0 0 auto; margin-right: 5px;">Label features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
             <option value="{JSON.stringify(propStack)}">{prop}</option>
+          {/each}
+        </select>
+      </div>
+
+      <!-- Point size property selector -->
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px;">Scale point size by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSize">
+          <option value=""></option>
+          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+            <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
+              <option value="{JSON.stringify(propStack)}">{prop}</option>
+            <!-- {/if} -->
           {/each}
         </select>
       </div>
@@ -448,6 +461,16 @@ export default {
     featureLabelPropStack: ({ displayToggles }) => {
       try {
         return (displayToggles && displayToggles.label) ? JSON.parse(displayToggles.label) : null;
+      }
+      catch (e) {
+        return null;
+      }
+    },
+
+    // point size prop stack is JSON stringified for easier svelte prop sync and query string handling
+    featurePointSizePropStack: ({ displayToggles }) => {
+      try {
+        return (displayToggles && displayToggles.pointSize) ? JSON.parse(displayToggles.pointSize) : null;
       }
       catch (e) {
         return null;
