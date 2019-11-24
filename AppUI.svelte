@@ -1072,7 +1072,10 @@ function isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, f
   const propName = formatPropStack(propStack);
   if (featurePropTypesCache[propName] == null) {
     // use a set to get unique values from array
-    const propValues = new Set(featuresInViewport.map(f => lookupProperty(f.properties, propStack)));
+    const propValues = new Set(featuresInViewport
+      .map(f => lookupProperty(f.properties, propStack))
+      .filter(f => typeof f !== 'object')
+    );
     featurePropTypesCache[propName] =
       mostlyNumeric([...propValues], featurePropNumericThreshold) ? PROP_TYPES.NUMERIC : PROP_TYPES.STRING;
   }

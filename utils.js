@@ -59,7 +59,7 @@ export function stringifyWithFunctions (obj) {
 // More robust number parsing, try to get a floating point or integer value from a string
 export function parseNumber(value) {
   // don't bother parsing these
-  if (value == null) {
+  if (value == null || typeof value === 'object') {
     return value;
   }
   else if (typeof value === 'number') {
