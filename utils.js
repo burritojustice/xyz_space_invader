@@ -1,3 +1,8 @@
+export const PROP_TYPES = {
+  STRING: 0,
+  NUMERIC: 1
+};
+
 // format nested property name stack with dot (object) and bracket (array) notation
 export function formatPropStack(propStack) {
   return propStack &&

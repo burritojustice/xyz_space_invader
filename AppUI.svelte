@@ -154,7 +154,8 @@
                 Hide values outside range
               </label>
 
-              {#if featurePropMostlyNumeric}
+              {#if isPropNumeric(featurePropStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })}
+              <!-- {#if featurePropMostlyNumeric} -->
                 <FeaturePropHistogram
                   minFilter={featurePropMinFilter}
                   maxFilter={featurePropMaxFilter}
@@ -341,7 +342,7 @@ import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNe
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers } from './colorFunctions';
 import { displayOptions } from './displayOptions';
-import { parseNestedObject, formatPropStack, parseNumber, mostlyNumeric } from './utils';
+import { parseNestedObject, formatPropStack, parseNumber, mostlyNumeric, lookupProperty, PROP_TYPES } from './utils';
 
 export default {
   data() {
@@ -380,6 +381,7 @@ export default {
       tagFilterSearch: '', // set these to empty strings (not null) to get placeholder text in input
 
       featuresInViewport: [],
+      featurePropTypesCache: {}, // cache of inferred feature property types
       uniqueTagsSeen: new Set(),
 
       uniqueFeaturePropsSeen: new Map(),
@@ -497,8 +499,8 @@ export default {
       };
     },
 
-    featurePropMostlyNumeric: ({ featurePropValueCounts, featurePropNumericThreshold }) => {
-      return mostlyNumeric(featurePropValueCounts && featurePropValueCounts.map(v => v[0]), featurePropNumericThreshold);
+    featurePropMostlyNumeric: ({ featurePropStack, featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) => {
+      return isPropNumeric(featurePropStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold });
     },
 
     featurePropValueCountHash: ({ featurePropValueCounts }) => hashString(JSON.stringify(featurePropValueCounts)),
@@ -681,19 +683,21 @@ export default {
       });
     }
 
-    // update globally seen properties
     if (changed.featuresInViewport) {
-      // first get all unique properties for features in viewport, combined with those previously seen
-      const uniqueFeaturePropsSeen = new Map(current.uniqueFeaturePropsSeen);
+      // update globally seen properties
+      const uniqueFeaturePropsSeen = new Map(current.uniqueFeaturePropsSeen); // get currently known props
       current.featuresInViewport.forEach(feature => {
         parseNestedObject(feature.properties)
           .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
           .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip properties we already know about
           .forEach(p => {
-            uniqueFeaturePropsSeen.set(p.prop, p.propStack);
+            uniqueFeaturePropsSeen.set(p.prop, p.propStack); // add new props
           });
       });
       this.set({ uniqueFeaturePropsSeen });
+
+      // reset property type cache (re-evaluatate property types when new features are available)
+      this.set({ featurePropTypesCache: {} });
     }
 
     // Apply Tangram scene updates based on state change
@@ -1052,13 +1056,27 @@ export default {
       return colorFunctions[colors] && colorFunctions[colors].usePalette;
     },
 
-    useFeaturePropRangeLimit, // reference here to make available to as template helper
-
     maybeStringifyObject(v) {
       // stringify objects, otherwise just return original object
       return (v != null && typeof v === 'object') ? JSON.stringify(v) : v;
-    }
+    },
+
+    // references here make these available to as template helper
+    useFeaturePropRangeLimit,
+    isPropNumeric
   }
+}
+
+// calculate whether a property is numeric based on the current features in the viewport, and cache the result
+function isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) {
+  const propName = formatPropStack(propStack);
+  if (featurePropTypesCache[propName] == null) {
+    // use a set to get unique values from array
+    const propValues = new Set(featuresInViewport.map(f => lookupProperty(f.properties, propStack)));
+    featurePropTypesCache[propName] =
+      mostlyNumeric([...propValues], featurePropNumericThreshold) ? PROP_TYPES.NUMERIC : PROP_TYPES.STRING;
+  }
+  return featurePropTypesCache[propName] === PROP_TYPES.NUMERIC;
 }
 
 function useFeaturePropRangeLimit(colors) {
