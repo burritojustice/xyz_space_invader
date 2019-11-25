@@ -100,10 +100,15 @@ export const displayOptions = {
               catch(e) { return null; } // catches cases where some features lack nested property, or other errors
             }`);
 
-        // NOTE: placeholder / WIP size values
-        _.set(scene, 'global.featurePointSizeRange', featurePointSizeRange || [0, 10, 5, 20]);
+        _.set(scene, 'global.featurePointSizeRange', featurePointSizeRange);
 
-        size = `function(){ return global.featurePointSize(feature, global); }`;
+        if (featurePointSizeRange[0] != null && featurePointSizeRange[1] != null) {
+          size = `function(){ return global.featurePointSize(feature, global); }`;
+        }
+        else {
+          // TODO: use rank or quantiles for non-numeric properties
+          size = '6px'; // use fixed point size for non-numeric properties
+        }
         outlineWidth = null;
       }
       else if (value === 0) { // small

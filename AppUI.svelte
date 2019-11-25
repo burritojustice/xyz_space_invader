@@ -499,7 +499,7 @@ export default {
         // value range for features in viewport
         featurePointSizePropStats.min, featurePointSizePropStats.max,
         // pixel size range to map these to
-        parseFloat(featurePointSizeDisplayRange[0]) || 4, parseFloat(featurePointSizeDisplayRange[1]) || 20
+        parseFloat(featurePointSizeDisplayRange[0]) || 5, parseFloat(featurePointSizeDisplayRange[1]) || 20
       ];
     },
 
