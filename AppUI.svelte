@@ -193,6 +193,15 @@
           {/each}
         </select>
       </div>
+
+      <!-- Point min/max pixel size -->
+      {#if displayToggles.pointSizeProp}
+        <div>
+          Point size (px):
+          <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
+          <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
+        </div>
+      {/if}
     {/if}
 
     {#if !(featureProp && featurePropCount != null)}
@@ -385,6 +394,7 @@ export default {
       featurePropSigma: null,
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
+      featurePointSizeDisplayRange: [4, 20],
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
@@ -484,10 +494,12 @@ export default {
     },
 
     // how point sizes are mapped to feature property values
-    featurePointSizeRange: ({ featurePointSizePropStats }) => {
+    featurePointSizeRange: ({ featurePointSizePropStats, featurePointSizeDisplayRange }) => {
       return [
-        featurePointSizePropStats.min, featurePointSizePropStats.max, // value range for features in viewport
-        4, 20 // pixel size range to map these to
+        // value range for features in viewport
+        featurePointSizePropStats.min, featurePointSizePropStats.max,
+        // pixel size range to map these to
+        parseFloat(featurePointSizeDisplayRange[0]) || 4, parseFloat(featurePointSizeDisplayRange[1]) || 20
       ];
     },
 
@@ -659,6 +671,7 @@ export default {
         featurePropMaxFilterInput,
         featurePropValueSort,
         featurePropHideOutliers,
+        featurePointSizeDisplayRange,
         tagFilterQueryParam
       }) => {
 
@@ -707,6 +720,8 @@ export default {
       params.set('sort', featurePropValueSort);
       params.set('hideOutliers', featurePropHideOutliers);
 
+      params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
+
       return params;
     }
 
@@ -748,6 +763,9 @@ export default {
         changed.hexbinInfo ||
         changed.featurePropStack ||
         changed.featurePropValue ||
+        changed.featureLabelPropStack ||
+        changed.featurePointSizePropStack ||
+        changed.featurePointSizeDisplayRange ||
         changed.featurePropPalette ||
         changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
@@ -899,6 +917,12 @@ export default {
       const featurePropValueSort = params.sort || 'count';
       const featurePropHideOutliers = (params.hideOutliers === 'true');
 
+      let featurePointSizeDisplayRange = this.get().featurePointSizeDisplayRange;
+      try { // protect against JSON.parse failure (it's brittle with string input)
+        featurePointSizeDisplayRange = JSON.parse(params.pointSizeRange);
+      }
+      catch(e) {}
+
       // set all params
       this.set({
         spaceId,
@@ -914,6 +938,7 @@ export default {
         featurePropMaxFilterInput,
         featurePropValueSort,
         featurePropHideOutliers,
+        featurePointSizeDisplayRange,
         tagFilterList,
         tagFilterAndOr
       });
