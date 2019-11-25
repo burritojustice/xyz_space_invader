@@ -7,7 +7,7 @@ import FileSaver from 'file-saver';
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 import { calcFeaturePropertyStats } from './stats';
-import { parseNumber, parseNestedObject, lookupProperty, stringifyWithFunctions } from './utils';
+import { stringifyWithFunctions } from './utils';
 
 let query;
 let layer, scene;

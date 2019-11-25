@@ -12,7 +12,6 @@ export const displayOptions = {
     }
   },
 
-
   // Feature label property
   label: {
     values: [],
@@ -131,6 +130,12 @@ export const displayOptions = {
       _.set(scene, 'layers._xyz_dots.draw.points.size', size);
       _.set(scene, 'layers._xyz_dots.draw.points.outline.width', outlineWidth);
     }
+  },
+
+  // optional feature property to tie point sizes to
+  pointSizeProp: {
+    // feature property-driven point sizes are applied by the 'points' option above, but we need an entry
+    // for it here so that it gets recognized as a display option during query string parameter on page load
   },
 
   // Line widths

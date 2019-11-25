@@ -184,7 +184,7 @@
       <!-- Point size property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
         <span style="flex: 0 0 auto; margin-right: 5px;">Scale point size by</span>
-        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSize">
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
             <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
@@ -355,6 +355,7 @@ import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNe
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers } from './colorFunctions';
 import { displayOptions } from './displayOptions';
+import { calcFeaturePropertyStats } from './stats';
 import { parseNestedObject, formatPropStack, parseNumber, mostlyNumeric, lookupProperty, PROP_TYPES } from './utils';
 
 export default {
@@ -470,11 +471,24 @@ export default {
     // point size prop stack is JSON stringified for easier svelte prop sync and query string handling
     featurePointSizePropStack: ({ displayToggles }) => {
       try {
-        return (displayToggles && displayToggles.pointSize) ? JSON.parse(displayToggles.pointSize) : null;
+        return (displayToggles && displayToggles.pointSizeProp) ? JSON.parse(displayToggles.pointSizeProp) : null;
       }
       catch (e) {
         return null;
       }
+    },
+
+    // update stats for current features and point size property (if one selected)
+    featurePointSizePropStats: ({ featuresInViewport, featurePointSizePropStack }) => {
+      return calcFeaturePropertyStats(featuresInViewport, featurePointSizePropStack);
+    },
+
+    // how point sizes are mapped to feature property values
+    featurePointSizeRange: ({ featurePointSizePropStats }) => {
+      return [
+        featurePointSizePropStats.min, featurePointSizePropStats.max, // value range for features in viewport
+        4, 20 // pixel size range to map these to
+      ];
     },
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
@@ -1110,7 +1124,7 @@ function useFeaturePropRangeLimit(colors) {
 }
 
 function defaultDisplayOptionValue(p) {
-  return displayOptions[p] && displayOptions[p].values[0];
+  return displayOptions[p] && displayOptions[p].values && displayOptions[p].values[0];
 }
 
 function formatFeaturePropValueColor(state, value) {
