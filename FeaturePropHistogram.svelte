@@ -40,7 +40,7 @@ import { parseNumber } from './colorFunctions';
 export default {
   data() {
     return {
-      numQuantiles: 6, 
+      numQuantiles: 10, 
       minFilter: null,
       maxFilter: null
     }
