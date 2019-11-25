@@ -243,8 +243,8 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
     
     
     scene_config.sources._xyzspace = {
-      type: 'GeoJSON',
-      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
+      type: 'MVT',
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}.mvt`,
       url_params: {
         access_token: token,
         clip: true
