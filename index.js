@@ -254,7 +254,7 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
     } else if (clustering == 2) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-      scene_config.sources._xyzspace.url_params.clustering.pointmode = true;
+      scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
     }
     else {
       delete scene_config.sources._xyzspace.url_params.clustering;
