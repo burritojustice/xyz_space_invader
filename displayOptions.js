@@ -208,7 +208,7 @@ export const displayOptions = {
   // toggle XYZ H3 hexbin clustering
   clustering: {
     parse: parseInt,
-    values: [0, 1], // 0 = raw data, 1 = h3 clustering
+    values: [0, 1, 2], // 0 = raw data, 1 = h3 clustering, 2 - h3 hexbin centroids
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
