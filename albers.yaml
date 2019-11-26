@@ -147,6 +147,8 @@ styles:
     albers:
         base: polygons
         animated: false
+        blend: overlay
+        blend_order: 0
         shaders:
             defines:
                 EARTH_RADIUS: 6378137.0
@@ -200,12 +202,14 @@ styles:
     alberslines:
         base: lines
         mix: albers
+        blend: opaque
     alberspoints:
         base: points
         mix: albers
     alberstext:
         base: text
         mix: albers
+        blend_order: 1
     pallete:
         shaders:
             blocks: 
