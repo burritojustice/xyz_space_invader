@@ -5,7 +5,7 @@
     <div id="space_info">
       {#if spaceInfo}
         {spaceInfo.title}<br>
-        {spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature<br
+        {spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature<br>
         {spaceInfo.updatedAt}<br>
       <x style="font-size:10px;">{spaceInfo.description}</x><br>
       {:elseif !spaceLoading}
