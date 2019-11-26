@@ -149,7 +149,7 @@ layers:
 styles:
     albers:
         base: polygons
-        animated: true
+        animated: false
         shaders:
             defines:
                 EARTH_RADIUS: 6378137.0
