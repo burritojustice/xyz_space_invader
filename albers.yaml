@@ -81,7 +81,7 @@ layers:
             filter: { kind: [lake, riverbank, dock, water, basin, reservoir, playa, canal, dam, ditch, drain, river, stream]}
             draw: 
                 alberslines:
-                    order: global.order
+                    order: 1 # global.order hides this for some reason
                     color: black
                     cap: round
                     width: .5px
