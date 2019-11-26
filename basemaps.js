@@ -350,5 +350,27 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     ...xyzTilezenSourceOverride
+  },
+  'albers': {
+    import: [
+      'tangram_xyz_scene.yaml',
+      'albers.yaml',
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    // can't use the regular ...xyzTilezenSourceOverride beacuse max_zoom is important for albers
+    sources: {
+      mapzen: {
+        url: 'https://xyz.api.here.com/tiles/osmbase/512/all/{z}/{x}/{y}.mvt',
+        url_params: {
+          'access_token': 'global.xyz_access_token'
+        },
+        max_zoom: 2
+      },
+      _xyzspace: {
+          max_zoom: 1 // important for albers until edge tile loading is resolved
+      }
+    }
   }
 };
