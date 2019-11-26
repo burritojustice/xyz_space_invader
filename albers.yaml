@@ -126,11 +126,11 @@ layers:
                 order: 10
                 color: [0,0,0,0.25]
                 width: [[5,1px],[10,2px]]
-                outlines:
-                    style: alberslines
-                    # order: 9
-                    color: white
-                    width: 2px
+                # outline:
+                #     style: alberslines
+                #     # order: 9
+                #     color: white
+                #     width: 2px
     places:
         data: { source: mapzen }
         # filter: { kind: country }
