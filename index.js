@@ -236,15 +236,14 @@ function makeLayer(scene_obj) {
   window.scene = scene;  // debugging
 }
 
-function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins } = {} }, scene_config) {
+function applySpace({ spaceId, token, hexbinInfo, basemap, displayToggles: { hexbins } = {} }, scene_config) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
     var max_zoom = 18
-    console.log('basemap',basemap)
     if (basemap == 'albers') {
         max_zoom = 2 // because tiles
-        scene.view.buffer = 2
+        scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
     }
 
     scene_config.sources._xyzspace = {
