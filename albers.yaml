@@ -67,10 +67,7 @@ layers:
         draw:
             waves:
                 order: 20
-                cap: round
-                width: 8px
                 color: [0.824, 0.812, 0.804]
-                width: 5px
             # alberspoints:
             #     buffer: 8px;
             #     font:
