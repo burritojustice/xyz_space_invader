@@ -467,12 +467,13 @@ export default {
       }
     },
     
-    // clustering prop stack is JSON stringified for easier svelte prop sync and query string handling
     featureClusteringPropPropStack: ({ displayToggles }) => {
       try {
           if (displayToggles && displayToggles.clusteringProp){
             console.log('clustering with property:',displayToggles.clusteringProp);
-            return (displayToggles && displayToggles.clusteringProp) ? JSON.parse(displayToggles.clusteringProp) : null;
+            return (displayToggles && displayToggles.clusteringProp) 
+            // below is adding brackets to the "["property"]" which is not what the API is looking for
+//             return (displayToggles && displayToggles.clusteringProp) ? JSON.parse(displayToggles.clusteringProp) : null;
           }
       }
       catch (e) {
