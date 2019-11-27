@@ -190,7 +190,7 @@
     <!-- clustering property selector -->
     {#if sortedUniqueFeaturePropsSeen.length > 0 && displayToggles.clustering > 0}
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-        <span style="flex: 0 0 auto; margin-right: 5px;">Extrude features by</span>
+        <span style="flex: 0 0 auto; margin-right: 5px;">Cluster features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.clusteringProp">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
