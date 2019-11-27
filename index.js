@@ -236,7 +236,7 @@ function makeLayer(scene_obj) {
   window.scene = scene;  // debugging
 }
 
-function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clustering } = {} }, scene_config) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clustering, clusteringProp } = {} }, scene_config) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
@@ -253,9 +253,15 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
     };
     if (clustering == 1) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp
+      }
     } else if (clustering == 2) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
       scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp
+      }
     }
     else {
       delete scene_config.sources._xyzspace.url_params.clustering;
