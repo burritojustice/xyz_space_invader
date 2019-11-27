@@ -403,39 +403,38 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       } catch (e) { } // in case hexbin space doesn't exist or fails to load
     }
   }
-  
-// calculate time since data was last written to the space
-  const d = new Date();
-  const timeNow = d.getTime();
-  const contentUpdatedAt = new Date(spaceInfo.contentUpdatedAt);
-  const secondsElapsed = (timeNow - contentUpdatedAt) / 1000;
-  const minutesElapsed = Math.round(secondsElapsed / 60)
-  const hoursElapsed = Math.round(secondsElapsed / 60 / 60)
-  const daysElapsed = Math.round(secondsElapsed / 60 / 60 / 24)
-  const weeksElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 7)
-  const monthsElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 30)
-  const yearsElapsed = (daysElapsed / 365).toFixed(1)
-  console.log(secondsElapsed,minutesElapsed,hoursElapsed,daysElapsed,weeksElapsed,monthsElapsed,yearsElapsed)
-  let timeUnitsElapsed
-  let timeUnitsPrefix = "space last updated "
-  
-  
-  if (yearsElapsed > 1){
-    timeUnitsElapsed = timeUnitsPrefix + yearsElapsed + " years ago"
-  } else if (monthsElapsed > 1) {
-    timeUnitsElapsed = timeUnitsPrefix + monthsElapsed + " months ago"
-  } else if (weeksElapsed > 1) {
-    timeUnitsElapsed = timeUnitsPrefix + weeksElapsed + " weeks ago"
-  } else if (daysElapsed > 1) {
-    timeUnitsElapsed = timeUnitsPrefix + daysElapsed + " days ago"
-  } else if (hoursElapsed > 1) {
-    timeUnitsElapsed = timeUnitsPrefix + hoursElapsed + " hours ago"
-  } else if (minutesElapsed > 1) {
-    timeUnitsElapsed = timeUnitsPrefix + minutesElapsed + " minutes ago"
-  } else {
-    timeUnitsElapsed = timeUnitsPrefix + Math.round(secondsElapsed) + " seconds ago"
-  }
-  console.log(timeUnitsElapsed)
+
+  // calculate time since data was last written to the space
+  let timeUnitsElapsed;
+  if (spaceInfo.contentUpdatedAt) {
+    const d = new Date();
+    const timeNow = d.getTime();
+    const contentUpdatedAt = new Date(spaceInfo.contentUpdatedAt);
+    const secondsElapsed = (timeNow - contentUpdatedAt) / 1000;
+    const minutesElapsed = Math.round(secondsElapsed / 60)
+    const hoursElapsed = Math.round(secondsElapsed / 60 / 60)
+    const daysElapsed = Math.round(secondsElapsed / 60 / 60 / 24)
+    const weeksElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 7)
+    const monthsElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 30)
+    const yearsElapsed = (daysElapsed / 365).toFixed(1)
+    const timeUnitsPrefix = "space last updated ";
+
+    if (yearsElapsed > 1){
+      timeUnitsElapsed = timeUnitsPrefix + yearsElapsed + " years ago"
+    } else if (monthsElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + monthsElapsed + " months ago"
+    } else if (weeksElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + weeksElapsed + " weeks ago"
+    } else if (daysElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + daysElapsed + " days ago"
+    } else if (hoursElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + hoursElapsed + " hours ago"
+    } else if (minutesElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + minutesElapsed + " minutes ago"
+    } else {
+      timeUnitsElapsed = timeUnitsPrefix + Math.round(secondsElapsed) + " seconds ago"
+    }
+  };
 
   // update UI
   appUI.set({
