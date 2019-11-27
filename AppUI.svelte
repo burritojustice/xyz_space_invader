@@ -56,23 +56,16 @@
           </table>
         {/if}
 
-        <table>
-            <tr>
-              <!-- Basemap selector -->
-              <td>basemap:</td>
-              <td>
-                <select bind:value="basemap">
-                  {#each Object.keys(basemaps) as basemap}
-                    <option value="{basemap}">{basemap}</option>
-                  {/each}
-                </select>
-              </td>
-              <td style="width: 100%;">
-                <!-- Export scene -->
-                <button on:click="fire('exportScene')" style="float: right;">export</button>
-              </td>
-            </tr>
-        </table>
+        <!-- Basemap selector -->
+        basemap:
+        <select bind:value="basemap" id="basemap_select">
+          {#each Object.keys(basemaps) as basemap}
+            <option value="{basemap}">{basemap}</option>
+          {/each}
+        </select>
+
+        <!-- Export scene -->
+        <button on:click="fire('exportScene')" style="float: right;">export</button>
 
         {/if}
       </div>
@@ -1326,6 +1319,14 @@ function hashString (string) {
       /* unset flexbox full height that will block user input */
       min-height: unset;
       max-height: unset;
+    }
+  }
+
+  /* mobile in landscape */
+  @media (max-width: 960px) and (orientation: landscape) {
+    /* keep basemap selector from being too wide */
+    #basemap_select {
+      width: 110px;
     }
   }
 
