@@ -254,12 +254,14 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
     if (clustering == 1) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
       if (clusteringProp){
+        clusteringProp = clusteringProp.replace(/[]"/,'') // removing the [""] from ["property"]
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp
       }
     } else if (clustering == 2) {
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
       scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
       if (clusteringProp){
+        clusteringProp = clusteringProp.replace(/[]"/,'') // removing the [""] from ["property"]
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp
       }
     }
