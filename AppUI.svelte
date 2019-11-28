@@ -193,8 +193,8 @@
         <span style="flex: 0 0 auto; margin-right: 5px;">Cluster features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.clusteringProp">
           <option value=""></option>
-          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-            <option value="{JSON.stringify(propStack)}">{prop}</option>
+          {#each sortedUniqueFeaturePropsSeen as [prop]}
+            <option value="{prop}">{prop}</option>
           {/each}
         </select>
       </div>
