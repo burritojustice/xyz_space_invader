@@ -40,7 +40,7 @@ import { parseNumber } from './utils';
 export default {
   data() {
     return {
-      numQuantiles: 10,
+      numQuantiles: 7,
       minFilter: null,
       maxFilter: null
     }
