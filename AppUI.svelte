@@ -209,7 +209,7 @@
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <!-- Label property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-        <span style="flex: 0 0 auto; margin-right: 5px;">Label features by</span>
+        <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Label features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
@@ -220,7 +220,7 @@
 
       <!-- Point size property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-        <span style="flex: 0 0 auto; margin-right: 5px;">Scale point size by</span>
+        <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Scale point size by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
@@ -233,10 +233,10 @@
 
       <!-- Point min/max pixel size -->
       {#if displayToggles.pointSizeProp}
-        <div>
-          Point size (px):
-          <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
-          <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
+        <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+          <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Point size (px):</span>
+          <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
+          <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
         </div>
       {/if}
     {/if}
