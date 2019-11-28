@@ -72,17 +72,37 @@
       {/if}
     </div>
 
-    <!-- Histogram for demo mode -->
-    {#if demoMode && displayToggles.colors === 'range'}
-      <div class="hideOnMobilePortrait">
-        <FeaturePropHistogram
-          showHeader={false}
-          minFilter={featurePropMinFilter}
-          maxFilter={featurePropMaxFilter}
-          valueCounts={sortedFeaturePropValueCounts}
-          valueColorFunction={featurePropValueColorFunction}
-        />
+    <!-- Demo mode context -->
+    {#if demoMode && featureProp && featurePropCount != null}
+      <!-- Selected feature property and value info -->
+      <div style="margin: 5px 0px;">
+        Analyzing property <b>{featureProp}</b>
       </div>
+
+      <!-- Histogram for demo mode -->
+      {#if displayToggles.colors === 'range'}
+        <div class="hideOnMobilePortrait">
+          <FeaturePropHistogram
+            showHeader={false}
+            minFilter={featurePropMinFilter}
+            maxFilter={featurePropMaxFilter}
+            valueCounts={sortedFeaturePropValueCounts}
+            valueColorFunction={featurePropValueColorFunction}
+          />
+        </div>
+      {:elseif displayToggles.colors === 'rank' && featurePropValueCounts}
+        <!-- Top values list -->
+        <div class="hideOnMobile">
+          <FeaturePropTopValues
+            showHeader={false}
+            prop={featureProp}
+            bind:propValue="featurePropValue"
+            bind:valueSort="featurePropValueSort"
+            valueCounts={sortedFeaturePropValueCounts}
+            valueColorFunction={featurePropValueColorFunction}
+          />
+        </div>
+      {/if}
     {/if}
   </div>
 
@@ -228,43 +248,13 @@
     <!-- Top values list -->
     {#if featureProp && featurePropValueCounts}
       <div class="hideOnMobile">
-        <div style="margin: 5px 0 5px 0;">
-          Top values by
-          <select bind:value="featurePropValueSort">
-            <option>count</option>
-            <option>values</option>
-          </select>
-        </div>
-
-        <table id="prop_stats">
-          <thead>
-            <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
-          </thead>
-          <tbody>
-            {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
-              <tr>
-                <td style="width: 15px; text-align: right;">{count}</td>
-                <td style="width: 15px;">
-                  <!-- uses color calc code shared with tangram-->
-                  {#if colorModeUsesProperty(displayToggles.colors)}
-                    <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
-                    </span>
-                  {/if}
-                </td>
-                <td
-                  class="value_row"
-                  class:active="featurePropValue != null && value == featurePropValue"
-                  on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
-                  {maybeStringifyObject(value)}
-                </td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-
-        {#if sortedFeaturePropValueCounts.length > 50}
-          <i>{sortedFeaturePropValueCounts.length - 50} more {sortedFeaturePropValueCounts.length - 50 > 1 ? 'values' : 'value'} for {featureProp} not shown</i>
-        {/if}
+        <FeaturePropTopValues
+          prop={featureProp}
+          bind:propValue="featurePropValue"
+          bind:valueSort="featurePropValueSort"
+          valueCounts={sortedFeaturePropValueCounts}
+          valueColorFunction={featurePropValueColorFunction}
+        />
       </div>
     {/if}
   </div>
@@ -439,6 +429,7 @@ export default {
 
   components: {
     FeaturePropHistogram: './FeaturePropHistogram.svelte',
+    FeaturePropTopValues: './FeaturePropTopValues.svelte',
     FeaturePopup: './FeaturePopup.svelte'
   },
 
@@ -1141,11 +1132,6 @@ export default {
       return colorFunctions[colors] && colorFunctions[colors].usePalette;
     },
 
-    maybeStringifyObject(v) {
-      // stringify objects, otherwise just return original object
-      return (v != null && typeof v === 'object') ? JSON.stringify(v) : v;
-    },
-
     // references here make these available to as template helper
     useFeaturePropRangeLimit,
     // isPropNumeric
@@ -1273,20 +1259,6 @@ function hashString (string) {
 
   .range_filter {
     width: 45px;
-  }
-
-  .dot {
-    height: 11px;
-    width: 11px;
-    background-color: yellow;
-    border: 2px solid grey;
-    border-radius: 50%;
-    display: inline-block;
-    vertical-align: bottom;
-  }
-
-  .value_row:hover {
-    background-color: rgba(240, 240, 240, 0.75);
   }
 
   .active {
