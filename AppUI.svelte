@@ -1,50 +1,53 @@
 <svelte:window on:keydown="handleKeyPress(event)" />
 
-<!-- Demo/inspect mode toggle-->
-{#if demoMode}
-  <button on:click="set({ demoMode: false })" class="demoModeToggle">inspect</button>
-{:else}
-  <!-- Render full UI -->
-  <div id="controls_left" class="column">
-    <div id="spaces" class="panel">
-      <div id="space_info">
-        {#if spaceInfo}
-          <div>
-            <!-- Space info -->
-            <div>{spaceInfo.title}</div>
+<!-- Render full UI -->
+<div id="controls_left" class="column">
+  <div id="spaces" class="panel">
+    <div id="space_info">
+      {#if spaceInfo}
+        <div>
+          <!-- Demo/inspect mode toggle-->
+          <button on:click="set({ demoMode: !demoMode })" class="demoModeToggle">
+            {demoMode ? 'inspect' : 'demo'}
+          </button>
+
+          <!-- Space info -->
+          <div>{spaceInfo.title}</div>
+          {#if !demoMode}
             <div>{spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature</div>
             {#if spaceInfo.updatedAt}
               <div>{spaceInfo.updatedAt}</div>
             {/if}
             <div style="font-size:10px;">{spaceInfo.description}</div>
-          </div>
-        {:elseif !spaceLoading}
-          <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
-          <input type="text" placeholder="enter an XYZ token" bind:value='token'>
-          <button on:click="updateSpace(true)">Show XYZ Space</button>
-        {/if}
-      </div>
-      <div id="style_info">
-        {#if displayToggles}
-          <table>
-            <tr>
-              <td on:click='toggleDisplayOption("roads")'>roads:</td>
-              <td>{displayToggles.roads}</td>
-              <td on:click='toggleDisplayOption("buildings")'>buildings:</td>
-              <td>{displayToggles.buildings}</td>
-              <td on:click='toggleDisplayOption("water")'>water:</td>
-              <td>{displayToggles.water}</td>
-              <td on:click='toggleDisplayOption("places")'>places:</td>
-              <td>{displayToggles.places}</td>
-            </tr>
-            <tr>
-              <td on:click='toggleDisplayOption("points")'>points:</td>
-              <td>{displayToggles.points}</td>
-              <td on:click='toggleDisplayOption("lines")'>lines:</td>
-              <td>{displayToggles.lines}</td>
-              <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
-              <td>{displayToggles.outlines}</td>
-            </tr>
+          {/if}
+        </div>
+      {:elseif !spaceLoading}
+        <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
+        <input type="text" placeholder="enter an XYZ token" bind:value='token'>
+        <button on:click="updateSpace(true)">Show XYZ Space</button>
+      {/if}
+    </div>
+    <div id="style_info" class:hideInDemoMode="demoMode">
+      {#if displayToggles}
+        <table>
+          <tr>
+            <td on:click='toggleDisplayOption("roads")'>roads:</td>
+            <td>{displayToggles.roads}</td>
+            <td on:click='toggleDisplayOption("buildings")'>buildings:</td>
+            <td>{displayToggles.buildings}</td>
+            <td on:click='toggleDisplayOption("water")'>water:</td>
+            <td>{displayToggles.water}</td>
+            <td on:click='toggleDisplayOption("places")'>places:</td>
+            <td>{displayToggles.places}</td>
+          </tr>
+          <tr>
+            <td on:click='toggleDisplayOption("points")'>points:</td>
+            <td>{displayToggles.points}</td>
+            <td on:click='toggleDisplayOption("lines")'>lines:</td>
+            <td>{displayToggles.lines}</td>
+            <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
+            <td>{displayToggles.outlines}</td>
+          </tr>
         </table>
         {#if hexbinInfo.spaceId}
           <table>
@@ -66,285 +69,290 @@
 
         <!-- Export scene -->
         <button on:click="fire('exportScene')" style="float: right;">export</button>
-
-        {/if}
-      </div>
+      {/if}
     </div>
 
-    <div id="colors" class="panel hideOnMobilePortrait">
-      <div id="colorProperties">
-        <!-- Selected feature property and value info -->
-        {#if featureProp && featurePropCount != null}
+    <!-- Histogram for demo mode -->
+    {#if demoMode && displayToggles.colors === 'range'}
+      <div class="hideOnMobilePortrait">
+        <FeaturePropHistogram
+          showHeader={false}
+          minFilter={featurePropMinFilter}
+          maxFilter={featurePropMaxFilter}
+          valueCounts={sortedFeaturePropValueCounts}
+          valueColorFunction={featurePropValueColorFunction}
+        />
+      </div>
+    {/if}
+  </div>
+
+  <div id="colors" class="panel hideOnMobilePortrait" class:hideInDemoMode="demoMode">
+    <div id="colorProperties">
+      <!-- Selected feature property and value info -->
+      {#if featureProp && featurePropCount != null}
+        <div>
+          <span class="active">
+            Analyzing property <b>{featureProp}</b>
+            <button on:click="set({ featurePropStack: null })" style="background: none; border: none;">❌</button>
+          </span>
+        </div>
+
+        {#if featurePropValue != null}
           <div>
             <span class="active">
-              Analyzing property <b>{featureProp}</b>
-              <button on:click="set({ featurePropStack: null })" style="background: none; border: none;">❌</button>
+              Only showing value <b>{featurePropValue}</b>
+              <button on:click="set({ featurePropValue: null })" style="background: none; border: none;">❌</button>
             </span>
           </div>
+        {/if}
 
-          {#if featurePropValue != null}
+        <div style="margin: 5px 0 5px 0;" class="hideOnMobile">
+          <div>{featurePropCount} unique values in the viewport</div>
+
+          {#if featurePropMin != null}
+            <div>min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}</div>
             <div>
-              <span class="active">
-                Only showing value <b>{featurePropValue}</b>
-                <button on:click="set({ featurePropValue: null })" style="background: none; border: none;">❌</button>
-              </span>
+              μ: {featurePropMean.toFixed(2)},
+              σ: {featurePropStdDev.toFixed(2)},
+              {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
             </div>
           {/if}
+        </div>
+      {/if}
 
-          <div style="margin: 5px 0 5px 0;" class="hideOnMobile">
-            <div>{featurePropCount} unique values in the viewport</div>
+      <!-- Color mode selector -->
+      {#if displayToggles}
+        <div>
+          Color features by
+          <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
+            {#each colorModes as mode}
+              {#if featureProp || !colorModeUsesProperty(mode)}
+                <option value="{mode}">{colorFunctions[mode].label || mode}</option>
+              {/if}
+            {/each}
+          </select>
+        </div>
+      {/if}
 
-            {#if featurePropMin != null}
-              <div>min: {featurePropMin}, median: {featurePropMedian}, max: {featurePropMax}</div>
-              <div>
-                μ: {featurePropMean.toFixed(2)},
-                σ: {featurePropStdDev.toFixed(2)},
-                {featurePropSigma.toFixed(2)}% ({featurePropSigmaFloor.toFixed(2)} - {featurePropSigmaCeiling.toFixed(2)})
-              </div>
-            {/if}
-          </div>
-        {/if}
-
-        <!-- Color mode selector -->
-        {#if displayToggles}
-          <div>
-            Color features by
-            <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
-              {#each colorModes as mode}
-                {#if featureProp || !colorModeUsesProperty(mode)}
-                  <option value="{mode}">{colorFunctions[mode].label || mode}</option>
-                {/if}
+      <!-- Color palette and range filters -->
+      {#if featureProp && featurePropCount != null}
+        {#if showFeaturePropPalette(displayToggles.colors)}
+          <div class="hideOnMobile">
+            Color palette
+            <select bind:value="featurePropPaletteName">
+              {#each Object.keys(colorPalettes) as palette}
+                <option value="{palette}">{palette}</option>
               {/each}
             </select>
+
+            <label>
+              <input type="checkbox" bind:checked="featurePropPaletteFlip">
+              Flip
+            </label>
           </div>
-        {/if}
 
-        <!-- Color palette and range filters -->
-        {#if featureProp && featurePropCount != null}
-          {#if showFeaturePropPalette(displayToggles.colors)}
-            <div class="hideOnMobile">
-              Color palette
-              <select bind:value="featurePropPaletteName">
-                {#each Object.keys(colorPalettes) as palette}
-                  <option value="{palette}">{palette}</option>
-                {/each}
-              </select>
+          {#if featurePropMin != null}
+            {#if useFeaturePropRangeLimit(displayToggles.colors)}
+              <div>
+                Limit values:
+                <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
+                  <option value="0">all</option>
+                  <option value="4">sigma 4</option>
+                  <option value="3">sigma 3</option>
+                  <option value="2">sigma 2</option>
+                  <option value="1">sigma 1</option>
+                  <option value="custom" class="hideOnMobile">custom</option>
+                </select>
+                <input class="range_filter hideOnMobile" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+                <input class="range_filter hideOnMobile" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
+              </div>
 
-              <label>
-                <input type="checkbox" bind:checked="featurePropPaletteFlip">
-                Flip
+              <label style="margin-bottom: 5px;">
+                <input type="checkbox" bind:checked="featurePropHideOutliers">
+                Hide values outside range
               </label>
-            </div>
 
-            {#if featurePropMin != null}
-              {#if useFeaturePropRangeLimit(displayToggles.colors)}
-                <div>
-                  Limit values:
-                  <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
-                    <option value="0">all</option>
-                    <option value="4">sigma 4</option>
-                    <option value="3">sigma 3</option>
-                    <option value="2">sigma 2</option>
-                    <option value="1">sigma 1</option>
-                    <option value="custom" class="hideOnMobile">custom</option>
-                  </select>
-                  <input class="range_filter hideOnMobile" type="text" bind:value="featurePropMinFilterInput" placeholder="min" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
-                  <input class="range_filter hideOnMobile" type="text" bind:value="featurePropMaxFilterInput" placeholder="max" on:input="updateFeaturePropRangeFilter('custom')" on:keydown="event.stopPropagation()">
-                </div>
-
-                <label style="margin-bottom: 5px;">
-                  <input type="checkbox" bind:checked="featurePropHideOutliers">
-                  Hide values outside range
-                </label>
-
-                {#if isPropNumeric(featurePropStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })}
-                <!-- {#if featurePropMostlyNumeric} -->
-                  <FeaturePropHistogram
-                    minFilter={featurePropMinFilter}
-                    maxFilter={featurePropMaxFilter}
-                    valueCounts={sortedFeaturePropValueCounts}
-                    valueColorFunction={featurePropValueColorFunction}
-                  />
-                {/if}
+              {#if featurePropMostlyNumeric}
+                <FeaturePropHistogram
+                  minFilter={featurePropMinFilter}
+                  maxFilter={featurePropMaxFilter}
+                  valueCounts={sortedFeaturePropValueCounts}
+                  valueColorFunction={featurePropValueColorFunction}
+                />
               {/if}
             {/if}
           {/if}
         {/if}
-      </div>
-
-      {#if sortedUniqueFeaturePropsSeen.length > 0}
-        <!-- Label property selector -->
-        <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-          <span style="flex: 0 0 auto; margin-right: 5px;">Label features by</span>
-          <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
-            <option value=""></option>
-            {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-              <option value="{JSON.stringify(propStack)}">{prop}</option>
-            {/each}
-          </select>
-        </div>
-
-        <!-- Point size property selector -->
-        <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-          <span style="flex: 0 0 auto; margin-right: 5px;">Scale point size by</span>
-          <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
-            <option value=""></option>
-            {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-              <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
-                <option value="{JSON.stringify(propStack)}">{prop}</option>
-              <!-- {/if} -->
-            {/each}
-          </select>
-        </div>
-
-        <!-- Point min/max pixel size -->
-        {#if displayToggles.pointSizeProp}
-          <div>
-            Point size (px):
-            <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
-            <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
-          </div>
-        {/if}
-      {/if}
-
-      {#if !(featureProp && featurePropCount != null)}
-        Select a feature property to analyze, from the property list or by clicking on an individual feature.
-      {/if}
-
-      <!-- Top values list -->
-      {#if featureProp && featurePropValueCounts}
-        <div class="hideOnMobile">
-          <div style="margin: 5px 0 5px 0;">
-            Top values by
-            <select bind:value="featurePropValueSort">
-              <option>count</option>
-              <option>values</option>
-            </select>
-          </div>
-
-          <table id="prop_stats">
-            <thead>
-              <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
-            </thead>
-            <tbody>
-              {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
-                <tr>
-                  <td style="width: 15px; text-align: right;">{count}</td>
-                  <td style="width: 15px;">
-                    <!-- uses color calc code shared with tangram-->
-                    {#if colorModeUsesProperty(displayToggles.colors)}
-                      <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
-                      </span>
-                    {/if}
-                  </td>
-                  <td
-                    class="value_row"
-                    class:active="featurePropValue != null && value == featurePropValue"
-                    on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
-                    {maybeStringifyObject(value)}
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
-
-          {#if sortedFeaturePropValueCounts.length > 50}
-            <i>{sortedFeaturePropValueCounts.length - 50} more {sortedFeaturePropValueCounts.length - 50 > 1 ? 'values' : 'value'} for {featureProp} not shown</i>
-          {/if}
-        </div>
       {/if}
     </div>
-  </div>
 
-  <!-- Demo/inspect mode toggle-->
-  {#if !demoMode}
-    <button on:click="set({ demoMode: true })" class="demoModeToggle">demo</button>
-  {/if}
-
-  <div id="controls_right" class="column hideOnMobile">
-    <div id="tag_summary" class="panel">
-      <table id="tag_stats">
-        {#if featuresInViewport.length}
-          <tr><td>features in viewport</td><td>{featuresInViewport.length}</td></tr>
-        {/if}
-        {#if numFeatureTagsInViewport != null}
-          <tr><td>feature tags in viewport</td><td>{numFeatureTagsInViewport}</td></tr>
-        {/if}
-        <tr><td>unique tags in viewport</td><td>{uniqueTagsInViewport.size}</td></tr>
-        <tr><td>unique tags seen</td><td>{uniqueTagsSeen.size}</td></tr>
-      </table>
-      <div id="tags_filtered">
-        filtering by tags:<br>
-        {#if tagFilterList.length > 0}
-          {tagFilterList.join(', ')}<br><br>
-        {:else}
-          <i>no tags filtered<br><br></i>
-        {/if}
-      </div>
-      <div style="color:blue;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</div>
-      <div id="and_or">
-        <input type="radio" g="and_or" value="or" bind:group='tagFilterAndOr'>or
-        <input type="radio" name="and_or" value="and" bind:group='tagFilterAndOr'>and<br>
-      </div>
-    </div>
-    <div id="tag_panel" class="panel">
-      <span style="color:blue;" on:click="toggleTagFilterViewport()">
-        {#if tagFilterViewport}
-          [show all tags seen]
-        {:else}
-          [only show tags in view]
-        {/if}
-      </span>
-      <span style="color:blue;" on:click="toggleTagFilterAt()">
-        {#if tagFilterAt}
-          [show all tag names]
-        {:else}
-          [only show @ tags]
-        {/if}
-      </span>
-      <span style="color:blue;" on:click="toggleTagSort()">
-        [sort by {nextTagSort}]
-      </span>
-      <div id="tags">
-        <div>
-          <input id="tag_search" type="text" bind:value="tagFilterSearch" placeholder="Filter tags" on:keydown="event.stopPropagation()">
-        </div>
-
-        <!-- The JSON.stringify gives Svelte a way to uniquely identify the full tag info.
-          This ensures that the correct checkboxes stay checked when the list is re-ordered
-          (for instance when tag counts change). See https://svelte.technology/guide#keyed-each-blocks.
-        -->
-        {#each tagDisplayList.slice(0, 500) as tag (JSON.stringify(tag))}
-          <label>
-            <input type="checkbox" value="{tag[0]}" bind:group='tagFilterList'>
-            ({tag[1]}x) {tag[0]}
-          </label>
-          <br>
-        {/each}
-
-        {#if tagDisplayList.length > 500}
-          <i>Displaying the top 500 tags of {tagDisplayList.length} total</i>
-        {/if}
-      </div>
-    </div>
-    <!-- testing moving the properties -->
-    <div id="properties" class="panel hideOnMobile">
-      {#if sortedUniqueFeaturePropsSeen.length > 0}
-        <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
-        <table>
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <!-- Label property selector -->
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px;">Label features by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
+          <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
-            <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
-              <td>
-                {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
-                {prop}
-              </td>
-            </tr>
+            <option value="{JSON.stringify(propStack)}">{prop}</option>
           {/each}
+        </select>
+      </div>
+
+      <!-- Point size property selector -->
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px;">Scale point size by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
+          <option value=""></option>
+          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+            <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
+              <option value="{JSON.stringify(propStack)}">{prop}</option>
+            <!-- {/if} -->
+          {/each}
+        </select>
+      </div>
+
+      <!-- Point min/max pixel size -->
+      {#if displayToggles.pointSizeProp}
+        <div>
+          Point size (px):
+          <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
+          <input class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
+        </div>
+      {/if}
+    {/if}
+
+    {#if !(featureProp && featurePropCount != null)}
+      Select a feature property to analyze, from the property list or by clicking on an individual feature.
+    {/if}
+
+    <!-- Top values list -->
+    {#if featureProp && featurePropValueCounts}
+      <div class="hideOnMobile">
+        <div style="margin: 5px 0 5px 0;">
+          Top values by
+          <select bind:value="featurePropValueSort">
+            <option>count</option>
+            <option>values</option>
+          </select>
+        </div>
+
+        <table id="prop_stats">
+          <thead>
+            <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
+          </thead>
+          <tbody>
+            {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
+              <tr>
+                <td style="width: 15px; text-align: right;">{count}</td>
+                <td style="width: 15px;">
+                  <!-- uses color calc code shared with tangram-->
+                  {#if colorModeUsesProperty(displayToggles.colors)}
+                    <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
+                    </span>
+                  {/if}
+                </td>
+                <td
+                  class="value_row"
+                  class:active="featurePropValue != null && value == featurePropValue"
+                  on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
+                  {maybeStringifyObject(value)}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
         </table>
+
+        {#if sortedFeaturePropValueCounts.length > 50}
+          <i>{sortedFeaturePropValueCounts.length - 50} more {sortedFeaturePropValueCounts.length - 50 > 1 ? 'values' : 'value'} for {featureProp} not shown</i>
+        {/if}
+      </div>
+    {/if}
+  </div>
+</div>
+
+<div id="controls_right" class="column hideOnMobile" class:hideInDemoMode="demoMode">
+  <div id="tag_summary" class="panel">
+    <table id="tag_stats">
+      {#if featuresInViewport.length}
+        <tr><td>features in viewport</td><td>{featuresInViewport.length}</td></tr>
+      {/if}
+      {#if numFeatureTagsInViewport != null}
+        <tr><td>feature tags in viewport</td><td>{numFeatureTagsInViewport}</td></tr>
+      {/if}
+      <tr><td>unique tags in viewport</td><td>{uniqueTagsInViewport.size}</td></tr>
+      <tr><td>unique tags seen</td><td>{uniqueTagsSeen.size}</td></tr>
+    </table>
+    <div id="tags_filtered">
+      filtering by tags:<br>
+      {#if tagFilterList.length > 0}
+        {tagFilterList.join(', ')}<br><br>
+      {:else}
+        <i>no tags filtered<br><br></i>
+      {/if}
+    </div>
+    <div style="color:blue;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</div>
+    <div id="and_or">
+      <input type="radio" g="and_or" value="or" bind:group='tagFilterAndOr'>or
+      <input type="radio" name="and_or" value="and" bind:group='tagFilterAndOr'>and<br>
+    </div>
+  </div>
+  <div id="tag_panel" class="panel">
+    <span style="color:blue;" on:click="toggleTagFilterViewport()">
+      {#if tagFilterViewport}
+        [show all tags seen]
+      {:else}
+        [only show tags in view]
+      {/if}
+    </span>
+    <span style="color:blue;" on:click="toggleTagFilterAt()">
+      {#if tagFilterAt}
+        [show all tag names]
+      {:else}
+        [only show @ tags]
+      {/if}
+    </span>
+    <span style="color:blue;" on:click="toggleTagSort()">
+      [sort by {nextTagSort}]
+    </span>
+    <div id="tags">
+      <div>
+        <input id="tag_search" type="text" bind:value="tagFilterSearch" placeholder="Filter tags" on:keydown="event.stopPropagation()">
+      </div>
+
+      <!-- The JSON.stringify gives Svelte a way to uniquely identify the full tag info.
+        This ensures that the correct checkboxes stay checked when the list is re-ordered
+        (for instance when tag counts change). See https://svelte.technology/guide#keyed-each-blocks.
+      -->
+      {#each tagDisplayList.slice(0, 500) as tag (JSON.stringify(tag))}
+        <label>
+          <input type="checkbox" value="{tag[0]}" bind:group='tagFilterList'>
+          ({tag[1]}x) {tag[0]}
+        </label>
+        <br>
+      {/each}
+
+      {#if tagDisplayList.length > 500}
+        <i>Displaying the top 500 tags of {tagDisplayList.length} total</i>
       {/if}
     </div>
   </div>
-{/if}
+  <!-- testing moving the properties -->
+  <div id="properties" class="panel hideOnMobile">
+    {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
+      <table>
+        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
+            <td>
+              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
+              {prop}
+            </td>
+          </tr>
+        {/each}
+      </table>
+    {/if}
+  </div>
+</div>
 
 <!-- feature popup content, hidden in the main UI and synced to the Leaflet popup -->
 <div style="display: none">
@@ -1140,7 +1148,7 @@ export default {
 
     // references here make these available to as template helper
     useFeaturePropRangeLimit,
-    isPropNumeric
+    // isPropNumeric
   }
 }
 
@@ -1248,6 +1256,10 @@ function hashString (string) {
     right: 0;
   }
 
+  .hideInDemoMode {
+    display: none !important;
+  }
+
   #tag_panel {
     overflow: auto;
     flex: 1 1 150vh;
@@ -1282,10 +1294,11 @@ function hashString (string) {
   }
 
   .demoModeToggle {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    z-index: 1001;
+    /* position: absolute; */
+    /* right: 10px; */
+    /* top: 10px; */
+    /* z-index: 1001; */
+    float: right;
   }
 
   /* mobile styles at the end for higher precedence */

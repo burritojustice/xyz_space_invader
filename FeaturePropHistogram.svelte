@@ -1,5 +1,7 @@
 <div>
-  <div>histogram: {numQuantiles} buckets, {step.toFixed(1)} wide</div>
+  {#if showHeader}
+    <div>histogram: {numQuantiles} buckets, {step.toFixed(1)} wide</div>
+  {/if}
   <table style="width: 100%">
     {#if outsideRange[0]}
       <tr>
@@ -42,7 +44,8 @@ export default {
     return {
       numQuantiles: 7,
       minFilter: null,
-      maxFilter: null
+      maxFilter: null,
+      showHeader: true
     }
   },
 
