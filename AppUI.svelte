@@ -466,20 +466,6 @@ export default {
         return null;
       }
     },
-    
-    featureClusteringPropPropStack: ({ displayToggles }) => {
-      try {
-          if (displayToggles && displayToggles.clusteringProp){
-            console.log('clustering with property:',displayToggles.clusteringProp);
-            return (displayToggles && displayToggles.clusteringProp) ? displayToggles.clusteringProp : null
-            // below is adding brackets to the "["property"]" which is not what the API is looking for
-//             return (displayToggles && displayToggles.clusteringProp) ? JSON.parse(displayToggles.clusteringProp) : null;
-          }
-      }
-      catch (e) {
-        return null;
-      }
-    },
 
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
       if (!featurePropValueCounts) {
