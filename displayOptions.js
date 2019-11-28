@@ -8,7 +8,9 @@ export const displayOptions = {
     parse: parseInt,
     values: [1, 0],
     apply: (scene, value) => {
-      _.set(scene, 'layers.buildings.enabled', (value === 1));
+      if (_.get(scene, 'layers.buildings')) {
+        _.set(scene, 'layers.buildings.enabled', (value === 1));
+      }
     }
   },
 
@@ -218,7 +220,9 @@ export const displayOptions = {
     apply: (scene, value) => {
       if (value === 0) {
         _.set(scene, 'layers.roads.enabled', false);
-        _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
+        if (_.get(scene, 'layers.pois')) {
+          _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
+        }
       }
       else if (value === 1) {
         _.set(scene, 'layers.roads.enabled', true);
@@ -227,7 +231,9 @@ export const displayOptions = {
       else if (value === 2) {
         _.set(scene, 'layers.roads.enabled', 'true');
         _.set(scene, 'layers.roads.draw.lines.visible', false); // just labels, no geometry
-        _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
+        if (_.get(scene, 'layers.pois')) {
+          _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
+        }
       }
     }
   },
