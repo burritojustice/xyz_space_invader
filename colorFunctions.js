@@ -68,7 +68,7 @@ export const colorFunctions = {
     color: colorHash,
   },
 
-  // color by hash of entire
+  // color by hash of entire feature
   hash: {
     label: 'feature hash',
     useProperty: false,
