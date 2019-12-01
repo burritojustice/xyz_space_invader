@@ -24,7 +24,7 @@ export const displayOptions = {
         _.set(scene, 'global.lookupFeatureLabelProp',
           `function(feature) {
               try {
-                return feature${featureLabelPropStack.map(k => '[\'' + k + '\']').join('')};
+                return feature${featureLabelPropStack.map(k => `['${k}']`).join('')};
               }
               catch(e) { return null; } // catches cases where some features lack nested property, or other errors
             }`);
@@ -58,7 +58,7 @@ export const displayOptions = {
         _.set(scene, 'global.lookupFeatureProp',
           `function(feature) {
             try {
-              return feature${featurePropStack.map(k => '[\'' + k + '\']').join('')};
+              return feature${featurePropStack.map(k => `['${k}']`).join('')};
             }
             catch(e) { return null; } // catches cases where some features lack nested property, or other errors
           }`);
@@ -97,7 +97,7 @@ export const displayOptions = {
         _.set(scene, 'global.lookupFeaturePointSizeProp',
           `function(feature) {
               try {
-                return feature${featurePointSizePropStack.map(k => '[\'' + k + '\']').join('')};
+                return feature${featurePointSizePropStack.map(k => `['${k}']`).join('')};
               }
               catch(e) { return null; } // catches cases where some features lack nested property, or other errors
             }`);
