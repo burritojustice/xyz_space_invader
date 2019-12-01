@@ -91,7 +91,7 @@ global:
         }
 
     # dynamic point size by feature property
-    featurePointSize: |
+    featurePointSizeDynamic: |
       function(feature, global) {
         var size = global.colorState.colorHelpers.parseNumber(global.lookupFeaturePointSizeProp(feature)) || 0;
         var range = global.featurePointSizeRange;
@@ -139,13 +139,33 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
+            # regular filled points
             points:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
                 color: function(){ return global.featureColorDefault(feature, global, $geometry); }
-                size: 6px
-                outline: {}
+                size: global.featurePointSize
+                outline:
+                    width: global.featurePointOutlineSize
+                text:
+                    visible: false # updated by JS app at run-time
+                    text_source: global.featureLabelText
+                    optional: true
+                    font: global.featureLabelFont # set by the basemap
+            # inverted, outline-only "donut" points
+            # these get toggled on/off with the filled points above, as an alternate point draw mode
+            donut_points:
+                visible: false
+                style: points
+                interactive: true
+                collide: false
+                blend_order: 0 # put our points under the basemap labels
+                color: [1, 1, 1, .05]
+                size: global.featurePointSize
+                outline:
+                    color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                    width: global.featurePointOutlineSize
                 text:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText

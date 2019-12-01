@@ -81,6 +81,7 @@ export const displayOptions = {
       _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.color', featureColorVal);
       _.set(scene, 'layers._xyz_lines.draw._lines.color', featureColorVal);
       _.set(scene, 'layers._xyz_dots.draw.points.color', featureColorVal);
+      _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.color', featureColorVal);
     }
   },
 
@@ -89,7 +90,7 @@ export const displayOptions = {
     parse: parseInt,
     values: [0, 1, 2, 3, 4],
     apply: (scene, value, { featurePointSizePropStack, featurePointSizeRange }) => {
-      let size, outlineWidth;
+      let size;
 
       // ignore explicit point size setting when a feature property is selected
       if (featurePointSizePropStack) {
@@ -105,37 +106,30 @@ export const displayOptions = {
         _.set(scene, 'global.featurePointSizeRange', featurePointSizeRange);
 
         if (featurePointSizeRange[0] != null && featurePointSizeRange[1] != null) {
-          size = `function(){ return global.featurePointSize(feature, global); }`;
+          size = `function(){ return global.featurePointSizeDynamic(feature, global); }`;
         }
         else {
           // TODO: use rank or quantiles for non-numeric properties
           size = '6px'; // use fixed point size for non-numeric properties
         }
-        outlineWidth = null;
       }
       else if (value === 0) { // small
         size = '6px';
-        outlineWidth = null;
       }
       else if (value === 1) { // smaller
         size = '3px';
-        outlineWidth = null;
       }
       else if (value === 2) { // bigger
         size = '15px';
-        outlineWidth = '1px';
       }
-      else if (value === 3) { // big
+    else if (value === 3) { // big
         size = '12px';
-        outlineWidth = '1px';
       }
-       else if (value === 4) { // medium
+      else if (value === 4) { // medium
         size = '9px';
-        outlineWidth = '1px';
       }
 
-      _.set(scene, 'layers._xyz_dots.draw.points.size', size);
-      _.set(scene, 'layers._xyz_dots.draw.points.outline.width', outlineWidth);
+      _.set(scene, 'global.featurePointSize', size);
     }
   },
 
@@ -169,20 +163,21 @@ export const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1, 2, 3],
+    values: [0, 1, 2, 3, 4],
     apply: (scene, value) => {
+      let donutOutline = false;
+
       if (value === 0) { // no outline
         _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '0px');
-//         _.set(scene, 'layers._xyz_lines.draw._lines.outline = {}
         _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '0px');
-        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '0px');
+        _.set(scene, 'global.featurePointOutlineSize', '0px');
       }
       else if (value === 1) { // subtle grey polygons
         _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '1px'); // polygons have a default aqua outlin)e
         _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [.5,.5,.5,.5]);
         _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
         _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [.5,.5,.5,.5]);
-        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'global.featurePointOutlineSize', '1px');
         _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [.5,.5,.5,.5]);
       }
       else if (value === 2) { // white outlines
@@ -190,7 +185,7 @@ export const displayOptions = {
         _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [1,1,1,0.75]);
         _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
         _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [1,1,1,.75]);
-        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'global.featurePointOutlineSize', '1px');
         _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [1,1,1,0.75]);
       }
       else if (value === 3) { // black outlines
@@ -198,10 +193,18 @@ export const displayOptions = {
         _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [0,0,0,0.75]);
         _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
         _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [0,0,0,0.75]);
-        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'global.featurePointOutlineSize', '1px');
         _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [0,0,0,0.75]);
       }
-      // TODO take point fill color, assign assign as point outline color, and remove fill entirely
+      else if (value === 4) { // donut outlines
+        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '0px');
+        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '0px');
+        _.set(scene, 'global.featurePointOutlineSize', '2px');
+        donutOutline = true;
+      }
+
+      _.set(scene, 'layers._xyz_dots.draw.points.visible', !donutOutline);
+      _.set(scene, 'layers._xyz_dots.draw.donut_points.visible', donutOutline);
     }
   },
 
