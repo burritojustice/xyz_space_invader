@@ -78,8 +78,8 @@ export const displayOptions = {
         featureColorVal = 'function(){ return global.featureColorDefault(feature, global, $geometry); }';
       }
 
-      _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.color', featureColorVal);
-      _.set(scene, 'layers._xyz_lines.draw._lines.color', featureColorVal);
+      _.set(scene, 'layers._xyz_polygons.draw.inlay_polygons.color', featureColorVal);
+      _.set(scene, 'layers._xyz_lines.draw.overlay_lines.color', featureColorVal);
       _.set(scene, 'layers._xyz_dots.draw.points.color', featureColorVal);
       _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.color', featureColorVal);
     }
@@ -156,7 +156,7 @@ export const displayOptions = {
         width = '1px';
       }
 
-      _.set(scene, 'layers._xyz_lines.draw._lines.width', width);
+      _.set(scene, 'layers._xyz_lines.draw.overlay_lines.width', width);
     }
   },
 
@@ -168,38 +168,43 @@ export const displayOptions = {
       let donutOutline = false;
 
       if (value === 0) { // no outline
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '0px');
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '0px');
-        _.set(scene, 'global.featurePointOutlineSize', '0px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', '0px');
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '0px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '0px');
+        _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '0px');
       }
       else if (value === 1) { // subtle grey polygons
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '1px'); // polygons have a default aqua outlin)e
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [.5,.5,.5,.5]);
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [.5,.5,.5,.5]);
-        _.set(scene, 'global.featurePointOutlineSize', '1px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', '1px'); // polygons have a default aqua outlin)e
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.color', [.5,.5,.5,.5]);
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '1px');
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.color', [.5,.5,.5,.5]);
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '1px');
         _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [.5,.5,.5,.5]);
       }
       else if (value === 2) { // white outlines
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '1px');
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [1,1,1,0.75]);
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [1,1,1,.75]);
-        _.set(scene, 'global.featurePointOutlineSize', '1px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', '1px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.color', [1,1,1,0.75]);
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '1px');
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.color', [1,1,1,.75]);
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '1px');
         _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [1,1,1,0.75]);
       }
       else if (value === 3) { // black outlines
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '1px');
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.color', [0,0,0,0.75]);
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '1px');
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.color', [0,0,0,0.75]);
-        _.set(scene, 'global.featurePointOutlineSize', '1px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', '1px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.color', [0,0,0,0.75]);
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '1px');
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.color', [0,0,0,0.75]);
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '1px');
         _.set(scene, 'layers._xyz_dots.draw.points.outline.color', [0,0,0,0.75]);
       }
       else if (value === 4) { // donut outlines
-        _.set(scene, 'layers._xyz_polygons._outlines.draw._lines.width', '0px');
-        _.set(scene, 'layers._xyz_lines.draw._lines.outline.width', '0px');
-        _.set(scene, 'global.featurePointOutlineSize', '2px');
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', '0px');
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '0px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '2px');
+        _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '2px');
         donutOutline = true;
       }
 
@@ -265,10 +270,10 @@ export const displayOptions = {
     values: [0, 1],
     apply: (scene, value) => {
       if (value === 0) {
-        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 200);
+        _.set(scene, 'layers._xyz_polygons.draw.inlay_polygons.order', 200);
       }
       else if (value === 1) {
-        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 300);
+        _.set(scene, 'layers._xyz_polygons.draw.inlay_polygons.order', 300);
       }
     }
   }

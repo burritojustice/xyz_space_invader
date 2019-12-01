@@ -86,7 +86,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -100,7 +100,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -114,7 +114,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -128,7 +128,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -142,7 +142,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -156,7 +156,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -170,7 +170,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -184,7 +184,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -198,7 +198,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -212,7 +212,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -226,7 +226,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -240,7 +240,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -254,7 +254,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -268,7 +268,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.light
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -282,7 +282,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: [1, 0, 0, 0.5] } } },
+      _xyz_lines: { draw: { overlay_lines: { color: [1, 0, 0, 0.5] } } },
       _xyz_dots: { draw: { points: { color: [0, 0, 1, 0.5] } } }
     },
     ...xyzTilezenSourceOverride
@@ -300,7 +300,7 @@ export const basemaps = {
       featureLabelFont: labelFontPresets.dark
     },
     layers: {
-      _xyz_lines: { draw: { _lines: { color: 'global.featureColorDefault' } } },
+      _xyz_lines: { draw: { overlay_lines: { color: 'global.featureColorDefault' } } },
       _xyz_dots: { draw: { points: { color: 'global.featureColorDefault' } } }
     },
     ...xyzTilezenSourceOverride

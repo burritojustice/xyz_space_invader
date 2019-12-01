@@ -103,32 +103,6 @@ global:
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
-styles:
-    _points:
-        base: points
-        blend: overlay
-        blend_order: 0
-    _text:
-        base: text
-        blend: overlay
-        blend_order: 11
-    _lines:
-        base: lines
-        blend: overlay
-        blend_order: 0
-    _lines_low:
-        base: lines
-        blend: inlay
-        blend_order: 2
-    _polygons_inlay:
-        base: polygons
-        blend: inlay
-        blend_order: 0
-    _polygons_overlay:
-        base: polygons
-        blend: overlay
-        blend_order: 1
-
 layers:
 
     _xyz_dots:
@@ -147,7 +121,7 @@ layers:
                 color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 size: global.featurePointSize
                 outline:
-                    width: global.featurePointOutlineSize
+                    width: 0px
                 text:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
@@ -165,7 +139,7 @@ layers:
                 size: global.featurePointSize
                 outline:
                     color: function(){ return global.featureColorDefault(feature, global, $geometry); }
-                    width: global.featurePointOutlineSize
+                    width: 0px
                 text:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
@@ -180,11 +154,11 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
-            _lines:
+            overlay_lines:
                 interactive: true
                 color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 width: 4px
-                order: 2000
+                blend_order: 0
                 outline:
                    color: white
                    width: 0px
@@ -204,16 +178,17 @@ layers:
         data: { source: _xyzspace }
         _outlines:
             draw:
-                _lines:
+                overlay_lines:
                     color: [0, 1, 1, 0.35]
                     width: 1px
-                    order: 2000
+                    blend_order: 0
         draw:
-            _polygons_inlay:
+            inlay_polygons:
                 interactive: true
                 color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 width: 2px
                 order: 300
+                blend_order: 0
             text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
