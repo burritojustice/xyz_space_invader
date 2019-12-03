@@ -164,7 +164,7 @@ export const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4],
+    values: [0, 1, 2, 3, 4, 5, 6],
     apply: (scene, value) => {
       let donutOutline = false;
 
@@ -208,6 +208,20 @@ export const displayOptions = {
         _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '2px');
         donutOutline = true;
       }
+      else if (value === 5) { // donut outlines
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', '0px');
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '0px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '1px');
+        _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '1px');
+        donutOutline = true;
+      }
+       else if (value === 6) { // donut outlines
+        _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', '0px');
+        _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '0px');
+        _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '.5px');
+        _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '.5px');
+        donutOutline = true;
+      }     
 
       _.set(scene, 'layers._xyz_dots.draw.points.visible', !donutOutline);
       _.set(scene, 'layers._xyz_dots.draw.donut_points.visible', donutOutline);
