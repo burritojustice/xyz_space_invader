@@ -353,8 +353,7 @@ export const basemaps = {
   },
   'albers': {
     import: [
-      'tangram_xyz_scene.yaml',
-      'albers.yaml',
+      'tangram_xyz_scene_albers.yaml',
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
