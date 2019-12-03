@@ -220,7 +220,7 @@ export const displayOptions = {
         _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', '.5px');
         _.set(scene, 'layers._xyz_dots.draw.points.outline.width', '.5px');
         _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.width', '.5px');
-        donutOutline = true;
+        donutOutline = true; 
       }     
 
       _.set(scene, 'layers._xyz_dots.draw.points.visible', !donutOutline);
