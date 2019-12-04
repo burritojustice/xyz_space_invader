@@ -9,8 +9,6 @@ import:
 
 styles:
     albers:
-        base: polygons
-        blend: overlay
         blend_order: 0
         shaders:
             defines:
