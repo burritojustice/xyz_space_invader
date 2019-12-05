@@ -201,11 +201,11 @@ layers:
                    color: white
                    width: 0px
             _text:
-              visible: false # updated by JS app at run-time
-              text_source: global.featureLabelText
-              # unique repeat group per feature, to avoid culling of labels with same values
-              repeat_group: function() { return $id }
-              font: global.featureLabelFont # set by the basemap
+                visible: false # updated by JS app at run-time
+                text_source: global.featureLabelText
+                # unique repeat group per feature, to avoid culling of labels with same values
+                repeat_group: function() { return $id }
+                font: global.featureLabelFont # set by the basemap
 
     _xyz_polygons:
         filter:
@@ -227,12 +227,12 @@ layers:
                 width: 2px
                 order: 300
             _text:
-              visible: false # updated by JS app at run-time
-              text_source: global.featureLabelText
-              # unique repeat group per feature, to avoid culling of labels with same values
-              repeat_group: function() { return $id }
-              repeat_distance: 700px # allow polygon labels to repeat over a longish distance
-              font: global.featureLabelFont # set by the basemap
+                visible: false # updated by JS app at run-time
+                text_source: global.featureLabelText
+                # unique repeat group per feature, to avoid culling of labels with same values
+                repeat_group: function() { return $id }
+                repeat_distance: 700px # allow polygon labels to repeat over a longish distance
+                font: global.featureLabelFont # set by the basemap
 
     boundaries:
         # enabled: false
@@ -266,7 +266,7 @@ layers:
     places:
         data: { source: mapzen }
         # filter: { kind: country }
-#         filter: { name: [British Columbia, Alberta, Saskatchewan, Manitoba, Ontario, Québec, New Brunswick, Nova Scotia, Prince Edward Island, Newfoundland and Labrador, ᓄᓇᕗᑦ Nunavut, Northwest Territories, Yukon]}
+        # filter: { name: [British Columbia, Alberta, Saskatchewan, Manitoba, Ontario, Québec, New Brunswick, Nova Scotia, Prince Edward Island, Newfoundland and Labrador, ᓄᓇᕗᑦ Nunavut, Northwest Territories, Yukon]}
         draw:
             _text:
                 # style: alberstext
