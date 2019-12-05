@@ -200,7 +200,7 @@ layers:
                 outline:
                    color: white
                    width: 0px
-            text:
+            _text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
@@ -226,7 +226,7 @@ layers:
                 color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 width: 2px
                 order: 300
-            text:
+            _text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
