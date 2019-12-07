@@ -73,16 +73,13 @@ export const displayOptions = {
       let featureColorVal;
       if (colorFunctions[value] && colorFunctions[value].color &&
           (featurePropStack || !colorFunctions[value].useProperty)) {
-        featureColorVal = 'function(){ return global.featureColorDynamic(feature, global); }';
+        featureColorVal = 'featureColorDynamic';
       }
       else {
-        featureColorVal = 'function(){ return global.featureColorDefault(feature, global, $geometry); }';
+        featureColorVal = 'featureColorDefault';
       }
 
-      _.set(scene, 'layers._xyz_polygons.draw.inlay_polygons.color', featureColorVal);
-      _.set(scene, 'layers._xyz_lines.draw.overlay_lines.color', featureColorVal);
-      _.set(scene, 'layers._xyz_dots.draw.points.color', featureColorVal);
-      _.set(scene, 'layers._xyz_dots.draw.donut_points.outline.color', featureColorVal);
+      _.set(scene, 'global.featureColorType', featureColorVal);
     }
   },
 

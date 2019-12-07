@@ -14,6 +14,15 @@ global:
     lookupFeatureLabelProp: function(feature) { return null; }
     lookupFeaturePointSizeProp: function(feature) { return null; }
 
+    # set feature colors to dynamic (by property, hash, etc.) or default (based on geometry type)
+    featureColorType: featureColorDefault
+
+    # get feature color based on current color mode
+    featureColor: |
+      function(feature, global, $geometry) {
+        return global[global.featureColorType](feature, global, $geometry);
+      }
+
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
@@ -118,7 +127,7 @@ layers:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                color: function(){ return global.featureColor(feature, global, $geometry); }
                 size: global.featurePointSize
                 outline:
                     width: 0px
@@ -135,10 +144,10 @@ layers:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
-                color: [1, 1, 1, .05]
+                color: transparent
                 size: global.featurePointSize
                 outline:
-                    color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                    color: function(){ return global.featureColor(feature, global, $geometry); }
                     width: 0px
                 text:
                     visible: false # updated by JS app at run-time
@@ -156,7 +165,7 @@ layers:
         draw:
             overlay_lines:
                 interactive: true
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                color: function(){ return global.featureColor(feature, global, $geometry); }
                 width: 4px
                 blend_order: 0
                 outline:
@@ -185,7 +194,7 @@ layers:
         draw:
             inlay_polygons:
                 interactive: true
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                color: global.featureColor
                 width: 2px
                 order: 300
                 blend_order: 0
