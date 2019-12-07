@@ -136,24 +136,16 @@ layers:
                     text_source: global.featureLabelText
                     optional: true
                     font: global.featureLabelFont # set by the basemap
-            # inverted, outline-only "donut" points
-            # these get toggled on/off with the filled points above, as an alternate point draw mode
-            donut_points:
-                visible: false
-                style: points
-                interactive: true
-                collide: false
-                blend_order: 0 # put our points under the basemap labels
-                color: transparent
-                size: global.featurePointSize
-                outline:
-                    color: function(){ return global.featureColor(feature, global, $geometry); }
-                    width: 0px
-                text:
-                    visible: false # updated by JS app at run-time
-                    text_source: global.featureLabelText
-                    optional: true
-                    font: global.featureLabelFont # set by the basemap
+
+        # inverted, outline-only "donut" points
+        # these get toggled on/off with the filled points above, as an alternate point draw mode
+        donut_points:
+            enabled: false
+            draw:
+              points:
+                  color: transparent
+                  outline:
+                      color: function(){ return global.featureColor(feature, global, $geometry); }
 
     _xyz_lines:
         filter:
