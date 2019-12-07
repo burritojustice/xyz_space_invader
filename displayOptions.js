@@ -8,9 +8,8 @@ export const displayOptions = {
     parse: parseInt,
     values: [1, 0],
     apply: (scene, value) => {
-      if (_.get(scene, 'layers.buildings')) {
-        _.set(scene, 'layers.buildings.enabled', (value === 1));
-      }
+      _.set(scene, 'layers.buildings.enabled', (value === 1));
+      _.set(scene, 'layers.buildings.data', {}); // ensure there is at least an empty data block, to suppress warnings
     }
   },
 
@@ -213,9 +212,8 @@ export const displayOptions = {
     parse: parseInt,
     values: [1, 0],
     apply: (scene, value) => {
-      if (_.get(scene, 'layers.places')) {
-        _.set(scene, 'layers.places.enabled', (value === 1));
-      }
+      _.set(scene, 'layers.places.enabled', (value === 1));
+      _.set(scene, 'layers.places.data', {}); // ensure there is at least an empty data block, to suppress warnings
     }
   },
 
@@ -224,30 +222,22 @@ export const displayOptions = {
     values: [1, 0, 2], // 1 = on, 0 = off, 2 = just road labels, no lines
     apply: (scene, value) => {
       if (value === 0) {
-        if (_.get(scene, 'layers.roads')) {
-          _.set(scene, 'layers.roads.enabled', false);
-        }
-
-        if (_.get(scene, 'layers.pois')) {
-          _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
-        }
+        _.set(scene, 'layers.roads.enabled', false);
+        _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
       }
       else if (value === 1) {
-        if (_.get(scene, 'layers.roads')) {
-          _.set(scene, 'layers.roads.enabled', true);
-          _.set(scene, 'layers.roads.draw.lines.visible', true);
-        }
+        _.set(scene, 'layers.roads.enabled', true);
+        _.set(scene, 'layers.roads.draw.lines.visible', true);
       }
       else if (value === 2) {
-        if (_.get(scene, 'layers.roads')) {
-          _.set(scene, 'layers.roads.enabled', 'true');
-          _.set(scene, 'layers.roads.draw.lines.visible', false); // just labels, no geometry
-        }
-
-        if (_.get(scene, 'layers.pois')) {
-          _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
-        }
+        _.set(scene, 'layers.roads.enabled', 'true');
+        _.set(scene, 'layers.roads.draw.lines.visible', false); // just labels, no geometry
+        _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
       }
+
+      // ensure there is at least an empty data block, to suppress warnings
+      _.set(scene, 'layers.roads.data', {});
+      _.set(scene, 'layers.pois.data', {});
     }
   },
 
