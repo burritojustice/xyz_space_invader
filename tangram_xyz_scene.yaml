@@ -161,7 +161,6 @@ layers:
                 width: 4px
                 blend_order: 0
                 outline:
-                   color: white
                    width: 0px
             text:
               visible: false # updated by JS app at run-time
@@ -180,8 +179,7 @@ layers:
         _outlines:
             draw:
                 overlay_lines:
-                    color: [0, 1, 1, 0.35]
-                    width: 1px
+                    width: 0px
                     blend_order: 0
         draw:
             inlay_polygons:
