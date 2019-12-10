@@ -1,5 +1,8 @@
-import: albers-import.yaml
-
+import:
+    - https://tangrams.github.io/blocks/patterns/stripes.yaml
+    - https://tangrams.github.io/blocks/space/screen.yaml
+    - albers-import.yaml
+    
 scene:
     background:
         color: white
@@ -171,7 +174,8 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
-            _points:
+            points:
+                style: _points
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
@@ -192,7 +196,8 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
-            _lines:
+            lines:
+                style: _lines
                 interactive: true
                 color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 width: 4px
@@ -200,7 +205,8 @@ layers:
                 outline:
                    color: white
                    width: 0px
-            _text:
+            text:
+                style: _text
                 visible: false # updated by JS app at run-time
                 text_source: global.featureLabelText
                 # unique repeat group per feature, to avoid culling of labels with same values
@@ -216,17 +222,20 @@ layers:
         data: { source: _xyzspace }
         _outlines:
             draw:
-                _lines:
+                lines:
+                    style: _lines
                     color: [0, 1, 1, 0.35]
                     width: 1px
                     order: 2000
         draw:
-            _polygons_inlay:
+            polygons:
+                style: _polygons_inlay
                 interactive: true
                 color: function(){ return global.featureColorDefault(feature, global, $geometry); }
                 width: 2px
                 order: 300
-            _text:
+            text:
+                style: _text
                 visible: false # updated by JS app at run-time
                 text_source: global.featureLabelText
                 # unique repeat group per feature, to avoid culling of labels with same values
@@ -238,7 +247,8 @@ layers:
         # enabled: false
         data: { source: mapzen }
         draw:
-            _lines:
+            lines:
+                style: _lines
                 # style: alberslines
                 order: 10
                 color: [0,0,0,0.25]
@@ -249,7 +259,8 @@ layers:
             waves:
                 order: 20
                 color: [0.824, 0.812, 0.804]
-            # alberspoints:
+            # points:
+            #     style: _points
             #     buffer: 8px;
             #     font:
             #         typeface: Italic 14px Times
@@ -257,8 +268,9 @@ layers:
             #         stroke: { color: white , width: 5 }
         lakes:
             filter: { kind: [lake, riverbank, dock, water, basin, reservoir, playa, canal, dam, ditch, drain, river, stream]}
-            draw: 
-                _lines:
+            draw:
+                lines:
+                    style: _lines
                     order: 1 # global.order hides this for some reason
                     color: black
                     cap: round
@@ -268,8 +280,8 @@ layers:
         # filter: { kind: country }
         # filter: { name: [British Columbia, Alberta, Saskatchewan, Manitoba, Ontario, Québec, New Brunswick, Nova Scotia, Prince Edward Island, Newfoundland and Labrador, ᓄᓇᕗᑦ Nunavut, Northwest Territories, Yukon]}
         draw:
-            _text:
-                # style: alberstext
+            text:
+                style: _text
                 buffer: 8px
                 font:
                     # typeface: Italic 10px Times

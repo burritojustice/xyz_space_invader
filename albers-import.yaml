@@ -1,12 +1,5 @@
 # contributors: @patriciogv @meetar @burritojustice
 
-import:
-    - https://tangrams.github.io/blocks/functions/aastep.yaml
-    - https://tangrams.github.io/blocks/functions/pulse.yaml
-    - https://tangrams.github.io/blocks/patterns/stripes.yaml
-    - https://tangrams.github.io/blocks/patterns/dots.yaml
-    - https://tangrams.github.io/blocks/space/screen.yaml
-
 styles:
     albers:
         blend_order: 0
