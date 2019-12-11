@@ -1,0 +1,667 @@
+global:
+    angle: 0.75
+    highlight:
+        color: [1,1,1,0.25]
+        width: 2px
+    grey:
+        color: [.5,.5,.5,0.25]
+        width: 2px
+    black:
+        color: [0,0,0,0.25]
+        width: 2px
+
+    # replaced by app JS, used to look-up feature props that may be nested
+    lookupFeatureProp: function(feature) { return null; }
+    lookupFeatureLabelProp: function(feature) { return null; }
+
+    # dyanmic feature coloring, using the currently defined "color mode"
+    # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
+    featureColorDynamic: |
+      function () {
+        try {
+          if (global.colorFunctions[global.colorMode]) {
+            if (global.colorFunctions[global.colorMode].useProperty) {
+              return global.colorFunctions[global.colorMode].color(
+                global.lookupFeatureProp(feature),
+                global.colorState
+              );
+            }
+            else {
+              return global.colorFunctions[global.colorMode].color(
+                feature,
+                global.colorState
+              );
+            }
+          }
+        }
+        catch(e) { } // fallthrough to default color on exception
+        return 'rgba(127, 127, 127, .5)';
+      }
+
+    # simple color by feature color property, or fallback to geometry type
+    featureColorDefault: |
+        function() {
+            var color;
+            if (feature.color) {
+                color = feature.color
+            }
+            else if ($geometry === 'point') {
+              color = [1, 0, 0, 0.5];
+            }
+            else if ($geometry === 'line') {
+              color = [1, 1, 0, 0.3];
+            }
+            else if ($geometry === 'polygon') {
+              color = [1, 0, 1, 0.3];
+            }
+            return color;
+        }
+
+    # optionally hide feature values that are above or below the current filter range
+    featureFilterOutliers: |
+        function() {
+          if (global.colorState.featurePropHideOutliers && global.colorFunctions[global.colorMode]) {
+            if (global.colorFunctions[global.colorMode].useProperty) {
+              var value = global.colorState.colorHelpers.parseNumber(global.lookupFeatureProp(feature));
+              if (value < global.colorState.featurePropMinFilter ||
+                  value > global.colorState.featurePropMaxFilter+1) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }
+
+    # optionally filter by specific property/value combination
+    featureFilterSelectedValue: |
+        function() {
+          if (global.colorState.featurePropStack != null && global.colorState.featurePropValue != null) {
+            var value = global.lookupFeatureProp(feature);
+            if (value !== global.colorState.featurePropValue) {
+              return false;
+            }
+          }
+          return true;
+        }
+
+    # used for dynamic text_source on feature labels
+    featureLabelText: |
+        function() {
+          return global.lookupFeatureLabelProp(feature);
+        }
+
+# sources:
+#     _xyzspace: # this source is created at run-time based on XYZ space
+
+import:
+    - https://sensescape.github.io/xyz-stripes/scene.yaml
+sources:
+    _xyzspace:
+        url: https://xyz.api.here.com/hub/spaces/cacVJZ1K/tile/web/{z}_{x}_{y}
+        type: GeoJSON
+        url_params: 
+            access_token: AVoxWfIDYgZOr4zOaUV3urg
+            # tags: YOUR_TAG
+            # limit: 50000 # 
+            clip: true
+    _census:
+        url: https://xyz.api.here.com/hub/spaces/oWmXpELu/tile/web/{z}_{x}_{y}
+        type: GeoJSON
+        url_params: 
+            access_token: AVoxWfIDYgZOr4zOaUV3urg
+            # tags: YOUR_TAG
+            # limit: 50000 # 
+            clip: true
+    
+    
+
+
+styles:
+    _points:
+        base: points
+        blend: overlay
+        blend_order: 0
+    _text:
+        base: text
+        blend: overlay
+        blend_order: 11
+    _lines:
+        base: lines
+        blend: overlay
+        blend_order: 0
+    _lines_low:
+        base: lines
+        blend: inlay
+        blend_order: 2
+    _polygons_inlay:
+        base: polygons
+        blend: inlay
+        blend_order: 0
+    _polygons_overlay:
+        base: polygons
+        blend: overlay
+        blend_order: 1
+    stripes-green-angle:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen]
+        blend: inlay
+        shaders:
+            defines:
+                STRIPES_WIDTH: 0.5
+                STRIPES_ALPHA: 0.204
+                STRIPES_SCALE: 2.
+                STRIPES_ANGLE: 0.7853981634
+            blocks:
+                color: |
+                    vec2 st = getScreenNonStretchCoords();
+                    color = mix(color,vec4(0.950,0.950,0.950,0.5),stripes(st*180.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+    _census-width-45:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen]
+        blend: inlay
+        shaders:
+            defines:
+                STRIPES_WIDTH: 0.975
+                STRIPES_ALPHA: 0.75
+                STRIPES_SCALE: 2.
+                STRIPES_ANGLE: 0.7853981634
+            blocks:
+                color: |
+                    vec2 st = getScreenNonStretchCoords();
+                    color = mix(color,vec4(0.950,0.950,0.950,0.5),stripes(st*180.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+                                        
+    _census-width-up:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen]
+        blend: inlay
+        shaders:
+            defines:
+                STRIPES_WIDTH: 0.975
+                STRIPES_ALPHA: 0.75
+                STRIPES_SCALE: 2.
+                STRIPES_ANGLE: 0.7853981634
+            blocks:
+                color: |
+                    vec2 st = getScreenNonStretchCoords();
+                    color = mix(color,vec4(0.950,0.950,0.950,0.5),stripes(st*180.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    _census-width-flat:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen]
+        blend: inlay
+        shaders:
+            defines:
+                STRIPES_WIDTH: 0.975
+                STRIPES_ALPHA: 0.75
+                STRIPES_SCALE: 2.
+                STRIPES_ANGLE: 3.14159265
+            blocks:
+                color: |
+                    vec2 st = getScreenNonStretchCoords();
+                    color = mix(color,vec4(0.950,0.950,0.950,0.5),stripes(st*180.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+
+    _census-width-down:
+        base: polygons
+        mix: [functions-aastep, patterns-stripes, space-screen]
+        blend: inlay
+        shaders:
+            defines:
+                STRIPES_WIDTH: 0.975
+                STRIPES_ALPHA: 0.75
+                STRIPES_SCALE: 2.
+                STRIPES_ANGLE: -0.7853981634
+            blocks:
+                color: |
+                    vec2 st = getScreenNonStretchCoords();
+                    color = mix(color,vec4(0.950,0.950,0.950,0.5),stripes(st*180.,
+                                        STRIPES_WIDTH,
+                                        STRIPES_ANGLE));
+    functions-aastep:
+        doc:
+            author:
+                name: Matt DesLauriers
+                twitter: mattdesl
+            version: 0.0.1
+            tangram-version: 0.0.7
+            licence: MIT
+            description: |
+                AnitAliased ```step()``` function implemented by [Matt DesLauriers](https://twitter.com/mattdesl) in this module <https://github.com/stackgl/glsl-aastep>
+        shaders:
+            extensions: OES_standard_derivatives
+            blocks:
+                global: |
+                    // AntiAliased Step function
+                    //=============================
+                    float aastep(float threshold, float value) {
+                        #ifdef TANGRAM_FRAGMENT_SHADER
+                            #ifdef TANGRAM_EXTENSION_OES_standard_derivatives
+                                float afwidth = length(vec2(dFdx(value), dFdy(value))) * 0.70710678118654757;
+                                return smoothstep(threshold-afwidth, threshold+afwidth, value);
+                            #else
+                                return step(threshold, value);
+                            #endif
+                        #else
+                            return step(threshold, value);
+                        #endif
+                    }
+    patterns-stripes:
+        doc:
+            author:
+                name: Patricio Gonzalez Vivo
+                twitter: patriciogv
+            version: 0.0.1
+            tangram-version: 0.0.7
+            licence: MIT
+            description: |
+                Collection of functions to draw stripes. To learn more about patterns check [this chapter from the Book of Shaders](https://thebookofshaders.com/09/)
+            examples:
+                grain-area:
+                    url: https://tangrams.github.io/tangram-sandbox/styles/grain-area.yaml
+                    img: https://tangrams.github.io/tangram-sandbox/styles/grain-area.png
+                    lines: 26
+                press:
+                    url: https://tangrams.github.io/tangram-sandbox/styles/press.yaml
+                    img: https://tangrams.github.io/tangram-sandbox/styles/press.png
+                    lines: 150
+                radar:
+                    url: https://tangrams.github.io/tangram-sandbox/styles/radar.yaml
+                    img: https://tangrams.github.io/tangram-sandbox/styles/radar.png
+        mix: [functions-aastep, geometry-matrices]
+        shaders:
+            defines:
+                PI: 3.14159265358979323846
+            blocks:
+                global: |
+                    // Return a distance function of stripes
+                    float stripesDF (vec2 st) {
+                        return abs(sin(st.y*PI));
+                    }
+
+                    // Adjustable width stripes
+                    float stripes (vec2 st, float width) {
+                        return aastep(width, stripesDF(st));
+                    }
+
+                    // Adjustable Angle
+                    float stripes (vec2 st, float width, float angle) {
+                        st = rotate2D(angle) * st;
+                        return stripes(st, width);
+                    }
+
+                    // Faster optimisation of diagonal stripes
+                    float diagonalStripes (vec2 st) {
+                        vec2 i_st = floor(st);
+                        vec2 f_st = fract(st);
+                        if (mod(i_st.y,2.) - mod(i_st.x,2.) == 0.) {
+                            return 1.0 - aastep(f_st.x,f_st.y);
+                        } else {
+                            return aastep(f_st.x,f_st.y);
+                        }
+                    }
+
+                    // Faster optimisation of diagonal stripes with controlable width
+                    float diagonalStripes (vec2 st, float width) {
+                        st.y -= st.x;
+                        return stripes(st, width);
+                    }
+    geometry-matrices:
+        mix: [block]
+        doc:
+            author:
+                name: Patricio Gonzalez Vivo
+                twitter: patriciogv
+            version: 0.0.1
+            tangram-version: 0.0.7
+            licence: MIT
+            description: |
+                Useful set of functions to construct scale, rotation and translation of 2, 3 or 4 dimensions. For more information about matrices read [this chapter from The Book of Shaders](http://thebookofshaders.com/08/)
+        shaders:
+            blocks:
+                global: |
+                    // Rotate in 2, 3 and 4 dimensions
+                    // ================================
+                    mat2 rotate2D (float angle) {
+                        return mat2(cos(angle),-sin(angle),
+                                    sin(angle),cos(angle));
+                    }
+                    #ifdef TANGRAM_FRAGMENT_SHADER
+                    vec2 rotate2D (vec2 st, float a) {
+                        return (rotate2D(a)*(st-.5))+.5;
+                    }
+                    #endif
+                    mat3 rotateX3D (float phi) {
+                        return mat3(
+                            vec3(1.,0.,0.),
+                            vec3(0.,cos(phi),-sin(phi)),
+                            vec3(0.,sin(phi),cos(phi)));
+                    }
+                    mat4 rotateX4D (float phi) {
+                        return mat4(
+                            vec4(1.,0.,0.,0),
+                            vec4(0.,cos(phi),-sin(phi),0.),
+                            vec4(0.,sin(phi),cos(phi),0.),
+                            vec4(0.,0.,0.,1.));
+                    }
+                    mat3 rotateY3D (float theta) {
+                        return mat3(
+                            vec3(cos(theta),0.,-sin(theta)),
+                            vec3(0.,1.,0.),
+                            vec3(sin(theta),0.,cos(theta)));
+                    }
+                    mat4 rotateY4D (float theta) {
+                        return mat4(
+                            vec4(cos(theta),0.,-sin(theta),0),
+                            vec4(0.,1.,0.,0.),
+                            vec4(sin(theta),0.,cos(theta),0.),
+                            vec4(0.,0.,0.,1.));
+                    }
+                    mat3 rotateZ3D (float psi) {
+                        return mat3(
+                            vec3(cos(psi),-sin(psi),0.),
+                            vec3(sin(psi),cos(psi),0.),
+                            vec3(0.,0.,1.));
+                    }
+                    mat4 rotateZ4D (float psi) {
+                        return mat4(
+                            vec4(cos(psi),-sin(psi),0.,0),
+                            vec4(sin(psi),cos(psi),0.,0.),
+                            vec4(0.,0.,1.,0.),
+                            vec4(0.,0.,0.,1.));
+                    }
+                    //
+                    // Scale 4 dimensions
+                    // ================================
+                    mat4 scale4D (float x, float y, float z) {
+                        return mat4(
+                            vec4(x,   0.0, 0.0, 0.0),
+                            vec4(0.0, y,   0.0, 0.0),
+                            vec4(0.0, 0.0, z,   0.0),
+                            vec4(0.0, 0.0, 0.0, 1.0)
+                        );
+                    }
+                    //
+                    // Translate in 4 dimensions
+                    mat4 translate4D (float x, float y, float z) {
+                        return mat4(
+                            vec4(1.0, 0.0, 0.0, 0.0),
+                            vec4(0.0, 1.0, 0.0, 0.0),
+                            vec4(0.0, 0.0, 1.0, 0.0),
+                            vec4(x,   y,   z,   1.0)
+                        );
+                    }
+    space-screen:
+        doc:
+            author: 
+                name: Patricio Gonzalez Vivo
+                twitter: patriciogv
+            version: 0.0.1
+            tangram-version: 0.0.7
+            licence: MIT
+            description: |
+                Get the coordinates in screen space streaching the proportion ('vec2 getScreenCoords ()') or non-streatching the proportion ('getScreenNonStretchCoords ()')
+            examples:
+                press:
+                    url: https://tangrams.github.io/tangram-sandbox/styles/press.yaml
+                    img: https://tangrams.github.io/tangram-sandbox/styles/press.png
+                    lines: 136-145
+                radar:
+                    url: https://tangrams.github.io/tangram-sandbox/styles/radar.yaml
+                    img: https://tangrams.github.io/tangram-sandbox/styles/radar.png
+                    lines: 0-143
+        test:
+            screen:
+                blocks:
+                    color: |
+                        vec2 st = getScreenCoords();
+                        color.rg += fract(st*3.);
+            screen_nonstretch:
+                blocks:
+                    color: |
+                        vec2 st = getScreenNonStretchCoords();
+                        color.rg += fract(st*3.);
+        shaders:
+            blocks:
+                global: |
+                    #ifdef TANGRAM_FRAGMENT_SHADER
+                    vec2 getScreenCoords () {
+                        return gl_FragCoord.xy / u_resolution.xy;
+                    }
+
+                    vec2 getScreenNonStretchCoords () {
+                        vec2 st = getScreenCoords();
+                        if (u_resolution.y > u_resolution.x ) {
+                            st.y *= u_resolution.y/u_resolution.x;
+                            st.y -= (u_resolution.y*.5-u_resolution.x*.5)/u_resolution.x;
+                        } else {
+                            st.x *= u_resolution.x/u_resolution.y;
+                            st.x -= (u_resolution.x*.5-u_resolution.y*.5)/u_resolution.y;
+                        } 
+                        return st;
+                    }
+                    #endif
+    
+
+layers:
+    water:
+        draw:
+
+            polygons:
+                order: 1000
+    landuse:
+        enabled: false
+        data: { source: mapzen }
+        draw:
+            polygons:
+                order: global.feature_order
+                visible: false
+            lines:
+                order: global.feature_order
+                visible: false
+        # tier1:
+        national_park:
+            filter:
+                all:
+                    - kind: [national_park, battlefield, protected_area]
+                any:
+                    - not: { operator: [ "United States Forest Service" ] }
+                    - protect_class: ['2','3','5']
+            draw:
+                polygons:
+                    style: stripes-green-angle
+                    color: [1.000,0.000,0.000]
+                    visible: true
+            us_national_park:
+                # yosemite national park, death valley national park, grand canyon national park
+                filter:
+                    any:
+                        - operator: [ "United States National Park Service" ]
+                        - protect_class: ['2','3','5']
+                draw:
+                    polygons:
+                        style: stripes-green-angle
+                        color: [1.000,0.000,0.000]
+                        visible: true
+
+    _xyz_dots:
+        # filter:
+          # all:
+          #   - $geometry: point
+          #   - global.featureFilterOutliers
+          #   - global.featureFilterSelectedValue
+        data: { source: _xyzspace }
+        draw:
+            points:
+                interactive: true
+                collide: false
+                blend_order: 0 # put our points under the basemap labels
+                color: global.featureColorDefault
+                size: 6px
+                outline:
+                    color: [1,1,0,0.2]
+                    width: .1px
+                text:
+                    visible: false # updated by JS app at run-time
+                    text_source: global.featureLabelText
+                    optional: true
+                    font: global.featureLabelFont # set by the basemap
+
+    _xyz_lines:
+        # filter:
+        #   all:
+        #     - $geometry: line
+        #     - global.featureFilterOutliers
+        #     - global.featureFilterSelectedValue
+        data: { source: _xyzspace }
+        draw:
+            _lines:
+                interactive: true
+                color: global.featureColorDefault
+                width: 4px
+                order: 2000
+            text:
+              visible: false # updated by JS app at run-time
+              text_source: global.featureLabelText
+              # unique repeat group per feature, to avoid culling of labels with same values
+              repeat_group: function() { return $id }
+              font: global.featureLabelFont # set by the basemap
+
+    _xyz_polygons:
+        # enabled: false
+        # filter:
+        #   all:
+        #     - $geometry: polygon
+        #     - global.featureFilterOutliers
+        #     - global.featureFilterSelectedValue
+        data: { source: _census }
+        _outlines:
+            filter: {$zoom: {min: 7}}
+            # enabled: false
+            draw:
+                _lines:
+                    color: [.5, .5, .5, 0.1]
+                    width: 1px
+                    order: 2000
+        draw:
+            _census-width-45:
+                interactive: true
+                color: |
+                    function(){
+                        var pop = feature.POPESTIMATE2018
+                        ratio = (pop / 11000000) * 3
+                        console.log(ratio)
+                        return [1,0,0,ratio]
+                    }
+                # color: [1,0,0,op.25
+                # color: global.featureColorDefault
+                width: 2px
+                order: 1000
+            text:
+              visible: false # updated by JS app at run-time
+              # text_source: global.featureLabelText
+              # unique repeat group per feature, to avoid culling of labels with same values
+              repeat_group: function() { return $id }
+              repeat_distance: 700px # allow polygon labels to repeat over a longish distance
+              font: global.featureLabelFont # set by the basemap
+    
+    _xyz_angle:
+        enabled: false
+        # filter:
+        #   all:
+        #     - $geometry: polygon
+        #     - global.featureFilterOutliers
+        #     - global.featureFilterSelectedValue
+        data: { source: _census }
+        _outlines:
+            filter: {$zoom: {min: 7}}
+            # enabled: false
+            draw:
+                _lines:
+                    color: [.5, .5, .5, 0.1]
+                    width: 1px
+                    order: 2000
+        down:
+            filter:
+                RNETMIG2018: {max: -2 }
+            draw:
+                _census-width-down:
+                    interactive: true
+                    color: |
+                        function(){
+                            var pop = feature.POPESTIMATE2018
+                            ratio = (pop / 11000000) * 2
+                            console.log(ratio)
+                            return [1,0,0,ratio]
+                        }
+                    # color: [1,0,0,op.25
+                    # color: global.featureColorDefault
+                    width: 2px
+                    order: 1000
+                text:
+                  # visible: false # updated by JS app at run-time
+                  text_source: RNETMIG2018
+                  # unique repeat group per feature, to avoid culling of labels with same values
+                  # repeat_group: function() { return $id }
+                  # repeat_distance: 700px # allow polygon labels to repeat over a longish distance
+                  font: global.featureLabelFont # set by the basemap
+                  # size: 12px
+                  # fill: white
+        flat:
+            filter:
+                RNETMIG2018: {min: -2, max: 2 }
+            draw:
+                _census-width-flat:
+                    interactive: true
+                    color: |
+                        function(){
+                            var pop = feature.POPESTIMATE2018
+                            ratio = (pop / 11000000) * 2
+                            console.log(ratio)
+                            return [1,0,0,ratio]
+                        }
+                    # color: [1,0,0,op.25
+                    # color: global.featureColorDefault
+                    width: 2px
+                    order: 1000
+                
+            
+        up:
+            filter:
+                RNETMIG2018: {min: 2}
+            draw:
+                _census-width-up:
+                    interactive: true
+                    color: |
+                        function(){
+                            var pop = feature.POPESTIMATE2018
+                            // var pop = feature.NETMIG2018
+                            ratio = (pop / 11000000) * 2
+                            console.log(ratio)
+                            return [1,0,0,ratio]
+                        }
+                    # color: [1,0,0,op.25
+                    # color: global.featureColorDefault
+                    width: 2px
+                    order: 1000
+            
+        # draw:
+        #     _census-width-45:
+        #         interactive: true
+        #         color: |
+        #             function(){
+        #                 var pop = feature.POPESTIMATE2018
+        #                 ratio = (pop / 11000000) * 3
+        #                 console.log(ratio)
+        #                 return [1,0,0,ratio]
+        #             }
+        #         # color: [1,0,0,op.25
+        #         # color: global.featureColorDefault
+        #         width: 2px
+        #         order: 1000
