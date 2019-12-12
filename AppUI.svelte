@@ -56,6 +56,19 @@
                 {/each}
               </select>
             </td>
+          </tr>
+          <tr>
+            <!-- Projection selector -->
+            <td>projection:</td>
+            <td>
+              <select bind:value="projection">
+                {#each Object.keys(projections) as projection}
+                  <option value="{projection}">{projection}</option>
+                {/each}
+              </select>
+            </td>
+          </tr>
+          <tr>
             <!-- Export scene -->
             <td>
               <button on:click="fire('exportScene')">export</button>
@@ -337,7 +350,8 @@
 
 <script>
 
-import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
+import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap,
+          projections, getProjectionScene, } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
 import { displayOptions } from './displayOptions';
@@ -390,6 +404,7 @@ export default {
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
       colorHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
+      projections, // need to reference here to make accessible to templates
     }
   },
 
@@ -399,8 +414,8 @@ export default {
   },
 
   computed: {
-    basemapScene: ({ basemap }) => {
-      const scene = getBasemapScene(basemap);
+    basemapScene: ({ basemap, projection }) => {
+      const scene = getBasemapScene(basemap, projection);
       if (scene) {
         scene.global = {
           ...scene.global,
@@ -408,6 +423,10 @@ export default {
         };
       }
       return scene;
+    },
+
+    projectionScene: ({ projection }) => {
+      return projection;
     },
 
     // un-nest selected feature property name
@@ -596,7 +615,7 @@ export default {
     },
 
     queryParams: ({
-        spaceId, token, basemap,
+        spaceId, token, basemap, projection,
         displayToggles,
         featurePropStack,
         featurePropValue,
@@ -620,6 +639,8 @@ export default {
       }
 
       params.set('basemap', basemap);
+
+      params.set('projection', projection);
 
       for(const p in displayToggles) {
         params.set(p, displayToggles[p]);
@@ -669,7 +690,7 @@ export default {
 
     // Apply Tangram scene updates based on state change
     if (current.spaceInfo &&
-        (changed.basemapScene || changed.spaceInfo)) {
+        (changed.basemapScene || changed.spaceInfo || changed.projection)) {
       this.fire('loadScene', current);
     }
 
@@ -798,6 +819,11 @@ export default {
         basemap = getDefaultBasemapName();
       }
 
+      let projection = params.projection;
+      if (!getProjectionScene(projection)) {
+        projection = "null";
+      }
+
       // parse selected feature property
       const featurePropStack = params.property && params.property
         .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
@@ -830,6 +856,7 @@ export default {
         spaceId,
         token,
         basemap,
+        projection,
         displayToggles,
         featurePropStack,
         featurePropValue,

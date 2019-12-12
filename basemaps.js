@@ -1,12 +1,11 @@
 import _ from 'lodash';
 
-export function getBasemapScene(basemap) {
+export function getBasemapScene(basemap, projection) {
   // deep copy the selected basemap object with lodash, to avoid modifying the original object
   var b = _.merge({}, basemaps[basemap]);
-  // declare an import parameter if it doesn't already exist
-  // if (typeof b.import === 'undefined') b.import = [];
   // add the desired projection to the imports
-  if (b.import) b.import.push('albers-import.yaml') // hardcoded example, replace with variable from a dropdown
+  var p = getProjectionScene(projection);
+  if (b.import && p) b.import.push(p)
   return b;
 }
 
@@ -43,6 +42,13 @@ function addBasePath(url) {
     base += '/';
   }
   return base + url;
+}
+
+export function getProjectionScene(projection) {
+  if (typeof projection !== "undefined" && projection !== "null") {
+    return projections[projection].file;
+  }
+  else return null
 }
 
 // skeletal structure of Invader viz scene, merged on top of underlying basemap, extended at run-time
@@ -359,28 +365,7 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
-  'albers': {
-    import: [
-      'tangram_xyz_scene_projected.yaml',
-    ],
-    global: {
-      featureLabelFont: labelFontPresets.dark
-    },
-    // can't use the regular ...xyzTilezenSourceOverride beacuse max_zoom is important for albers
-    sources: {
-      mapzen: {
-        url: 'https://xyz.api.here.com/tiles/osmbase/512/all/{z}/{x}/{y}.mvt',
-        url_params: {
-          'access_token': 'global.xyz_access_token'
-        },
-        max_zoom: 2
-      },
-      _xyzspace: {
-          max_zoom: 1 // important for albers until edge tile loading is resolved
-      }
-    }
-  },
-  'mollweide': {
+  'projected': {
     import: [
       'tangram_xyz_scene_projected.yaml',
     ],
@@ -400,5 +385,17 @@ export const basemaps = {
           max_zoom: 1 // important until edge tile loading is resolved
       }
     }
+  }
+};
+
+export const projections = {
+  'mercator': {
+    file: 'mercator.yaml'
+  },
+  'albers': {
+    file: 'albers-import.yaml'
+  },
+  'molleweide': {
+    file: 'mollweide-import.yaml',
   }
 };
