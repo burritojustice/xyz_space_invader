@@ -1,6 +1,8 @@
 # contributors: @patriciogv @meetar @burritojustice
 
 styles:
+    projection:
+        mix: albers
     albers:
         blend_order: 0
         shaders:

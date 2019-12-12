@@ -1,6 +1,8 @@
 # contributors: @patriciogv @meetar
 
 styles:
+    projection:
+        mix: mollweide
     mollweide:
         blend_order: 0
         shaders:

@@ -1,5 +1,13 @@
+import _ from 'lodash';
+
 export function getBasemapScene(basemap) {
-  return basemaps[basemap];
+  // deep copy the selected basemap object with lodash, to avoid modifying the original object
+  var b = _.merge({}, basemaps[basemap]);
+  // declare an import parameter if it doesn't already exist
+  // if (typeof b.import === 'undefined') b.import = [];
+  // add the desired projection to the imports
+  if (b.import) b.import.push('albers-import.yaml') // hardcoded example, replace with variable from a dropdown
+  return b;
 }
 
 export function getBasemapName(basemap) {
@@ -353,7 +361,7 @@ export const basemaps = {
   },
   'albers': {
     import: [
-      'tangram_xyz_scene_albers.yaml',
+      'tangram_xyz_scene_projected.yaml',
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
@@ -374,7 +382,7 @@ export const basemaps = {
   },
   'mollweide': {
     import: [
-      'tangram_xyz_scene_mollweide.yaml',
+      'tangram_xyz_scene_projected.yaml',
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
