@@ -19,7 +19,7 @@ global:
 
     # get feature color based on current color mode
     featureColor: |
-      function(feature, global, $geometry) {
+      function() {
         return global[global.featureColorType](feature, global, $geometry);
       }
 
@@ -127,7 +127,7 @@ layers:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
-                color: function(){ return global.featureColor(feature, global, $geometry); }
+                color: global.featureColor
                 size: global.featurePointSize
                 outline:
                     width: 0px
@@ -145,7 +145,7 @@ layers:
               points:
                   color: transparent
                   outline:
-                      color: function(){ return global.featureColor(feature, global, $geometry); }
+                      color: global.featureColor
 
     _xyz_lines:
         filter:
@@ -157,7 +157,7 @@ layers:
         draw:
             overlay_lines:
                 interactive: true
-                color: function(){ return global.featureColor(feature, global, $geometry); }
+                color: global.featureColor
                 width: 4px
                 blend_order: 0
                 outline:
