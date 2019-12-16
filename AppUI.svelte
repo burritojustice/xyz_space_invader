@@ -60,8 +60,8 @@
         {/if}
 
         <!-- Basemap selector -->
-        <div id="basemap_selector">basemap:
-          <select bind:value="basemap" id="basemap_select">
+        <div class="controls_left_selector">basemap:
+          <select bind:value="basemap" class="controls_left_dropdown">
             {#each Object.keys(basemaps) as basemap}
               <option value="{basemap}">{basemap}</option>
             {/each}
@@ -69,8 +69,8 @@
         </div>
 
         <!-- Projection selector -->
-        <div id="projection_selector">projection:
-          <select bind:value="projection" id="projection_select">
+        <div class="controls_left_selector">projection:
+          <select bind:value="projection" class="controls_left_dropdown">
             {#each Object.keys(projections) as projection}
               <option value="{projection}">{projection}</option>
             {/each}
@@ -455,10 +455,6 @@ export default {
         };
       }
       return scene;
-    },
-
-    projectionScene: ({ projection }) => {
-      return projection;
     },
 
     // un-nest selected feature property name
@@ -1297,12 +1293,7 @@ function hashString (string) {
     float: right;
   }
 
-  #basemap_selector {
-    float: left;
-    clear: left;
-  }
-
-  #projection_selector {
+  .controls_left_selector {
     float: left;
     clear: left;
   }
@@ -1344,10 +1335,7 @@ function hashString (string) {
   /* mobile in landscape */
   @media (max-width: 960px) and (orientation: landscape) {
     /* keep basemap and projection selectors from being too wide */
-    #basemap_select {
-      width: 110px;
-    }
-    #projection_select {
+    .controls_left_dropdown {
       width: 110px;
     }
   }
