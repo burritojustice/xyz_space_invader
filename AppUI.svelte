@@ -919,7 +919,7 @@ export default {
 
       let projection = params.projection;
       if (!getProjectionScene(projection)) {
-        projection = "null";
+        projection = "mercator";
       }
 
       // parse selected feature property
