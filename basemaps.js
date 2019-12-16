@@ -331,7 +331,7 @@ export const projections = {
   'albers': {
     file: 'albers.yaml'
   },
-  'molleweide': {
+  'mollweide': {
     file: 'mollweide.yaml',
   }
 };
