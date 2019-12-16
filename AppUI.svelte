@@ -59,37 +59,26 @@
           </table>
         {/if}
 
-      <table>
-          <tr>
             <!-- Basemap selector -->
-            <td>basemap:</td>
-            <td>
+            <div id="basemap_selector">basemap:
               <select bind:value="basemap" id="basemap_select">
                 {#each Object.keys(basemaps) as basemap}
                   <option value="{basemap}">{basemap}</option>
                 {/each}
               </select>
-            </td>
-          </tr>
-          <tr>
+            </div>
+
             <!-- Projection selector -->
-            <td>projection:</td>
-            <td>
+            <div id="projection_selector">projection:
               <select bind:value="projection" id="projection_select">
                 {#each Object.keys(projections) as projection}
                   <option value="{projection}">{projection}</option>
                 {/each}
               </select>
-            </td>
-          </tr>
-          <tr>
-            <!-- Export scene -->
-            <td>
-              <button on:click="fire('exportScene')" style="float: right;">export</button>
-            </td>
-          </tr>
-      </table>
+            </div>
 
+            <!-- Export scene -->
+              <button on:click="fire('exportScene')" style="float: right;">export</button>
       {/if}
     </div>
 
@@ -446,6 +435,7 @@ export default {
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
       colorHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
+      projections, // need to reference here to make accessible to templates
     }
   },
 
@@ -1305,6 +1295,16 @@ function hashString (string) {
     /* top: 10px; */
     /* z-index: 1001; */
     float: right;
+  }
+
+  #basemap_selector {
+    float: left;
+    clear: left;
+  }
+
+  #projection_selector {
+    float: left;
+    clear: left;
   }
 
   /* mobile styles at the end for higher precedence */

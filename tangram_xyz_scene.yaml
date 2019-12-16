@@ -12,6 +12,16 @@ global:
     # replaced by app JS, used to look-up feature props that may be nested
     lookupFeatureProp: function(feature) { return null; }
     lookupFeatureLabelProp: function(feature) { return null; }
+    lookupFeaturePointSizeProp: function(feature) { return null; }
+
+    # set feature colors to dynamic (by property, hash, etc.) or default (based on geometry type)
+    featureColorType: featureColorDefault
+
+    # get feature color based on current color mode
+    featureColor: |
+      function() {
+        return global[global.featureColorType](feature, global, $geometry);
+      }
 
     # dyanmic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
@@ -89,34 +99,18 @@ global:
           return global.lookupFeatureLabelProp(feature);
         }
 
+    # dynamic point size by feature property
+    featurePointSizeDynamic: |
+      function(feature, global) {
+        var size = global.colorState.colorHelpers.parseNumber(global.lookupFeaturePointSizeProp(feature)) || 0;
+        var range = global.featurePointSizeRange;
+        size = (size - range[0]) / (range[1] - range[0]) * (range[3] - range[2]) + range[2];
+        size = Math.max(range[2], Math.min(range[3], size));
+        return size;
+      }
+
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
-
-styles:
-    _points:
-        base: points
-        blend: overlay
-        blend_order: 0
-    _text:
-        base: text
-        blend: overlay
-        blend_order: 11
-    _lines:
-        base: lines
-        blend: overlay
-        blend_order: 0
-    _lines_low:
-        base: lines
-        blend: inlay
-        blend_order: 2
-    _polygons_inlay:
-        base: polygons
-        blend: inlay
-        blend_order: 0
-    _polygons_overlay:
-        base: polygons
-        blend: overlay
-        blend_order: 1
 
 layers:
 
@@ -128,18 +122,30 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
+            # regular filled points
             points:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
-                size: 6px
-                outline: {}
+                color: global.featureColor
+                size: global.featurePointSize
+                outline:
+                    width: 0px
                 text:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
                     optional: true
                     font: global.featureLabelFont # set by the basemap
+
+        # inverted, outline-only "donut" points
+        # these get toggled on/off with the filled points above, as an alternate point draw mode
+        donut_points:
+            enabled: false
+            draw:
+              points:
+                  color: transparent
+                  outline:
+                      color: global.featureColor
 
     _xyz_lines:
         filter:
@@ -149,13 +155,12 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
-            _lines:
+            overlay_lines:
                 interactive: true
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                color: global.featureColor
                 width: 4px
-                order: 2000
+                blend_order: 0
                 outline:
-                   color: white
                    width: 0px
             text:
               visible: false # updated by JS app at run-time
@@ -173,16 +178,16 @@ layers:
         data: { source: _xyzspace }
         _outlines:
             draw:
-                _lines:
-                    color: [0, 1, 1, 0.35]
-                    width: 1px
-                    order: 2000
+                overlay_lines:
+                    width: 0px
+                    blend_order: 0
         draw:
-            _polygons_inlay:
+            inlay_polygons:
                 interactive: true
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                color: global.featureColor
                 width: 2px
                 order: 300
+                blend_order: 0
             text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
