@@ -59,26 +59,26 @@
           </table>
         {/if}
 
-            <!-- Basemap selector -->
-            <div id="basemap_selector">basemap:
-              <select bind:value="basemap" id="basemap_select">
-                {#each Object.keys(basemaps) as basemap}
-                  <option value="{basemap}">{basemap}</option>
-                {/each}
-              </select>
-            </div>
+        <!-- Basemap selector -->
+        <div id="basemap_selector">basemap:
+          <select bind:value="basemap" id="basemap_select">
+            {#each Object.keys(basemaps) as basemap}
+              <option value="{basemap}">{basemap}</option>
+            {/each}
+          </select>
+        </div>
 
-            <!-- Projection selector -->
-            <div id="projection_selector">projection:
-              <select bind:value="projection" id="projection_select">
-                {#each Object.keys(projections) as projection}
-                  <option value="{projection}">{projection}</option>
-                {/each}
-              </select>
-            </div>
+        <!-- Projection selector -->
+        <div id="projection_selector">projection:
+          <select bind:value="projection" id="projection_select">
+            {#each Object.keys(projections) as projection}
+              <option value="{projection}">{projection}</option>
+            {/each}
+          </select>
+        </div>
 
-            <!-- Export scene -->
-              <button on:click="fire('exportScene')" style="float: right;">export</button>
+        <!-- Export scene -->
+          <button on:click="fire('exportScene')" style="float: right;">export</button>
       {/if}
     </div>
 
