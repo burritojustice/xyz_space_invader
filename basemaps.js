@@ -46,6 +46,7 @@ function addBasePath(url) {
 
 export function getProjectionScene(projection) {
   if (typeof projection !== "undefined" && projection !== "null") {
+    if (!projections[projection]) console.error("Projection \""+projection+"\" not found");
     return projections[projection].file;
   }
   else return null
