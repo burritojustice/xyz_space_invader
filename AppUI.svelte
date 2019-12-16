@@ -1,20 +1,33 @@
 <svelte:window on:keydown="handleKeyPress(event)" />
 
+<!-- Render full UI -->
 <div id="controls_left" class="column">
   <div id="spaces" class="panel">
     <div id="space_info">
       {#if spaceInfo}
-        {spaceInfo.title}<br>
-        {spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature<br>
-      <x style="font-size:10px;">{spaceInfo.description}</x><br>
+        <div>
+          <!-- Demo/inspect mode toggle-->
+          <button on:click="set({ demoMode: !demoMode })" class="demoModeToggle">
+            {demoMode ? 'inspect' : 'demo'}
+          </button>
+
+          <!-- Space info -->
+          <div>{spaceInfo.title}</div>
+          {#if !demoMode}
+            <div>{spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature</div>
+            {#if spaceInfo.updatedAt}
+              <div>{spaceInfo.updatedAt}</div>
+            {/if}
+            <div style="font-size:10px;">{spaceInfo.description}</div>
+          {/if}
+        </div>
       {:elseif !spaceLoading}
         <input type="text" placeholder="enter an XYZ space ID" bind:value='spaceId'>
         <input type="text" placeholder="enter an XYZ token" bind:value='token'>
         <button on:click="updateSpace(true)">Show XYZ Space</button>
       {/if}
     </div>
-<!--     <div id="style_info" class="hideOnMobile"> -->
-    <div id="style_info">
+    <div id="style_info" class:hideInDemoMode="demoMode">
       {#if displayToggles}
         <table>
           <tr>
@@ -35,22 +48,23 @@
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
           </tr>
-      </table>
+        </table>
         {#if hexbinInfo.spaceId}
-      <table>
-          <tr>
-            <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
-          </tr><tr>
-            <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
-          </tr>
-      </table>
+          <table>
+              <tr>
+                <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
+              </tr><tr>
+                <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
+              </tr>
+          </table>
         {/if}
+
       <table>
           <tr>
             <!-- Basemap selector -->
             <td>basemap:</td>
             <td>
-              <select bind:value="basemap">
+              <select bind:value="basemap" id="basemap_select">
                 {#each Object.keys(basemaps) as basemap}
                   <option value="{basemap}">{basemap}</option>
                 {/each}
@@ -61,7 +75,7 @@
             <!-- Projection selector -->
             <td>projection:</td>
             <td>
-              <select bind:value="projection">
+              <select bind:value="projection" id="projection_select">
                 {#each Object.keys(projections) as projection}
                   <option value="{projection}">{projection}</option>
                 {/each}
@@ -71,17 +85,49 @@
           <tr>
             <!-- Export scene -->
             <td>
-              <button on:click="fire('exportScene')">export</button>
+              <button on:click="fire('exportScene')" style="float: right;">export</button>
             </td>
           </tr>
       </table>
 
       {/if}
     </div>
+
+    <!-- Demo mode context -->
+    {#if demoMode && featureProp && featurePropCount != null}
+      <!-- Selected feature property and value info -->
+      <div style="margin: 5px 0px;">
+        Analyzing property <b>{featureProp}</b>
+      </div>
+
+      <!-- Histogram for demo mode -->
+      {#if displayToggles.colors === 'range'}
+        <div class="hideOnMobilePortrait">
+          <FeaturePropHistogram
+            showHeader={false}
+            minFilter={featurePropMinFilter}
+            maxFilter={featurePropMaxFilter}
+            valueCounts={sortedFeaturePropValueCounts}
+            valueColorFunction={featurePropValueColorFunction}
+          />
+        </div>
+      {:elseif displayToggles.colors === 'rank' && featurePropValueCounts}
+        <!-- Top values list -->
+        <div class="hideOnMobile">
+          <FeaturePropTopValues
+            showHeader={false}
+            prop={featureProp}
+            bind:propValue="featurePropValue"
+            bind:valueSort="featurePropValueSort"
+            valueCounts={sortedFeaturePropValueCounts}
+            valueColorFunction={featurePropValueColorFunction}
+          />
+        </div>
+      {/if}
+    {/if}
   </div>
 
-
-  <div id="colors" class="panel hideOnMobilePortrait">
+  <div id="colors" class="panel hideOnMobilePortrait" class:hideInDemoMode="demoMode">
     <div id="colorProperties">
       <!-- Selected feature property and value info -->
       {#if featureProp && featurePropCount != null}
@@ -118,7 +164,7 @@
       <!-- Color mode selector -->
       {#if displayToggles}
         <div>
-          Visualize features by
+          Color features by
           <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
             {#each colorModes as mode}
               {#if featureProp || !colorModeUsesProperty(mode)}
@@ -181,10 +227,10 @@
       {/if}
     </div>
 
-    <!-- Label property selector -->
     {#if sortedUniqueFeaturePropsSeen.length > 0}
+      <!-- Label property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-        <span style="flex: 0 0 auto; margin-right: 5px;">Label features by</span>
+        <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Label features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
@@ -192,6 +238,28 @@
           {/each}
         </select>
       </div>
+
+      <!-- Point size property selector -->
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Scale point size by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
+          <option value=""></option>
+          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+            <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
+              <option value="{JSON.stringify(propStack)}">{prop}</option>
+            <!-- {/if} -->
+          {/each}
+        </select>
+      </div>
+
+      <!-- Point min/max pixel size -->
+      {#if displayToggles.pointSizeProp}
+        <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+          <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Point size (px):</span>
+          <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
+          <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
+        </div>
+      {/if}
     {/if}
 
     {#if !(featureProp && featurePropCount != null)}
@@ -201,53 +269,23 @@
     <!-- Top values list -->
     {#if featureProp && featurePropValueCounts}
       <div class="hideOnMobile">
-        <div style="margin: 5px 0 5px 0;">
-          Top values by
-          <select bind:value="featurePropValueSort">
-            <option>count</option>
-            <option>values</option>
-          </select>
-        </div>
-
-        <table id="prop_stats">
-          <thead>
-            <tr><td style="text-align: right;">#</td><td></td><td>Value</td></tr>
-          </thead>
-          <tbody>
-            {#each sortedFeaturePropValueCounts.slice(0, 50) as [value, count], i }
-              <tr>
-                <td style="width: 15px; text-align: right;">{count}</td>
-                <td style="width: 15px;">
-                  <!-- uses color calc code shared with tangram-->
-                  {#if colorModeUsesProperty(displayToggles.colors)}
-                    <span class="dot" style="background-color: {featurePropValueColorFunction(value)};">
-                    </span>
-                  {/if}
-                </td>
-                <td
-                  class="value_row"
-                  class:active="featurePropValue != null && value == featurePropValue"
-                  on:click="set({featurePropValue: (value != featurePropValue ? value : null)})">
-                  {maybeStringifyObject(value)}
-                </td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-
-        {#if sortedFeaturePropValueCounts.length > 50}
-          <i>{sortedFeaturePropValueCounts.length - 50} more {sortedFeaturePropValueCounts.length - 50 > 1 ? 'values' : 'value'} for {featureProp} not shown</i>
-        {/if}
+        <FeaturePropTopValues
+          prop={featureProp}
+          bind:propValue="featurePropValue"
+          bind:valueSort="featurePropValueSort"
+          valueCounts={sortedFeaturePropValueCounts}
+          valueColorFunction={featurePropValueColorFunction}
+        />
       </div>
     {/if}
   </div>
 </div>
 
-<div id="controls_right" class="column hideOnMobile">
+<div id="controls_right" class="column hideOnMobile" class:hideInDemoMode="demoMode">
   <div id="tag_summary" class="panel">
     <table id="tag_stats">
-      {#if numFeaturesInViewport}
-        <tr><td>features in viewport</td><td>{numFeaturesInViewport}</td></tr>
+      {#if featuresInViewport.length}
+        <tr><td>features in viewport</td><td>{featuresInViewport.length}</td></tr>
       {/if}
       {#if numFeatureTagsInViewport != null}
         <tr><td>feature tags in viewport</td><td>{numFeatureTagsInViewport}</td></tr>
@@ -353,9 +391,10 @@
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap,
           projections, getProjectionScene, } from './basemaps';
 import { colorPalettes } from './colorPalettes';
-import { colorFunctions, colorHelpers, parseNumber } from './colorFunctions';
+import { colorFunctions, colorHelpers } from './colorFunctions';
 import { displayOptions } from './displayOptions';
-import { parseNestedObject, formatPropStack } from './utils';
+import { calcFeaturePropertyStats } from './stats';
+import { parseNestedObject, formatPropStack, parseNumber, mostlyNumeric, lookupProperty, PROP_TYPES } from './utils';
 
 export default {
   data() {
@@ -365,6 +404,7 @@ export default {
       token: '',
       spaceInfo: null,
       hexbinInfo: {},
+      demoMode: false, // display collapsed UI demo mode
       feature: null,
       featurePropStack: null,
       featurePropCount: null,
@@ -384,6 +424,7 @@ export default {
       featurePropSigma: null,
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
+      featurePointSizeDisplayRange: [4, 20],
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
@@ -393,7 +434,8 @@ export default {
       tagSort: 'count',
       tagFilterSearch: '', // set these to empty strings (not null) to get placeholder text in input
 
-      numFeaturesInViewport: null,
+      featuresInViewport: [],
+      featurePropTypesCache: {}, // cache of inferred feature property types
       uniqueTagsSeen: new Set(),
 
       uniqueFeaturePropsSeen: new Map(),
@@ -404,12 +446,12 @@ export default {
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
       colorHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
-      projections, // need to reference here to make accessible to templates
     }
   },
 
   components: {
     FeaturePropHistogram: './FeaturePropHistogram.svelte',
+    FeaturePropTopValues: './FeaturePropTopValues.svelte',
     FeaturePopup: './FeaturePopup.svelte'
   },
 
@@ -471,6 +513,31 @@ export default {
       }
     },
 
+    // point size prop stack is JSON stringified for easier svelte prop sync and query string handling
+    featurePointSizePropStack: ({ displayToggles }) => {
+      try {
+        return (displayToggles && displayToggles.pointSizeProp) ? JSON.parse(displayToggles.pointSizeProp) : null;
+      }
+      catch (e) {
+        return null;
+      }
+    },
+
+    // update stats for current features and point size property (if one selected)
+    featurePointSizePropStats: ({ featuresInViewport, featurePointSizePropStack }) => {
+      return calcFeaturePropertyStats(featuresInViewport, featurePointSizePropStack);
+    },
+
+    // how point sizes are mapped to feature property values
+    featurePointSizeRange: ({ featurePointSizePropStats, featurePointSizeDisplayRange }) => {
+      return [
+        // value range for features in viewport
+        featurePointSizePropStats.min, featurePointSizePropStats.max,
+        // pixel size range to map these to
+        parseFloat(featurePointSizeDisplayRange[0]) || 5, parseFloat(featurePointSizeDisplayRange[1]) || 20
+      ];
+    },
+
     sortedFeaturePropValueCounts: ({ featurePropValueCounts, featurePropValueSort }) => {
       if (!featurePropValueCounts) {
         return [];
@@ -516,21 +583,35 @@ export default {
       };
     },
 
-    featurePropMostlyNumeric: ({ featurePropValueCounts, featurePropNumericThreshold }) => {
-      if (!featurePropValueCounts) {
-        return false;
-      }
-
-      const numeric = featurePropValueCounts
-        .map(v => parseNumber(v[0]))
-        .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity)
-        .length;
-      return numeric / featurePropValueCounts.length >= (featurePropNumericThreshold/100);
+    featurePropMostlyNumeric: ({ featurePropStack, featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) => {
+      return isPropNumeric(featurePropStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold });
     },
 
-    featurePropValueCountHash: ({ featurePropValueCounts }) => hashString(JSON.stringify(featurePropValueCounts)),
+    featurePropValueCountHash: ({ featurePropValueCounts }) => featurePropValueCounts && hashString(JSON.stringify(featurePropValueCounts)),
 
     nextTagSort: ({ tagSort }) => (tagSort === 'count' ? 'name' : 'count'),
+
+    tagsWithCountsInViewport: ({ featuresInViewport }) => {
+      // grab the tags from Tangram's viewport tiles
+      let tagsViewport = [];
+      featuresInViewport.forEach(x => {
+        if (x.properties['@ns:com:here:xyz'] && x.properties['@ns:com:here:xyz'].tags) {
+          tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags);
+        }
+      })
+
+      const tagsWithCountsInViewport =
+        Object.entries(
+          featuresInViewport
+            .filter(f => f.properties['@ns:com:here:xyz'] && f.properties['@ns:com:here:xyz'].tags)
+            .flatMap(f => f.properties['@ns:com:here:xyz'].tags)
+            .reduce((tagCounts, tag) => {
+                tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
+                return tagCounts;
+              }, {}))
+        .sort((a, b) => b[1] > a[1] ? 1 : (b[1] > a[1] ? -1 : 0));
+      return tagsWithCountsInViewport;
+    },
 
     uniqueTagsInViewport: ({ tagsWithCountsInViewport }) => new Set(tagsWithCountsInViewport.map(v => v[0])),
 
@@ -616,6 +697,7 @@ export default {
 
     queryParams: ({
         spaceId, token, basemap, projection,
+        demoMode,
         displayToggles,
         featurePropStack,
         featurePropValue,
@@ -625,6 +707,7 @@ export default {
         featurePropMaxFilterInput,
         featurePropValueSort,
         featurePropHideOutliers,
+        featurePointSizeDisplayRange,
         tagFilterQueryParam
       }) => {
 
@@ -641,6 +724,8 @@ export default {
       params.set('basemap', basemap);
 
       params.set('projection', projection);
+
+      params.set('demo', demoMode ? 1 : 0);
 
       for(const p in displayToggles) {
         params.set(p, displayToggles[p]);
@@ -675,6 +760,8 @@ export default {
       params.set('sort', featurePropValueSort);
       params.set('hideOutliers', featurePropHideOutliers);
 
+      params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
+
       return params;
     }
 
@@ -688,6 +775,23 @@ export default {
       });
     }
 
+    if (changed.featuresInViewport) {
+      // update globally seen properties
+      const uniqueFeaturePropsSeen = new Map(current.uniqueFeaturePropsSeen); // get currently known props
+      current.featuresInViewport.forEach(feature => {
+        parseNestedObject(feature.properties)
+          .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
+          .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip properties we already know about
+          .forEach(p => {
+            uniqueFeaturePropsSeen.set(p.prop, p.propStack); // add new props
+          });
+      });
+      this.set({ uniqueFeaturePropsSeen });
+
+      // reset property type cache (re-evaluatate property types when new features are available)
+      this.set({ featurePropTypesCache: {} });
+    }
+
     // Apply Tangram scene updates based on state change
     if (current.spaceInfo &&
         (changed.basemapScene || changed.spaceInfo || changed.projection)) {
@@ -699,6 +803,9 @@ export default {
         changed.hexbinInfo ||
         changed.featurePropStack ||
         changed.featurePropValue ||
+        changed.featureLabelPropStack ||
+        changed.featurePointSizePropStack ||
+        changed.featurePointSizeDisplayRange ||
         changed.featurePropPalette ||
         changed.featurePropPaletteFlip ||
         changed.featurePropValueCountHash ||
@@ -747,6 +854,10 @@ export default {
         if (!current.featurePropMostlyNumeric && colors === 'range') {
           colors = 'rank';
         }
+        // or the converse
+        else if (current.featurePropMostlyNumeric && colors === 'rank') {
+          colors = 'range';
+        }
 
         this.set({
           featurePropCheckNumeric: current.featureProp, // record that we last ran the check for this property name
@@ -775,6 +886,7 @@ export default {
       // set these to empty strings (not null) to get placeholder text in input
       const spaceId = params.space || '';
       const token = params.token || '';
+      const demoMode = (parseInt(params.demo) === 1);
 
       // parse out display option toggles
       const displayToggles = {};
@@ -851,12 +963,19 @@ export default {
       const featurePropValueSort = params.sort || 'count';
       const featurePropHideOutliers = (params.hideOutliers === 'true');
 
+      let featurePointSizeDisplayRange = this.get().featurePointSizeDisplayRange;
+      try { // protect against JSON.parse failure (it's brittle with string input)
+        featurePointSizeDisplayRange = JSON.parse(params.pointSizeRange);
+      }
+      catch(e) {}
+
       // set all params
       this.set({
         spaceId,
         token,
         basemap,
         projection,
+        demoMode,
         displayToggles,
         featurePropStack,
         featurePropValue,
@@ -867,6 +986,7 @@ export default {
         featurePropMaxFilterInput,
         featurePropValueSort,
         featurePropHideOutliers,
+        featurePointSizeDisplayRange,
         tagFilterList,
         tagFilterAndOr
       });
@@ -1046,13 +1166,25 @@ export default {
       return colorFunctions[colors] && colorFunctions[colors].usePalette;
     },
 
-    useFeaturePropRangeLimit, // reference here to make available to as template helper
-
-    maybeStringifyObject(v) {
-      // stringify objects, otherwise just return original object
-      return (v != null && typeof v === 'object') ? JSON.stringify(v) : v;
-    }
+    // references here make these available to as template helper
+    useFeaturePropRangeLimit,
+    // isPropNumeric
   }
+}
+
+// calculate whether a property is numeric based on the current features in the viewport, and cache the result
+function isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) {
+  const propName = formatPropStack(propStack);
+  if (featurePropTypesCache[propName] == null) {
+    // use a set to get unique values from array
+    const propValues = new Set(featuresInViewport
+      .map(f => lookupProperty(f.properties, propStack))
+      .filter(f => typeof f !== 'object')
+    );
+    featurePropTypesCache[propName] =
+      mostlyNumeric([...propValues], featurePropNumericThreshold) ? PROP_TYPES.NUMERIC : PROP_TYPES.STRING;
+  }
+  return featurePropTypesCache[propName] === PROP_TYPES.NUMERIC;
 }
 
 function useFeaturePropRangeLimit(colors) {
@@ -1060,7 +1192,7 @@ function useFeaturePropRangeLimit(colors) {
 }
 
 function defaultDisplayOptionValue(p) {
-  return displayOptions[p] && displayOptions[p].values[0];
+  return displayOptions[p] && displayOptions[p].values && displayOptions[p].values[0];
 }
 
 function formatFeaturePropValueColor(state, value) {
@@ -1144,6 +1276,10 @@ function hashString (string) {
     right: 0;
   }
 
+  .hideInDemoMode {
+    display: none !important;
+  }
+
   #tag_panel {
     overflow: auto;
     flex: 1 1 150vh;
@@ -1159,22 +1295,16 @@ function hashString (string) {
     width: 45px;
   }
 
-  .dot {
-    height: 11px;
-    width: 11px;
-    background-color: yellow;
-    border: 2px solid grey;
-    border-radius: 50%;
-    display: inline-block;
-    vertical-align: bottom;
-  }
-
-  .value_row:hover {
-    background-color: rgba(240, 240, 240, 0.75);
-  }
-
   .active {
     background-color: lightyellow; padding: 3px;
+  }
+
+  .demoModeToggle {
+    /* position: absolute; */
+    /* right: 10px; */
+    /* top: 10px; */
+    /* z-index: 1001; */
+    float: right;
   }
 
   /* mobile styles at the end for higher precedence */
@@ -1188,6 +1318,11 @@ function hashString (string) {
     /* columns are narrower */
     .column {
       width: 240px;
+    }
+
+    /* more button-like appearance on iOS */
+    button {
+      -webkit-appearance: textfield;
     }
   }
 
@@ -1203,6 +1338,17 @@ function hashString (string) {
       /* unset flexbox full height that will block user input */
       min-height: unset;
       max-height: unset;
+    }
+  }
+
+  /* mobile in landscape */
+  @media (max-width: 960px) and (orientation: landscape) {
+    /* keep basemap and projection selectors from being too wide */
+    #basemap_select {
+      width: 110px;
+    }
+    #projection_select {
+      width: 110px;
     }
   }
 
