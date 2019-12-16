@@ -393,9 +393,9 @@ export const projections = {
     file: 'mercator.yaml'
   },
   'albers': {
-    file: 'albers-import.yaml'
+    file: 'albers.yaml'
   },
   'molleweide': {
-    file: 'mollweide-import.yaml',
+    file: 'mollweide.yaml',
   }
 };
