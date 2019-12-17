@@ -336,5 +336,8 @@ export const projections = {
   },
   'mollweide': {
     file: 'mollweide.yaml',
+  },
+  'globe': {
+    file: 'globe.yaml',
   }
 };
