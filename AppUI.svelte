@@ -1298,6 +1298,14 @@ function hashString (string) {
     clear: left;
   }
 
+  .demoModeToggle {
+    /* position: absolute; */
+    /* right: 10px; */
+    /* top: 10px; */
+    /* z-index: 1001; */
+    float: right;
+  }
+
   /* mobile styles at the end for higher precedence */
 
   /* mobile (any orientation) */
