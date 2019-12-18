@@ -1201,10 +1201,12 @@ function hashString (string) {
   .panel {
     margin: 5px;
     padding: 5px;
-    background-color: rgba(200, 200, 200, 0.75);
+/*     background-color: rgba(200, 200, 200, 0.75); */
+    background-color: #0f1621;
     border: 1px solid black;
     border-radius: 3px;
-    color: black;
+/*     color: black; */
+    color: white:
     box-shadow: 2px 2px 2px black;
   }
 
