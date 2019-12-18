@@ -1208,7 +1208,7 @@ function hashString (string) {
     border-radius: 3px;
 /*     color: black; */
     color: white;
-    box-shadow: 2px 2px 2px black;
+    box-shadow: 2px 2px 2px grey;
   }
 
   #space_info {
@@ -1228,7 +1228,7 @@ function hashString (string) {
   }
 
   #properties tr:hover {
-    background-color: rgba(240, 240, 240, 0.75);
+    background-color: rgba(80, 80, 80, 0.75);
   }
 
   #properties tr.active {
