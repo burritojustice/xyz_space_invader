@@ -1208,8 +1208,8 @@ function hashString (string) {
     border: 1px solid black;
     border-radius: 3px;
 /*     color: black; */
-    color: rgba(240,240,240);
-    box-shadow: 2px 2px 2px grey;
+    color: rgb(240,240,240);
+/*     box-shadow: 2px 2px 2px darkgrey; */
   }
 
   #space_info {
@@ -1234,6 +1234,7 @@ function hashString (string) {
 
   #properties tr.active {
     background-color: lightyellow;
+    background-color: grey;
   }
 
   #colors {
