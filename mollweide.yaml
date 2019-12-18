@@ -1,9 +1,10 @@
 # contributors: @patriciogv @meetar
-
+import: mercator-functions.yaml
 styles:
     projection:
         mix: mollweide
     mollweide:
+        mix: mercator-functions
         blend_order: 0
         shaders:
             defines:
