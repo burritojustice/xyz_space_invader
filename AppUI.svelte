@@ -280,28 +280,28 @@
         <i>no tags filtered<br><br></i>
       {/if}
     </div>
-    <div style="color:blue;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</div>
+    <div style="color:rgba(15,22,33,0.7);;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</div>
     <div id="and_or">
       <input type="radio" g="and_or" value="or" bind:group='tagFilterAndOr'>or
       <input type="radio" name="and_or" value="and" bind:group='tagFilterAndOr'>and<br>
     </div>
   </div>
   <div id="tag_panel" class="panel">
-    <span style="color:blue;" on:click="toggleTagFilterViewport()">
+    <span style="color:rgba(15,22,33,0.7);;" on:click="toggleTagFilterViewport()">
       {#if tagFilterViewport}
         [show all tags seen]
       {:else}
         [only show tags in view]
       {/if}
     </span>
-    <span style="color:blue;" on:click="toggleTagFilterAt()">
+    <span style="color:rgba(15,22,33,0.7);;" on:click="toggleTagFilterAt()">
       {#if tagFilterAt}
         [show all tag names]
       {:else}
         [only show @ tags]
       {/if}
     </span>
-    <span style="color:blue;" on:click="toggleTagSort()">
+    <span style="color:rgba(15,22,33,0.7);;" on:click="toggleTagSort()">
       [sort by {nextTagSort}]
     </span>
     <div id="tags">
@@ -1202,7 +1202,8 @@ function hashString (string) {
     margin: 5px;
     padding: 5px;
 /*     background-color: rgba(200, 200, 200, 0.75); */
-    background-color: #0f1621;
+/*     background-color: #0f1621; */
+    background-color: rgba(15,22,33,0.7);
     border: 1px solid black;
     border-radius: 3px;
 /*     color: black; */
