@@ -1204,7 +1204,7 @@ function hashString (string) {
 /*     background-color: rgba(200, 200, 200, 0.75); */
 /*     background-color: #0f1621; */
 /*     background-color: rgba(15,22,33,0.7); */
-    bckground-color: rgba(39,45,55,0.8);
+    background-color: rgba(39,45,55,0.8);
     border: 1px solid black;
     border-radius: 3px;
 /*     color: black; */
