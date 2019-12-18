@@ -1267,7 +1267,8 @@ function hashString (string) {
   }
 
   .active {
-    background-color: lightyellow; padding: 3px;
+/*     background-color: lightyellow; padding: 3px; */
+    background-color: grey; padding: 3px;
   }
 
   .demoModeToggle {
