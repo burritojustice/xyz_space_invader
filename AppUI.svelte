@@ -280,28 +280,28 @@
         <i>no tags filtered<br><br></i>
       {/if}
     </div>
-    <div style="color:rgba(15,22,33,0.7);;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</div>
+    <div style="color:#2dd5c9;" id="clear_filters" on:click="set({ tagFilterList: [] })">CLEAR TAG FILTERS</div>
     <div id="and_or">
       <input type="radio" g="and_or" value="or" bind:group='tagFilterAndOr'>or
       <input type="radio" name="and_or" value="and" bind:group='tagFilterAndOr'>and<br>
     </div>
   </div>
   <div id="tag_panel" class="panel">
-    <span style="color:rgba(15,22,33,0.7);;" on:click="toggleTagFilterViewport()">
+    <span style="color:#2dd5c9;" on:click="toggleTagFilterViewport()">
       {#if tagFilterViewport}
         [show all tags seen]
       {:else}
         [only show tags in view]
       {/if}
     </span>
-    <span style="color:rgba(15,22,33,0.7);;" on:click="toggleTagFilterAt()">
+    <span style="color:#2dd5c9;" on:click="toggleTagFilterAt()">
       {#if tagFilterAt}
         [show all tag names]
       {:else}
         [only show @ tags]
       {/if}
     </span>
-    <span style="color:rgba(15,22,33,0.7);;" on:click="toggleTagSort()">
+    <span style="color:#2dd5c9;" on:click="toggleTagSort()">
       [sort by {nextTagSort}]
     </span>
     <div id="tags">
