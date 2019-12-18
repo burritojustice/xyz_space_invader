@@ -112,8 +112,51 @@ global:
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
-layers:
+styles:
+    projection:
+        mix: []
+    _points:
+        base: points
+        mix: projection
+        blend: overlay
+        blend_order: 0
+    _text:
+        base: text
+        mix: projection
+        blend: overlay
+        blend_order: 11
+    _lines:
+        base: lines
+        mix: projection
+        blend: opaque
+        blend_order: 0
+    _lines_overlay:
+        base: lines
+        mix: projection
+        blend: overlay
+        blend_order: 0
+    _lines_low:
+        base: lines
+        mix: projection
+        blend: inlay
+        blend_order: 2
+    _polygons:
+        base: polygons
+        mix: projection
+        blend: opaque
+        blend_order: 1
+    _polygons_inlay:
+        base: polygons
+        mix: projection
+        blend: inlay
+        blend_order: 0
+    _polygons_overlay:
+        base: polygons
+        mix: projection
+        blend: overlay
+        blend_order: 1
 
+layers:
     _xyz_dots:
         filter:
           all:

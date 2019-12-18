@@ -306,6 +306,7 @@ export const basemaps = {
   },
   'projected': {
     import: [
+      xyzTangramBaseScene,
       'tangram_xyz_scene_projected.yaml',
     ],
     global: {
