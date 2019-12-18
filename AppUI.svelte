@@ -1233,7 +1233,7 @@ function hashString (string) {
   }
 
   #properties tr.active {
-    background-color: lightyellow;
+/*     background-color: lightyellow; */
     background-color: grey;
   }
 
