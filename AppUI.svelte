@@ -1206,7 +1206,7 @@ function hashString (string) {
     border: 1px solid black;
     border-radius: 3px;
 /*     color: black; */
-    color: white:
+    color: white;
     box-shadow: 2px 2px 2px black;
   }
 
