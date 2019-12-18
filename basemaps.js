@@ -47,7 +47,7 @@ const xyzTilezenSourceOverride = {
   sources: {
     mapzen: {
 //       url: 'https://xyz.api.here.com/tiles/osmbase/512/all/{z}/{x}/{y}.mvt',
-      url: https://xyz.api.here.com/tiles/herebase.02/{z}/{x}/{y}/omv,
+      url: 'https://xyz.api.here.com/tiles/herebase.02/{z}/{x}/{y}/omv',
       url_params: {
         'access_token': 'global.xyz_access_token'
       }
