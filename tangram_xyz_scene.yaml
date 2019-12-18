@@ -23,7 +23,7 @@ global:
         return global[global.featureColorType](feature, global, $geometry);
       }
 
-    # dyanmic feature coloring, using the currently defined "color mode"
+    # dynamic feature coloring, using the currently defined "color mode"
     # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
       function (feature, global) {
