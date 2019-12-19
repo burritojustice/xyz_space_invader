@@ -136,6 +136,7 @@ export const colorHelpers = {
 };
 
 function hashValue(value,scene) {
+  console.log("scene",scene)
   if (typeof value !== 'string') {
     value = (value === undefined ? 'undefined' : JSON.stringify(value));
   }
