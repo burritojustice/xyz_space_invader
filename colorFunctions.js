@@ -64,8 +64,19 @@ export const colorFunctions = {
   property: {
     label: 'property hash',
     useProperty: true,
-    usePalette: false,
-    color: colorHash,
+    usePalette: true,
+    defaultSort: 'count',
+    color: function (value, colorState) {
+      var palette = colorState.featurePropPalette;
+      // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
+      var palSize = (palette.assignment === 'categorical' ? palette.values.length : 7);
+      var hash = colorState.colorHelpers.hashValue(value);
+      if (hash == null) {
+        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+      }
+      var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
+      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, false);
+    }
   },
 
   // color by hash of entire feature
@@ -73,7 +84,13 @@ export const colorFunctions = {
     label: 'feature hash',
     useProperty: false,
     usePalette: false,
-    color: colorHash
+    color: function (value, colorState) {
+      var hash = colorState.colorHelpers.hashValue(value);
+      if (hash == null) {
+        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+      }
+      return 'hsla(' + hash + ', 100%, 50%, 0.75)';
+    }
   },
 
   xray: {
@@ -91,6 +108,7 @@ export const colorFunctions = {
 // reference Tangram globals, feature properties, and other predefined variables).
 export const colorHelpers = {
   parseNumber, // referenced here to provide access to Tangram
+  hashValue, // referenced here to provide access to Tangram
 
   getPaletteColor: function getPaletteColor (palette, value, alpha = 1, flip = false) {
     try {
@@ -117,14 +135,13 @@ export const colorHelpers = {
   }
 };
 
-// Compute a color by hashing a value
-function colorHash (value) {
+function hashValue(value) {
   if (typeof value !== 'string') {
     value = (value === undefined ? 'undefined' : JSON.stringify(value));
   }
 
   if (['null', 'undefined'].indexOf(value) > -1) {
-    return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+    return null; // handle null/undefined values
   }
 
   let hash = 0, i, chr;
@@ -134,6 +151,5 @@ function colorHash (value) {
     hash = ((hash << 5) - hash) + chr;
     hash |= 0; // Convert to 32bit integer
   }
-  var color = 'hsla(' + hash + ', 100%, 50%, 0.75)';
-  return color;
+  return hash;
 }
