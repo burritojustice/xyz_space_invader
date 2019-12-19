@@ -135,7 +135,7 @@ export const colorHelpers = {
   }
 };
 
-function hashValue(value) {
+function hashValue(value,scene) {
   if (typeof value !== 'string') {
     value = (value === undefined ? 'undefined' : JSON.stringify(value));
   }
@@ -148,7 +148,7 @@ function hashValue(value) {
   if (value === 0) { hash = 0 };
   for (i = 0; i < value.length; i++) {
     chr = value.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
+    hash = ((hash << 5) - hash) + chr + scene.config.global.hash_shuffle;
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
