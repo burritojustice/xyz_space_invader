@@ -69,7 +69,7 @@ export const colorFunctions = {
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
-      var palSize = (palette.assignment === 'categorical' ? palette.values.length : 70);
+      var palSize = (palette.assignment === 'categorical' ? palette.values.length : 360);
       var hash = colorState.colorHelpers.hashValue(value);
 //       hash = Math.log(hash)
       console.log(value,hash)
