@@ -71,6 +71,7 @@ export const colorFunctions = {
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
       var palSize = (palette.assignment === 'categorical' ? palette.values.length : 7);
       var hash = colorState.colorHelpers.hashValue(value);
+      hash = Math.log(hash)
       console.log(value,hash)
       if (hash == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
