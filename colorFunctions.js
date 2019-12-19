@@ -68,14 +68,30 @@ export const colorFunctions = {
     defaultSort: 'count',
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
-      // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
-      var palSize = (palette.assignment === 'categorical' ? palette.values.length : 7);
-      var hash = colorState.colorHelpers.hashValue(value);
-      if (hash == null) {
-        return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+      var assignments = colorState.featurePropValueColorAssignments;
+
+      if (assignments[value] == null) {
+        var palSize = (palette.assignment === 'categorical' ? palette.values.length : 10);
+        // var vals = Object.values(assignments).map(a => a.index);
+        // var next = Math.max(...vals) + 1;
+        var next = Math.max(-1, ...Object.values(assignments).map(a => a.index)) + 1;
+        var ratio = (next % palSize) / (palSize - 1); // assign the top values to a single color
+
+        assignments[value] = {
+          index: next,
+          color: colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, false)
+        };
       }
-      var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
-      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, false);
+      return assignments[value].color;
+
+      // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
+      // var palSize = (palette.assignment === 'categorical' ? palette.values.length : 7);
+      // var hash = colorState.colorHelpers.hashValue(value);
+      // if (hash == null) {
+      //   return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
+      // }
+      // var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
+      // return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, false);
     }
   },
 

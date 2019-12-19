@@ -45,10 +45,10 @@ export const displayOptions = {
   colors: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
 
-    apply: (scene, value, { featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue, colorHelpers }) => {
+    apply: (scene, value, { featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropValueColorAssignments, featurePropHideOutliers, featurePropValue, colorHelpers }) => {
       _.set(scene, 'global.colorMode', value);
       _.set(scene, 'global.colorState', {
-        featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue,
+        featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropValueColorAssignments, featurePropHideOutliers, featurePropValue,
         colorHelpers // include color helper functions in Tangram global state
       });
 

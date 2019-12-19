@@ -392,6 +392,7 @@ export default {
       featurePropCheckNumeric: null, // the property name that was active when we last checked for numeric-ness
       featurePropPaletteName: 'viridis', // TODO: move palette to import
       featurePropPaletteFlip: false,
+      featurePropValueColorAssignments: {},
       featurePropMin: null,
       featurePropMax: null,
       featurePropMinFilterInput: '', // use empty string to get input placeholder
@@ -538,7 +539,8 @@ export default {
     featurePropValueColorFunction: ({
       displayToggles,
       featurePropMinFilter, featurePropMaxFilter,
-      featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
+      featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
+      featurePropValueColorAssignments, colorHelpers }) => {
 
       return (value) => {
         const colors = displayToggles.colors;
@@ -547,7 +549,8 @@ export default {
             value, {
               displayToggles,
               featurePropMinFilter, featurePropMaxFilter,
-              featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
+              featurePropPalette, featurePropPaletteFlip,
+              featurePropValueCounts, featurePropValueColorAssignments,
               colorHelpers
             }
           );
@@ -762,6 +765,12 @@ export default {
 
       // reset property type cache (re-evaluatate property types when new features are available)
       this.set({ featurePropTypesCache: {} });
+    }
+
+    // reset palette assignment state on palette change
+    if (changed.featurePropPalette || changed.featureProp) {
+      console.log('reset palette assignments');
+      this.set({ featurePropValueColorAssignments: {} });
     }
 
     // Apply Tangram scene updates based on state change
