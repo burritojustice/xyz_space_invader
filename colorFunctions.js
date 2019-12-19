@@ -135,8 +135,8 @@ export const colorHelpers = {
   }
 };
 
-function hashValue(value,scene_config) {
-  console.log("scene",scene_config)
+function hashValue(value,colorState) {
+  console.log('colorstate',colorState.featurePropPaletteFlip)
   if (typeof value !== 'string') {
     value = (value === undefined ? 'undefined' : JSON.stringify(value));
   }
@@ -149,7 +149,7 @@ function hashValue(value,scene_config) {
   if (value === 0) { hash = 0 };
   for (i = 0; i < value.length; i++) {
     chr = value.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr + scene_config.global.hash_shuffle;
+    hash = ((hash << 5) - hash) + chr;
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
