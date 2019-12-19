@@ -8,6 +8,7 @@ global:
     black:
         color: [0,0,0,0.25]
         width: 2px
+    hash_shuffle: 0
 
     # replaced by app JS, used to look-up feature props that may be nested
     lookupFeatureProp: function(feature) { return null; }
