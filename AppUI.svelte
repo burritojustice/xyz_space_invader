@@ -212,7 +212,7 @@
         <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Label features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
           <option value=""></option>
-          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+          {#each sortedUniqueFeaturePropsSeen as [prop, { propStack }]}
             <option value="{JSON.stringify(propStack)}">{prop}</option>
           {/each}
         </select>
@@ -223,7 +223,7 @@
         <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Scale point size by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
           <option value=""></option>
-          {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+          {#each sortedUniqueFeaturePropsSeen as [prop, { propStack }]}
             <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
               <option value="{JSON.stringify(propStack)}">{prop}</option>
             <!-- {/if} -->
@@ -326,12 +326,13 @@
       {/if}
     </div>
   </div>
-  <!-- testing moving the properties -->
+
+  <!-- property list-->
   <div id="properties" class="panel hideOnMobile">
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
-        {#each sortedUniqueFeaturePropsSeen as [prop, propStack]}
+        {#each sortedUniqueFeaturePropsSeen as [prop, { propStack }]}
           <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
             <td>
               {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
@@ -747,21 +748,42 @@ export default {
       });
     }
 
+    // check if globally seen properties need to be updated
+    const uniqueFeaturePropsSeen = new Map(current.uniqueFeaturePropsSeen); // get currently known props
+    let updateUniqueFeaturePropsSeen = false;
+
+    // seed globally seen properties from space stats
+    if (changed.spaceInfo && current.spaceInfo) {
+
+      Object.entries(current.spaceInfo.properties)
+        .forEach(([prop, value]) => {
+          uniqueFeaturePropsSeen.set(prop, {
+            ...value,
+            propStack: prop.split('.')
+          });
+        });
+      updateUniqueFeaturePropsSeen = true;
+    }
+
+    // update globally seen properties from current feature set
     if (changed.featuresInViewport) {
-      // update globally seen properties
-      const uniqueFeaturePropsSeen = new Map(current.uniqueFeaturePropsSeen); // get currently known props
       current.featuresInViewport.forEach(feature => {
         parseNestedObject(feature.properties)
           .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
           .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip properties we already know about
           .forEach(p => {
-            uniqueFeaturePropsSeen.set(p.prop, p.propStack); // add new props
+            uniqueFeaturePropsSeen.set(p.prop, { propStack: p.propStack }); // add new props
           });
       });
-      this.set({ uniqueFeaturePropsSeen });
+      updateUniqueFeaturePropsSeen = true;
 
       // reset property type cache (re-evaluatate property types when new features are available)
       this.set({ featurePropTypesCache: {} });
+    }
+
+    // update feature props if needed
+    if (updateUniqueFeaturePropsSeen) {
+      this.set({ uniqueFeaturePropsSeen });
     }
 
     // Apply Tangram scene updates based on state change

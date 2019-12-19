@@ -383,6 +383,13 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var featureSize = spaceSize/spaceCount/1024 // KB per feature
   featureSize = featureSize.toFixed(1) + ' KB'
 
+  // Get property info
+  const properties =
+    ((stats.properties && stats.properties.value) || [])
+      .reduce((props, p) => {
+        props[p.key] = p;
+        return props;
+      }, {});
 
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
@@ -443,6 +450,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       title: spaceInfo.title,
       description: spaceInfo.description,
       numFeatures: spaceCount,
+      properties,
       dataSize: calcSize,
       featureSize: featureSize,
       updatedAt: timeUnitsElapsed
