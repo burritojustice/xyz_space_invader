@@ -75,7 +75,7 @@ export const colorFunctions = {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
       if (colorState.featurePropPaletteFlip) {
-        hash = hash * 2
+        hash = hash * 10
       }
       var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
       return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, false);
