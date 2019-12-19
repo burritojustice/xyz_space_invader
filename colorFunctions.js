@@ -71,14 +71,12 @@ export const colorFunctions = {
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
       var palSize = (palette.assignment === 'categorical' ? palette.values.length : 7);
       var hash = colorState.colorHelpers.hashValue(value);
+      console.log(value,hash)
       if (hash == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
-      if (colorState.featurePropPaletteFlip) {
-        hash = hash * 1000
-      }
       var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
-      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, false);
+      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
     }
   },
 
