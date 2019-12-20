@@ -14,7 +14,9 @@
   <select bind:value=op>
     <option value=""></option>
     <option value="equals">equals</option>
-    <option value="range">range</option>
+    {#if datatype === 'number'}
+      <option value="range">range</option>
+    {/if}
   </select>
 </span>
 <span>
@@ -51,6 +53,7 @@ export default {
   data() {
     return {
       prop: null,
+      datatype: null,
       initial: null,
       op: null,
       equals: '',

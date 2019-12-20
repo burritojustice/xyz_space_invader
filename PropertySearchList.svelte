@@ -4,7 +4,7 @@
     ({numSearchableProperties === numSearchableProperties ? 'all' : numSearchableProperties} searchable):
   </div>
   <table>
-    {#each Object.entries(properties) as [prop, { searchable }]}
+    {#each Object.entries(properties) as [prop, { searchable, datatype }]}
       <tr>
         <td style="width: 105px; max-width: 105px; overflow: hidden;">
           {prop}
@@ -13,6 +13,7 @@
           <td>
             <PropertySearchField
               prop={prop}
+              datatype={datatype}
               initial={propertySearch}
               on:update="updatePropertySearchField(event)"
             />
