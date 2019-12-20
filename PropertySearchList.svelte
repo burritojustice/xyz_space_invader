@@ -14,7 +14,7 @@
             <PropertySearchField
               prop={prop}
               datatype={datatype}
-              initial={propertySearch}
+              initial={propertySearch[prop]}
               on:update="updatePropertySearchField(event)"
             />
           </td>

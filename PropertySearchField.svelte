@@ -65,15 +65,13 @@ export default {
   onstate({ changed, current, previous }) {
     // first-time initialization with provided values
     if (!previous && current.initial) {
-      const data = current.initial[current.prop];
-      if (data) {
-        this.set({
-          op: data.op,
-          equals: data.equals != null ? data.equals : '',
-          min: data.min != null ? data.min : '',
-          max: data.max != null ? data.max : '',
-        });
-      }
+      const data = current.initial;
+      this.set({
+        op: data.op,
+        equals: data.equals != null ? data.equals : '',
+        min: data.min != null ? data.min : '',
+        max: data.max != null ? data.max : '',
+      });
     }
     // send updates to parent component
     else if (changed.op || changed.equals || changed.min || changed.max) {
