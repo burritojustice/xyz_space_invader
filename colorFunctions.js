@@ -64,20 +64,22 @@ export const colorFunctions = {
   property: {
     label: 'property hash',
     useProperty: true,
-    usePalette: true,
+    usePalette: false,
     defaultSort: 'count',
     color: function (value, colorState) {
-      var palette = colorState.featurePropPalette;
+//       var palette = colorState.featurePropPalette;
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
-      var palSize = (palette.assignment === 'categorical' ? palette.values.length : 360);
-      var hash = colorState.colorHelpers.hashValue(value);
+//       var palSize = (palette.assignment === 'categorical' ? palette.values.length : 360);
+      var hash = colorState.colorHelpers.murmurhash3_32_gc(value,spaceId);
 //       hash = Math.log(hash)
       console.log(value,hash)
       if (hash == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
-      var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
-      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
+//       var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
+//       return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
+      return 'hsla(' + hash + ', 100%, 50%, 0.75)';
+
     }
   },
 
@@ -154,4 +156,56 @@ function hashValue(value) {
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
+}
+
+function murmurhash3_32_gc(key, seed) {
+	var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
+	
+	remainder = key.length & 3; // key.length % 4
+	bytes = key.length - remainder;
+	h1 = seed;
+	c1 = 0xcc9e2d51;
+	c2 = 0x1b873593;
+	i = 0;
+	
+	while (i < bytes) {
+	  	k1 = 
+	  	  ((key.charCodeAt(i) & 0xff)) |
+	  	  ((key.charCodeAt(++i) & 0xff) << 8) |
+	  	  ((key.charCodeAt(++i) & 0xff) << 16) |
+	  	  ((key.charCodeAt(++i) & 0xff) << 24);
+		++i;
+		
+		k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
+		k1 = (k1 << 15) | (k1 >>> 17);
+		k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+
+		h1 ^= k1;
+        h1 = (h1 << 13) | (h1 >>> 19);
+		h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
+		h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
+	}
+	
+	k1 = 0;
+	
+	switch (remainder) {
+		case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
+		case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
+		case 1: k1 ^= (key.charCodeAt(i) & 0xff);
+		
+		k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
+		k1 = (k1 << 15) | (k1 >>> 17);
+		k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+		h1 ^= k1;
+	}
+	
+	h1 ^= key.length;
+
+	h1 ^= h1 >>> 16;
+	h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+	h1 ^= h1 >>> 13;
+	h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+	h1 ^= h1 >>> 16;
+
+	return h1 >>> 0;
 }
