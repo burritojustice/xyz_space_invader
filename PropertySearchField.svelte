@@ -42,6 +42,11 @@
 
 <script>
 
+import _ from 'lodash';
+
+// number of milliseconds to delay input update events
+const INPUT_DEBOUNCE_TIME = 300;
+
 export default {
   data() {
     return {
@@ -70,8 +75,18 @@ export default {
     // send updates to parent component
     else if (changed.op || changed.equals || changed.min || changed.max) {
       const { op, equals, min, max } = current;
-      this.fire('update', { prop: current.prop, values: { op, equals, min, max } });
+      this.updateField({ prop: current.prop, values: { op, equals, min, max } });
     }
+  },
+
+  methods: {
+
+    // debounced update event to avoid spamming on rapid UI changes
+    updateField: _.debounce(function({ prop, values }) {
+      console.log({ prop, values });
+      this.fire('update', { prop, values });
+    }, INPUT_DEBOUNCE_TIME)
+
   }
 
 };
