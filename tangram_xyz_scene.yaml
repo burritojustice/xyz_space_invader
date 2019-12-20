@@ -104,7 +104,12 @@ global:
       function(feature, global) {
         var size = global.colorState.colorHelpers.parseNumber(global.lookupFeaturePointSizeProp(feature)) || 0;
         var range = global.featurePointSizeRange;
-        size = (size - range[0]) / (range[1] - range[0]) * (range[3] - range[2]) + range[2];
+        if (range[1] - range[0] !== 0) {
+          size = (size - range[0]) / (range[1] - range[0]) * (range[3] - range[2]) + range[2];
+        }
+        else {
+          size = range[2]; // use minimum size value if range min/max are the same
+        }
         size = Math.max(range[2], Math.min(range[3], size));
         return size;
       }
