@@ -75,7 +75,14 @@ export default {
     }
     // send updates to parent component
     else if (changed.op || changed.equals || changed.min || changed.max) {
-      const { op, equals, min, max } = current;
+      let { op, equals, min, max } = current;
+      const { datatype } = this.get();
+
+      // add explicit quotes to numeric searches on string fields
+      if (datatype === 'string' && equals != null && equals.match(/^\d+$/)) {
+        equals = `"${equals}"`;
+      }
+
       this.updateField({ prop: current.prop, values: { op, equals, min, max } });
     }
   },
