@@ -327,34 +327,15 @@
     </div>
   </div>
 
-  <!-- property list-->
-  <div id="properties" class="panel hideOnMobile">
-    {#if sortedUniqueFeaturePropsSeen.length > 0}
-      <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
-      <table>
-        {#each sortedUniqueFeaturePropsSeen as [prop, { propStack, searchable }]}
-          <tr>
-            <td style="width: 105px; max-width: 105px; overflow: hidden;">
-              {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
-              {prop}
-            </td>
-            {#if searchable}
-              <td>
-                <PropertySearchField
-                  prop={prop}
-                  initial={propertySearch}
-                  on:update="updatePropertySearchField(event)"
-                />
-              </td>
-            {:else}
-              <td></td>
-            {/if}
-          </tr>
-
-        {/each}
-      </table>
-    {/if}
-  </div>
+  <!-- property search UI-->
+  {#if spaceInfo && spaceInfo.properties}
+    <div id="properties" class="panel hideOnMobile">
+      <PropertySearchList
+        properties={spaceInfo.properties}
+        bind:propertySearch="propertySearch"
+      />
+    </div>
+  {/if}
 </div>
 
 <!-- feature popup content, hidden in the main UI and synced to the Leaflet popup -->
@@ -445,7 +426,7 @@ export default {
     FeaturePropHistogram: './FeaturePropHistogram.svelte',
     FeaturePropTopValues: './FeaturePropTopValues.svelte',
     FeaturePopup: './FeaturePopup.svelte',
-    PropertySearchField: './PropertySearchField.svelte'
+    PropertySearchList: './PropertySearchList.svelte'
   },
 
   computed: {
@@ -1093,23 +1074,6 @@ export default {
           });
         }
       }
-    },
-
-    updatePropertySearchField({ prop, values }) {
-      if (!prop) {
-        return;
-      }
-
-      const { propertySearch } = this.get();
-
-      if (values.op) {
-        propertySearch[prop] = { ...values };
-      }
-      else {
-        delete propertySearch[prop];
-      }
-
-      this.set({ propertySearch });
     },
 
     toggleDisplayOption(prop) {
