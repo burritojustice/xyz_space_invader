@@ -332,13 +332,25 @@
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <div>{sortedUniqueFeaturePropsSeen.length} properties seen so far:</div>
       <table>
-        {#each sortedUniqueFeaturePropsSeen as [prop, { propStack }]}
-          <tr class:active="prop === featureProp" on:click="setFeatureProp({ featurePropStack: (prop !== featureProp ? propStack : null) })">
-            <td>
+        {#each sortedUniqueFeaturePropsSeen as [prop, { propStack, searchable }]}
+          <tr>
+            <td style="width: 105px; max-width: 105px; overflow: hidden;">
               {@html Array((propStack.length - 1) * 2).fill('&nbsp;').join('')}
               {prop}
             </td>
+            {#if searchable}
+              <td>
+                <PropertySearchField
+                  prop={prop}
+                  initial={propertySearch}
+                  on:update="updatePropertySearchField(event)"
+                />
+              </td>
+            {:else}
+              <td></td>
+            {/if}
           </tr>
+
         {/each}
       </table>
     {/if}
@@ -412,6 +424,7 @@ export default {
       tagFilterAt: false,
       tagSort: 'count',
       tagFilterSearch: '', // set these to empty strings (not null) to get placeholder text in input
+      propertySearch: {},
 
       featuresInViewport: [],
       featurePropTypesCache: {}, // cache of inferred feature property types
@@ -431,7 +444,8 @@ export default {
   components: {
     FeaturePropHistogram: './FeaturePropHistogram.svelte',
     FeaturePropTopValues: './FeaturePropTopValues.svelte',
-    FeaturePopup: './FeaturePopup.svelte'
+    FeaturePopup: './FeaturePopup.svelte',
+    PropertySearchField: './PropertySearchField.svelte'
   },
 
   computed: {
@@ -683,7 +697,8 @@ export default {
         featurePropValueSort,
         featurePropHideOutliers,
         featurePointSizeDisplayRange,
-        tagFilterQueryParam
+        tagFilterQueryParam,
+        propertySearch
       }) => {
 
       const params = new URLSearchParams();
@@ -734,6 +749,8 @@ export default {
       params.set('hideOutliers', featurePropHideOutliers);
 
       params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
+
+      params.set('propertySearch', JSON.stringify(propertySearch));
 
       return params;
     }
@@ -955,8 +972,12 @@ export default {
       let featurePointSizeDisplayRange = this.get().featurePointSizeDisplayRange;
       try { // protect against JSON.parse failure (it's brittle with string input)
         featurePointSizeDisplayRange = JSON.parse(params.pointSizeRange);
-      }
-      catch(e) {}
+      } catch(e) {}
+
+      let propertySearch = {};
+      try { // protect against JSON.parse failure (it's brittle with string input)
+        propertySearch = JSON.parse(params.propertySearch);
+      } catch(e) {}
 
       // set all params
       this.set({
@@ -976,7 +997,8 @@ export default {
         featurePropHideOutliers,
         featurePointSizeDisplayRange,
         tagFilterList,
-        tagFilterAndOr
+        tagFilterAndOr,
+        propertySearch
       });
 
       this.updateSpace(false);
@@ -1071,6 +1093,23 @@ export default {
           });
         }
       }
+    },
+
+    updatePropertySearchField({ prop, values }) {
+      if (!prop) {
+        return;
+      }
+
+      const { propertySearch } = this.get();
+
+      if (values.op) {
+        propertySearch[prop] = { ...values };
+      }
+      else {
+        delete propertySearch[prop];
+      }
+
+      this.set({ propertySearch });
     },
 
     toggleDisplayOption(prop) {
@@ -1244,10 +1283,6 @@ function hashString (string) {
 
   #properties table {
     width: 100%;
-  }
-
-  #properties tr:hover {
-    background-color: rgba(240, 240, 240, 0.75);
   }
 
   #properties tr.active {
