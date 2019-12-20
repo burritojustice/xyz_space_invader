@@ -113,6 +113,8 @@ export const colorFunctions = {
 export const colorHelpers = {
   parseNumber, // referenced here to provide access to Tangram
   hashValue, // referenced here to provide access to Tangram
+  murmurhash3_32_gc,
+	
 
   getPaletteColor: function getPaletteColor (palette, value, alpha = 1, flip = false) {
     try {
