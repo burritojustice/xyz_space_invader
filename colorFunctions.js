@@ -41,7 +41,7 @@ export const colorFunctions = {
 
       var ratio; // number from 0-1 that maps to the palette color index to use
 
-      if (palette.assignment === 'categorical') {
+      if (palette.type === 'categorical') {
         // optional categorical assigment
         if (rank < palette.values.length) {
           ratio = rank / (palette.values.length-1); // assign the top values to a single color
@@ -69,7 +69,7 @@ export const colorFunctions = {
     color: function (value, colorState) {
       var palette = colorState.featurePropPalette;
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
-      var palSize = (palette.assignment === 'categorical' ? palette.values.length : 7);
+      var palSize = (palette.type === 'categorical' ? palette.values.length : 7);
       var hash = colorState.colorHelpers.hashValue(value);
       if (hash == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
@@ -119,8 +119,8 @@ export const colorHelpers = {
       }
 
       // function-based palette
-      if (typeof palette === 'function') {
-        return palette(value, alpha);
+      if (typeof palette.values === 'function') {
+        return palette.values(value, alpha);
       }
       // array-based palette
       else {
