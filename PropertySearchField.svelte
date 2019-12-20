@@ -45,7 +45,7 @@
 import _ from 'lodash';
 
 // number of milliseconds to delay input update events
-const INPUT_DEBOUNCE_TIME = 300;
+const INPUT_DEBOUNCE_TIME = 500;
 
 export default {
   data() {
