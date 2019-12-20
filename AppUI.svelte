@@ -665,6 +665,30 @@ export default {
       }
     },
 
+    // format property searches as query parameters for XYZ tile requests
+    propertySearchQueryParams: ({ propertySearch }) => {
+      return Object.entries(propertySearch)
+        .reduce((params, [prop, { op, equals, min, max }]) => {
+          const p = `p.${prop}`;
+          if (op === 'equals' && equals) {
+            params.push([p, equals]);
+          }
+          else if (op === 'range') {
+            min = parseFloat(min);
+            max = parseFloat(max);
+
+            if (typeof min === 'number' && !isNaN(min)) {
+              params.push([p, `gt=${min}`]);
+            }
+
+            if (typeof max === 'number' && !isNaN(max)) {
+              params.push([p, `lt=${max}`]);
+            }
+          }
+          return params;
+        }, []);
+    },
+
     queryParams: ({
         spaceId, token, basemap,
         demoMode,
@@ -792,6 +816,7 @@ export default {
 
     if (changed.displayToggles ||
         changed.tagFilterQueryParam ||
+        changed.propertySearchQueryParams ||
         changed.hexbinInfo ||
         changed.featurePropStack ||
         changed.featurePropValue ||
