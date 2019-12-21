@@ -210,10 +210,10 @@
       <!-- Label property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
         <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Label features by</span>
-        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.labelProp">
           <option value=""></option>
-          {#each sortedUniqueFeaturePropsSeen as [prop, { propStack }]}
-            <option value="{JSON.stringify(propStack)}">{prop}</option>
+          {#each sortedUniqueFeaturePropsSeen as [prop]}
+            <option value="{prop}">{prop}</option>
           {/each}
         </select>
       </div>
@@ -223,9 +223,9 @@
         <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Scale point size by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
           <option value=""></option>
-          {#each sortedUniqueFeaturePropsSeen as [prop, { propStack }]}
+          {#each sortedUniqueFeaturePropsSeen as [prop]}
             <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
-              <option value="{JSON.stringify(propStack)}">{prop}</option>
+              <option value="{prop}">{prop}</option>
             <!-- {/if} -->
           {/each}
         </select>
@@ -366,7 +366,7 @@ import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers } from './colorFunctions';
 import { displayOptions } from './displayOptions';
 import { calcFeaturePropertyStats } from './stats';
-import { parseNestedObject, formatPropStack, parseNumber, mostlyNumeric, lookupProperty, PROP_TYPES } from './utils';
+import { parseNestedObject, parsePropStack, formatPropStack, parseNumber, mostlyNumeric, lookupProperty, PROP_TYPES } from './utils';
 
 export default {
   data() {
@@ -442,13 +442,7 @@ export default {
     },
 
     // parse nested property components
-    featurePropStack: ({ featureProp }) => {
-      return featureProp &&
-      featureProp
-        .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
-        .split('.')
-        .map(s => s.replace(/__DELIMITER__/g, '.'));
-    },
+    featurePropStack: ({ featureProp }) => parsePropStack(featureProp),
 
     // apply range filters if needed
     featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
@@ -479,25 +473,9 @@ export default {
       return colorPalettes[featurePropPaletteName];
     },
 
-    // label prop stack is JSON stringified for easier svelte prop sync and query string handling
-    featureLabelPropStack: ({ displayToggles }) => {
-      try {
-        return (displayToggles && displayToggles.label) ? JSON.parse(displayToggles.label) : null;
-      }
-      catch (e) {
-        return null;
-      }
-    },
+    featureLabelPropStack: ({ displayToggles }) => parsePropStack(displayToggles && displayToggles.labelProp),
 
-    // point size prop stack is JSON stringified for easier svelte prop sync and query string handling
-    featurePointSizePropStack: ({ displayToggles }) => {
-      try {
-        return (displayToggles && displayToggles.pointSizeProp) ? JSON.parse(displayToggles.pointSizeProp) : null;
-      }
-      catch (e) {
-        return null;
-      }
-    },
+    featurePointSizePropStack: ({ displayToggles }) => parsePropStack(displayToggles && displayToggles.pointSizeProp),
 
     // update stats for current features and point size property (if one selected)
     featurePointSizePropStats: ({ featuresInViewport, featurePointSizePropStack }) => {

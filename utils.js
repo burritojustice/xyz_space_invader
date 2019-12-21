@@ -3,6 +3,16 @@ export const PROP_TYPES = {
   NUMERIC: 1
 };
 
+// parse a nested object in dot notation (e.g. feature.a.b.c) into a "stack" of its components:
+// ['feature', 'a', 'b', 'c']
+export function parsePropStack(prop) {
+  return prop &&
+    prop
+      .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
+      .split('.')
+      .map(s => s.replace(/__DELIMITER__/g, '.'));
+}
+
 // format nested property name stack with dot (object) and bracket (array) notation
 export function formatPropStack(propStack) {
   return propStack &&
