@@ -113,7 +113,7 @@
         <div>
           <span class="active">
             Analyzing property <b>{featureProp}</b>
-            <button on:click="set({ featurePropStack: null })" style="background: none; border: none;">❌</button>
+            <button on:click="set({ featureProp: null })" style="background: none; border: none;">❌</button>
           </span>
         </div>
 
@@ -348,11 +348,11 @@
       featurePinned={featurePinned}
       featurePropValue={featurePropValue}
       on:selectProp="setFeatureProp({
-        featurePropStack: (event.prop !== featureProp ? event.propStack : null),
+        featureProp: (event.prop !== featureProp ? event.prop : null),
         featurePropValue: null
       })"
       on:selectValue="setFeatureProp({
-        featurePropStack: event.propStack,
+        featureProp: event.prop,
         featurePropValue: (event.value !== featurePropValue ? event.value : null)
       })"
     />
@@ -378,7 +378,7 @@ export default {
       hexbinInfo: {},
       demoMode: false, // display collapsed UI demo mode
       feature: null,
-      featurePropStack: null,
+      featureProp: null,
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropValueSort: 'count',
@@ -441,8 +441,14 @@ export default {
       return scene;
     },
 
-    // un-nest selected feature property name
-    featureProp: ({ featurePropStack }) => formatPropStack(featurePropStack),
+    // parse nested property components
+    featurePropStack: ({ featureProp }) => {
+      return featureProp &&
+      featureProp
+        .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
+        .split('.')
+        .map(s => s.replace(/__DELIMITER__/g, '.'));
+    },
 
     // apply range filters if needed
     featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
@@ -693,7 +699,7 @@ export default {
         spaceId, token, basemap,
         demoMode,
         displayToggles,
-        featurePropStack,
+        featureProp,
         featurePropValue,
         featurePropPaletteName, featurePropPaletteFlip,
         featurePropRangeFilter,
@@ -728,10 +734,8 @@ export default {
         params.set('tags', tagFilterQueryParam);
       }
 
-      if (featurePropStack) {
-        // escape dot notation in property names
-        // make sure to call toString to handle numbers, etc.
-        params.set('property', featurePropStack.map(s => s.toString().replace(/\./g, '\\\.')).join('.'));
+      if (featureProp) {
+        params.set('property', featureProp);
       }
 
       if (featurePropValue) {
@@ -818,7 +822,7 @@ export default {
         changed.tagFilterQueryParam ||
         changed.propertySearchQueryParams ||
         changed.hexbinInfo ||
-        changed.featurePropStack ||
+        changed.featureProp ||
         changed.featurePropValue ||
         changed.featureLabelPropStack ||
         changed.featurePointSizePropStack ||
@@ -887,7 +891,7 @@ export default {
     // (this is in svelte onupdate because it fires after the DOM has been updated with new content)
     if (changed.feature ||
         changed.featureProp ||
-        changed.featurePropStack ||
+        changed.featureProp ||
         changed.featurePinned) {
       if (current.feature) {
         this.fire('updatePopup');
@@ -949,10 +953,7 @@ export default {
       }
 
       // parse selected feature property
-      const featurePropStack = params.property && params.property
-        .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
-        .split('.')
-        .map(s => s.replace(/__DELIMITER__/g, '.'));
+      const featureProp = params.property;
 
       // parse selected property value
       const featurePropValue = params.value;
@@ -992,7 +993,7 @@ export default {
         basemap,
         demoMode,
         displayToggles,
-        featurePropStack,
+        featureProp,
         featurePropValue,
         featurePropPaletteName,
         featurePropPaletteFlip,
@@ -1036,7 +1037,7 @@ export default {
       }
     },
 
-    setFeatureProp({ featurePropStack, featurePropValue }) {
+    setFeatureProp({ featureProp, featurePropValue }) {
       // if selecting a feature property and current color mode isn't property-specific,
       // automatically change to the 'property' color mode
       const displayToggles = this.get().displayToggles;
@@ -1046,7 +1047,7 @@ export default {
       }
 
       this.set({
-        featurePropStack,
+        featureProp,
         featurePropValue,
         displayToggles: { ...displayToggles, colors }
       });
