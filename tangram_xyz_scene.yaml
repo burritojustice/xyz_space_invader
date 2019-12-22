@@ -17,7 +17,7 @@ global:
     # set feature colors to dynamic (by property, hash, etc.) or default (based on geometry type)
     featureColorType: default
 
-    # get feature color based on current color mode
+    # get feature color based on current visualization mode and color palette
     # either color by feature color property, or fallback to geometry type,
     # or dyanmic feature coloring, using the currently defined "visualization mode"
     featureColor: |
@@ -56,6 +56,25 @@ global:
             else if ($geometry === 'polygon') {
               return [1, 0, 1, 0.3];
             }
+        }
+      }
+
+    # calculate normalized value (between 0-1) feature
+    featureNormalizedValue: |
+      function() {
+        try {
+          if (global.viz.featureProp != null && typeof global.vizModes[global.vizMode].value === 'function') {
+            return global.vizModes[global.vizMode].value(
+              global.lookupFeatureProp(feature),
+              global.viz
+            );
+          }
+          else {
+            return 1;
+          }
+        }
+        catch(e) { // fallthrough to default on exception
+          return 1;
         }
       }
 
