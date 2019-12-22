@@ -24,21 +24,21 @@ global:
       }
 
     # dyanmic feature coloring, using the currently defined "color mode"
-    # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
+    # the `viz` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
     featureColorDynamic: |
       function (feature, global) {
         try {
-          if (global.colorFunctions[global.colorMode]) {
-            if (global.colorFunctions[global.colorMode].useProperty) {
-              return global.colorFunctions[global.colorMode].color(
+          if (global.vizModes[global.vizMode]) {
+            if (global.vizModes[global.vizMode].useProperty) {
+              return global.vizModes[global.vizMode].color(
                 global.lookupFeatureProp(feature),
-                global.colorState
+                global.viz
               );
             }
             else {
-              return global.colorFunctions[global.colorMode].color(
+              return global.vizModes[global.vizMode].color(
                 feature,
-                global.colorState
+                global.viz
               );
             }
           }
@@ -69,11 +69,11 @@ global:
     # optionally hide feature values that are above or below the current filter range
     featureFilterOutliers: |
         function() {
-          if (global.colorState.featurePropHideOutliers && global.colorFunctions[global.colorMode]) {
-            if (global.colorFunctions[global.colorMode].useProperty) {
-              var value = global.colorState.colorHelpers.parseNumber(global.lookupFeatureProp(feature));
-              if (value < global.colorState.featurePropMinFilter ||
-                  value > global.colorState.featurePropMaxFilter+1) {
+          if (global.viz.featurePropHideOutliers && global.vizModes[global.vizMode]) {
+            if (global.vizModes[global.vizMode].useProperty) {
+              var value = global.viz.vizHelpers.parseNumber(global.lookupFeatureProp(feature));
+              if (value < global.viz.featurePropMinFilter ||
+                  value > global.viz.featurePropMaxFilter+1) {
                 return false;
               }
             }
@@ -84,11 +84,11 @@ global:
     # optionally filter by specific property/value combination
     featureFilterSelectedValue: |
         function() {
-          if (global.colorState.featurePropStack != null &&
-              global.colorState.featurePropValue != null &&
-              global.colorState.featurePropValue !== '') {
+          if (global.viz.featurePropStack != null &&
+              global.viz.featurePropValue != null &&
+              global.viz.featurePropValue !== '') {
             var value = global.lookupFeatureProp(feature);
-            if (value !== global.colorState.featurePropValue) {
+            if (value !== global.viz.featurePropValue) {
               return false;
             }
           }
@@ -104,7 +104,7 @@ global:
     # dynamic point size by feature property
     featurePointSizeDynamic: |
       function(feature, global) {
-        var size = global.colorState.colorHelpers.parseNumber(global.lookupFeaturePointSizeProp(feature)) || 0;
+        var size = global.viz.vizHelpers.parseNumber(global.lookupFeaturePointSizeProp(feature)) || 0;
         var range = global.featurePointSizeRange;
         if (range[1] - range[0] !== 0) {
           size = (size - range[0]) / (range[1] - range[0]) * (range[3] - range[2]) + range[2];

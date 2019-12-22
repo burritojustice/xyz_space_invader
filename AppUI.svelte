@@ -80,7 +80,7 @@
       </div>
 
       <!-- Histogram for demo mode -->
-      {#if displayToggles.colors === 'range'}
+      {#if displayToggles.vizMode === 'range'}
         <div class="hideOnMobilePortrait">
           <FeaturePropHistogram
             showHeader={false}
@@ -90,7 +90,7 @@
             valueColorFunction={featurePropValueColorFunction}
           />
         </div>
-      {:elseif displayToggles.colors === 'rank' && featurePropValueCounts}
+      {:elseif displayToggles.vizMode === 'rank' && featurePropValueCounts}
         <!-- Top values list -->
         <div class="hideOnMobile">
           <FeaturePropTopValues
@@ -106,8 +106,8 @@
     {/if}
   </div>
 
-  <div id="colors" class="panel hideOnMobilePortrait" class:hideInDemoMode="demoMode">
-    <div id="colorProperties">
+  <div id="viz" class="panel hideOnMobilePortrait" class:hideInDemoMode="demoMode">
+    <div>
       <!-- Selected feature property stats -->
       {#if featureProp && featurePropCount != null}
         <div style="margin: 5px 0 5px 0;" class="hideOnMobile">
@@ -128,17 +128,17 @@
       {#if displayToggles}
         <div>
           Analyze by
-          <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
-            {#each colorModes as mode}
-              {#if featureProp || !colorModeUsesProperty(mode)}
-                <option value="{mode}">{colorFunctions[mode].label || mode}</option>
+          <select bind:value="displayToggles.vizMode" on:change="updateFeaturePropValueSort()">
+            {#each Object.keys(vizModes) as mode}
+              {#if featureProp || !vizModeUsesProperty(mode)}
+                <option value="{mode}">{vizModes[mode].label || mode}</option>
               {/if}
             {/each}
           </select>
         </div>
       {/if}
 
-      {#if sortedUniqueFeaturePropsSeen.length > 0 && colorModeUsesProperty(displayToggles.colors)}
+      {#if sortedUniqueFeaturePropsSeen.length > 0 && vizModeUsesProperty(displayToggles.vizMode)}
         <!-- Visualize property selector -->
         <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
           <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Visualize by property</span>
@@ -166,7 +166,7 @@
 
       <!-- Color palette and range filters -->
       {#if featureProp && featurePropCount != null}
-        {#if showFeaturePropPalette(displayToggles.colors)}
+        {#if showFeaturePropPalette(displayToggles.vizMode)}
           <div class="hideOnMobile">
             Color palette
             <select bind:value="featurePropPaletteName">
@@ -182,7 +182,7 @@
           </div>
 
           {#if featurePropMin != null}
-            {#if useFeaturePropRangeLimit(displayToggles.colors)}
+            {#if useFeaturePropRangeLimit(displayToggles.vizMode)}
               <div>
                 Limit values:
                 <select bind:value="featurePropRangeFilter" on:change="updateFeaturePropRangeFilter(this.value)">
@@ -373,7 +373,7 @@
 
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
 import { colorPalettes } from './colorPalettes';
-import { colorFunctions, colorHelpers } from './colorFunctions';
+import { vizModes, vizHelpers } from './vizModes';
 import { displayOptions } from './displayOptions';
 import { calcFeaturePropertyStats } from './stats';
 import { parseNestedObject, parsePropStack, formatPropStack, parseNumber, mostlyNumeric, lookupProperty, PROP_TYPES } from './utils';
@@ -424,10 +424,9 @@ export default {
       uniqueFeaturePropsSeen: new Map(),
 
       displayToggles: null,
-      colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
-      colorFunctions, // need to reference here to make accessible to templates and tangram functions
+      vizModes, // need to reference here to make accessible to templates and tangram functions
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
-      colorHelpers, // need to reference here to make accessible to templates and tangram functions
+      vizHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
     }
   },
@@ -445,7 +444,7 @@ export default {
       if (scene) {
         scene.global = {
           ...scene.global,
-          colorFunctions
+          vizModes
         };
       }
       return scene;
@@ -457,7 +456,7 @@ export default {
     // apply range filters if needed
     featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
       // only use if color mode supports range filter
-      if (displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
+      if (displayToggles && useFeaturePropRangeLimit(displayToggles.vizMode)) {
         const val = parseNumber(featurePropMinFilterInput);
         if (typeof val === 'number' && !isNaN(val)) {
           return val;
@@ -468,7 +467,7 @@ export default {
 
     featurePropMaxFilter: ({ displayToggles, featurePropMax, featurePropMaxFilterInput }) => {
       // only use if color mode supports range filter
-      if (displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
+      if (displayToggles && useFeaturePropRangeLimit(displayToggles.vizMode)) {
         const val = parseNumber(featurePropMaxFilterInput);
         if (typeof val === 'number' && !isNaN(val)) {
           return val;
@@ -528,17 +527,17 @@ export default {
     featurePropValueColorFunction: ({
       displayToggles,
       featurePropMinFilter, featurePropMaxFilter,
-      featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
+      featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, vizHelpers }) => {
 
       return (value) => {
-        const colors = displayToggles.colors;
-        if (colorFunctions[colors] && colorFunctions[colors].color) {
-          return colorFunctions[colors].color(
+        const vizMode = displayToggles.vizMode;
+        if (vizModes[vizMode] && vizModes[vizMode].color) {
+          return vizModes[vizMode].color(
             value, {
               displayToggles,
               featurePropMinFilter, featurePropMaxFilter,
               featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
-              colorHelpers
+              vizHelpers
             }
           );
         }
@@ -734,7 +733,7 @@ export default {
       params.set('paletteFlip', featurePropPaletteFlip);
 
       // save range filter (if current color mode supports it)
-      if (featurePropRangeFilter && displayToggles && useFeaturePropRangeLimit(displayToggles.colors)) {
+      if (featurePropRangeFilter && displayToggles && useFeaturePropRangeLimit(displayToggles.vizMode)) {
         params.set('rangeFilter', featurePropRangeFilter);
         if (featurePropRangeFilter === 'custom') {
           params.set('rangeFilterMin', featurePropMinFilterInput);
@@ -859,18 +858,18 @@ export default {
 
         // if color 'range' mode is active, check if values are sufficiently numeric, and if so,
         // automatically switch to 'rank' mode instead (no use using range controls for non-numeric data)
-        let colors = current.displayToggles.colors;
-        if (!current.featurePropMostlyNumeric && colors === 'range') {
-          colors = 'rank';
+        let vizMode = current.displayToggles.vizMode;
+        if (!current.featurePropMostlyNumeric && vizMode === 'range') {
+          vizMode = 'rank';
         }
         // or the converse
-        else if (current.featurePropMostlyNumeric && colors === 'rank') {
-          colors = 'range';
+        else if (current.featurePropMostlyNumeric && vizMode === 'rank') {
+          vizMode = 'range';
         }
 
         this.set({
           featurePropCheckNumeric: current.featureProp, // record that we last ran the check for this property name
-          displayToggles: { ...current.displayToggles, colors }
+          displayToggles: { ...current.displayToggles, vizMode }
         });
         this.updateFeaturePropValueSort();
     }
@@ -899,6 +898,7 @@ export default {
 
       // parse out display option toggles
       const displayToggles = {};
+      params.vizMode = params.vizMode || params.colors; // backwards compatibility for `colors` parameter
       for (const p in params) {
         if (displayOptions[p]) {
           if (displayOptions[p].parse) {
@@ -1029,24 +1029,24 @@ export default {
       // if selecting a feature property and current color mode isn't property-specific,
       // automatically change to the 'property' color mode
       const displayToggles = this.get().displayToggles;
-      let colors = displayToggles.colors;
-      if (colorFunctions[colors] && !colorFunctions[colors].useProperty) {
-        colors = 'property';
+      let vizMode = displayToggles.vizMode;
+      if (vizModes[vizMode] && !vizModes[vizMode].useProperty) {
+        vizMode = 'property';
       }
 
       this.set({
         featureProp,
         featurePropValue,
-        displayToggles: { ...displayToggles, colors }
+        displayToggles: { ...displayToggles, vizMode }
       });
     },
 
     updateFeaturePropValueSort() {
       // set default sort type (if there is one) for feature property color mode
       const displayToggles = this.get().displayToggles;
-      let colors = displayToggles.colors;
-      if (colorFunctions[colors] && colorFunctions[colors].defaultSort) {
-        this.set({ featurePropValueSort: colorFunctions[colors].defaultSort });
+      let vizMode = displayToggles.vizMode;
+      if (vizModes[vizMode] && vizModes[vizMode].defaultSort) {
+        this.set({ featurePropValueSort: vizModes[vizMode].defaultSort });
       }
     },
 
@@ -1121,7 +1121,7 @@ export default {
 
     handleKeyPress({ key }) {
       // b = toggle buildings
-      // l = colors good for a light basemap
+      // l = line width
       // n = names on map
       // o = toggle polygon outlines
       // p = make dots bigger
@@ -1163,12 +1163,12 @@ export default {
   },
 
   helpers: {
-    colorModeUsesProperty(colors) {
-      return colorFunctions[colors] && colorFunctions[colors].useProperty;
+    vizModeUsesProperty(mode) {
+      return vizModes[mode] && vizModes[mode].useProperty;
     },
 
-    showFeaturePropPalette(colors) {
-      return colorFunctions[colors] && colorFunctions[colors].usePalette;
+    showFeaturePropPalette(mode) {
+      return vizModes[mode] && vizModes[mode].usePalette;
     },
 
     // references here make these available to as template helper
@@ -1192,8 +1192,8 @@ function isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, f
   return featurePropTypesCache[propName] === PROP_TYPES.NUMERIC;
 }
 
-function useFeaturePropRangeLimit(colors) {
-  return colorFunctions[colors] && colorFunctions[colors].limitRange;
+function useFeaturePropRangeLimit(vizMode) {
+  return vizModes[vizMode] && vizModes[vizMode].limitRange;
 }
 
 function defaultDisplayOptionValue(p) {
@@ -1201,9 +1201,9 @@ function defaultDisplayOptionValue(p) {
 }
 
 function formatFeaturePropValueColor(state, value) {
-  const colors = state.displayToggles.colors;
-  if (colorFunctions[colors] && colorFunctions[colors].color) {
-    return colorFunctions[colors].color(value, state);
+  const vizMode = state.displayToggles.vizMode;
+  if (vizModes[vizMode] && vizModes[vizMode].color) {
+    return vizModes[vizMode].color(value, state);
   }
   return 'rgba(127, 127, 127, .25)';
 }
@@ -1267,7 +1267,7 @@ function hashString (string) {
     background-color: lightyellow;
   }
 
-  #colors {
+  #viz {
     overflow: auto;
     flex: 1 1 auto;
     height: 20vh;

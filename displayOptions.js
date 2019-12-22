@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { colorFunctions } from './colorFunctions';
+import { vizModes } from './vizModes';
 
 export const displayOptions = {
 
@@ -42,14 +42,14 @@ export const displayOptions = {
   },
 
   // Feature colors
-  colors: {
+  vizMode: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
 
-    apply: (scene, value, { featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue, colorHelpers }) => {
-      _.set(scene, 'global.colorMode', value);
-      _.set(scene, 'global.colorState', {
+    apply: (scene, value, { featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue, vizHelpers }) => {
+      _.set(scene, 'global.vizMode', value);
+      _.set(scene, 'global.viz', {
         featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue,
-        colorHelpers // include color helper functions in Tangram global state
+        vizHelpers // include color helper functions in Tangram global state
       });
 
       if (featurePropStack) {
@@ -69,8 +69,8 @@ export const displayOptions = {
       // the scene with the global feature color functions). Wrapping them ensures they only need to be
       // created by the time the scene is built (once all merging is complete).
       let featureColorVal;
-      if (colorFunctions[value] && colorFunctions[value].color &&
-          (featurePropStack || !colorFunctions[value].useProperty)) {
+      if (vizModes[value] && vizModes[value].color &&
+          (featurePropStack || !vizModes[value].useProperty)) {
         featureColorVal = 'featureColorDynamic';
       }
       else {

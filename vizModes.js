@@ -1,6 +1,6 @@
 import { parseNumber } from './utils';
 
-export const colorFunctions = {
+export const vizModes = {
   // color by value of specific property, in provided min/max range
   range: {
     label: 'value range',
@@ -8,12 +8,12 @@ export const colorFunctions = {
     usePalette: true,
     limitRange: true,
     defaultSort: 'values',
-    index: function (value, colorState) {
+    index: function (value, viz) {
       // produces a value between 0-1 for the current feature value
-      var min = colorState.featurePropMinFilter;
-      var max = colorState.featurePropMaxFilter;
+      var min = viz.featurePropMinFilter;
+      var max = viz.featurePropMaxFilter;
       var delta = max - min;
-      var number = colorState.colorHelpers.parseNumber(value);
+      var number = viz.vizHelpers.parseNumber(value);
 
       if (min == null || max == null || typeof number !== 'number' || isNaN(number)) {
         return null;
@@ -22,14 +22,14 @@ export const colorFunctions = {
       var ratio = (delta === 0 ? 1 : Math.max(Math.min(1 - ((max - number) / delta), 1), 0));
       return ratio;
     },
-    color: function (value, colorState) {
+    color: function (value, viz) {
       // returns a color for the palette and feature value
-      var palette = colorState.featurePropPalette;
-      var index = this.index(value, colorState); // index into palette
+      var palette = viz.featurePropPalette;
+      var index = this.index(value, viz); // index into palette
       if (index == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
-      return colorState.colorHelpers.getPaletteColor(palette, index, 0.75, colorState.featurePropPaletteFlip);
+      return viz.vizHelpers.getPaletteColor(palette, index, 0.75, viz.featurePropPaletteFlip);
     }
   },
 
@@ -39,10 +39,10 @@ export const colorFunctions = {
     useProperty: true,
     usePalette: true,
     defaultSort: 'count',
-    index: function (value, colorState) {
+    index: function (value, viz) {
       // produces a value between 0-1 for the current feature value
-      var palette = colorState.featurePropPalette;
-      var counts = (colorState.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
+      var palette = viz.featurePropPalette;
+      var counts = (viz.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
       var rank = counts.findIndex(c => c[0] === value);
 
       if (rank === -1) {
@@ -67,14 +67,14 @@ export const colorFunctions = {
 
       return ratio;
     },
-    color: function (value, colorState) {
+    color: function (value, viz) {
       // returns a color for the palette and feature value
-      var palette = colorState.featurePropPalette;
-      var index = this.index(value, colorState); // index into palette
+      var palette = viz.featurePropPalette;
+      var index = this.index(value, viz); // index into palette
       if (index == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
-      return colorState.colorHelpers.getPaletteColor(palette, index, 0.75, colorState.featurePropPaletteFlip);
+      return viz.vizHelpers.getPaletteColor(palette, index, 0.75, viz.featurePropPaletteFlip);
     }
   },
 
@@ -84,16 +84,16 @@ export const colorFunctions = {
     useProperty: true,
     usePalette: true,
     defaultSort: 'count',
-    color: function (value, colorState) {
-      var palette = colorState.featurePropPalette;
+    color: function (value, viz) {
+      var palette = viz.featurePropPalette;
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
       var palSize = (palette.type === 'categorical' ? palette.values.length : 7);
-      var hash = colorState.colorHelpers.hashValue(value);
+      var hash = viz.vizHelpers.hashValue(value);
       if (hash == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
       var ratio = (hash % palSize) / (palSize - 1); // cycle through colors
-      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, false);
+      return viz.vizHelpers.getPaletteColor(palette, ratio, 0.75, false);
     }
   },
 
@@ -102,8 +102,8 @@ export const colorFunctions = {
     label: 'feature hash',
     useProperty: false,
     usePalette: false,
-    color: function (value, colorState) {
-      var hash = colorState.colorHelpers.hashValue(value);
+    color: function (value, viz) {
+      var hash = viz.vizHelpers.hashValue(value);
       if (hash == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
@@ -124,7 +124,7 @@ export const colorFunctions = {
 // called by the color functions above (references to any non-global functions get lost when the
 // scene is serialized and sent to the worker -- the functions must be self-contained and only
 // reference Tangram globals, feature properties, and other predefined variables).
-export const colorHelpers = {
+export const vizHelpers = {
   parseNumber, // referenced here to provide access to Tangram
   hashValue, // referenced here to provide access to Tangram
 
