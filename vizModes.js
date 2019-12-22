@@ -8,7 +8,7 @@ export const vizModes = {
     usePalette: true,
     limitRange: true,
     defaultSort: 'values',
-    index: function (value, viz) {
+    value: function (value, viz) {
       // produces a value between 0-1 for the current feature value
       var min = viz.featurePropMinFilter;
       var max = viz.featurePropMaxFilter;
@@ -25,7 +25,7 @@ export const vizModes = {
     color: function (value, viz) {
       // returns a color for the palette and feature value
       var palette = viz.featurePropPalette;
-      var index = this.index(value, viz); // index into palette
+      var index = this.value(value, viz); // index into palette
       if (index == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
@@ -39,7 +39,7 @@ export const vizModes = {
     useProperty: true,
     usePalette: true,
     defaultSort: 'count',
-    index: function (value, viz) {
+    value: function (value, viz) {
       // produces a value between 0-1 for the current feature value
       var palette = viz.featurePropPalette;
       var counts = (viz.featurePropValueCounts || []).filter(c => c[0] != null); // exclude nulls
@@ -70,7 +70,7 @@ export const vizModes = {
     color: function (value, viz) {
       // returns a color for the palette and feature value
       var palette = viz.featurePropPalette;
-      var index = this.index(value, viz); // index into palette
+      var index = this.value(value, viz); // index into palette
       if (index == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
