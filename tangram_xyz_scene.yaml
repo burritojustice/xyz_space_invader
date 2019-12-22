@@ -1,3 +1,6 @@
+import:
+  - xyz_patterns.yaml
+
 global:
     highlight:
         color: [1,1,1,0.25]
@@ -126,6 +129,9 @@ global:
         return size;
       }
 
+    # set to the currently active pattern at run-time
+    xyz_pattern: xyz_pattern_stripes
+
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
@@ -139,6 +145,7 @@ styles:
   xyz_polygons:
     base: polygons
     blend: inlay
+    mix: global.xyz_pattern
   xyz_text:
     base: text
 
