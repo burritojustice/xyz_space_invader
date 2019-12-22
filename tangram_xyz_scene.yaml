@@ -15,56 +15,49 @@ global:
     lookupFeaturePointSizeProp: function(feature) { return null; }
 
     # set feature colors to dynamic (by property, hash, etc.) or default (based on geometry type)
-    featureColorType: featureColorDefault
+    featureColorType: default
 
     # get feature color based on current color mode
+    # either color by feature color property, or fallback to geometry type,
+    # or dyanmic feature coloring, using the currently defined "visualization mode"
     featureColor: |
       function() {
-        return global[global.featureColorType](feature, global, $geometry);
-      }
-
-    # dyanmic feature coloring, using the currently defined "color mode"
-    # the `viz` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
-    featureColorDynamic: |
-      function (feature, global) {
-        try {
-          if (global.vizModes[global.vizMode]) {
-            if (global.vizModes[global.vizMode].useProperty) {
-              return global.vizModes[global.vizMode].color(
-                global.lookupFeatureProp(feature),
-                global.viz
-              );
-            }
-            else {
-              return global.vizModes[global.vizMode].color(
-                feature,
-                global.viz
-              );
+        if (global.featureColorType === 'dynamic') {
+          try {
+            if (global.vizModes[global.vizMode]) {
+              if (global.vizModes[global.vizMode].useProperty) {
+                return global.vizModes[global.vizMode].color(
+                  global.lookupFeatureProp(feature),
+                  global.viz
+                );
+              }
+              else {
+                return global.vizModes[global.vizMode].color(
+                  feature,
+                  global.viz
+                );
+              }
             }
           }
+          catch(e) { // fallthrough to default color on exception
+            return 'rgba(127, 127, 127, .25)';
+          }
         }
-        catch(e) { } // fallthrough to default color on exception
-        return 'rgba(127, 127, 127, .25)';
-      }
-
-    # simple color by feature color property, or fallback to geometry type
-    featureColorDefault: |
-        function(feature, global, $geometry) {
-            var color;
+        else {
             if (feature.color) {
-                color = feature.color
+              return feature.color
             }
             else if ($geometry === 'point') {
-              color = [1, 0, 0, 0.5];
+              return [1, 0, 0, 0.5];
             }
             else if ($geometry === 'line') {
-              color = [1, 1, 0, 0.3];
+              return [1, 1, 0, 0.3];
             }
             else if ($geometry === 'polygon') {
-              color = [1, 0, 1, 0.3];
+              return [1, 0, 1, 0.3];
             }
-            return color;
         }
+      }
 
     # optionally hide feature values that are above or below the current filter range
     featureFilterOutliers: |

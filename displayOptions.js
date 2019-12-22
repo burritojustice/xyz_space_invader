@@ -71,10 +71,10 @@ export const displayOptions = {
       let featureColorVal;
       if (vizModes[value] && vizModes[value].color &&
           (featurePropStack || !vizModes[value].useProperty)) {
-        featureColorVal = 'featureColorDynamic';
+        featureColorVal = 'dynamic';
       }
       else {
-        featureColorVal = 'featureColorDefault';
+        featureColorVal = 'default';
       }
 
       _.set(scene, 'global.featureColorType', featureColorVal);
