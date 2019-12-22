@@ -57,7 +57,7 @@ export const vizModes = {
           ratio = rank / (palette.values.length-1); // assign the top values to a single color
         }
         else {
-          return 'rgba(255, 255, 255, 0.5)'; // bucket the remaining values as white
+          ratio = 1.01; // use value > 1 to signify out of range;
         }
       }
       else {
@@ -71,7 +71,10 @@ export const vizModes = {
       // returns a color for the palette and feature value
       var palette = viz.featurePropPalette;
       var index = this.value(value, viz); // index into palette
-      if (index == null) {
+      if (index > 1) {
+        return 'rgba(255, 255, 255, 0.5)'; // bucket the remaining values as white
+      }
+      else if (index == null) {
         return 'rgba(128, 128, 128, 0.5)'; // handle null/undefined values
       }
       return viz.vizHelpers.getPaletteColor(palette, index, 0.75, viz.featurePropPaletteFlip);
