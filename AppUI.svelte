@@ -220,7 +220,7 @@
       <!-- Label property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
         <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Label features by</span>
-        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.labelProp">
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop]}
             <option value="{prop}">{prop}</option>
@@ -231,10 +231,10 @@
       <!-- Point size property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
         <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Scale point size by</span>
-        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="featurePointSizeProp">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop]}
-            <!-- {#if isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
+            <!-- {#if isPropNumeric(parsePropStack(prop), { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold })} -->
               <option value="{prop}">{prop}</option>
             <!-- {/if} -->
           {/each}
@@ -242,7 +242,7 @@
       </div>
 
       <!-- Point min/max pixel size -->
-      {#if displayToggles.pointSizeProp}
+      {#if featurePointSizeProp}
         <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
           <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Point size (px):</span>
           <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
@@ -354,7 +354,6 @@
     <FeaturePopup
       feature={feature}
       featureProp={featureProp}
-      featurePropStack={featurePropStack}
       featurePinned={featurePinned}
       featurePropValue={featurePropValue}
       on:selectProp="setFeatureProp({
@@ -389,6 +388,7 @@ export default {
       demoMode: false, // display collapsed UI demo mode
       feature: null,
       featureProp: null,
+      featurePropValue: '',
       featurePropCount: null,
       featurePropValueCounts: null,
       featurePropValueSort: 'count',
@@ -450,9 +450,6 @@ export default {
       return scene;
     },
 
-    // parse nested property components
-    featurePropStack: ({ featureProp }) => parsePropStack(featureProp),
-
     // apply range filters if needed
     featurePropMinFilter: ({ displayToggles, featurePropMin, featurePropMinFilterInput }) => {
       // only use if color mode supports range filter
@@ -482,13 +479,9 @@ export default {
       return colorPalettes[featurePropPaletteName];
     },
 
-    featureLabelPropStack: ({ displayToggles }) => parsePropStack(displayToggles && displayToggles.labelProp),
-
-    featurePointSizePropStack: ({ displayToggles }) => parsePropStack(displayToggles && displayToggles.pointSizeProp),
-
     // update stats for current features and point size property (if one selected)
-    featurePointSizePropStats: ({ featuresInViewport, featurePointSizePropStack }) => {
-      return calcFeaturePropertyStats(featuresInViewport, featurePointSizePropStack);
+    featurePointSizePropStats: ({ featuresInViewport, featurePointSizeProp }) => {
+      return calcFeaturePropertyStats(featuresInViewport, featurePointSizeProp);
     },
 
     // how point sizes are mapped to feature property values
@@ -546,8 +539,8 @@ export default {
       };
     },
 
-    featurePropMostlyNumeric: ({ featurePropStack, featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) => {
-      return isPropNumeric(featurePropStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold });
+    featurePropMostlyNumeric: ({ featureProp, featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) => {
+      return isPropNumeric(featureProp, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold });
     },
 
     featurePropValueCountHash: ({ featurePropValueCounts }) => featurePropValueCounts && hashString(JSON.stringify(featurePropValueCounts)),
@@ -694,6 +687,7 @@ export default {
         featurePropMaxFilterInput,
         featurePropValueSort,
         featurePropHideOutliers,
+        featurePointSizeProp,
         featurePointSizeDisplayRange,
         tagFilterQueryParam,
         propertySearch
@@ -744,6 +738,7 @@ export default {
       params.set('sort', featurePropValueSort);
       params.set('hideOutliers', featurePropHideOutliers);
 
+      params.set('pointSizeProp', featurePointSizeProp);
       params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
 
       params.set('propertySearch', JSON.stringify(propertySearch));
@@ -811,8 +806,7 @@ export default {
         changed.hexbinInfo ||
         changed.featureProp ||
         changed.featurePropValue ||
-        changed.featureLabelPropStack ||
-        changed.featurePointSizePropStack ||
+        changed.featurePointSizeProp ||
         changed.featurePointSizeDisplayRange ||
         changed.featurePropPalette ||
         changed.featurePropPaletteFlip ||
@@ -944,7 +938,7 @@ export default {
       const featureProp = params.property;
 
       // parse selected property value
-      const featurePropValue = params.value;
+      const featurePropValue = params.value === undefined ? '' : params.value;
 
       // parse color palette
       const featurePropPaletteFlip = (params.paletteFlip === 'true');
@@ -964,6 +958,7 @@ export default {
       const featurePropValueSort = params.sort || 'count';
       const featurePropHideOutliers = (params.hideOutliers === 'true');
 
+      const featurePointSizeProp = params.pointSizeProp;
       let featurePointSizeDisplayRange = this.get().featurePointSizeDisplayRange;
       try { // protect against JSON.parse failure (it's brittle with string input)
         featurePointSizeDisplayRange = JSON.parse(params.pointSizeRange);
@@ -990,6 +985,7 @@ export default {
         featurePropMaxFilterInput,
         featurePropValueSort,
         featurePropHideOutliers,
+        featurePointSizeProp,
         featurePointSizeDisplayRange,
         tagFilterList,
         tagFilterAndOr,
@@ -1178,18 +1174,18 @@ export default {
 }
 
 // calculate whether a property is numeric based on the current features in the viewport, and cache the result
-function isPropNumeric(propStack, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) {
-  const propName = formatPropStack(propStack);
-  if (featurePropTypesCache[propName] == null) {
+function isPropNumeric(prop, { featurePropTypesCache, featuresInViewport, featurePropNumericThreshold }) {
+  const propStack = parsePropStack(prop);
+  if (featurePropTypesCache[prop] == null) {
     // use a set to get unique values from array
     const propValues = new Set(featuresInViewport
       .map(f => lookupProperty(f.properties, propStack))
       .filter(f => typeof f !== 'object')
     );
-    featurePropTypesCache[propName] =
+    featurePropTypesCache[prop] =
       mostlyNumeric([...propValues], featurePropNumericThreshold) ? PROP_TYPES.NUMERIC : PROP_TYPES.STRING;
   }
-  return featurePropTypesCache[propName] === PROP_TYPES.NUMERIC;
+  return featurePropTypesCache[prop] === PROP_TYPES.NUMERIC;
 }
 
 function useFeaturePropRangeLimit(vizMode) {

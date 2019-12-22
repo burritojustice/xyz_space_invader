@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { vizModes } from './vizModes';
+import { parsePropStack } from './utils';
 
 export const displayOptions = {
 
@@ -16,8 +17,9 @@ export const displayOptions = {
   // Feature label property
   label: {
     values: [],
-    apply: (scene, value, { featureLabelPropStack }) => {
+    apply: (scene, value) => {
       let showLabels;
+      const featureLabelPropStack = parsePropStack(value);
       if (featureLabelPropStack) {
         // custom JS tangram function to access nested properties efficiently
         _.set(scene, 'global.lookupFeatureLabelProp',
@@ -45,13 +47,14 @@ export const displayOptions = {
   vizMode: {
     values: ['xray', 'property', 'hash', 'range', 'rank'],
 
-    apply: (scene, value, { featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue, vizHelpers }) => {
+    apply: (scene, value, { featureProp, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue, vizHelpers }) => {
       _.set(scene, 'global.vizMode', value);
       _.set(scene, 'global.viz', {
-        featurePropStack, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue,
+        featureProp, featurePropMinFilter, featurePropMaxFilter, featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, featurePropHideOutliers, featurePropValue,
         vizHelpers // include color helper functions in Tangram global state
       });
 
+      const featurePropStack = parsePropStack(featureProp);
       if (featurePropStack) {
         // custom JS tangram function to access nested properties efficiently
         _.set(scene, 'global.lookupFeatureProp',
@@ -85,10 +88,11 @@ export const displayOptions = {
   points: {
     parse: parseInt,
     values: [0, 1, 2, 3, 4],
-    apply: (scene, value, { featurePointSizePropStack, featurePointSizeRange }) => {
+    apply: (scene, value, { featurePointSizeProp, featurePointSizeRange }) => {
       let size;
 
       // ignore explicit point size setting when a feature property is selected
+      const featurePointSizePropStack = parsePropStack(featurePointSizeProp);
       if (featurePointSizePropStack) {
         // custom JS tangram function to access nested properties efficiently
         _.set(scene, 'global.lookupFeaturePointSizeProp',
@@ -127,12 +131,6 @@ export const displayOptions = {
 
       _.set(scene, 'global.featurePointSize', size);
     }
-  },
-
-  // optional feature property to tie point sizes to
-  pointSizeProp: {
-    // feature property-driven point sizes are applied by the 'points' option above, but we need an entry
-    // for it here so that it gets recognized as a display option during query string parameter on page load
   },
 
   // Line widths

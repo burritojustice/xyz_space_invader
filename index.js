@@ -477,8 +477,8 @@ async function queryViewport() {
 
 function updateViewportProperties(features) { // for feature prop
   // then get feature values based on currently selected property
-  const propStack = appUI.get().featurePropStack;
-  const stats = calcFeaturePropertyStats(features, propStack);
+  const { featureProp } = appUI.get();
+  const stats = calcFeaturePropertyStats(features, featureProp);
 
   // update UI
   appUI.set({

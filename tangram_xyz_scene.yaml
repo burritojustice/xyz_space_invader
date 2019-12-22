@@ -77,11 +77,9 @@ global:
     # optionally filter by specific property/value combination
     featureFilterSelectedValue: |
         function() {
-          if (global.viz.featurePropStack != null &&
-              global.viz.featurePropValue != null &&
-              global.viz.featurePropValue !== '') {
+          if (global.viz.featureProp != null && global.viz.featurePropValue !== '') {
             var value = global.lookupFeatureProp(feature);
-            if (value !== global.viz.featurePropValue) {
+            if (value != global.viz.featurePropValue) {
               return false;
             }
           }

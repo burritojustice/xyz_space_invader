@@ -51,7 +51,7 @@
 
 <script>
 
-import { parseNestedObject, lookupProperty } from './utils';
+import { parsePropStack, parseNestedObject, lookupProperty } from './utils';
 
 export default {
   data() {
@@ -61,11 +61,12 @@ export default {
   },
 
   computed: {
-    summaryProps: ({ feature, featureProp, featurePropStack }) => {
+    summaryProps: ({ feature, featureProp }) => {
       if (feature == null) {
         return [];
       }
 
+      const featurePropStack = parsePropStack(featureProp);
       const addFeatureProp = (['id', 'name'].indexOf(featureProp) === -1);
 
       return [
