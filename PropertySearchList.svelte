@@ -1,7 +1,7 @@
 {#if numProperties > 0}
   <div>
     {numProperties} properties
-    ({numSearchableProperties === numSearchableProperties ? 'all' : numSearchableProperties} searchable):
+    ({numSearchableProperties === numProperties ? 'all' : numSearchableProperties} searchable):
   </div>
   <table>
     {#each Object.entries(properties) as [prop, { searchable, datatype }]}
