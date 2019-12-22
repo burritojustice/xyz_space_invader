@@ -140,7 +140,7 @@
 
       {#if sortedUniqueFeaturePropsSeen.length > 0 && vizModeUsesProperty(displayToggles.vizMode)}
         <!-- Visualize property selector -->
-        <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <div class="property_selector">
           <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Visualize by property</span>
           <select style="flex: 1 1 auto; width: 100%;" bind:value="featureProp">
             <option value=""></option>
@@ -152,7 +152,7 @@
 
         <!-- Visualize value selector -->
         {#if featureProp && featurePropValueCounts}
-          <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+          <div class="property_selector">
             <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Filter by value</span>
             <select style="flex: 1 1 auto; width: 100%;" bind:value="featurePropValue">
               <option value=""></option>
@@ -218,7 +218,7 @@
 
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <!-- Label property selector -->
-      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+      <div class="property_selector">
         <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Label features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.label">
           <option value=""></option>
@@ -229,7 +229,7 @@
       </div>
 
       <!-- Point size property selector -->
-      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+      <div class="property_selector">
         <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Scale point size by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="featurePointSizeProp">
           <option value=""></option>
@@ -243,10 +243,10 @@
 
       <!-- Point min/max pixel size -->
       {#if featurePointSizeProp}
-        <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <div class="property_selector hideOnMobile">
           <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Point size (px):</span>
-          <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
-          <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
+          <input style="flex: 1 1 auto; width: 100%;" class="range_filter" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
+          <input style="flex: 1 1 auto; width: 100%;" class="range_filter" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
         </div>
       {/if}
     {/if}
@@ -1290,6 +1290,13 @@ function hashString (string) {
 
   .range_filter {
     width: 45px;
+  }
+
+  .property_selector {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 5px 0px;
   }
 
   .active {
