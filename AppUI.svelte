@@ -358,7 +358,7 @@
       featurePropValue={featurePropValue}
       on:selectProp="setFeatureProp({
         featureProp: (event.prop !== featureProp ? event.prop : null),
-        featurePropValue: null
+        featurePropValue: undefined
       })"
       on:selectValue="setFeatureProp({
         featureProp: event.prop,
@@ -938,7 +938,10 @@ export default {
       const featureProp = params.property;
 
       // parse selected property value
-      const featurePropValue = params.value === undefined ? '' : params.value;
+      let featurePropValue = params.value === undefined ? '' : params.value;
+      if (featurePropValue && featurePropValue.match(/^\d+$/)) {
+        featurePropValue = parseNumber(featurePropValue); // parse from string if needed
+      }
 
       // parse color palette
       const featurePropPaletteFlip = (params.paletteFlip === 'true');
