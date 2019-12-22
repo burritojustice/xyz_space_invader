@@ -108,24 +108,8 @@
 
   <div id="colors" class="panel hideOnMobilePortrait" class:hideInDemoMode="demoMode">
     <div id="colorProperties">
-      <!-- Selected feature property and value info -->
+      <!-- Selected feature property stats -->
       {#if featureProp && featurePropCount != null}
-        <div>
-          <span class="active">
-            Analyzing property <b>{featureProp}</b>
-            <button on:click="set({ featureProp: null })" style="background: none; border: none;">❌</button>
-          </span>
-        </div>
-
-        {#if featurePropValue != null}
-          <div>
-            <span class="active">
-              Only showing value <b>{featurePropValue}</b>
-              <button on:click="set({ featurePropValue: null })" style="background: none; border: none;">❌</button>
-            </span>
-          </div>
-        {/if}
-
         <div style="margin: 5px 0 5px 0;" class="hideOnMobile">
           <div>{featurePropCount} unique values in the viewport</div>
 
@@ -143,7 +127,7 @@
       <!-- Color mode selector -->
       {#if displayToggles}
         <div>
-          Color features by
+          Analyze by
           <select bind:value="displayToggles.colors" on:change="updateFeaturePropValueSort()">
             {#each colorModes as mode}
               {#if featureProp || !colorModeUsesProperty(mode)}
@@ -152,6 +136,32 @@
             {/each}
           </select>
         </div>
+      {/if}
+
+      {#if sortedUniqueFeaturePropsSeen.length > 0 && colorModeUsesProperty(displayToggles.colors)}
+        <!-- Visualize property selector -->
+        <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+          <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Visualize by property</span>
+          <select style="flex: 1 1 auto; width: 100%;" bind:value="featureProp">
+            <option value=""></option>
+            {#each sortedUniqueFeaturePropsSeen as [prop]}
+              <option value="{prop}">{prop}</option>
+            {/each}
+          </select>
+        </div>
+
+        <!-- Visualize value selector -->
+        {#if featureProp && featurePropValueCounts}
+          <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+            <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Visualize by value</span>
+            <select style="flex: 1 1 auto; width: 100%;" bind:value="featurePropValue">
+              <option value=""></option>
+              {#each featurePropValueCounts as [value, count]}
+                <option value="{value}">({count}x) {value}</option>
+              {/each}
+            </select>
+          </div>
+        {/if}
       {/if}
 
       <!-- Color palette and range filters -->
@@ -209,7 +219,7 @@
     {#if sortedUniqueFeaturePropsSeen.length > 0}
       <!-- Label property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-        <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Label features by</span>
+        <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Label features by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.labelProp">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop]}
@@ -220,7 +230,7 @@
 
       <!-- Point size property selector -->
       <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-        <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Scale point size by</span>
+        <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Scale point size by</span>
         <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pointSizeProp">
           <option value=""></option>
           {#each sortedUniqueFeaturePropsSeen as [prop]}
@@ -234,7 +244,7 @@
       <!-- Point min/max pixel size -->
       {#if displayToggles.pointSizeProp}
         <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-          <span style="flex: 0 0 auto; margin-right: 5px; width: 110px;">Point size (px):</span>
+          <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Point size (px):</span>
           <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[0]" placeholder="min" on:keydown="event.stopPropagation()">
           <input style="flex: 1 1 auto; width: 100%;" class="range_filter hideOnMobile" type="text" bind:value="featurePointSizeDisplayRange[1]" placeholder="max" on:keydown="event.stopPropagation()">
         </div>
@@ -353,7 +363,7 @@
       })"
       on:selectValue="setFeatureProp({
         featureProp: event.prop,
-        featurePropValue: (event.value !== featurePropValue ? event.value : null)
+        featurePropValue: (event.value !== featurePropValue ? event.value : '')
       })"
     />
   </div>
@@ -1336,7 +1346,7 @@ function hashString (string) {
   @media (max-width: 960px) and (orientation: landscape) {
     /* keep basemap selector from being too wide */
     #basemap_select {
-      width: 110px;
+      width: 115px;
     }
   }
 

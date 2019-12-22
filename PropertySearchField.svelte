@@ -91,7 +91,6 @@ export default {
 
     // debounced update event to avoid spamming on rapid UI changes
     updateField: _.debounce(function({ prop, values }) {
-      console.log({ prop, values });
       this.fire('update', { prop, values });
     }, INPUT_DEBOUNCE_TIME)
 

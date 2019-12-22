@@ -84,7 +84,9 @@ global:
     # optionally filter by specific property/value combination
     featureFilterSelectedValue: |
         function() {
-          if (global.colorState.featurePropStack != null && global.colorState.featurePropValue != null) {
+          if (global.colorState.featurePropStack != null &&
+              global.colorState.featurePropValue != null &&
+              global.colorState.featurePropValue !== '') {
             var value = global.lookupFeatureProp(feature);
             if (value !== global.colorState.featurePropValue) {
               return false;
