@@ -153,7 +153,7 @@
         <!-- Visualize value selector -->
         {#if featureProp && featurePropValueCounts}
           <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
-            <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Visualize by value</span>
+            <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Filter by value</span>
             <select style="flex: 1 1 auto; width: 100%;" bind:value="featurePropValue">
               <option value=""></option>
               {#each featurePropValueCounts as [value, count]}
