@@ -358,7 +358,7 @@
       featurePropValue={featurePropValue}
       on:selectProp="setFeatureProp({
         featureProp: (event.prop !== featureProp ? event.prop : null),
-        featurePropValue: undefined
+        featurePropValue: ''
       })"
       on:selectValue="setFeatureProp({
         featureProp: event.prop,
