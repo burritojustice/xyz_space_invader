@@ -110,6 +110,19 @@ global:
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
+# App-specific versions of styles, with extra mixins for projections, patterns, etc.
+styles:
+  xyz_points:
+    base: points
+  xyz_lines:
+    base: lines
+    blend: overlay
+  xyz_polygons:
+    base: polygons
+    blend: inlay
+  xyz_text:
+    base: text
+
 layers:
 
     _xyz_dots:
@@ -121,7 +134,7 @@ layers:
         data: { source: _xyzspace }
         draw:
             # regular filled points
-            points:
+            xyz_points:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
@@ -140,7 +153,7 @@ layers:
         donut_points:
             enabled: false
             draw:
-              points:
+              xyz_points:
                   color: transparent
                   outline:
                       color: global.featureColor
@@ -153,14 +166,14 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
-            overlay_lines:
+            xyz_lines:
                 interactive: true
                 color: global.featureColor
                 width: 4px
                 blend_order: 0
                 outline:
                    width: 0px
-            text:
+            xyz_text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
@@ -176,11 +189,11 @@ layers:
         data: { source: _xyzspace }
         _outlines:
             draw:
-                overlay_lines:
+                xyz_lines:
                     width: 0px
                     blend_order: 0
         draw:
-            inlay_polygons:
+            xyz_polygons:
                 interactive: true
                 color: global.featureColor
                 width: 2px
