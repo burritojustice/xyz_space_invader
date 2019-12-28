@@ -83,7 +83,7 @@
     {#if demoMode && displayToggles.pointSizeProp != null}
       <!-- Selected point size property and value info -->
       <div style="margin: 5px 0px;">
-        Points scaled by <b>{pointSizeProp.label}</b>
+        Points scaled by <b>{displayToggles.pointSizeProp}</b>
       </div>
     {/if}
     
