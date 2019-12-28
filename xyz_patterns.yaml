@@ -6,7 +6,7 @@ styles:
 
   xyz_pattern_stripes:
       base: polygons
-      mix: [xyz_feature_attribute, functions-aastep, patterns-stripes, space-screen]
+      mix: [xyz_feature_attribute, functions-aastep, patterns-stripes, space-screen, space-tile]
       blend: inlay
       # animated: true
       shaders:
@@ -17,10 +17,40 @@ styles:
           blocks:
               color: |
                   color = vec4(0.302, 0.729, 1., 1.); // fixed stripe color
-                  vec2 st = getScreenNonStretchCoords();
+                  //vec2 st = getScreenNonStretchCoords();
+                  vec2 st = getTileCoords() * .35;
                   //st.x += log(1. - v_xyz_feature) * u_time * .1;
                   color = mix(color, vec4(0.980, 0.980, 0.980, 0.25),
                   stripes(st*85., v_xyz_feature, STRIPES_ANGLE));
+
+  xyz_pattern_dash:
+    base: polygons
+    blend: inlay
+    mix: [xyz_feature_attribute, block, space-screen, space-tile, tiling-tile, shapes-type]
+    shaders:
+        defines:
+            ZOOM_START: 12.
+            ZOOM_END: 18.
+            ZOOM_IN: .0
+            ZOOM_OUT: 1.
+
+            DASH_SCALE: 7.
+            DASH_COLOR: vec3(0.302, 0.729, 1.) # fixed dash color
+            DASH_BACKGROUND_COLOR: vec3(1.)
+            DASH_TILE_STYLE: tile
+            DASH_TYPE: fill
+        blocks:
+            global: |
+                float dashDF(vec2 st) {
+                    return min(cos((st.x-st.y)*PI),-cos((st.x+st.y+.5)*PI*.6666)*5.);
+                }
+            color: |
+                float dash_size = 1. - v_xyz_feature;
+                //vec2 st = getScreenNonStretchCoords();
+                vec2 st = getTileCoords();
+                color.rgb = mix(DASH_COLOR,
+                                DASH_BACKGROUND_COLOR,
+                                DASH_TYPE(dash_size, dashDF(DASH_TILE_STYLE(st*DASH_SCALE,3.))) );
 
   ### Add XYZ feature attribute
 
@@ -262,3 +292,57 @@ styles:
                       return st;
                   }
                   #endif
+
+  shapes-type:
+      mix: [functions-aastep]
+      shaders:
+          defines:
+              STROKE: 0.15
+          blocks:
+              global: |
+                  float fill (in float size, in float x) {
+                      return 1.-aastep(size, x);
+                  }
+                  float stroke (in float size, in float x) {
+                      return aastep(size, x+STROKE) - aastep(size, x);
+                  }
+  space-tile:
+      shaders:
+          blocks:
+              global: |
+                  // Variant to be add to both vertex and fragments shaders
+                  varying vec3 v_pos;
+                  //
+                  // Get the coordinates in tile space
+                  // ================================
+                  vec2 getTileCoords() {
+                      return fract(v_pos.xy);
+                  }
+              position: |
+                  // Normalize the attribute position of a vertex
+                  v_pos = modelPosition().xyz;
+
+  tiling-tile:
+      shaders:
+          blocks:
+              global: |
+                  // Repeats a coordinate space (st) in diferent tiles
+                  // ================================
+                  vec2 tile (vec2 st, float zoom) {
+                      st *= zoom;
+                      return fract(st);
+                  }
+
+  block:
+    shaders:
+        defines:
+            ADD: '+'
+            SUBTRACT: '-'
+            MULTIPLY: '*'
+            PI: 3.1415926535897932384626433832795
+            TWO_PI: 6.2831853071795864769252867665590
+            HALF_PI: 1.5707963267948966192313216916398
+            QUATER_PI: .785398163
+            EPSILON: 0.0000001
+            deg2rad(d): (((d)*3.1415926535897932384626433832795)/180.0)
+            rad2deg(d): (((d)*180.0)/3.1415926535897932384626433832795)
