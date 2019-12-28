@@ -80,6 +80,13 @@
       </div>
     {/if}
     
+    {#if demoMode && displayToggles.pointSizeProp != null}
+      <!-- Selected point size property and value info -->
+      <div style="margin: 5px 0px;">
+        Points scaled by <b>{pointSizeProp.label}</b>
+      </div>
+    {/if}
+    
     {#if demoMode && featureProp && featurePropCount != null}
       <!-- Selected feature property and value info -->
       <div style="margin: 5px 0px;">
