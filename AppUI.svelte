@@ -90,7 +90,7 @@
     {#if demoMode && featureProp && featurePropCount != null}
       <!-- Selected feature property and value info -->
       <div style="margin: 5px 0px;">
-        Analyzing property <b>{featureProp}</b>
+        Analyzing property <b>{featureProp}</b> by {displayToggles.vizMode}
       </div>
 
       <!-- Histogram for demo mode -->
