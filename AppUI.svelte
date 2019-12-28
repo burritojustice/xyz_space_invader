@@ -77,6 +77,8 @@
       <!-- Selected label property and value info -->
       <div style="margin: 5px 0px;">
         Features labeled by <b>{displayToggles.label}</b>
+        Points scaled by <b>{displayToggles.pointSizeProp}</b>
+
       </div>
     {/if}
     
@@ -90,7 +92,7 @@
     {#if demoMode && featureProp && featurePropCount != null}
       <!-- Selected feature property and value info -->
       <div style="margin: 5px 0px;">
-        Analyzing property <b>{featureProp}</b> by {displayToggles.vizMode}
+        Analyzing property <b>{featureProp}</b> by <b>{displayToggles.vizMode}</b>
       </div>
 
       <!-- Histogram for demo mode -->
