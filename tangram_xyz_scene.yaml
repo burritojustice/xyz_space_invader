@@ -129,9 +129,6 @@ global:
         return size;
       }
 
-    # set to the currently active pattern at run-time
-    xyz_pattern: null
-
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
@@ -145,9 +142,12 @@ styles:
   xyz_polygons:
     base: polygons
     blend: inlay
-    mix: global.xyz_pattern
+    mix: xyz_pattern
   xyz_text:
     base: text
+
+  # set to the currently active pattern at run-time
+  xyz_pattern: {}
 
 layers:
 

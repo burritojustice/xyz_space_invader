@@ -89,7 +89,7 @@ export const displayOptions = {
     values: ['stripes'],
     apply: (scene, value) => {
       // Set active pattern
-      _.set(scene, 'global.xyz_pattern', value ? `xyz_pattern_${value}` : null);
+      _.set(scene, 'styles.xyz_pattern', value ? { mix: `xyz_pattern_${value}` } : {});
     }
   },
 
