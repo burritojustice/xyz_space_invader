@@ -84,6 +84,15 @@ export const displayOptions = {
     }
   },
 
+  // Patterns (shader-based)
+  pattern: {
+    values: ['stripes'],
+    apply: (scene, value) => {
+      // Set active pattern
+      _.set(scene, 'global.xyz_pattern', value ? `xyz_pattern_${value}` : null);
+    }
+  },
+
   // Point sizes
   points: {
     parse: parseInt,

@@ -130,7 +130,7 @@ global:
       }
 
     # set to the currently active pattern at run-time
-    xyz_pattern: xyz_pattern_stripes
+    xyz_pattern: null
 
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
