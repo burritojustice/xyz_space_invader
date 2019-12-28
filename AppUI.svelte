@@ -73,6 +73,13 @@
     </div>
 
     <!-- Demo mode context -->
+    {#if demoMode && displayToggles\.label != null}
+      <!-- Selected label property and value info -->
+      <div style="margin: 5px 0px;">
+        Features labeled by <b>{displayToggles.label}</b>
+      </div>
+    {/if}
+    
     {#if demoMode && featureProp && featurePropCount != null}
       <!-- Selected feature property and value info -->
       <div style="margin: 5px 0px;">
