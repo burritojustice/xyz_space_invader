@@ -77,15 +77,14 @@
       <!-- Selected label property and value info -->
       <div style="margin: 5px 0px;">
         Features labeled by <b>{displayToggles.label}</b>
-        Points scaled by <b>{displayToggles.pointSizeProp}</b>
-
       </div>
     {/if}
     
-    {#if demoMode && displayToggles.pointSizeProp != null}
+    {#if demoMode && featurePointSizeProp != null}
       <!-- Selected point size property and value info -->
       <div style="margin: 5px 0px;">
-        Points scaled by <b>{displayToggles.pointSizeProp}</b>
+<!--         Points scaled by <b>{displayToggles.pointSizeProp}</b> -->
+        Points scaled by <b>{featurePointSizeProp}</b>
       </div>
     {/if}
     
