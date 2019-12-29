@@ -83,7 +83,6 @@
     {#if demoMode && featurePointSizeProp != null}
       <!-- Selected point size property and value info -->
       <div style="margin: 5px 0px;">
-<!--         Points scaled by <b>{displayToggles.pointSizeProp}</b> -->
         Points scaled by <b>{featurePointSizeProp}</b>
       </div>
     {/if}
@@ -117,7 +116,6 @@
             valueColorFunction={featurePropValueColorFunction}
           />
         </div>
-<!--test-->
       {:elseif displayToggles.vizMode === 'property'}
         <!-- Top values list -->
         <div class="hideOnMobilePortrait">
@@ -130,7 +128,6 @@
             valueColorFunction={featurePropValueColorFunction}
           />
         </div>
-<!--test-->
       {/if}
     {/if}
   </div>
