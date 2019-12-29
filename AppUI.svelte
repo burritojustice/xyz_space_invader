@@ -107,7 +107,7 @@
         </div>
       {:elseif displayToggles.vizMode === 'rank' && featurePropValueCounts}
         <!-- Top values list -->
-        <div class="hideOnMobile">
+        <div class="hideOnMobilePortrait">
           <FeaturePropTopValues
             showHeader={false}
             prop={featureProp}
@@ -117,6 +117,20 @@
             valueColorFunction={featurePropValueColorFunction}
           />
         </div>
+<!--test-->
+      {:elseif displayToggles.vizMode === 'property'}
+        <!-- Top values list -->
+        <div class="hideOnMobilePortrait">
+          <FeaturePropTopValues
+            showHeader={false}
+            prop={featureProp}
+            bind:propValue="featurePropValue"
+            bind:valueSort="featurePropValueSort"
+            valueCounts={sortedFeaturePropValueCounts}
+            valueColorFunction={featurePropValueColorFunction}
+          />
+        </div>
+<!--test-->
       {/if}
     {/if}
   </div>
