@@ -2,7 +2,7 @@ styles:
 
   ### Patterns
   # each pattern style should mixin `xyz_feature_attribute` (defined below), which adds an
-  # attribute with the name `v_xyz_feature` inside shader blocks
+  # attribute with the name `xyz_feature` inside shader blocks
 
   xyz_pattern_stripes:
       base: polygons
@@ -19,9 +19,9 @@ styles:
                   color = vec4(0.302, 0.729, 1., 1.); // fixed stripe color
                   //vec2 st = getScreenNonStretchCoords();
                   vec2 st = getTileCoords() * .35;
-                  //st.x += log(1. - v_xyz_feature) * u_time * .1;
+                  //st.x += log(1. - xyz_feature) * u_time * .1;
                   color = mix(color, vec4(0.980, 0.980, 0.980, 0.25),
-                  stripes(st*85., v_xyz_feature, STRIPES_ANGLE));
+                  stripes(st*85., xyz_feature, STRIPES_ANGLE));
 
   xyz_pattern_dash:
     base: polygons
@@ -45,7 +45,7 @@ styles:
                     return min(cos((st.x-st.y)*PI),-cos((st.x+st.y+.5)*PI*.6666)*5.);
                 }
             color: |
-                float dash_size = 1. - v_xyz_feature;
+                float dash_size = 1. - xyz_feature;
                 //vec2 st = getScreenNonStretchCoords();
                 vec2 st = getTileCoords();
                 color.rgb = mix(DASH_COLOR,
