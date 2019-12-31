@@ -722,7 +722,9 @@ export default {
       params.set('demo', demoMode ? 1 : 0);
 
       for(const p in displayToggles) {
-        params.set(p, displayToggles[p]);
+        if (displayToggles[p] != null) {
+          params.set(p, displayToggles[p]);
+        }
       }
 
       if (tagFilterQueryParam) {
@@ -913,7 +915,7 @@ export default {
             // parse display options values (e.g. convert strings to numbers, etc.)
             displayToggles[p] = displayOptions[p].parse(params[p]);
           }
-          else {
+          else if (params[p] !== 'null' && params[p] !== 'undefined') {
             displayToggles[p] = params[p];
           }
         }
