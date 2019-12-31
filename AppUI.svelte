@@ -177,6 +177,13 @@
               {/each}
             </select>
           </div>
+
+          {#if displayToggles.pattern}
+            <div class="property_selector">
+              <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Pattern color</span>
+              <input style="flex: 1 1 auto; width: 100%;" type="color" bind:value="displayToggles.patternColor">
+            </div>
+          {/if}
         {/if}
 
         <!-- Color palette and range filters -->

@@ -16,7 +16,7 @@ styles:
               STRIPES_ANGLE: 0.7853981634
           blocks:
               color: |
-                  color = vec4(0.302, 0.729, 1., 1.); // fixed stripe color
+                  color.rgb = u_pattern_color;
                   //vec2 st = getScreenNonStretchCoords();
                   vec2 st = getTileCoords() * .35;
                   //st.x += log(1. - xyz_feature) * u_time * .1;
@@ -33,10 +33,7 @@ styles:
             ZOOM_END: 18.
             ZOOM_IN: .0
             ZOOM_OUT: 1.
-
             DASH_SCALE: 7.
-            DASH_COLOR: vec3(0.302, 0.729, 1.) # fixed dash color
-            DASH_BACKGROUND_COLOR: vec3(1.)
             DASH_TILE_STYLE: tile
             DASH_TYPE: fill
         blocks:
@@ -45,11 +42,13 @@ styles:
                     return min(cos((st.x-st.y)*PI),-cos((st.x+st.y+.5)*PI*.6666)*5.);
                 }
             color: |
+                vec3 dash_color = u_pattern_color;
+                vec3 dash_background_color = vec3(1.);
                 float dash_size = 1. - xyz_feature;
                 //vec2 st = getScreenNonStretchCoords();
                 vec2 st = getTileCoords();
-                color.rgb = mix(DASH_COLOR,
-                                DASH_BACKGROUND_COLOR,
+                color.rgb = mix(dash_color,
+                                dash_background_color,
                                 DASH_TYPE(dash_size, dashDF(DASH_TILE_STYLE(st*DASH_SCALE,3.))) );
 
   ### Add XYZ feature attribute
@@ -61,6 +60,8 @@ styles:
       attributes:
         xyz_feature:
           type: float
+      uniforms:
+        u_pattern_color: [1, 1, 1] # RGB color to use for pattern fill
     draw:
       attributes:
         xyz_feature: global.featureNormalizedValue
