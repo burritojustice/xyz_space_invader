@@ -918,6 +918,9 @@ export default {
           else if (params[p] !== 'null' && params[p] !== 'undefined') {
             displayToggles[p] = params[p];
           }
+          else {
+            displayToggles[p] = displayOptions[p].default;
+          }
         }
       }
 
