@@ -59,10 +59,10 @@ layers:
     _xyz_polygons:
         _outlines:
             draw:
-                lines:
+                overlay_lines:
                     style: _lines
         draw:
-            polygons:
+            inlay_polygons:
                 style: _polygons_inlay
             text:
                 style: _text
