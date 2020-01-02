@@ -137,8 +137,7 @@
           </select>
         </div>
       {/if}
-
-      {#if sortedUniqueFeaturePropsSeen.length > 0 && vizModeUsesProperty(displayToggles.vizMode)}
+      {#if sortedUniqueFeaturePropsSeen.length > 0} <!-- && vizModeUsesProperty(displayToggles.vizMode)} -->
         <!-- Visualize property selector -->
         <div class="property_selector">
           <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Visualize by property</span>
