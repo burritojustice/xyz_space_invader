@@ -11,7 +11,10 @@ styles:
         shaders:
             defines:
                 EARTH_RADIUS: 6378137.0 //radius of ellipsoid, WGS84
+                PI: 3.14159265358979323846
                 HALF_PI: 1.570796327
+                deg2rad(d): (d)*PI/180.0
+                rad2deg(d): (d)*180.0/PI
             blocks:
                 global: |
                     // http://wiki.openstreetmap.org/wiki/Mercator
@@ -52,6 +55,22 @@ styles:
                         return vec3(x,z,y);
                     }
 
+                    float haversine(float lat1, float lon1, float lat2, float lon2) {
+                        float phi1 = deg2rad(lat1);
+                        float phi2 = deg2rad(lat2);
+                        float deltaphi = deg2rad(lat2-lat1);
+                        float deltalambda = deg2rad(lon2-lon1);
+
+                        float a = sin(deltaphi/2.0) * sin(deltaphi/2.0) +
+                                cos(phi1) * cos(phi2) *
+                                sin(deltalambda/2.0) * sin(deltalambda/2.0);
+                        float c = 2.0 * atan(sqrt(a), sqrt(1.0-a));
+                        //float c = 2.0 * atan(sqrt(1.0-a), sqrt(a));
+
+                        float d = EARTH_RADIUS * c;
+                        return d;
+                    }
+
                 position: |
                     // mercator position of the current vertex, u_map_position = center of screen,
                     // position.xy = vertex screen position in meters from the center of the screen
@@ -64,11 +83,14 @@ styles:
                     // Central_Meridian
                     float centerlon = x2lon_m(u_map_position.x);
 
-                    // bend map into globe
-                    position.xyz = latLongToVector3(lat, lon, 2.) * EARTH_RADIUS;
+                    if (haversine(rad2deg(lat), rad2deg(lon), rad2deg(centerlat), rad2deg(centerlon)) > EARTH_RADIUS * PI / 2.0) {
+                        position.xy = vec2(3.402823466e+38);
+                    } else {
+                        // bend map into globe
+                        position.xyz = latLongToVector3(lat, lon, 2.) * EARTH_RADIUS;
 
-                    // rotate globe with map navigation
-                    // 90 degrees in radians = 1.5708
-                    position.xyz *= globe_rotateY3D((-centerlon - 1.5708));
-                    position.xyz *= globe_rotateX3D(-(centerlat));
-
+                        // rotate globe with map navigation
+                        // 90 degrees in radians = 1.5708
+                        position.xyz *= globe_rotateY3D((-centerlon - 1.5708));
+                        position.xyz *= globe_rotateX3D(-(centerlat));
+                    }
