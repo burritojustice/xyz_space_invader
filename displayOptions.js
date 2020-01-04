@@ -84,6 +84,26 @@ export const displayOptions = {
     }
   },
 
+  // Patterns (shader-based)
+  pattern: {
+    values: ['stripes', 'dash'],
+    apply: (scene, value) => {
+      // Set active pattern
+      _.set(scene, 'styles.xyz_pattern', value ? { mix: `xyz_pattern_${value}` } : {});
+    }
+  },
+
+  patternColor: {
+    default: '#84c6f9',
+    apply: (scene, value) => {
+      // Set active pattern color
+      // parse hex color to RGB value from 0-1
+      const rgb = value ?
+        [1, 3, 5].map(i => parseInt(value.substr(i, 2), 16) / 255) : [1, 1, 1];
+      _.set(scene, 'styles.xyz_pattern.shaders.uniforms.u_pattern_color', rgb);
+    }
+  },
+
   // Point sizes
   points: {
     parse: parseInt,

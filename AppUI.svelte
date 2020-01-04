@@ -150,7 +150,7 @@
           </select>
         </div>
 
-        <!-- Visualize value selector -->
+        <!-- Filter value selector -->
         {#if featureProp && featurePropValueCounts}
           <div class="property_selector">
             <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Filter by value</span>
@@ -164,8 +164,29 @@
         {/if}
       {/if}
 
-      <!-- Color palette and range filters -->
+
       {#if featureProp && featurePropCount != null}
+        <!-- Pattern selector -->
+        {#if displayToggles}
+          <div class="property_selector">
+            <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Pattern</span>
+            <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pattern">
+              <option value=""></option>
+              {#each patternOptions as pattern}
+                <option value="{pattern}">{pattern}</option>
+              {/each}
+            </select>
+          </div>
+
+          {#if displayToggles.pattern}
+            <div class="property_selector">
+              <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Pattern color</span>
+              <input style="flex: 1 1 auto; width: 100%;" type="color" bind:value="displayToggles.patternColor">
+            </div>
+          {/if}
+        {/if}
+
+        <!-- Color palette and range filters -->
         {#if showFeaturePropPalette(displayToggles.vizMode)}
           <div class="hideOnMobile">
             Color palette
@@ -708,7 +729,9 @@ export default {
       params.set('demo', demoMode ? 1 : 0);
 
       for(const p in displayToggles) {
-        params.set(p, displayToggles[p]);
+        if (displayToggles[p] != null) {
+          params.set(p, displayToggles[p]);
+        }
       }
 
       if (tagFilterQueryParam) {
@@ -899,8 +922,11 @@ export default {
             // parse display options values (e.g. convert strings to numbers, etc.)
             displayToggles[p] = displayOptions[p].parse(params[p]);
           }
-          else {
+          else if (params[p] !== 'null' && params[p] !== 'undefined') {
             displayToggles[p] = params[p];
+          }
+          else {
+            displayToggles[p] = displayOptions[p].default;
           }
         }
       }
@@ -1169,6 +1195,8 @@ export default {
     showFeaturePropPalette(mode) {
       return vizModes[mode] && vizModes[mode].usePalette;
     },
+
+    patternOptions: displayOptions.pattern.values, // for easier template access
 
     // references here make these available to as template helper
     useFeaturePropRangeLimit,
