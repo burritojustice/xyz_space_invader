@@ -117,12 +117,12 @@ styles:
         mix: []
     _points:
         base: points
-        mix: projection
+        mix: projection_points
         blend: overlay
         blend_order: 0
     _text:
         base: text
-        mix: projection
+        mix: projection_points
         blend: overlay
         blend_order: 11
     _lines:

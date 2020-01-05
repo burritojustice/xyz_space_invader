@@ -22,14 +22,8 @@ styles:
             blocks:
                 global: |
                     // http://wiki.openstreetmap.org/wiki/Mercator
-                    float y2lat_m (float y) { return rad2deg(2.0*atan(exp((y/EARTH_RADIUS)))-HALF_PI); }
-                    float x2lon_m (float x) { return rad2deg(x/EARTH_RADIUS); }
-
                     float y2lat_d (float y) { return rad2deg( atan(exp( deg2rad(y) )) * 2.0 - HALF_PI ); }
                     float x2lon_d (float x) { return x; }
-
-                    float lat2y_m (float lat) { return EARTH_RADIUS*log(tan(QUARTER_PI+ deg2rad(lat)/2.0)); }
-                    float lon2x_m (float lon) { return deg2rad(lon)*EARTH_RADIUS; }
 
                     float lat2y_d(float lat) { return rad2deg( log(tan( deg2rad(lat) / 2.0 +  PI/4.0 )) ); }
                     float lon2x_d(float lon) { return lon; }
