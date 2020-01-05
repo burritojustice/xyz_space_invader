@@ -5,7 +5,7 @@ export function getBasemapScene(basemap, projection) {
   var b = _.merge({}, basemaps[basemap]);
   // add the desired projection to the imports
   var p = getProjectionScene(projection);
-  if (b.import && p) b.import.push(p)
+  if (b.import && p) b.import = b.import.concat(p)
   return b;
 }
 
@@ -49,7 +49,7 @@ export function getProjectionScene(projection) {
     if (!projections[projection]) {
       throw new Error("Projection \""+projection+"\" not found");
     }
-    return projections[projection].file;
+    return projections[projection].files;
   }
   else return null
 }
@@ -330,15 +330,15 @@ export const basemaps = {
 
 export const projections = {
   'mercator': {
-    file: 'mercator.yaml'
+    files: ['mercator.yaml']
   },
   'albers': {
-    file: 'albers.yaml'
+    files: ['albers.yaml']
   },
   'mollweide': {
-    file: 'mollweide.yaml',
+    files: ['mollweide.yaml']
   },
   'globe': {
-    file: 'globe.yaml',
+    files: ['globe.yaml', 'globe-points.yaml']
   }
 };
