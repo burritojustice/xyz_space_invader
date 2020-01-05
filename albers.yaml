@@ -3,6 +3,8 @@ import: mercator-functions.yaml
 styles:
     projection:
         mix: albers
+    projection_points:
+        mix: projection
     albers:
         mix: mercator-functions
         blend_order: 0

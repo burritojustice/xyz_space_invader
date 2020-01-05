@@ -83,14 +83,33 @@ styles:
                     // Central_Meridian
                     float centerlon = x2lon_m(u_map_position.x);
 
-                    if (haversine(rad2deg(lat), rad2deg(lon), rad2deg(centerlat), rad2deg(centerlon)) > EARTH_RADIUS * PI / 2.0) {
-                        position.xy = vec2(3.402823466e+38);
-                    } else {
-                        // bend map into globe
-                        position.xyz = latLongToVector3(lat, lon, 2.) * EARTH_RADIUS;
+                    // bend map into globe
+                    position.xyz = latLongToVector3(lat, lon, 2.) * EARTH_RADIUS;
 
-                        // rotate globe with map navigation
-                        // 90 degrees in radians = 1.5708
-                        position.xyz *= globe_rotateY3D((-centerlon - 1.5708));
-                        position.xyz *= globe_rotateX3D(-(centerlat));
+                    // rotate globe with map navigation
+                    // 90 degrees in radians = 1.5708
+                    position.xyz *= globe_rotateY3D((-centerlon - 1.5708));
+                    position.xyz *= globe_rotateX3D(-(centerlat));
+
+                    // only show the front side of the globe:
+                    // if the great circle distance between the center of the view and the current vertex's position is greater than the distance to the horizon, snap the point to the horizon so it doesn't show through the globe
+                    // use haversine formula to calculate great circle distance
+                    float haversine_distance = haversine(rad2deg(lat), rad2deg(lon), rad2deg(centerlat), rad2deg(centerlon));
+                    float quarter_circumference = EARTH_RADIUS * PI / 2.0;
+                    // if the point is beyond the horizon
+                    if (haversine_distance > quarter_circumference) {
+                        // if it's closer to the opposite point on the earth than to the horizon
+                        if (haversine_distance > quarter_circumference * 1.75) {
+                            // clip it
+                            position.xy = vec2(3.402823466e+38);
+                        } else {
+                            // move point to horizon
+                            // position.xy may be thought of as a vector from center of screen to current position, in meters
+                            // get difference between distance from center of screen to current position and distance from center of screen to the horizon
+                            float factor = EARTH_RADIUS / length(position.xy);
+                            // multiply by factor to snap point to horizon
+                            position.xy *= vec2(factor * 2.);
+                            //position.z = -1000000.;
+                            //position.xy = vec2(3.402823466e+38);
+                        }
                     }

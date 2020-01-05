@@ -3,6 +3,8 @@ import: mercator-functions.yaml
 styles:
     projection:
         mix: mollweide
+    projection_points:
+        mix: projection
     mollweide:
         mix: mercator-functions
         blend_order: 0
