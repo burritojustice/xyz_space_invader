@@ -70,7 +70,7 @@ export const colorFunctions = {
 //       var palette = colorState.featurePropPalette;
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
 //       var palSize = (palette.assignment === 'categorical' ? palette.values.length : 360);
-      var hash = colorState.colorHelpers.murmurhash3_32_gc(value,77);
+      var hash = colorState.colorHelpers.murmurhash3_32_gc(value,8);
 //       hash = Math.log(hash)
       console.log(value,hash)
       if (hash == null) {
