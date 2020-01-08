@@ -73,10 +73,24 @@
     </div>
 
     <!-- Demo mode context -->
+    {#if demoMode && displayToggles.label != null}
+      <!-- Selected label property and value info -->
+      <div style="margin: 5px 0px;">
+        Features labeled by <b>{displayToggles.label}</b>
+      </div>
+    {/if}
+    
+    {#if demoMode && featurePointSizeProp != null}
+      <!-- Selected point size property and value info -->
+      <div style="margin: 5px 0px;">
+        Points scaled by <b>{featurePointSizeProp}</b>
+      </div>
+    {/if}
+    
     {#if demoMode && featureProp && featurePropCount != null}
       <!-- Selected feature property and value info -->
       <div style="margin: 5px 0px;">
-        Analyzing property <b>{featureProp}</b>
+        Analyzing property <b>{featureProp}</b> by <b>{displayToggles.vizMode}</b>
       </div>
 
       <!-- Histogram for demo mode -->
@@ -92,7 +106,19 @@
         </div>
       {:elseif displayToggles.vizMode === 'rank' && featurePropValueCounts}
         <!-- Top values list -->
-        <div class="hideOnMobile">
+        <div class="hideOnMobilePortrait">
+          <FeaturePropTopValues
+            showHeader={false}
+            prop={featureProp}
+            bind:propValue="featurePropValue"
+            bind:valueSort="featurePropValueSort"
+            valueCounts={sortedFeaturePropValueCounts}
+            valueColorFunction={featurePropValueColorFunction}
+          />
+        </div>
+      {:elseif displayToggles.vizMode === 'property'}
+        <!-- Top values list -->
+        <div class="hideOnMobilePortrait">
           <FeaturePropTopValues
             showHeader={false}
             prop={featureProp}
