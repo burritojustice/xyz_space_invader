@@ -419,6 +419,7 @@ export default {
       uniqueFeaturePropsSeen: new Map(),
 
       displayToggles: null,
+      hashColorSeed: 1,
       colorModes: Object.keys(colorFunctions), // make list of color modes accessible to templates
       colorFunctions, // need to reference here to make accessible to templates and tangram functions
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
