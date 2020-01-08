@@ -66,11 +66,11 @@ export const colorFunctions = {
     useProperty: true,
     usePalette: false,
     defaultSort: 'count',
-    color: function (value, colorState) {
+    color: function (value, colorState, hashColorSeed) {
 //       var palette = colorState.featurePropPalette;
       // cycle through all colors in a categorical palette, or 7 evenly spaced colors in any other palette
 //       var palSize = (palette.assignment === 'categorical' ? palette.values.length : 360);
-      var hash = colorState.colorHelpers.murmurhash3_32_gc(value,8);
+      var hash = colorState.colorHelpers.murmurhash3_32_gc(value,hashColorSeed);
 //       hash = Math.log(hash)
       console.log(value,hash)
       if (hash == null) {
