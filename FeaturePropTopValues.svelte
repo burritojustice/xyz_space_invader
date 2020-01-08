@@ -5,6 +5,7 @@
       <option>count</option>
       <option>values</option>
     </select>
+  <div style="color:blue;" id="clear_filters" on:click="set({ hashColorSeed: (hashColorSeed *= 10) })">Shuffle colors</div>
   </div>
 {/if}
 
