@@ -5,8 +5,6 @@
       <option>count</option>
       <option>values</option>
     </select>
-    <b>test</b>
-    <div style="color:blue;" id="shuffle_colors" on:click="set({ hashColorSeed: (hashColorSeed *= 10) })">Shuffle colors</div>
   </div>
 {/if}
 
