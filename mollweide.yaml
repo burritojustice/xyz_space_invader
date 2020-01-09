@@ -10,7 +10,7 @@ styles:
             blocks:
                 position: |
                     // lat and lon are defined in mollweide-points.yaml
-                    if (abs(lon) > 360.) {
+                    if (abs(lon) > 270.) {
                         // clip
                         position.xy = vec2(3.402823466e+38);
                     } else {
