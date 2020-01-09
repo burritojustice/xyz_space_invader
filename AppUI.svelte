@@ -784,7 +784,8 @@ export default {
         changed.featurePropValueCountHash ||
         changed.featurePropMinFilter ||
         changed.featurePropMaxFilter ||
-        changed.featurePropHideOutliers) {
+        changed.featurePropHideOutliers ||
+        changed.hashColorSeed) {
       this.fire('updateScene', current);
     }
 
