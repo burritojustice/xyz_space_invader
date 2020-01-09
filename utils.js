@@ -3,14 +3,25 @@ export const PROP_TYPES = {
   NUMERIC: 1
 };
 
-// parse a nested object in dot notation (e.g. feature.a.b.c) into a "stack" of its components:
-// ['feature', 'a', 'b', 'c']
+// parse a nested object in dot and array notation (e.g. feature.a[2].b.c) into a "stack" of its components:
+// ['feature', 'a', 2, 'b', 'c']
 export function parsePropStack(prop) {
   return prop &&
     prop
       .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
       .split('.')
-      .map(s => s.replace(/__DELIMITER__/g, '.'));
+      .flatMap(s => {
+        // handle array bracket syntax (only for numeric indexes), e.g. names[4]
+        const brackets = s.match(/\[(\d+)\]/);
+        if (brackets != null && brackets.length === 2) {
+          const idx = parseInt(brackets[1]); // the numeric index we found inside the brackets
+          if (typeof idx === 'number' && !isNaN(idx)) {
+            return [s.substr(0, brackets.index), idx]; // insert the array index
+          }
+        }
+        return s; // continue without array index
+      })
+      .map(s => typeof s === 'string' ? s.replace(/__DELIMITER__/g, '.') : s); // swap out delimeter
 }
 
 // format nested property name stack with dot (object) and bracket (array) notation
