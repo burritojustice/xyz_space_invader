@@ -1,14 +1,58 @@
 # contributors: @patriciogv @meetar
-import: mollweide.yaml
+import: mercator-functions.yaml
 styles:
     projection_points:
         mix: mollweide-points
     mollweide-points:
-        mix: mollweide
+        mix: mercator-functions
         shaders:
+            defines:
+                EARTH_RADIUS: 6378137.0
+                PI: 3.14159265358979323846
+                HALF_PI: 1.570796327
+                QUARTER_PI: .785398163
+                deg2rad(d): (d)*PI/180.0
+                rad2deg(d): (d)*180.0/PI
+                SQRT2: sqrt(2.0)
+
+                # MAX_ITER: 10
+                TOLERANCE: .0000001
+
             blocks:
+                global: |
+                    // http://wiki.openstreetmap.org/wiki/Mercator
+                    float y2lat_d (float y) { return rad2deg( atan(exp( deg2rad(y) )) * 2.0 - HALF_PI ); }
+                    float x2lon_d (float x) { return x; }
+
+                    float lat2y_d(float lat) { return rad2deg( log(tan( deg2rad(lat) / 2.0 +  PI/4.0 )) ); }
+                    float lon2x_d(float lon) { return lon; }
+
+                    float sp = sin(HALF_PI);
+                    float r = sqrt(PI * 2.0 * sp / PI);
+                    float cx = SQRT2 / HALF_PI;
+                    float cy = SQRT2;
+
+                    // convert from lat/lon to mollweide -- Adapted from https://github.com/d3/d3-geo-projection/blob/master/src/mollweide.js
+                    float mollweideBromleyTheta(float phi) {
+                        float cpsinPhi = PI * sin(phi);
+                        for ( int i = 4; i != 0; i--) {
+                          float delta = (phi + sin(phi) - cpsinPhi) / (1. + cos(phi));
+                          phi -= delta;
+                        }
+                        return phi / 2.;
+                    }
+
+                    // x,y = lambda, phi
+                    vec2 mollweide(float lambda, float phi) {
+                        phi = mollweideBromleyTheta(phi);
+                        return vec2(cx * lambda * cos(phi), cy * sin(phi));
+                    }
                 position: |
-                    // lat and lon are defined in mollweide.yaml
+                    // mercator position of the current vertex, u_map_position = center of screen,
+                    // position.xy = vertex screen position in meters from the center of the screen
+                    vec2 mercator = u_map_position.xy + position.xy;
+                    float lat = y2lat_m(position.y);
+                    float lon = x2lon_m(position.x);
                     if (abs(lon) > 180.) {
                         // clip the point
                         position.xy = vec2(3.402823466e+38);
