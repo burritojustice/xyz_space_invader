@@ -3,8 +3,6 @@ import: mercator-functions.yaml
 styles:
     projection:
         mix: mollweide
-    projection_points:
-        mix: projection
     mollweide:
         mix: mercator-functions
         blend_order: 0
@@ -57,8 +55,21 @@ styles:
                     vec2 mercator = u_map_position.xy + position.xy;
                     float lat = y2lat_m(position.y);
                     float lon = x2lon_m(position.x);
-                    vec2 new = mollweide(deg2rad(lon), deg2rad(lat));
-                    // TODO: factor out this magic number – possibly something related to the difference in coordinate systems?
-                    float magic_number = 100.;
-                    new = vec2(lon2x_m(new.x)*magic_number, lat2y_m(new.y)*magic_number);
-                    position.xy = new;
+                    if (abs(lon) > 360.) {
+                        // clip
+                        position.xy = vec2(3.402823466e+38);
+                    } else {
+                        if (abs(lon) > 180.) {
+                            // snap to horizon
+                            if (lon < -180.) {
+                                lon = -180.;
+                            } else {
+                                lon = 180.;
+                            }
+                        }
+                        vec2 new = mollweide(deg2rad(lon), deg2rad(lat));
+                        // TODO: factor out this magic number – possibly something related to the difference in coordinate systems?
+                        float magic_number = 100.;
+                        new = vec2(lon2x_m(new.x)*magic_number, lat2y_m(new.y)*magic_number);
+                        position.xy = new;
+                    }

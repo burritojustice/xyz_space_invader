@@ -1,0 +1,24 @@
+# contributors: @patriciogv @meetar
+import: mollweide.yaml
+styles:
+    projection_points:
+        mix: mollweide-points
+    mollweide-points:
+        mix: mollweide
+        shaders:
+            blocks:
+                position: |
+                    // lat and lon are defined in mollweide.yaml
+                    if (abs(lon) > 180.) {
+                        // clip the point
+                        position.xy = vec2(3.402823466e+38);
+                    } else {
+                        // bend map into mollweide
+                        lon = max(-180., lon);
+                        lon = min(180., lon);
+                        vec2 new = mollweide(deg2rad(lon), deg2rad(lat));
+                        // TODO: factor out this magic number – possibly something related to the difference in coordinate systems?
+                        float magic_number = 100.;
+                        new = vec2(lon2x_m(new.x)*magic_number, lat2y_m(new.y)*magic_number);
+                        position.xy = new;
+                    }
