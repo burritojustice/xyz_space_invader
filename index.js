@@ -370,9 +370,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     const bounds = L.latLngBounds(sw, ne);
     map.fitBounds(bounds);
   }
-
-  var spaceSize = ( stats.byteSize.value || 0)
-  var spaceCount = ( stats.count.value || 0)
+  
+  
+  var spaceSize = (stats.byteSize) ? stats.byteSize.value : 0
+  var spaceCount = (stats.count) ? stats.count.value : 0
 
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
