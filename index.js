@@ -384,7 +384,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   else {
     calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
   }
-  if (spaceCount > 0){
+  if (spaceSize > 0){
     var featureSize = spaceSize/spaceCount/1024 // KB per feature
     featureSize = featureSize.toFixed(1) + ' KB'
   } else {
