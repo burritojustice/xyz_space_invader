@@ -386,8 +386,9 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   }
   if (spaceSize > 0){
     var featureSize = spaceSize/spaceCount/1024 // KB per feature
-    featureSize = featureSize.toFixed(1) + ' KB'
+    featureSize = featureSize.toFixed(1) + ' KB/feature'
   } else {
+    spaceSize = "n/a"
     featureSize = "n/a"
   }
 
