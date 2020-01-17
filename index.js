@@ -370,9 +370,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     const bounds = L.latLngBounds(sw, ne);
     map.fitBounds(bounds);
   }
-
-  var spaceSize = stats.byteSize.value
-  var spaceCount = stats.count.value
+  
+  
+  var spaceSize = (stats.byteSize) ? stats.byteSize.value : 0
+  var spaceCount = (stats.count) ? stats.count.value : 0
 
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
@@ -383,9 +384,13 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   else {
     calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
   }
-
-  var featureSize = spaceSize/spaceCount/1024 // KB per feature
-  featureSize = featureSize.toFixed(1) + ' KB'
+  if (spaceSize > 0){
+    var featureSize = spaceSize/spaceCount/1024 // KB per feature
+    featureSize = featureSize.toFixed(1) + ' KB/feature'
+  } else {
+    calcSize = "n/a"
+    featureSize = "n/a"
+  }
 
   // Get property info
   const properties =
