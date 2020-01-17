@@ -371,8 +371,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     map.fitBounds(bounds);
   }
 
-  var spaceSize = stats.byteSize.value
-  var spaceCount = stats.count.value
+  var spaceSize = ( stats.byteSize.value || 0)
+  var spaceCount = ( stats.count.value || 0)
 
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
@@ -383,9 +383,12 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   else {
     calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
   }
-
-  var featureSize = spaceSize/spaceCount/1024 // KB per feature
-  featureSize = featureSize.toFixed(1) + ' KB'
+  if (spaceCount > 0){
+    var featureSize = spaceSize/spaceCount/1024 // KB per feature
+    featureSize = featureSize.toFixed(1) + ' KB'
+  } else {
+    featureSize = "n/a"
+  }
 
   // Get property info
   const properties =
