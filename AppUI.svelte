@@ -14,7 +14,7 @@
           <!-- Space info -->
           <div>{spaceInfo.title}</div>
           {#if !demoMode}
-            <div>{spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}/feature</div>
+            <div>{spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}</div>
             {#if spaceInfo.updatedAt}
               <div>{spaceInfo.updatedAt}</div>
             {/if}
