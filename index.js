@@ -6,8 +6,8 @@ import FileSaver from 'file-saver';
 
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
-import { parseNumber } from './colorFunctions';
-import { parseNestedObject, lookupProperty, stringifyWithFunctions } from './utils';
+import { calcFeaturePropertyStats } from './stats';
+import { stringifyWithFunctions } from './utils';
 
 let query;
 let layer, scene;
@@ -240,12 +240,15 @@ function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clu
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-    
-    
+
+    // build property search query string params
+    // TODO: replace with native Tangram `url_params` when multiple-value support is available
+    const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
+
+    scene_config.sources = scene_config.sources || {};
     scene_config.sources._xyzspace = {
-      type: 'MVT',
-      parse_json: true,
-      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}.mvt`,
+      type: 'GeoJSON',
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}?${propertySearch}`,
       url_params: {
         access_token: token,
         clip: true
@@ -382,9 +385,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     const bounds = L.latLngBounds(sw, ne);
     map.fitBounds(bounds);
   }
-
-  var spaceSize = stats.byteSize.value
-  var spaceCount = stats.count.value
+  
+  
+  var spaceSize = (stats.byteSize) ? stats.byteSize.value : 0
+  var spaceCount = (stats.count) ? stats.count.value : 0
 
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
@@ -395,10 +399,21 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   else {
     calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
   }
+  if (spaceSize > 0){
+    var featureSize = spaceSize/spaceCount/1024 // KB per feature
+    featureSize = featureSize.toFixed(1) + ' KB/feature'
+  } else {
+    calcSize = "n/a"
+    featureSize = "n/a"
+  }
 
-  var featureSize = spaceSize/spaceCount/1024 // KB per feature
-  featureSize = featureSize.toFixed(1) + ' KB'
-
+  // Get property info
+  const properties =
+    ((stats.properties && stats.properties.value) || [])
+      .reduce((props, p) => {
+        props[p.key] = p;
+        return props;
+      }, {});
 
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
@@ -421,14 +436,48 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     }
   }
 
+  // calculate time since data was last written to the space
+  let timeUnitsElapsed;
+  if (spaceInfo.contentUpdatedAt) {
+    const d = new Date();
+    const timeNow = d.getTime();
+    const contentUpdatedAt = new Date(spaceInfo.contentUpdatedAt);
+    const secondsElapsed = (timeNow - contentUpdatedAt) / 1000;
+    const minutesElapsed = Math.round(secondsElapsed / 60)
+    const hoursElapsed = Math.round(secondsElapsed / 60 / 60)
+    const daysElapsed = Math.round(secondsElapsed / 60 / 60 / 24)
+    const weeksElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 7)
+    const monthsElapsed = Math.round(secondsElapsed / 60 / 60 / 24 / 30)
+    const yearsElapsed = (daysElapsed / 365).toFixed(1)
+    const timeUnitsPrefix = "space last updated ";
+
+    if (yearsElapsed > 1){
+      timeUnitsElapsed = timeUnitsPrefix + yearsElapsed + " years ago"
+    } else if (monthsElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + monthsElapsed + " months ago"
+    } else if (weeksElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + weeksElapsed + " weeks ago"
+    } else if (daysElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + daysElapsed + " days ago"
+    } else if (hoursElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + hoursElapsed + " hours ago"
+    } else if (minutesElapsed > 1) {
+      timeUnitsElapsed = timeUnitsPrefix + minutesElapsed + " minutes ago"
+    } else {
+      timeUnitsElapsed = timeUnitsPrefix + Math.round(secondsElapsed) + " seconds ago"
+    }
+  };
+
   // update UI
   appUI.set({
     spaceInfo: {
       title: spaceInfo.title,
       description: spaceInfo.description,
       numFeatures: spaceCount,
+      properties,
       dataSize: calcSize,
-      featureSize: featureSize
+      featureSize: featureSize,
+      updatedAt: timeUnitsElapsed
     },
 
     hexbinInfo,
@@ -442,166 +491,26 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 async function queryViewport() {
   const features = await scene.queryFeatures({ filter: { $source: '_xyzspace' }});
   console.log("features in viewport:", features.length);
-  updateViewportTags(features);
+  appUI.set({ featuresInViewport: features });
   updateViewportProperties(features);
 }
 
-function updateViewportTags(features) {  // for tags
-  // grab the tags from Tangram's viewport tiles
-  let tagsViewport = [];
-  features.forEach(x => {
-    if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
-      tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
-    }
-  })
-
-  const tagsWithCountsInViewport =
-    Object.entries(
-      features
-        .flatMap(f => { 
-          if (f.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
-            f.properties['@ns:com:here:xyz'].tags
-          }
-        })
-        .reduce((tagCounts, tag) => {
-            tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
-            return tagCounts;
-          }, {}))
-    .sort((a, b) => b[1] > a[1] ? 1 : (b[1] > a[1] ? -1 : 0));
-
-  appUI.set({
-    numFeaturesInViewport: features.length,
-    tagsWithCountsInViewport
-  });
-}
-
 function updateViewportProperties(features) { // for feature prop
-  // first get all unique properties for features in viewport, combined with those previously seen
-  const { uniqueFeaturePropsSeen } = appUI.get();
-  features.forEach(feature => {
-    parseNestedObject(feature.properties)
-      .filter(p => !p.prop.startsWith('$')) // don't include special tangram context properties
-      .filter(p => !uniqueFeaturePropsSeen.has(p.prop)) // skip features we already know about
-      .forEach(p => {
-        uniqueFeaturePropsSeen.set(p.prop, p.propStack);
-      });
-  });
-
   // then get feature values based on currently selected property
-  const propStack = appUI.get().featurePropStack;
-
-  if (!propStack || propStack.length === 0) {
-    appUI.set({
-      uniqueFeaturePropsSeen,
-      featurePropCount: null,
-      featurePropValueCounts: null,
-      featurePropMin: null,
-      featurePropMax: null,
-      featurePropMedian: null,
-      featurePropMean: null,
-      featurePropStdDev: null,
-      featurePropSigma: null,
-      featurePropSigmaFloor: null,
-      featurePropSigmaCeiling: null,
-      featurePropHistogram: null
-
-    });
-    return;
-  }
-
-  // grab the selected feature properties from Tangram's viewport tiles
-  const propsViewport = features.map(f => lookupProperty(f.properties, propStack));
-
-  // convert to numbers to get min/max
-  var vals = propsViewport
-    .map(parseNumber)
-    .filter(x => typeof x === 'number' && !isNaN(x) && Math.abs(x) !== Infinity);
-
-  let min, max, mean, median, stdDev;
-  let sigma = {};
-
-  if (vals.length > 0 ) {
-    min = Math.min(...vals);
-    max = Math.max(...vals);
-
-    mean = vals.reduce((a,b) => a + b, 0) / vals.length;
-    if (vals.length % 2 === 0) {
-      median = (vals[(vals.length / 2)] + vals[(vals.length / 2) + 1]) / 2;
-    }
-    else {
-      median = vals[((vals.length + 1) / 2)]
-    }
-
-    var squareDiffs = vals.map(function(value){
-      var diff = value - mean;
-      var sqrDiff = diff * diff;
-      return sqrDiff;
-    });
-
-    var avgSquareDiff = squareDiffs.reduce((a,b) => a + b, 0) / squareDiffs.length;
-
-    stdDev = Math.sqrt(avgSquareDiff);
-
-//     console.log('min:', min, 'max:', max, 'mean:', mean, 'median:', median, 'std dev:', stdDev);
-
-    // calculating sigmas and ranges using standard deviations
-    sigma = {
-      floor: mean - stdDev,
-      ceiling: mean + stdDev
-    };
-
-    sigma.count = vals.reduce((total,amount) => {
-      if ((amount > sigma.floor) && (amount < sigma.ceiling)) {
-        total += 1;
-      }
-      return total;
-    }, 0);
-    sigma.percent = 100 - sigma.count / vals.length
-    sigma.outside = vals.length - sigma.count
-
-//     console.log(sigma)
-  } //endif
-
-  // count up the number of each unique property value
-  const propCounts = new Map(); // use map to preserve key types (e.g. avoid '[Object object]' string keys)
-  for (let i = 0; i < propsViewport.length; i++) {
-    const value = propsViewport[i];
-    if (propCounts.get(value) == null) {
-      propCounts.set(value, 0);
-    }
-    propCounts.set(value, propCounts.get(value) + 1);
-  }
-
-  // sort the list of properties by count
-  const sortedPropCounts = Array.from(propCounts.entries()).sort((a, b) => {
-    const d = b[1] - a[1];
-    if (d !== 0) {
-      return d;
-    }
-
-    if (a < b) {
-      return -1;
-    }
-    else if (b < a) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
-  });
+  const { featureProp } = appUI.get();
+  const stats = calcFeaturePropertyStats(features, featureProp);
 
   // update UI
   appUI.set({
-    uniqueFeaturePropsSeen,
-    featurePropCount: propCounts.size,
-    featurePropValueCounts: sortedPropCounts,
-    featurePropMin: min,
-    featurePropMax: max,
-    featurePropMedian: median,
-    featurePropMean: mean,
-    featurePropStdDev: stdDev,
-    featurePropSigma: sigma.percent,
-    featurePropSigmaFloor: sigma.floor,
-    featurePropSigmaCeiling: sigma.ceiling
+    featurePropCount: stats.uniqueCount,
+    featurePropValueCounts: stats.sortedValueCounts,
+    featurePropMin: stats.min,
+    featurePropMax: stats.max,
+    featurePropMedian: stats.median,
+    featurePropMean: stats.mean,
+    featurePropStdDev: stats.stdDev,
+    featurePropSigma: stats.sigmaPercent,
+    featurePropSigmaFloor: stats.sigmaFloor,
+    featurePropSigmaCeiling: stats.sigmaCeiling
   });
 }

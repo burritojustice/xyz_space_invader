@@ -1,3 +1,6 @@
+import:
+  - xyz_patterns.yaml
+
 global:
     highlight:
         color: [1,1,1,0.25]
@@ -12,58 +15,80 @@ global:
     # replaced by app JS, used to look-up feature props that may be nested
     lookupFeatureProp: function(feature) { return null; }
     lookupFeatureLabelProp: function(feature) { return null; }
+    lookupFeaturePointSizeProp: function(feature) { return null; }
 
-    # dyanmic feature coloring, using the currently defined "color mode"
-    # the `colorState` global holds settings that may be relevant to each mode (e.g. min/max, palette, etc.)
-    featureColorDynamic: |
-      function (feature, global) {
-        try {
-          if (global.colorFunctions[global.colorMode]) {
-            if (global.colorFunctions[global.colorMode].useProperty) {
-              return global.colorFunctions[global.colorMode].color(
-                global.lookupFeatureProp(feature),
-                global.colorState
-              );
-            }
-            else {
-              return global.colorFunctions[global.colorMode].color(
-                feature,
-                global.colorState
-              );
+    # set feature colors to dynamic (by property, hash, etc.) or default (based on geometry type)
+    featureColorType: default
+
+    # get feature color based on current visualization mode and color palette
+    # either color by feature color property, or fallback to geometry type,
+    # or dyanmic feature coloring, using the currently defined "visualization mode"
+    featureColor: |
+      function() {
+        if (global.featureColorType === 'dynamic') {
+          try {
+            if (global.vizModes[global.vizMode]) {
+              if (global.vizModes[global.vizMode].useProperty) {
+                return global.vizModes[global.vizMode].color(
+                  global.lookupFeatureProp(feature),
+                  global.viz
+                );
+              }
+              else {
+                return global.vizModes[global.vizMode].color(
+                  feature,
+                  global.viz
+                );
+              }
             }
           }
+          catch(e) { // fallthrough to default color on exception
+            return 'rgba(127, 127, 127, .25)';
+          }
         }
-        catch(e) { } // fallthrough to default color on exception
-        return 'rgba(127, 127, 127, .25)';
-      }
-
-    # simple color by feature color property, or fallback to geometry type
-    featureColorDefault: |
-        function(feature, global, $geometry) {
-            var color;
+        else {
             if (feature.color) {
-                color = feature.color
+              return feature.color
             }
             else if ($geometry === 'point') {
-              color = [1, 0, 0, 0.5];
+              return [1, 0, 0, 0.5];
             }
             else if ($geometry === 'line') {
-              color = [1, 1, 0, 0.3];
+              return [1, 1, 0, 0.3];
             }
             else if ($geometry === 'polygon') {
-              color = [1, 0, 1, 0.3];
+              return [1, 0, 1, 0.3];
             }
-            return color;
         }
+      }
+
+    # calculate normalized value (between 0-1) feature
+    featureNormalizedValue: |
+      function() {
+        try {
+          if (global.viz.featureProp != null && typeof global.vizModes[global.vizMode].value === 'function') {
+            return global.vizModes[global.vizMode].value(
+              global.lookupFeatureProp(feature),
+              global.viz
+            );
+          }
+          else {
+            return 1;
+          }
+        }
+        catch(e) { // fallthrough to default on exception
+          return 1;
+        }
+      }
 
     # optionally hide feature values that are above or below the current filter range
     featureFilterOutliers: |
         function() {
-          if (global.colorState.featurePropHideOutliers && global.colorFunctions[global.colorMode]) {
-            if (global.colorFunctions[global.colorMode].useProperty) {
-              var value = global.colorState.colorHelpers.parseNumber(global.lookupFeatureProp(feature));
-              if (value < global.colorState.featurePropMinFilter ||
-                  value > global.colorState.featurePropMaxFilter+1) {
+          if (global.viz.featurePropHideOutliers && global.vizModes[global.vizMode]) {
+            if (global.vizModes[global.vizMode].useProperty) {
+              var value = global.viz.vizHelpers.parseNumber(global.lookupFeatureProp(feature));
+              if (value < global.viz.featurePropMinFilter ||
+                  value > global.viz.featurePropMaxFilter+1) {
                 return false;
               }
             }
@@ -74,9 +99,9 @@ global:
     # optionally filter by specific property/value combination
     featureFilterSelectedValue: |
         function() {
-          if (global.colorState.featurePropStack != null && global.colorState.featurePropValue != null) {
+          if (global.viz.featureProp != null && global.viz.featurePropValue !== '') {
             var value = global.lookupFeatureProp(feature);
-            if (value !== global.colorState.featurePropValue) {
+            if (value != global.viz.featurePropValue) {
               return false;
             }
           }
@@ -89,34 +114,40 @@ global:
           return global.lookupFeatureLabelProp(feature);
         }
 
+    # dynamic point size by feature property
+    featurePointSizeDynamic: |
+      function(feature, global) {
+        var size = global.viz.vizHelpers.parseNumber(global.lookupFeaturePointSizeProp(feature)) || 0;
+        var range = global.featurePointSizeRange;
+        if (range[1] - range[0] !== 0) {
+          size = (size - range[0]) / (range[1] - range[0]) * (range[3] - range[2]) + range[2];
+        }
+        else {
+          size = range[2]; // use minimum size value if range min/max are the same
+        }
+        size = Math.max(range[2], Math.min(range[3], size));
+        return size;
+      }
+
 # sources:
 #     _xyzspace: # this source is created at run-time based on XYZ space
 
+# App-specific versions of styles, with extra mixins for projections, patterns, etc.
 styles:
-    _points:
-        base: points
-        blend: overlay
-        blend_order: 0
-    _text:
-        base: text
-        blend: overlay
-        blend_order: 11
-    _lines:
-        base: lines
-        blend: overlay
-        blend_order: 0
-    _lines_low:
-        base: lines
-        blend: inlay
-        blend_order: 2
-    _polygons_inlay:
-        base: polygons
-        blend: inlay
-        blend_order: 0
-    _polygons_overlay:
-        base: polygons
-        blend: overlay
-        blend_order: 1
+  xyz_points:
+    base: points
+  xyz_lines:
+    base: lines
+    blend: overlay
+  xyz_polygons:
+    base: polygons
+    blend: inlay
+    mix: xyz_pattern
+  xyz_text:
+    base: text
+
+  # set to the currently active pattern at run-time
+  xyz_pattern: {}
 
 layers:
 
@@ -130,18 +161,30 @@ layers:
             source: _xyzspace
             all_layers: true
         draw:
-            points:
+            # regular filled points
+            xyz_points:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
-                size: 6px
-                outline: {}
+                color: global.featureColor
+                size: global.featurePointSize
+                outline:
+                    width: 0px
                 text:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
                     optional: true
                     font: global.featureLabelFont # set by the basemap
+
+        # inverted, outline-only "donut" points
+        # these get toggled on/off with the filled points above, as an alternate point draw mode
+        donut_points:
+            enabled: false
+            draw:
+              xyz_points:
+                  color: transparent
+                  outline:
+                      color: global.featureColor
 
     _xyz_lines:
         filter:
@@ -153,15 +196,14 @@ layers:
             source: _xyzspace
             all_layers: true
         draw:
-            _lines:
+            xyz_lines:
                 interactive: true
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                color: global.featureColor
                 width: 4px
-                order: 2000
+                blend_order: 0
                 outline:
-                   color: white
                    width: 0px
-            text:
+            xyz_text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
@@ -179,16 +221,16 @@ layers:
             all_layers: true        
         _outlines:
             draw:
-                _lines:
-                    color: [0, 1, 1, 0.35]
-                    width: 1px
-                    order: 2000
+                xyz_lines:
+                    width: 0px
+                    blend_order: 0
         draw:
-            _polygons_inlay:
+            xyz_polygons:
                 interactive: true
-                color: function(){ return global.featureColorDefault(feature, global, $geometry); }
+                color: global.featureColor
                 width: 2px
                 order: 300
+                blend_order: 0
             text:
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText

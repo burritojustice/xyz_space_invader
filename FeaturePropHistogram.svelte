@@ -1,5 +1,7 @@
 <div>
-  <div>histogram: {numQuantiles} buckets, {step.toFixed(1)} wide</div>
+  {#if showHeader}
+    <div>histogram: {numQuantiles} buckets, {step.toFixed(1)} wide</div>
+  {/if}
   <table style="width: 100%">
     {#if outsideRange[0]}
       <tr>
@@ -35,14 +37,15 @@
 
 <script>
 
-import { parseNumber } from './colorFunctions';
+import { parseNumber } from './utils';
 
 export default {
   data() {
     return {
-      numQuantiles: 10, 
+      numQuantiles: 7,
       minFilter: null,
-      maxFilter: null
+      maxFilter: null,
+      showHeader: true
     }
   },
 
