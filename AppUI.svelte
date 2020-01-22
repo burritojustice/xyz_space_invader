@@ -47,6 +47,8 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
+            <td on:click='toggleDisplayOption("clustering")'>clustering:</td>
+            <td>{displayToggles.clustering}</td>            
           </tr>
         </table>
         {#if hexbinInfo.spaceId}
@@ -300,6 +302,19 @@
 
     {#if !(featureProp && featurePropCount != null)}
       Select a feature property to analyze, from the property list or by clicking on an individual feature.
+    {/if}
+    
+    <!-- clustering property selector -->
+    {#if sortedUniqueFeaturePropsSeen.length > 0 && displayToggles.clustering > 0}
+      <div style="display: flex; flex-direction: row; align-items: center; margin: 5px 0px;">
+        <span style="flex: 0 0 auto; margin-right: 5px;">Cluster features by</span>
+        <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.clusteringProp">
+          <option value=""></option>
+          {#each sortedUniqueFeaturePropsSeen as [prop]}
+            <option value="{prop}">{prop}</option>
+          {/each}
+        </select>
+      </div>
     {/if}
 
     <!-- Top values list -->
@@ -1208,6 +1223,9 @@ export default {
         else if (key == "x") { // toggle hexbins, centroids, (and raw data?)
           this.toggleDisplayOption('hexbins');
         }
+        else if (key == "k") { // toggle server-side clustering
+          this.toggleDisplayOption('clustering');
+        }        
       }
     }
 

@@ -236,7 +236,7 @@ function makeLayer(scene_obj) {
   window.scene = scene;  // debugging
 }
 
-function applySpace({ spaceId, token, displayToggles: { hexbins } = {}, propertySearchQueryParams, hexbinInfo }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp } = {}, propertySearchQueryParams, hexbinInfo }, scene_config) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
@@ -252,8 +252,23 @@ function applySpace({ spaceId, token, displayToggles: { hexbins } = {}, property
       url_params: {
         access_token: token,
         clip: true
-      }
+      }      
     };
+    if (clustering == 1) {
+      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+      }
+    } else if (clustering == 2) {
+      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+      }
+    }
+    else {
+      delete scene_config.sources._xyzspace.url_params.clustering;
+    }
   }
 }
 
