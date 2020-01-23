@@ -86,7 +86,7 @@ export const displayOptions = {
 
   // Patterns (shader-based)
   pattern: {
-    values: ['stripes', 'dash'],
+    values: ['stripes', 'dash', 'dots'],
     apply: (scene, value) => {
       // Set active pattern
       _.set(scene, 'styles.xyz_pattern', value ? { mix: `xyz_pattern_${value}` } : {});

@@ -51,6 +51,28 @@ styles:
                                 dash_background_color,
                                 DASH_TYPE(dash_size, dashDF(DASH_TILE_STYLE(st*DASH_SCALE,3.))) );
 
+  xyz_pattern_dots:
+    base: polygons
+    blend: inlay
+    mix: [xyz_feature_attribute, space-tile, tiling-brick, tiling-tile, shapes-circle]
+    shaders:
+        defines:
+            DOTS_COLOR: color.rgb*.5
+            DOTS_BACKGROUND_COLOR: vec3(0.935,0.935,0.935)
+            DOTS_SCALE: 21.
+            DOTS_SIZE: 0.41
+            DOTS_TYPE: fill
+            DOTS_TILE_STYLE: brick
+        blocks:
+            color: |
+                vec3 dot_color = u_pattern_color;
+                vec3 dot_background_color = vec3(1.);
+                float dot_size = 0.0 + xyz_feature;
+                vec2 st = getTileCoords();
+                color.rgb = mix(dot_background_color,
+                                dot_color,
+                                DOTS_TYPE( dot_size, circleDF(vec2(0.5)-DOTS_TILE_STYLE(getTileCoords()*DOTS_SCALE,1.))) );
+
   ### Add XYZ feature attribute
 
   # adds an attribute with a normalized 0-1 value based on the current XYZ
@@ -307,6 +329,31 @@ styles:
                   float stroke (in float size, in float x) {
                       return aastep(size, x+STROKE) - aastep(size, x);
                   }
+
+  shapes-circle:
+      mix: [shapes-type]
+      shaders:
+          blocks:
+              global: |
+                  // get distance field of a Circle
+                  // ================================
+                  float circleDF (vec2 st) {
+                      return dot(st,st)*3.03;
+                  }
+                  //
+                  // Draw a circle in the middle of the ST space
+                  // ================================
+                  float circle (vec2 st, float radius) {
+                      return fill(radius, circleDF(st-vec2(0.5)));
+                  }
+
+                  //
+                  // Draw a circle in the middle of the ST space
+                  // ================================
+                  float circleBorder (vec2 st, float radius) {
+                      return stroke(radius, circleDF(st-vec2(0.5)));
+                  }
+
   space-tile:
       shaders:
           blocks:
@@ -331,6 +378,17 @@ styles:
                   // ================================
                   vec2 tile (vec2 st, float zoom) {
                       st *= zoom;
+                      return fract(st);
+                  }
+
+  tiling-brick:
+      shaders:
+          blocks:
+              global: |
+                  vec2 brick (vec2 st, float zoom) {
+                      st *= zoom;
+                      // Here is where the offset is happening
+                      st.x += step(1., mod(st.y,2.0)) * 0.5;
                       return fract(st);
                   }
 
