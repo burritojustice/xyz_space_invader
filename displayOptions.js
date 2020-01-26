@@ -2,6 +2,12 @@ import _ from 'lodash';
 import { vizModes } from './vizModes';
 import { parsePropStack } from './utils';
 
+export function defaultDisplayOptionValue(p) {
+  if (displayOptions[p]) {
+    return displayOptions[p].default || (displayOptions[p].values && displayOptions[p].values[0]);
+  }
+}
+
 export const displayOptions = {
 
   // Buildings on/off
@@ -86,7 +92,7 @@ export const displayOptions = {
 
   // Patterns (shader-based)
   pattern: {
-    values: ['stripes', 'dash'],
+    values: ['', 'stripes', 'dash'],
     apply: (scene, value) => {
       // Set active pattern
       _.set(scene, 'styles.xyz_pattern', value ? { mix: `xyz_pattern_${value}` } : {});

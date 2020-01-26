@@ -79,14 +79,14 @@
         Features labeled by <b>{displayToggles.label}</b>
       </div>
     {/if}
-    
+
     {#if demoMode && featurePointSizeProp != null}
       <!-- Selected point size property and value info -->
       <div style="margin: 5px 0px;">
         Points scaled by <b>{featurePointSizeProp}</b>
       </div>
     {/if}
-    
+
     {#if demoMode && featureProp && featurePropCount != null}
       <!-- Selected feature property and value info -->
       <div style="margin: 5px 0px;">
@@ -197,7 +197,6 @@
           <div class="property_selector">
             <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Pattern</span>
             <select style="flex: 1 1 auto; width: 100%;" bind:value="displayToggles.pattern">
-              <option value=""></option>
               {#each patternOptions as pattern}
                 <option value="{pattern}">{pattern}</option>
               {/each}
@@ -420,7 +419,7 @@
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { vizModes, vizHelpers } from './vizModes';
-import { displayOptions } from './displayOptions';
+import { displayOptions, defaultDisplayOptionValue } from './displayOptions';
 import { calcFeaturePropertyStats } from './stats';
 import { parseNestedObject, parsePropStack, formatPropStack, parseNumber, mostlyNumeric, lookupProperty, PROP_TYPES } from './utils';
 
@@ -951,9 +950,6 @@ export default {
           else if (params[p] !== 'null' && params[p] !== 'undefined') {
             displayToggles[p] = params[p];
           }
-          else {
-            displayToggles[p] = displayOptions[p].default;
-          }
         }
       }
 
@@ -1247,10 +1243,6 @@ function isPropNumeric(prop, { featurePropTypesCache, featuresInViewport, featur
 
 function useFeaturePropRangeLimit(vizMode) {
   return vizModes[vizMode] && vizModes[vizMode].limitRange;
-}
-
-function defaultDisplayOptionValue(p) {
-  return displayOptions[p] && displayOptions[p].values && displayOptions[p].values[0];
 }
 
 function formatFeaturePropValueColor(state, value) {
