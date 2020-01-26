@@ -170,7 +170,9 @@
           <span style="flex: 0 0 auto; margin-right: 5px; width: 115px;">Visualize by property</span>
           <select style="flex: 1 1 auto; width: 100%;" bind:value="featureProp">
             <option value=""></option>
-            {#each sortedUniqueFeaturePropsSeen as [prop]}
+            <!-- JSON.stringify is a hint to help Svelte uniquely identify the object values -->
+            <!-- see https://v2.svelte.dev/guide#keyed-each-blocks -->
+            {#each sortedUniqueFeaturePropsSeen as [prop] (JSON.stringify(prop))}
               <option value="{prop}">{prop}</option>
             {/each}
           </select>
