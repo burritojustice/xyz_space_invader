@@ -813,9 +813,11 @@ export default {
 
       Object.entries(current.spaceInfo.properties)
         .forEach(([prop, value]) => {
+          const propStack = prop.split(':'); // XYZ API uses ':' delimiter
+          prop = formatPropStack(propStack);
           uniqueFeaturePropsSeen.set(prop, {
             ...value,
-            propStack: prop.split('.')
+            propStack
           });
         });
       updateUniqueFeaturePropsSeen = true;
