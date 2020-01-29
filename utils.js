@@ -86,9 +86,10 @@ export function parseNumber(value) {
   else if (typeof value === 'number') {
     return isNaN(value) ? undefined : value;
   }
-
-  const m = value.match(/[-+]?([0-9]+,?)*\.?[0-9]+/); // get floating point or integer via regex
-  const num = parseFloat(m && m[0].replace(/[,-\/]/g, '')); // strip formatter chars, e.g. '1,500' => '1500' (NB only works for US-style numbers)
+  const n = value.replace(/[,\/]/g, '').replace(/([0-9])\-([0-9])/g, '$1$2'); 
+  // ^ strip formatter chars, including interior dashes, forward slash, e.g. '1,500' => '1500' (NB only works for US-style numbers)
+  const m = n.match(/[-+]?([0-9]+,?)*\.?[0-9]+/); // get floating point or integer via regex, keeping negative nums
+  const num = parseFloat(m && m[0]); 
   if (typeof num === 'number' && !isNaN(num)) {
     return num;
   }
