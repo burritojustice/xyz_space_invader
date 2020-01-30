@@ -51,6 +51,7 @@ styles:
                                 dash_background_color,
                                 DASH_TYPE(dash_size, dashDF(DASH_TILE_STYLE(st*DASH_SCALE,3.))) );
 
+
   xyz_pattern_dots:
     base: polygons
     blend: inlay
@@ -77,6 +78,20 @@ styles:
                                 dot_color,
                                 DOTS_TYPE( dot_size, circleDF(vec2(0.5)-DOTS_TILE_STYLE(getTileCoords()*DOTS_SCALE,1.))) );
 
+  ### dots with transition taken from Bubblewrap
+  # xyz_pattern_dots:
+  #   base: polygons
+  #   blend: inlay
+  #   mix: [xyz_feature_attribute, pattern-dots]
+  #   shaders:
+  #       blocks:
+  #           color: |
+  #               vec3 dot_color = u_pattern_color;
+  #               vec3 dot_background_color = vec3(1.);
+  #               float dot_size = 0.0 + xyz_feature;
+  #               color.rgb = mix(dot_color, dot_background_color, TileDots(dot_size, 0.1));
+
+
   ### Add XYZ feature attribute
 
   # adds an attribute with a normalized 0-1 value based on the current XYZ
@@ -93,6 +108,61 @@ styles:
         xyz_feature: global.featureNormalizedValue
 
   ### Dependencies
+
+  pattern-dots:
+      mix: [tools-tilecoords, tiling-brick, shapes-circle2, tools-aastep]
+      shaders:
+          blocks:
+              global: |
+                  #ifdef TANGRAM_FRAGMENT_SHADER
+                      float TileDots(float scale, float size) {
+                          // controls
+                          float DOT_SIZE = 1.0; // bigger value = smaller dots
+                          float SPEED = 10.; // bigger value = faster transition
+                          vec2 tc = TileCoords() * scale * exp2(floor(u_map_position.z) - abs(u_tile_origin.z));
+                          vec2 IN = brick(tc, 2.);
+                          float A = circleDF(vec2(0.5) - IN) * DOT_SIZE;
+                          vec2 OUT = brick(tc, 4.);
+                          float B = circleDF(vec2(0.5) - OUT) * DOT_SIZE;
+                          float transition = pow(fract(u_map_position.z), SPEED);
+                          // keep B dots big as they fade in, to maintain density
+                          B *= transition;
+                          float d = mix(A, B, transition);
+                          return aastep(size, d);
+                      }
+                  #endif
+
+  tools-tilecoords:
+      shaders:
+          blocks:
+              global: |
+                  // Varying to be added to both vertex and fragment shaders
+                  varying vec2 v_pos;
+                  #ifdef TANGRAM_FRAGMENT_SHADER
+                  vec2 TileCoords() {
+                      return fract(v_pos);
+                  }
+                  #endif
+              position: |
+                  v_pos = modelPosition().xy;
+
+  tools-aastep:
+      shaders:
+          extensions: OES_standard_derivatives
+          blocks:
+              global: |
+                  float aastep(float threshold, float value) {
+                      #ifdef TANGRAM_FRAGMENT_SHADER
+                          #ifdef TANGRAM_EXTENSION_OES_standard_derivatives
+                              float afwidth = length(vec2(dFdx(value), dFdy(value))) * 0.70710678118654757;
+                              return smoothstep(threshold - afwidth, threshold + afwidth, value);
+                          #else
+                              return step(threshold, value);
+                          #endif
+                      #else
+                          return step(threshold, value);
+                      #endif
+                  }
 
   functions-aastep:
       doc:
@@ -556,6 +626,16 @@ styles:
                   // ================================
                   float circleBorder (vec2 st, float radius) {
                       return stroke(radius, circleDF(st-vec2(0.5)));
+                  }
+
+  shapes-circle2:
+      shaders:
+          blocks:
+              global: |
+                  // get distance field of a Circle
+                  // ================================
+                  float circleDF (vec2 st) {
+                      return dot(st,st);
                   }
 
   space-tile:
