@@ -236,7 +236,7 @@ function makeLayer(scene_obj) {
   window.scene = scene;  // debugging
 }
 
-function applySpace({ spaceId, token, displayToggles: { hexbins } = {}, propertySearchQueryParams, hexbinInfo }, scene_config) {
+function applySpace({ spaceId, token, hexbinInfo, displayToggles: { hexbins, clustering, clusteringProp } = {} }, scene_config) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
