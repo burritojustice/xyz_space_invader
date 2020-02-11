@@ -240,11 +240,9 @@ function applySpace({ spaceId, token, displayToggles: { hexbins } = {}, property
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-
+    const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
     // build property search query string params
     // TODO: replace with native Tangram `url_params` when multiple-value support is available
-    const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
-
     scene_config.sources = scene_config.sources || {};
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
@@ -252,8 +250,23 @@ function applySpace({ spaceId, token, displayToggles: { hexbins } = {}, property
       url_params: {
         access_token: token,
         clip: true
-      }
+      }      
     };
+    if (clustering == 1) {
+      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+      }
+    } else if (clustering == 2) {
+      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+      }
+    }
+    else {
+      delete scene_config.sources._xyzspace.url_params.clustering;
+    }
   }
 }
 
@@ -478,6 +491,36 @@ async function queryViewport() {
   console.log("features in viewport:", features.length);
   appUI.set({ featuresInViewport: features });
   updateViewportProperties(features);
+}
+
+
+function updateViewportTags(features) {  // for tags
+  // grab the tags from Tangram's viewport tiles
+  let tagsViewport = [];
+  features.forEach(x => {
+    if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
+      tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
+    }
+  })
+
+  const tagsWithCountsInViewport =
+    Object.entries(
+      features
+        .flatMap(f => { 
+          if (f.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
+            f.properties['@ns:com:here:xyz'].tags
+          }
+        })
+        .reduce((tagCounts, tag) => {
+            tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
+            return tagCounts;
+          }, {}))
+    .sort((a, b) => b[1] > a[1] ? 1 : (b[1] > a[1] ? -1 : 0));
+
+  appUI.set({
+    numFeaturesInViewport: features.length,
+    tagsWithCountsInViewport
+  });
 }
 
 function updateViewportProperties(features) { // for feature prop

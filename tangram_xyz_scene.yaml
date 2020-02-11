@@ -157,7 +157,9 @@ layers:
             - $geometry: point
             - global.featureFilterOutliers
             - global.featureFilterSelectedValue
-        data: { source: _xyzspace }
+        data:
+            source: _xyzspace
+            all_layers: true
         draw:
             # regular filled points
             xyz_points:
@@ -190,7 +192,9 @@ layers:
             - $geometry: line
             - global.featureFilterOutliers
             - global.featureFilterSelectedValue
-        data: { source: _xyzspace }
+        data:
+            source: _xyzspace
+            all_layers: true
         draw:
             xyz_lines:
                 interactive: true
@@ -212,7 +216,9 @@ layers:
             - $geometry: polygon
             - global.featureFilterOutliers
             - global.featureFilterSelectedValue
-        data: { source: _xyzspace }
+        data:
+            source: _xyzspace
+            all_layers: true        
         _outlines:
             draw:
                 xyz_lines:
