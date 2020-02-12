@@ -364,7 +364,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     if (stats.errorMessage == "The space with this ID does not exist"){
       error_response = "XYZ Space ID " + spaceId + " does not exist"
     }    
-    alert('error_response'); // old-school
+    alert(error_response); // old-school
     return
   }
   var bbox = stats.bbox.value
