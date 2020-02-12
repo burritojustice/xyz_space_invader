@@ -361,8 +361,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     if (stats.errorMessage == "Unauthorized"){
       error_response = "Unauthorized: " + token + " is not a valid XYZ token"
     }
-    if (stats.errorMessage == "The space with this ID does not exist"){
-      error_response = "XYZ Space ID " + spaceId + " does not exist"
+    if (stats.errorMessage == "The space with this ID does not exist."){
+      error_response = "XYZ space ID " + spaceId + " does not exist"
     }    
     alert(error_response); // old-school
     return
