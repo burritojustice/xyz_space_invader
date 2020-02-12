@@ -355,9 +355,9 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
   const stats = await fetch(url).then(r => r.json());
     // console.log(stats)
+  var spaceInfo = {}
   if (stats.type == 'ErrorResponse'){
     console.log(stats.errorMessage);
-    var spaceInfo
     spaceInfo.title = 'stats.errorMessage'
     return
   }
@@ -422,7 +422,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
-  const spaceInfo = await fetch(spaceURL).then((response) => response.json());
+  spaceInfo = await fetch(spaceURL).then((response) => response.json());
 
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
