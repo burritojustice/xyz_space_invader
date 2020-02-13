@@ -353,7 +353,18 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
   const stats = await fetch(url).then(r => r.json());
     // console.log(stats)
-
+  if (stats.type == 'ErrorResponse'){
+    console.log(stats.errorMessage);
+    var error_response = stats.errorMessage;
+    if (stats.errorMessage == "Unauthorized"){
+      error_response = "Unauthorized: " + token + " is not a valid XYZ token"
+    }
+    if (stats.errorMessage == "The space with this ID does not exist."){
+      error_response = "Error: XYZ space " + spaceId + " does not exist"
+    }    
+    alert(error_response); // old-school
+    return
+  }
   var bbox = stats.bbox.value
   console.log('map start location:', mapStartLocation)
   console.log('bbox',bbox)
