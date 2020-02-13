@@ -312,7 +312,7 @@ export const basemaps = {
     global: {
       featureLabelFont: labelFontPresets.dark
     },
-    // can't use the regular ...xyzTilezenSourceOverride beacuse max_zoom is important
+    ...xyzTilezenSourceOverride,
     sources: {
       mapzen: {
         url: 'https://xyz.api.here.com/tiles/osmbase/512/all/{z}/{x}/{y}.mvt',

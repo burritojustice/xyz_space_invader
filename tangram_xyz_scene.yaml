@@ -109,8 +109,9 @@ global:
         return size;
       }
 
-# sources:
-#     _xyzspace: # this source is created at run-time based on XYZ space
+sources:
+    # this source is created at run-time based on XYZ space
+    _xyzspace: {}
 
 styles:
     projection:
