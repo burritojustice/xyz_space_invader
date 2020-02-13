@@ -69,13 +69,15 @@
         </div>
 
         <!-- Projection selector -->
-        <div class="controls_left_selector">projection:
-          <select bind:value="projection" class="controls_left_dropdown">
-            {#each Object.keys(projections) as projection}
-              <option value="{projection}">{projection}</option>
-            {/each}
-          </select>
-        </div>
+        {#if basemap === 'projected'}
+          <div class="controls_left_selector">projection:
+            <select bind:value="projection" class="controls_left_dropdown">
+              {#each Object.keys(projections) as projection}
+                <option value="{projection}">{projection}</option>
+              {/each}
+            </select>
+          </div>
+        {/if}
 
         <!-- Export scene -->
           <button on:click="fire('exportScene')" style="float: right;">export</button>
