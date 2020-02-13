@@ -562,7 +562,8 @@ export default {
               displayToggles,
               featurePropMinFilter, featurePropMaxFilter,
               featurePropPalette, featurePropPaletteFlip, featurePropValueCounts,
-              colorHelpers
+              colorHelpers,
+              projection
             }
           );
         }
