@@ -22,8 +22,11 @@ export const colorFunctions = {
 
       var ratio = (delta === 0 ? 1 : Math.max(Math.min(1 - ((max - number) / delta), 1), 0));
       // need to detect projection and change opacity to 1 so we don't see opacity overlap with bad bent lines (China, NWT)
-      console.log("projection?",projection)
-      return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
+      var alpha = 0.75
+      if (projection){
+        alpha = 1
+      }
+      return colorState.colorHelpers.getPaletteColor(palette, ratio, alpha, colorState.featurePropPaletteFlip);
     }
   },
 
