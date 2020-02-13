@@ -20,6 +20,7 @@ export const colorFunctions = {
       }
 
       var ratio = (delta === 0 ? 1 : Math.max(Math.min(1 - ((max - number) / delta), 1), 0));
+      console.log("can I see basemap and projection in colorFunctions?", colorState.basemap, colorState.projection)
       return colorState.colorHelpers.getPaletteColor(palette, ratio, 0.75, colorState.featurePropPaletteFlip);
     }
   },
