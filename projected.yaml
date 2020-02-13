@@ -7,14 +7,13 @@ scene:
         color: white
 
 sources:
-    # _xyzspace: # this source is created at run-time based on XYZ space
     mapzen: #xyz-osm
         type: MVT
         url: https://xyz.api.here.com/tiles/osmbase/512/all/{z}/{x}/{y}.mvt
         url_params:
             access_token: global.access_token
         max_zoom: 2
-    _xyzspace:
+    _xyzspace: # this source is created at run-time based on XYZ space
         max_zoom: 1
 
 styles:
@@ -79,13 +78,23 @@ layers:
             polygons:
                 style: _polygons
                 order: 9
-                color: white
+                color: pink
+            _lines:
+                order: 10
+                width: .5px
+                color: red
+                tile_edges: true
     water:
         data: { source: mapzen }
         draw:
-            waves:
+            _polygons:
                 order: 8
-                color: [0.824, 0.812, 0.804]
+                color: lightblue
+            _lines:
+                order: 10
+                width: .5px
+                color: blue
+                tile_edges: true
         lakes:
             filter: { kind: [lake, riverbank, dock, water, basin, reservoir, playa, canal, dam, ditch, drain, river, stream]}
             draw:

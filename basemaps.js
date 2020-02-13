@@ -306,8 +306,8 @@ export const basemaps = {
   },
   'projected': {
     import: [
+      'projected.yaml',
       xyzTangramBaseScene,
-      'tangram_xyz_scene_projected.yaml',
     ],
     global: {
       featureLabelFont: labelFontPresets.dark
