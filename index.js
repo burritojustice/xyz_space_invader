@@ -243,7 +243,11 @@ function applySpace({ spaceId, token, hexbinInfo, basemap, displayToggles: { hex
     var max_zoom = 18
     if (basemap == 'albers') {
         max_zoom = 2 // because tiles
-        scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
+        try {
+          scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
+        } catch(e) {
+          console.error("Failed to set scene.view.buffer:\n", e)
+        }
     }
 
     scene_config.sources = scene_config.sources || {};
