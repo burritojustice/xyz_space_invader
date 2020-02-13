@@ -14,6 +14,7 @@ export const colorFunctions = {
       var max = colorState.featurePropMaxFilter;
       var delta = max - min;
       var number = colorState.colorHelpers.parseNumber(value);
+      var projection = colorState.projection;
 
       if (min == null || max == null || typeof number !== 'number' || isNaN(number)) {
         return 'rgba(128, 128, 128, 0.25)'; // handle null/undefined values
