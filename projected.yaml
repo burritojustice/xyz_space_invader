@@ -50,19 +50,16 @@ layers:
 
     _xyz_lines:
         draw:
-            overlay_lines:
-                style: _lines_overlay
+            _lines_overlay: {}
             text:
                 style: _text
 
     _xyz_polygons:
         _outlines:
             draw:
-                overlay_lines:
-                    style: _lines
+                _lines: {}
         draw:
-            inlay_polygons:
-                style: _polygons_inlay
+            _polygons_inlay: {}
             text:
                 style: _text
 

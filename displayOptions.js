@@ -152,7 +152,7 @@ export const displayOptions = {
         width = '1px';
       }
 
-      _.set(scene, 'layers._xyz_lines.draw.overlay_lines.width', width);
+      _.set(scene, 'layers._xyz_lines.draw._lines_overlay.width', width);
     }
   },
 
@@ -195,11 +195,11 @@ export const displayOptions = {
         donutOutline = true;
       }
 
-      _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.width', width);
-      _.set(scene, 'layers._xyz_polygons._outlines.draw.overlay_lines.color', color);
+      _.set(scene, 'layers._xyz_polygons._outlines.draw._lines_overlay.width', width);
+      _.set(scene, 'layers._xyz_polygons._outlines.draw._lines_overlay.color', color);
 
-      _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.width', width);
-      _.set(scene, 'layers._xyz_lines.draw.overlay_lines.outline.color', color);
+      _.set(scene, 'layers._xyz_lines.draw._lines_overlay.outline.width', width);
+      _.set(scene, 'layers._xyz_lines.draw._lines_overlay.outline.color', color);
 
       _.set(scene, 'layers._xyz_dots.draw.points.outline.width', width);
       _.set(scene, 'layers._xyz_dots.draw.points.outline.color', color);
@@ -255,10 +255,10 @@ export const displayOptions = {
     values: [0, 1],
     apply: (scene, value) => {
       if (value === 0) {
-        _.set(scene, 'layers._xyz_polygons.draw.inlay_polygons.order', 200);
+        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 200);
       }
       else if (value === 1) {
-        _.set(scene, 'layers._xyz_polygons.draw.inlay_polygons.order', 300);
+        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 300);
       }
     }
   }

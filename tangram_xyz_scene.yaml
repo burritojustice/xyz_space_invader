@@ -194,7 +194,7 @@ layers:
             - global.featureFilterSelectedValue
         data: { source: _xyzspace }
         draw:
-            overlay_lines:
+            _lines_overlay:
                 interactive: true
                 color: global.featureColor
                 width: 4px
@@ -217,11 +217,11 @@ layers:
         data: { source: _xyzspace }
         _outlines:
             draw:
-                overlay_lines:
+                _lines_overlay:
                     width: 0px
                     blend_order: 0
         draw:
-            inlay_polygons:
+            _polygons_inlay:
                 interactive: true
                 color: global.featureColor
                 width: 2px
