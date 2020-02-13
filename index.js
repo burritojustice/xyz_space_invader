@@ -240,9 +240,7 @@ function applySpace({ spaceId, token, hexbinInfo, basemap, displayToggles: { hex
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-    var max_zoom = 18
-    if (basemap == 'albers') {
-        max_zoom = 2 // because tiles
+    if (basemap == 'projected') {
         try {
           scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
         } catch(e) {
