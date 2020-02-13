@@ -552,7 +552,7 @@ export default {
     featurePropValueColorFunction: ({
       displayToggles,
       featurePropMinFilter, featurePropMaxFilter,
-      featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers }) => {
+      featurePropPalette, featurePropPaletteFlip, featurePropValueCounts, colorHelpers, projection }) => {
 
       return (value) => {
         const colors = displayToggles.colors;
