@@ -135,11 +135,6 @@ styles:
         mix: projection
         blend: overlay
         blend_order: 0
-    _lines_low:
-        base: lines
-        mix: projection
-        blend: inlay
-        blend_order: 2
     _polygons:
         base: polygons
         mix: projection
