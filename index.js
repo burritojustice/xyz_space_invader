@@ -1,8 +1,11 @@
 import L from 'leaflet';
 import 'leaflet-hash';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-control-geocoder';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import yaml from 'js-yaml';
 import FileSaver from 'file-saver';
+
 
 import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
