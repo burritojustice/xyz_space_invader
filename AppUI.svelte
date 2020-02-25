@@ -1351,8 +1351,8 @@ function hashString (string) {
 
   #tag_panel {
     overflow: auto;
-    height: 50vh;
-    flex: 1 1 auto;
+/*     height: 50vh; */
+    flex: 1 0 auto;
   }
 
   #tag_search {
