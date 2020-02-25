@@ -40,10 +40,10 @@ map.setView([37.7,-122.4], 2);
 //add geocoder (to do: Pelias / Geocode Earth)
 var here_geocoder_options = {
   app_id: '0VeWPmMuUeMebnjNVGz9',
-  app_code: 'MVqjbI661R5lC2DqkAZpNg',
-  defaultMarkGeocode: false
+  app_code: 'MVqjbI661R5lC2DqkAZpNg'//,
+//   defaultMarkGeocode: false
 }
-new L.Control.Geocoder.HERE(here_geocoder_options).addTo(map);
+L.Control.Geocoder.here(here_geocoder_options).addTo(map);
 
 // Initialize App UI
 const appUI = new AppUI({
