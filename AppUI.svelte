@@ -1323,7 +1323,7 @@ function hashString (string) {
   #properties {
     overflow: auto;
 /*     height: 40vh; */
-    flex: 1 1 auto;
+    flex: 1 0 auto;
   }
 
   #properties table {
@@ -1342,7 +1342,7 @@ function hashString (string) {
 
   #controls_right {
     right: 0;
-    height: 90vh; 
+    height: 90%; 
   }
 
   .hideInDemoMode {
