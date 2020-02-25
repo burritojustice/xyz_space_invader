@@ -1341,6 +1341,7 @@ function hashString (string) {
   }
 
   #controls_right {
+    display: flex;
     right: 0;
     height: 80vh; 
   }
