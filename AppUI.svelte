@@ -1322,7 +1322,7 @@ function hashString (string) {
 
   #properties {
     overflow: auto;
-    height: 80%; /* was 150vh */
+    height: 150vh 
     flex: 1 1 auto;
   }
 
@@ -1342,6 +1342,7 @@ function hashString (string) {
 
   #controls_right {
     right: 0;
+    height: 90%; 
   }
 
   .hideInDemoMode {
