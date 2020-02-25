@@ -33,12 +33,15 @@ popup = L.popup({ autoPan: false, closeButton: true });
 
 // Leaflet needs an initial location before the map is "ready", which will block Tangram layer loading
 map.setView([37.7,-122.4], 2);
+
 //add geocoder (to do: Pelias / Geocode Earth)
-var geocoder = L.Control.geocoder.here( {
-    app_id: '0VeWPmMuUeMebnjNVGz9',
-    app_code: 'MVqjbI661R5lC2DqkAZpNg',
-    defaultMarkGeocode: false
-  }).addTo(map);
+var here_geocoder_options = {
+  app_id: '0VeWPmMuUeMebnjNVGz9',
+  app_code: 'MVqjbI661R5lC2DqkAZpNg',
+  defaultMarkGeocode: false
+}
+L.Control.Geocoder.HERE(here_geocoder_options).addTo(map);
+
 // Initialize App UI
 const appUI = new AppUI({
   target: document.getElementById('ui')
