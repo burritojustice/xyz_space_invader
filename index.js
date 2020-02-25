@@ -41,7 +41,9 @@ map.setView([37.7,-122.4], 2);
 var here_geocoder_options = {
   app_id: '0VeWPmMuUeMebnjNVGz9',
   app_code: 'MVqjbI661R5lC2DqkAZpNg',
-  defaultMarkGeocode: false
+  {
+    defaultMarkGeocode: false
+  }
 }
 L.Control.Geocoder.HERE(here_geocoder_options).addTo(map);
 
