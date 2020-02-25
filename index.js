@@ -43,7 +43,7 @@ var here_geocoder_options = {
   app_code: 'MVqjbI661R5lC2DqkAZpNg',
   defaultMarkGeocode: false
 }
-L.Control.Geocoder.HERE(here_geocoder_options).addTo(map);
+L.Control.geocoder.HERE(here_geocoder_options).addTo(map);
 
 // Initialize App UI
 const appUI = new AppUI({
