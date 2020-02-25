@@ -1342,7 +1342,7 @@ function hashString (string) {
 
   #controls_right {
     right: 0;
-    height: 90%; 
+    height: 80vh; 
   }
 
   .hideInDemoMode {
