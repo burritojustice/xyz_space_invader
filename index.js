@@ -51,7 +51,7 @@ var geocoder = new L.Control.Geocoder({
 .on('markgeocode', function(e) {
   var response = e.view[0].result[0].location
   console.log(response)
-}
+})
 .addTo(map);
 
 
