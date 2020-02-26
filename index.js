@@ -49,8 +49,15 @@ var geocoder = new L.Control.Geocoder({
     position: "bottomright"
   })
 .on('markgeocode', function(e) {
-  var response = e.response.view[0].result[0].location
-  console.log(response)
+  var bbox = e.geocode.bbox;  
+  var poly = L.polygon([
+    bbox.getSouthEast(),
+    bbox.getNorthEast(),
+    bbox.getNorthWest(),
+    bbox.getSouthWest()
+  ])
+   map.fitBounds(poly.getBounds());
+  console.log(bbox)
 })
 .addTo(map);
 
