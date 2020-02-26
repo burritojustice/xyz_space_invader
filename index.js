@@ -49,6 +49,7 @@ var geocoder = new L.Control.Geocoder({
     position: "bottomright"
   })
 .on('markgeocode', function(e) {
+  e.stopPropagation();
   var bbox = e.geocode.bbox;  
   var poly = L.polygon([
     bbox.getSouthEast(),
