@@ -244,7 +244,27 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
-
+     'xyz-reduction-light': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-reduction-light/master/scene.yaml',
+      xyzTangramBaseScene
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.light
+    },
+    ...xyzTilezenSourceOverride
+  }, 
+     'xyz-reduction-dark': {
+    import: [
+      'https://raw.githubusercontent.com/sensescape/xyz-reduction-dark/master/scene.yaml',
+      xyzTangramBaseScene
+    ],
+    global: {
+      featureLabelFont: labelFontPresets.dark
+    },
+    ...xyzTilezenSourceOverride
+  }, 
+  
   'mapzen-refill-dark': {
     import: [
       'https://www.nextzen.org/carto/refill-style/refill-style.zip',
