@@ -240,7 +240,7 @@ function applySpace({ spaceId, token, hexbinInfo, basemap, displayToggles: { hex
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-    if (basemap == 'projected') {
+    if (basemap == 'projected' || 'xyz-reduction-dark') {
         try {
           scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
         } catch(e) {
