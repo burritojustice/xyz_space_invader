@@ -3,6 +3,9 @@
 cameras:
     camera1:
         type: perspective
+scene:
+    background:
+        color: black
 
 global:
     # default order for basemap features
