@@ -264,12 +264,12 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
         }
     } else if (clustering == 3) { // quadbin clustering
-        scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
+        scene_config.sources._xyzspace.url_params.clustering = 'quad';
         if (clusteringProp){
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
         }
     } else if (clustering == 4) { // quadbin centroids
-        scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
+        scene_config.sources._xyzspace.url_params.clustering = 'quad';
         scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
         if (clusteringProp){
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
