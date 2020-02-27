@@ -215,29 +215,30 @@ sources:
         url: https://xyz.api.here.com/tiles/osmbase/256/all/{z}/{x}/{y}.mvt
 
 layers:
-#     _xyz_dots:
-#         draw:
-#             points:
-#                 style: _points
-#         donut_points:
-#             draw:
-#                 points:
-#                     style: _points
+# we should be able to add the style: _... on the fly in js
+    _xyz_dots:
+        draw:
+            points:
+                style: _points
+        donut_points:
+            draw:
+                points:
+                    style: _points
 
-#     _xyz_lines:
-#         draw:
-#             _lines_overlay: {}
-#             text:
-#                 style: _text
+    _xyz_lines:
+        draw:
+            _lines_overlay: {}
+            text:
+                style: _text
 
-#     _xyz_polygons:
-#         _outlines:
-#             draw:
-#                 _lines: {}
-#         draw:
-#             _polygons_inlay: {}
-#             text:
-#                 style: _text
+    _xyz_polygons:
+        _outlines:
+            draw:
+                _lines: {}
+        draw:
+            _polygons_inlay: {}
+            text:
+                style: _text
     earth:
         data: { source: mapzen, layer: earth }
         draw:
