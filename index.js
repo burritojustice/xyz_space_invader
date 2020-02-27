@@ -258,24 +258,22 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
     } else if (clustering == 2) { // h3 hexbin centroids
-      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-      scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
-      if (clusteringProp){
-        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
-      }
-    }
+        scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+        scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
+        if (clusteringProp){
+          scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+        }
     } else if (clustering == 3) { // quadbin clustering
-      scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
-      if (clusteringProp){
-        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
-      }
-    }
+        scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
+        if (clusteringProp){
+          scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+        }
     } else if (clustering == 4) { // quadbin centroids
-      scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
-      scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
-      if (clusteringProp){
-        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
-      }
+        scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
+        scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
+        if (clusteringProp){
+          scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+        }
     }
     else {
       delete scene_config.sources._xyzspace.url_params.clustering;
