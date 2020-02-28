@@ -272,6 +272,12 @@ export const displayOptions = {
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
+  clusterRez: {
+    parse: parseInt,
+    values: [0, -1, -2, -3] // bump down the clustering resolution
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
   
   // toggle CLI hexbins
   hexbins: {
