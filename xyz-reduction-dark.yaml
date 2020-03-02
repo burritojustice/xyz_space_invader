@@ -244,8 +244,8 @@ layers:
         draw:
             polygons:
                 style: _polygons
-#                 order: global.feature_order
-                order: 9
+                order: global.feature_order
+#                 order: 9
                 color: [0.149,0.149,0.149]
 
     water:
@@ -253,8 +253,8 @@ layers:
         draw:
             polygons:
                 style: _polygons
-                order: 8
-#                 order: global.feature_order
+#                 order: 8
+                order: global.feature_order
                 color: [0.120,0.120,0.120]
             lines:
                 style: _lines
