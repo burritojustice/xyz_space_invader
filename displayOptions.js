@@ -116,6 +116,7 @@ export const displayOptions = {
     values: [0, 1, 2, 3, 4],
     apply: (scene, value, { featurePointSizeProp, featurePointSizeRange }) => {
       let size;
+      console.log('featurePointSizeProp', featurePointSizeProp)
 
       // ignore explicit point size setting when a feature property is selected
       const featurePointSizePropStack = parsePropStack(featurePointSizeProp);
