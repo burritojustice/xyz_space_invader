@@ -470,7 +470,7 @@ export default {
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
       featurePointSizeDisplayRange: [4, 20],
-      featurePointSizeProp: null,
+      featurePointSizeProp: '', // setting this to null breaks the point toggle
       
       clustering: null,
       quadCountmode: null,
