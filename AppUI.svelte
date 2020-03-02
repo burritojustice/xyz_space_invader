@@ -470,6 +470,11 @@ export default {
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
       featurePointSizeDisplayRange: [4, 20],
+      featurePointSizeProp: null,
+      
+      clustering: null,
+      quadCountmode: null,
+      quadRez: null,
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
