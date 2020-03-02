@@ -314,6 +314,9 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         default: 
           delete scene_config.sources._xyzspace.url_params['clustering.resolution']
       }
+    } else {
+      delete scene_config.sources._xyzspace.url_params['clustering.countmode']
+      delete scene_config.sources._xyzspace.url_params['clustering.resolution']
     }
                     
     
