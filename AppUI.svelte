@@ -404,7 +404,7 @@
   {#if spaceInfo && spaceInfo.properties}
     <div id="properties" class="panel hideOnMobile">
       <PropertySearchList
-        properties={spaceInfo.properties}
+        properties={spaceInfo.properties},propertySearchOverride
         bind:propertySearch="propertySearch"
       />
     </div>
@@ -484,6 +484,7 @@ export default {
       tagSort: 'count',
       tagFilterSearch: '', // set these to empty strings (not null) to get placeholder text in input
       propertySearch: {},
+      propertySearchOverride: null,
 
       featuresInViewport: [],
       featurePropTypesCache: {}, // cache of inferred feature property types
