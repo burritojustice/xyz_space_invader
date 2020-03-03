@@ -279,45 +279,45 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     else {
       delete scene_config.sources._xyzspace.url_params.clustering;
     }
-    
-    if (clustering == 3 || 4){
-      switch (quadCountmode) {
-        case "real":
-          scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
-          console.log('quadbin countmode', quadCountmode)
-          break;
-        case "estimated":
-          scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
-          console.log('quadbin countmode', quadCountmode)
-          break;
-        case "mixed":
-          scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
-          console.log('quadbin countmode', quadCountmode)
-          break;
-        default: 
-          delete scene_config.sources._xyzspace.url_params['clustering.countmode']
-        }
+// disabling countmode and quad resolution until API stabilizes    
+//     if (clustering == 3 || 4){
+//       switch (quadCountmode) {
+//         case "real":
+//           scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
+//           console.log('quadbin countmode', quadCountmode)
+//           break;
+//         case "estimated":
+//           scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
+//           console.log('quadbin countmode', quadCountmode)
+//           break;
+//         case "mixed":
+//           scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
+//           console.log('quadbin countmode', quadCountmode)
+//           break;
+//         default: 
+//           delete scene_config.sources._xyzspace.url_params['clustering.countmode']
+//         }
       
-      switch (quadRez) {
-        case 0:
-          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
-          console.log('quadbin resolution', quadRez)
-          break;
-        case 1:
-          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
-          console.log('quadbin resolution', quadRez)
-          break;
-        case 2:
-          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
-          console.log('quadbin resolution', quadRez)
-          break;
-        default: 
-          delete scene_config.sources._xyzspace.url_params['clustering.resolution']
-      }
-    } else {
-      delete scene_config.sources._xyzspace.url_params['clustering.countmode']
-      delete scene_config.sources._xyzspace.url_params['clustering.resolution']
-    }
+//       switch (quadRez) {
+//         case 0:
+//           scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
+//           console.log('quadbin resolution', quadRez)
+//           break;
+//         case 1:
+//           scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
+//           console.log('quadbin resolution', quadRez)
+//           break;
+//         case 2:
+//           scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
+//           console.log('quadbin resolution', quadRez)
+//           break;
+//         default: 
+//           delete scene_config.sources._xyzspace.url_params['clustering.resolution']
+//       }
+//     } else {
+//       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
+//       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
+//     }
                     
     
     // if we ever can increase h3 resolution (denser hexbins), can enable this
