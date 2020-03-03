@@ -73,6 +73,7 @@ export default {
           ['id', feature.properties.id, ['id']],
           ['name', feature.properties.name, ['name']],
           ['WOF name', feature.properties['wof:name'], ['wof:name']],
+          ['feature id', feature.id, ['feature id']],
           addFeatureProp ? [featureProp, lookupProperty(feature.properties, featurePropStack) || 'null', featurePropStack] : []
         ]
         .filter(x => x[0] && x[1]); // only include props that had values
