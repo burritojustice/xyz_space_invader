@@ -404,7 +404,7 @@
   {#if spaceInfo && spaceInfo.properties}
     <div id="properties" class="panel hideOnMobile">
       <PropertySearchList
-        properties={spaceInfo.properties},propertySearchOverride
+        properties={spaceInfo.properties}
         bind:propertySearch="propertySearch"
       />
     </div>
