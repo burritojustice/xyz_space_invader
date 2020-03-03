@@ -53,7 +53,7 @@ export default {
       return properties ? Object.values(properties).filter(p => p.searchable).length : 0;
     },
     
-    PropSearchoverride: () => {
+    PropSearchoverride: ({ properties }) => {
       var checkBox = document.getElementById("PropSearchoverride");
       var override = false;
       if (checkBox.checked == true){ override = true }
