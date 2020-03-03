@@ -85,7 +85,7 @@ export default {
 
       return parseNestedObject(feature.properties)
         .map(r => [r.prop, r.obj, r.propStack])
-        .filter(([p]) => ['id', 'name'/*, featureProp*/].indexOf(p) === -1)
+        .filter(([p]) => ['id', 'name', 'wof:name'/*, featureProp*/].indexOf(p) === -1)
         .filter(x => x[0] && x[1]) // only include props that had values
         // alpha sort, @ properties at bottom
         .sort(([a], [b]) => a[0] === '@' ? 1 : b[0] === '@' ? -1 : a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0);
