@@ -67,11 +67,12 @@ export default {
       }
 
       const featurePropStack = parsePropStack(featureProp);
-      const addFeatureProp = (['id', 'name'].indexOf(featureProp) === -1);
+      const addFeatureProp = (['id', 'name', 'wof:name'].indexOf(featureProp) === -1);
 
       return [
           ['id', feature.properties.id, ['id']],
           ['name', feature.properties.name, ['name']],
+          ['WOF name', feature.properties['wof:name'], ['wof:name']],
           addFeatureProp ? [featureProp, lookupProperty(feature.properties, featurePropStack) || 'null', featurePropStack] : []
         ]
         .filter(x => x[0] && x[1]); // only include props that had values
