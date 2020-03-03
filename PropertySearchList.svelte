@@ -71,6 +71,7 @@ export default {
 
       if (values.op) {
         propertySearch[prop] = { ...values };
+      }
       else {
         delete propertySearch[prop];
       }
