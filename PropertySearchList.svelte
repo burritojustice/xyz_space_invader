@@ -2,7 +2,7 @@
   <div>
     {numProperties} properties
     ({numSearchableProperties === numProperties ? 'all' : numSearchableProperties} searchable): 
-    {#if numProperties == 0}
+    {#if numSearchableProperties == 0}
         <label><input type="checkbox" bind:checked="propertySearchOverride">Override API</label>
     {/if}
   </div>
