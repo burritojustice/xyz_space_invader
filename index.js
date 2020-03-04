@@ -464,7 +464,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   const tokenCapabilities = 
     (tokenInfo.urm['xyz-hub'].useCapabilities || [])
       .reduce((props, p) => {
-        props[p.id] = p;
+        props[p.id] = true;
         return props;
       }, {});
      
