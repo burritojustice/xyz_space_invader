@@ -58,7 +58,6 @@
             {/if}
             {#if displayToggles.clustering == 3}
             <td>Quadbins</td>
-            {/if}
             <td style="color:blue;" on:click='toggleDisplayOption("quadRez")'>resolution:</td>
             <td>{displayToggles.quadRez}</td>
             {/if}
