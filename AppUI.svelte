@@ -47,8 +47,14 @@
             <td>{displayToggles.lines}</td>
             <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
+          </tr>
+          <tr>
             <td on:click='toggleDisplayOption("clustering")'>clustering:</td>
-            <td>{displayToggles.clustering}</td>            
+            <td>{displayToggles.clustering}</td>
+            {#if clustering == 3}
+            <td on:click='toggleDisplayOption("clusterRez")'>quadbin:</td>
+            <td>{displayToggles.clusterRez}</td>
+            {/if}
           </tr>
         </table>
         {#if hexbinInfo.spaceId}
