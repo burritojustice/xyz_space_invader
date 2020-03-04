@@ -51,9 +51,9 @@
           <tr>
             <td on:click='toggleDisplayOption("clustering")'>clustering:</td>
             <td>{displayToggles.clustering}</td>
-            {#if clustering == 3}
-            <td on:click='toggleDisplayOption("clusterRez")'>quadbin:</td>
-            <td>{displayToggles.clusterRez}</td>
+            {#if displayToggles.clustering == 3}
+            <td on:click='toggleDisplayOption("quadRez")'>quadbins:</td>
+            <td>{displayToggles.quadRez}</td>
             {/if}
           </tr>
         </table>
