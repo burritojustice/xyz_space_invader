@@ -279,12 +279,12 @@ export const displayOptions = {
 //     // we're using displayOptions for storing and parsing values, but they get applied when creating
 //     // the Tangram data source in index.js, so there's no `apply()` function here
 //   },
-//   quadRez: {
-//     parse: parseInt,
-//     values: ['', 0, 1, 2, 3, 4] 
-//     // we're using displayOptions for storing and parsing values, but they get applied when creating
-//     // the Tangram data source in index.js, so there's no `apply()` function here
-//   },
+  quadRez: {
+    parse: parseInt,
+    values: [0, 1, 2, 3, 4] // is 0 the default?
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
   // toggle CLI hexbins
   hexbins: {
     parse: parseInt,
