@@ -462,7 +462,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var tokenURL = `https://xyz.api.here.com/token-api/tokens/${token}`;
   const tokenInfo = await fetch(tokenURL).then((response) => response.json());
   const tokenCapabilities = 
-    (tokenInfo.urm['xyz-hub']useCapabilities || [])
+    (tokenInfo.urm['xyz-hub'].useCapabilities || [])
       .reduce((props, p) => {
         props[p.id] = p;
         return props;
