@@ -272,7 +272,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
         }
         console.log('quadbins');
-        if (quadRez > 1){
+        if (quadRez > 0){
           scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
           console.log('quadbin resolution',quadRez);
         }
