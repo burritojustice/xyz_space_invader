@@ -468,7 +468,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
         return props;
       }, {});
      
-  console.log('token has", tokenCapabilities);
+  console.log("token has", tokenCapabilities);
   
       
   // updated document title
