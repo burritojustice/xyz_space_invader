@@ -281,7 +281,7 @@ export const displayOptions = {
   },
   quadRez: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4] // 0 is the default for that zoom, 1 is the default divided into 4 quads, 2 is 16, 3 is 64, 4 is 256 
+    values: [4, 3, 2, 1, 0] // 0 is the API default for that zoom, 1 is the default divided into 4 quads, 2 is 16, 3 is 64, 4 is 256 
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
