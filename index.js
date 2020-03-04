@@ -258,68 +258,37 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
+      console.log('H3 hexbins')
     } else if (clustering == 2) { // h3 hexbin centroids
         scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
         scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
         if (clusteringProp){
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
         }
+        console.log('H3 hexbin centroids')
     } else if (clustering == 3) { // quadbin clustering 
         scene_config.sources._xyzspace.url_params.clustering = 'quad';
         if (clusteringProp){
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
         }
-    } else if (clustering == 4) { // quadbin centroids
-        scene_config.sources._xyzspace.url_params.clustering = 'quad';
-        scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
-        if (clusteringProp){
-          scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+        console.log('quadbins');
+        if (quadRez > 1){
+          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
+          console.log('quadbin resolution',quadRez);
+        }
+        if (quadCountmode){
+          scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
+          console.log('quadbin countmode', quadCountmode)
         }
     }
     else {
       delete scene_config.sources._xyzspace.url_params.clustering;
-    }
-// disabling countmode and quad resolution until API stabilizes    
-    if (clustering == 3 || 4){
-//       switch (quadCountmode) {
-//         case "real":
-//           scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
-//           console.log('quadbin countmode', quadCountmode)
-//           break;
-//         case "estimated":
-//           scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
-//           console.log('quadbin countmode', quadCountmode)
-//           break;
-//         case "mixed":
-//           scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
-//           console.log('quadbin countmode', quadCountmode)
-//           break;
-//         default: 
-//           delete scene_config.sources._xyzspace.url_params['clustering.countmode']
-//         }
-      
-      switch (quadRez) {
-        case 0:
-          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
-          console.log('quadbin resolution', quadRez)
-          break;
-        case 1:
-          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
-          console.log('quadbin resolution', quadRez)
-          break;
-        case 2:
-          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
-          console.log('quadbin resolution', quadRez)
-          break;
-        default: 
-          delete scene_config.sources._xyzspace.url_params['clustering.resolution']
-      }
-    } else {
-//       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
+      delete scene_config.sources._xyzspace.url_params['clustering.property']
+      delete scene_config.sources._xyzspace.url_params['clustering.countmode']
     }
-                    
-    
+
+      
     // if we ever can increase h3 resolution (denser hexbins), can enable this
 //     const h3zoomRez = [2,2,2,2,3,4,4,5,6,6,7,8,9,9,10,11,11,12,13,14,14,15,15] // h3 hexbin resolution - map zoom lookup, 0-22
 //     const currentZoom = scene.view.tile_zoom;
@@ -329,6 +298,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
 //     else if (clusterRez > 1){
 //       scene_config.sources._xyzspace.url_params['clustering.resolution'] = h3zoomRez[currentZoom] + clusterRez
 //     }
+    
   }
 }
 
