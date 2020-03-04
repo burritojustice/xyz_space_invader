@@ -533,7 +533,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     },
 
     hexbinInfo,
-    tokenInfo,
+    tokenCapabilities,
 
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))
