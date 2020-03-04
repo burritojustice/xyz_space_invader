@@ -280,7 +280,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       delete scene_config.sources._xyzspace.url_params.clustering;
     }
 // disabling countmode and quad resolution until API stabilizes    
-//     if (clustering == 3 || 4){
+    if (clustering == 3 || 4){
 //       switch (quadCountmode) {
 //         case "real":
 //           scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
@@ -298,26 +298,26 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
 //           delete scene_config.sources._xyzspace.url_params['clustering.countmode']
 //         }
       
-//       switch (quadRez) {
-//         case 0:
-//           scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
-//           console.log('quadbin resolution', quadRez)
-//           break;
-//         case 1:
-//           scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
-//           console.log('quadbin resolution', quadRez)
-//           break;
-//         case 2:
-//           scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
-//           console.log('quadbin resolution', quadRez)
-//           break;
-//         default: 
-//           delete scene_config.sources._xyzspace.url_params['clustering.resolution']
-//       }
-//     } else {
+      switch (quadRez) {
+        case 0:
+          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
+          console.log('quadbin resolution', quadRez)
+          break;
+        case 1:
+          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
+          console.log('quadbin resolution', quadRez)
+          break;
+        case 2:
+          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadCountmode;
+          console.log('quadbin resolution', quadRez)
+          break;
+        default: 
+          delete scene_config.sources._xyzspace.url_params['clustering.resolution']
+      }
+    } else {
 //       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
-//       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
-//     }
+      delete scene_config.sources._xyzspace.url_params['clustering.resolution']
+    }
                     
     
     // if we ever can increase h3 resolution (denser hexbins), can enable this
