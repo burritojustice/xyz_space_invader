@@ -235,7 +235,7 @@ export const displayOptions = {
   // places on/off
   places: {
     parse: parseInt,
-    values: [1, 0],
+    values: [1, 0], // need to add ux_language: en and other options 
     apply: (scene, value) => {
       _.set(scene, 'layers.places.enabled', (value === 1));
       _.merge(scene.layers.places, { data: {} }); // ensure there is at least an empty data block, to suppress warnings
@@ -266,22 +266,22 @@ export const displayOptions = {
     }
   },
   
-  // toggle XYZ H3 hexbin clustering
+  // toggle XYZ clustering
   clustering: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4] // 0 = source, 1 = h3 hexbins, 2 = h3 centroids, 3 - quadbins, 4 - quadbin centroids
+    values: [0, 1, 2, 3] // 0 = source, 1 = h3 hexbins, 2 = h3 centroids, 3 - quadbins
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
-//   quadCountmode: {
-// //     parse: parseInt,
-//     values: ["mixed", "estimated", "real"] // mixed is the default
-//     // we're using displayOptions for storing and parsing values, but they get applied when creating
-//     // the Tangram data source in index.js, so there's no `apply()` function here
-//   },
+  quadCountmode: {
+//     parse: parseInt,
+    values: ["mixed", "estimated", "real"] // mixed is the default
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
   quadRez: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4] // is 0 the default?
+    values: [0, 1, 2, 3, 4] // 0 is the default for that zoom, 1 is the default divided into 4 quads, 2 is 16, 3 is 64, 4 is 256 
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
