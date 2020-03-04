@@ -49,10 +49,17 @@
             <td>{displayToggles.outlines}</td>
           </tr>
           <tr>
-            <td on:click='toggleDisplayOption("clustering")'>clustering:</td>
-            <td>{displayToggles.clustering}</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("clustering")'>clustering:</td>
+            {#if displayToggles.clustering == 1}
+            <td>H3 hexbins</td>
+            {/if}
+            {#if displayToggles.clustering == 2}
+            <td>H3 hexbin centroids</td>
+            {/if}
             {#if displayToggles.clustering == 3}
-            <td on:click='toggleDisplayOption("quadRez")'>quadbins:</td>
+            <td>Quadbins</td>
+            {/if}
+            <td style="color:blue;" on:click='toggleDisplayOption("quadRez")'>resolution:</td>
             <td>{displayToggles.quadRez}</td>
             {/if}
           </tr>
@@ -60,7 +67,7 @@
         {#if hexbinInfo.spaceId}
           <table>
               <tr>
-                <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
+                <td on:click='toggleDisplayOption("hexbins")'>CLI hexbins available: mode {displayToggles.hexbins}</td>
               </tr><tr>
                 <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
               </tr>
