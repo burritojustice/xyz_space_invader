@@ -31,25 +31,30 @@
       {#if displayToggles}
         <table>
           <tr>
-            <td on:click='toggleDisplayOption("roads")'>roads:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("roads")'>roads:</td>
             <td>{displayToggles.roads}</td>
-            <td on:click='toggleDisplayOption("buildings")'>buildings:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("buildings")'>buildings:</td>
             <td>{displayToggles.buildings}</td>
-            <td on:click='toggleDisplayOption("water")'>water:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("water")'>water:</td>
             <td>{displayToggles.water}</td>
-            <td on:click='toggleDisplayOption("places")'>places:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("places")'>places:</td>
             <td>{displayToggles.places}</td>
           </tr>
           <tr>
-            <td on:click='toggleDisplayOption("points")'>points:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("points")'>points:</td>
             <td>{displayToggles.points}</td>
-            <td on:click='toggleDisplayOption("lines")'>lines:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("lines")'>lines:</td>
             <td>{displayToggles.lines}</td>
-            <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
           </tr>
+        </table>
+        <table>
           <tr>
             <td style="color:blue;" on:click='toggleDisplayOption("clustering")'>clustering:</td>
+            {#if displayToggles.clustering == 0}
+            <td>off</td>
+            {/if}            
             {#if displayToggles.clustering == 1}
             <td>H3 hexbins</td>
             {/if}
@@ -486,7 +491,7 @@ export default {
       
       clustering: null,
       quadCountmode: null,
-      quadRez: null,
+      quadRez: 4,
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
