@@ -467,6 +467,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
         props[p.id] = p;
         return props;
       }, {});
+     
   console.log('token has", tokenCapabilities);
   
       
