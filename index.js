@@ -459,7 +459,17 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
-
+  var tokenURL = `https://xyz.api.here.com/token-api/tokens/${token}`;
+  const tokenInfo = await fetch(tokenURL).then((response) => response.json());
+  const tokenCapabilities = 
+    ((tokenInfo.urm.xyz-hub.useCapabilities || [])
+      .reduce((props, p) => {
+        props[p.id] = p;
+        return props;
+      }, {});
+  console.log('token has", tokenCapabilities);
+  
+      
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
 
@@ -522,6 +532,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     },
 
     hexbinInfo,
+    tokenInfo,
 
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))
