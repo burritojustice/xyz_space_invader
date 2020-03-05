@@ -54,11 +54,11 @@
             <td style="color:blue;" on:click='toggleDisplayOption("clustering")'>clustering:</td>
             {#if displayToggles.clustering == 0}
             <td>
-            {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering}
+<!--             {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering} -->
              off
-            {:else}
-             sign up for XYZ Pro to cluster
-            {/if}
+<!--             {:else} -->
+<!--              sign up for XYZ Pro to cluster -->
+<!--             {/if} -->
             </td>
             {/if}
             {#if displayToggles.clustering == 1}
