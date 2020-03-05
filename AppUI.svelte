@@ -74,6 +74,20 @@
             {/if}
           </tr>
         </table>
+        
+        {#if gisInfo.voronoi}
+        <table>
+          <tr>
+            <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi polygons via {gisInfo.voronoi}:</td>
+            {#if displayToggles.voronoi == 0}
+            <td>off</td>
+            {#if displayToggles.voronoi == 1}
+            <td>on</td>
+          </tr>
+        </table>
+        
+        {/if}
+      
         {#if hexbinInfo.spaceId}
           <table>
               <tr>
