@@ -461,7 +461,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
   var tokenURL = `https://xyz.api.here.com/token-api/tokens/${token}`;
   const tokenInfo = await fetch(tokenURL).then((response) => response.json());
-  const tokenCapabilities = 
+  var tokenCapabilities = {"hexbinClustering": false, "quadClustering": false}
+  tokenCapabilities = 
     (tokenInfo.urm['xyz-hub'].useCapabilities || [])
       .reduce((props, p) => {
         props[p.id] = true;
@@ -475,16 +476,26 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
 
   // check for hexbins, if they exist, create a hexbin object
-  const hexbinInfo = {};
+  var hexbinInfo = {};
   if (spaceInfo.client) {
     if (spaceInfo.client.hexbinSpaceId) {
       hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
       const hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
       try {
-        const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
+        hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
         hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
         hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
       } catch (e) { } // in case hexbin space doesn't exist or fails to load
+    }
+  }
+  
+  var gisInfo = {}
+  if (spaceInfo.client) {
+    if (spaceInfo.client.voronoi){
+      gisInfo.voronoi = spaceInfo.client.voronoiSpaceId   
+    }
+    if (spaceInfo.client.tin){
+      gisInfo.voronoi = spaceInfo.client.tinSpaceId   
     }
   }
 
@@ -531,10 +542,9 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       featureSize: featureSize,
       updatedAt: timeUnitsElapsed
     },
-
     hexbinInfo,
     tokenCapabilities,
-
+    gisInfo,
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))
   });
