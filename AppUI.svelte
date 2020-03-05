@@ -77,7 +77,18 @@
         {#if hexbinInfo.spaceId}
           <table>
               <tr>
-                <td on:click='toggleDisplayOption("hexbins")'>CLI hexbins available: mode {displayToggles.hexbins}</td>
+                <td on:click='toggleDisplayOption("hexbins")'>
+                  CLI hexbins: 
+                  {if displayToggles.hexbins == 0}
+                  off
+                  {/if}
+                  {if displayToggles.hexbins == 0}
+                  on
+                  {/if}
+                  {if displayToggles.hexbins == 0}
+                  centroids
+                  {/if}
+                </td>
               </tr><tr>
                 <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
               </tr>
