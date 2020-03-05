@@ -493,13 +493,13 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     }
   }
   
-  var gisInfo = {"voronoi": null, "delaunay": null}
+  var gisInfo = {"voronoi": null, "tin": null}
   if (spaceInfo.client) {
     if (spaceInfo.client.voronoi){
       gisInfo.voronoi = spaceInfo.client.voronoiSpaceId   
     }
     if (spaceInfo.client.tin){
-      gisInfo.voronoi = spaceInfo.client.tinSpaceId   
+      gisInfo.tin = spaceInfo.client.tinSpaceId   
     }
     console.log('gis:',gisInfo);
   }
