@@ -86,9 +86,8 @@
             <td>on</td>
             {/if}
           </tr>
-        </table> -->
-        
-        {/if}
+        </table>
+        {/if} -->
       
         {#if hexbinInfo.spaceId}
           <table>
