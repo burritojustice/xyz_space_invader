@@ -57,9 +57,10 @@
             {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering}
              off
             {:else}
-             Sign up for XYZ Pro to cluster
+             sign up for XYZ Pro to cluster
             {/if}
             </td>
+            {/if}
             {#if displayToggles.clustering == 1}
             <td>H3 hexbins</td>
             {/if}
