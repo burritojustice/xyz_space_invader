@@ -242,7 +242,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     var activeSpaceId 
     activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
     // voronoi wins over hexbins? need to work this out
-    activeSpaceId = (gisInfo.voronoi) ? gisInfo.voronoi : spaceId;
+//     activeSpaceId = (gisInfo.voronoi) ? gisInfo.voronoi : spaceId;
 
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
     // build property search query string params
