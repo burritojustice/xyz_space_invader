@@ -91,7 +91,7 @@
         {#if hexbinInfo.spaceId}
           <table>
               <tr>
-                <td on:click='toggleDisplayOption("hexbins")'>
+                <td style="color:blue;" on:click='toggleDisplayOption("hexbins")'>
                   CLI hexbins: 
                   {#if displayToggles.hexbins == 0}
                   off
