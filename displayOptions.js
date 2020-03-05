@@ -292,6 +292,10 @@ export const displayOptions = {
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
+  voronoi: {
+    values: ['off', 'on'] 
+  },
+  
 
   // Water under/over
   water: {
