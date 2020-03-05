@@ -82,10 +82,10 @@
                   {#if displayToggles.hexbins == 0}
                   off
                   {/if}
-                  {#if displayToggles.hexbins == 0}
+                  {#if displayToggles.hexbins == 1}
                   on
                   {/if}
-                  {#if displayToggles.hexbins == 0}
+                  {#if displayToggles.hexbins == 2}
                   centroids
                   {/if}
                 </td>
