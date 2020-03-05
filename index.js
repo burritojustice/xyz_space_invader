@@ -235,11 +235,15 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode } = {}, propertySearchQueryParams, hexbinInfo }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, gisInfo } = {}, propertySearchQueryParams, hexbinInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
-    const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+    var activeSpaceId 
+    activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+    // voronoi wins over hexbins? need to work this out
+    activeSpaceId = (gisInfo.voronoi) ? gisInfo.voronoi : spaceId;
+
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
     // build property search query string params
     // TODO: replace with native Tangram `url_params` when multiple-value support is available
@@ -489,7 +493,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     }
   }
   
-  var gisInfo = {}
+  var gisInfo = {"voronoi": null, "delaunay": null}
   if (spaceInfo.client) {
     if (spaceInfo.client.voronoi){
       gisInfo.voronoi = spaceInfo.client.voronoiSpaceId   
@@ -497,6 +501,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     if (spaceInfo.client.tin){
       gisInfo.voronoi = spaceInfo.client.tinSpaceId   
     }
+    console.log('gis:',gisInfo);
   }
 
   // calculate time since data was last written to the space
