@@ -81,8 +81,10 @@
             <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi polygons via {gisInfo.voronoi}:</td>
             {#if displayToggles.voronoi == 0}
             <td>off</td>
+            {/if}
             {#if displayToggles.voronoi == 1}
             <td>on</td>
+            {/if}
           </tr>
         </table>
         
