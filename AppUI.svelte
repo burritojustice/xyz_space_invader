@@ -75,7 +75,7 @@
           </tr>
         </table>
         
-        {#if gisInfo.voronoi}
+<!--         {#if gisInfo.voronoi}
         <table>
           <tr>
             <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi polygons via {gisInfo.voronoi}:</td>
@@ -86,7 +86,7 @@
             <td>on</td>
             {/if}
           </tr>
-        </table>
+        </table> -->
         
         {/if}
       
@@ -525,6 +525,8 @@ export default {
       clustering: null,
       quadCountmode: null,
       quadRez: 4,
+      voronoi: 'off',
+      
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
