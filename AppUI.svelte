@@ -79,13 +79,13 @@
               <tr>
                 <td on:click='toggleDisplayOption("hexbins")'>
                   CLI hexbins: 
-                  {if displayToggles.hexbins == 0}
+                  {#if displayToggles.hexbins == 0}
                   off
                   {/if}
-                  {if displayToggles.hexbins == 0}
+                  {#if displayToggles.hexbins == 0}
                   on
                   {/if}
-                  {if displayToggles.hexbins == 0}
+                  {#if displayToggles.hexbins == 0}
                   centroids
                   {/if}
                 </td>
