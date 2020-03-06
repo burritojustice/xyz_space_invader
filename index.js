@@ -236,12 +236,13 @@ function makeLayer(scene_obj) {
   window.scene = scene;  // debugging
 }
 
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi } = {}, propertySearchQueryParams, hexbinInfo,  gisInfo }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi } = {}, propertySearchQueryParams, hexbinInfo, gisInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
     var activeSpaceId 
     // look for voronoi (will need to add tin. maybe look for GIS in general?
+    console.log('voronoi state',voronoi,voronoiSpaceId
     if (voronoi == 1 && gisInfo.voronoiSpaceId){
       console.log('switching to voronoi space',gisInfo.voronoiSpaceId)
       if (hexbins > 0){
@@ -253,7 +254,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     else {
       activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
     }
-   
+    
     
 
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
