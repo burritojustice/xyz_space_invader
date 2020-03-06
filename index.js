@@ -498,6 +498,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 //   var gisInfo = {"voronoi": null, "tin": null}
   var gisInfo = {}
   if (spaceInfo.client) {
+    console.log(spaceInfo.client.voronoi)
     if (spaceInfo.client.voronoi){
       gisInfo.voronoi = spaceInfo.client.voronoiSpaceId   
     }
