@@ -243,6 +243,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     var activeSpaceId 
     // look for voronoi (will need to add tin. maybe look for GIS in general?
     if (voronoi == 1 && gisInfo.voronoiSpaceId){
+      console.log('switching to voronoi space',gisInfo.voronoiSpaceId)
       if (hexbins > 0){
         hexbins = 0;  // voronoi wins over hexbins
         console.log('sorry CLI hexbins, GIS wins')
