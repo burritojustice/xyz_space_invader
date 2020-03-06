@@ -246,7 +246,7 @@ export const basemaps = {
   },
      'xyz-reduction-light': {
     import: [
-      'https://raw.githubusercontent.com/sensescape/xyz-reduction-light/master/scene.yaml',
+      'xyz-reduction-light.yaml',
       xyzTangramBaseScene
     ],
     global: {
