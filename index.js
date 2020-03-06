@@ -253,7 +253,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       }
       activeSpaceId = gisInfo.voronoi 
     }
-    else if if (delaunay == 1 && gisInfo.delaunay){
+    else if (delaunay == 1 && gisInfo.delaunay){
       console.log('switching to delaunay space',gisInfo.delaunay)
       if (hexbins > 0){
         hexbins = 0;  //  gis wins over hexbins
