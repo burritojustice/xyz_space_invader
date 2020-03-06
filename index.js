@@ -463,6 +463,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
+  console.log(spaceInfo)
   var tokenURL = `https://xyz.api.here.com/token-api/tokens/${token}`;
   const tokenInfo = await fetch(tokenURL).then((response) => response.json());
   var tokenCapabilities = {"hexbinClustering": false, "quadClustering": false}
