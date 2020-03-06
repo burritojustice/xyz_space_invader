@@ -235,17 +235,20 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
+
 function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi } = {}, propertySearchQueryParams, hexbinInfo,  gisInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
     var activeSpaceId 
-    if (voronoi == 1){
+    // look for voronoi (will need to add tin. maybe look for GIS in general?
+    if (voronoi == 1 && gisInfo.voronoiSpaceId){
       if (hexbins > 0){
-        hexbins = 0;  // voronoi wins over hexbins? need to work this out
-        console.log('sorry CLI hexbins GIS wins')
+        hexbins = 0;  // voronoi wins over hexbins
+        console.log('sorry CLI hexbins, GIS wins')
       }
-      activeSpaceId = (voronoi == 1 && gisInfo.voronoiSpaceId) ? gisInfo.voronoiSpaceId : spaceId;
+      activeSpaceId = gisInfo.voronoiSpaceId 
+    }
     else {
       activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
     }
