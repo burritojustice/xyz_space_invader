@@ -296,6 +296,10 @@ export const displayOptions = {
     parse: parseInt,
     values: [0,1] 
   },
+  delaunay: {
+    parse: parseInt,
+    values: [0,1] 
+  },
   
 
   // Water under/over
