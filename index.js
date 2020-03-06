@@ -240,9 +240,17 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
   if (spaceId && token) {
     // choose main space, or hexbins space
     var activeSpaceId 
-    activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-    // voronoi wins over hexbins? need to work this out
-//     activeSpaceId = (gisInfo.voronoi) ? gisInfo.voronoi : spaceId;
+    if (voronoi == 1){
+      if (hexbins > 0){
+        hexbins = 0;  // voronoi wins over hexbins? need to work this out
+        console.log('sorry CLI hexbins GIS wins')
+      }
+      activeSpaceId = (voronoi == 1 && gisInfo.voronoiSpaceId) ? gisInfo.voronoiSpaceId : spaceId;
+    else {
+      activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+    }
+   
+    
 
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
     // build property search query string params
@@ -498,11 +506,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 //   var gisInfo = {"voronoi": null, "tin": null}
   var gisInfo = {}
   if (spaceInfo.client) {
-    console.log(spaceInfo.client.voronoi)
-    if (spaceInfo.client.voronoi){
+    if (spaceInfo.client.voronoiSpaceId){
       gisInfo.voronoi = spaceInfo.client.voronoiSpaceId   
     }
-    if (spaceInfo.client.tin){
+    if (spaceInfo.client.tinSpaceId){
       gisInfo.tin = spaceInfo.client.tinSpaceId   
     }
     console.log('gis:',gisInfo);
