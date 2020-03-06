@@ -235,7 +235,7 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, gisInfo } = {}, propertySearchQueryParams, hexbinInfo }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi } = {}, propertySearchQueryParams, hexbinInfo,  gisInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
