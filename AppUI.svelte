@@ -75,15 +75,27 @@
           </tr>
         </table>
         
-        {#if gisInfo.voronoi}
+        {#if gisInfo}
         <table>
           <tr>
-            <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi polygons via {gisInfo.voronoi}:</td>
-            {#if displayToggles.voronoi == 0}
-            <td>off</td>
+            <td>GIS: </td>
+            {#if gisInfo.voronoi}
+              <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi ({gisInfo.voronoi}):</td>
+              {#if displayToggles.voronoi == 0}
+              <td>off</td>
+              {/if}
+              {#if displayToggles.voronoi == 1}
+              <td>on</td>
+              {/if}
             {/if}
-            {#if displayToggles.voronoi == 1}
-            <td>on</td>
+            {#if gisInfo.delaunay}
+              <td style="color:blue;" on:click='toggleDisplayOption("delaunay")'>Delaunay ({gisInfo.delaunay}):</td>
+              {#if displayToggles.delaunay == 0}
+              <td>off</td>
+              {/if}
+              {#if displayToggles.delaunay == 1}
+              <td>on</td>
+              {/if}
             {/if}
           </tr>
         </table>
