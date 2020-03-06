@@ -89,7 +89,7 @@
               {/if}
             {/if}
             {#if gisInfo.delaunay}
-              <td style="color:blue;" on:click='toggleDisplayOption("delaunay");'>Delaunay ({gisInfo.delaunay}):</td>
+              <td style="color:blue;" on:click='toggleDisplayOption("delaunay")'>Delaunay ({gisInfo.delaunay}):</td>
               {#if displayToggles.delaunay == 0}
               off
               {/if}
