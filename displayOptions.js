@@ -149,7 +149,7 @@ export const displayOptions = {
       else if (value === 2) { // bigger
         size = '15px';
       }
-    else if (value === 3) { // big
+      else if (value === 3) { // big
         size = '12px';
       }
       else if (value === 4) { // medium
@@ -293,7 +293,8 @@ export const displayOptions = {
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
   voronoi: {
-    values: ['off', 'on'] 
+    parse: parseInt,
+    values: [0,1] 
   },
   
 
