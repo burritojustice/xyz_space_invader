@@ -522,10 +522,11 @@ export default {
       featurePointSizeDisplayRange: [4, 20],
       featurePointSizeProp: '', // setting this to null breaks the point toggle
       
-      clustering: null,
-      quadCountmode: null,
-      quadRez: 4,
-      voronoi: 'off',
+      // these are params
+//       clustering: null,
+//       quadCountmode: null,
+//       quadRez: 4,
+//       voronoi: 'off',
       
 
       tagsWithCountsInViewport: [],
