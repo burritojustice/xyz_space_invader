@@ -488,6 +488,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       try {
         hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
         hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
+        console.log(hexbinSpaceInfo,hexbinSpaceURL);
         hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
       } catch (e) { } // in case hexbin space doesn't exist or fails to load
     }
@@ -535,7 +536,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       timeUnitsElapsed = timeUnitsPrefix + Math.round(secondsElapsed) + " seconds ago"
     }
   };
-
+  
   // update UI
   appUI.set({
     spaceInfo: {
