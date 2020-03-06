@@ -241,11 +241,15 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
   if (spaceId && token) {
     // choose main space, or hexbins space
     var activeSpaceId 
+    // may want to test for gisInfo, and then choose voronoi or delaunay?
     if (voronoi == 1 && gisInfo.voronoi){
       console.log('switching to voronoi space',gisInfo.voronoi)
       if (hexbins > 0){
         hexbins = 0;  // voronoi wins over hexbins
         console.log('sorry CLI hexbins, GIS wins')
+      }
+      if (delaunay == 1){
+        delaunay = 0
       }
       activeSpaceId = gisInfo.voronoi 
     }
@@ -255,6 +259,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         hexbins = 0;  //  gis wins over hexbins
         console.log('sorry CLI hexbins, GIS wins')
       }
+      if (voronoi == 1){
+        voronoi = 0
+      }
+      // how would this work if we have edges? maybe tags?
       activeSpaceId = gisInfo.delaunay 
     }
     else {
