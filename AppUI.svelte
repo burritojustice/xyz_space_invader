@@ -75,7 +75,7 @@
           </tr>
         </table>
         
-<!--         {#if gisInfo.voronoi}
+        {#if gisInfo.voronoi}
         <table>
           <tr>
             <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi polygons via {gisInfo.voronoi}:</td>
@@ -87,13 +87,13 @@
             {/if}
           </tr>
         </table>
-        {/if} -->
+        {/if}
       
         {#if hexbinInfo.spaceId}
           <table>
               <tr>
                 <td style="color:blue;" on:click='toggleDisplayOption("hexbins")'>
-                  CLI hexbins: 
+                  CLI hexbins: </td><td>
                   {#if displayToggles.hexbins == 0}
                   off
                   {/if}
