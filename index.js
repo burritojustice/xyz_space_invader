@@ -483,12 +483,12 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var hexbinInfo = {};
   if (spaceInfo.client) {
     if (spaceInfo.client.hexbinSpaceId) {
+      console.log('LOOKING FOR HEXBIN')
       hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
       const hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
       try {
         hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
         hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
-        console.log(hexbinSpaceInfo,hexbinSpaceURL);
         hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
       } catch (e) { } // in case hexbin space doesn't exist or fails to load
     }
