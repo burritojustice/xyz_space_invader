@@ -82,7 +82,7 @@
             {#if displayToggles.voronoi == 'off'}
             <td>off</td>
             {/if}
-            {#if displayToggles.voronoi == 'on';}
+            {#if displayToggles.voronoi == 'on'}
             <td>on</td>
             {/if}
           </tr>
