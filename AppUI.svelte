@@ -79,10 +79,10 @@
         <table>
           <tr>
             <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi polygons via {gisInfo.voronoi}:</td>
-            {#if displayToggles.voronoi == 'off'}
+            {#if displayToggles.voronoi == 0}
             <td>off</td>
             {/if}
-            {#if displayToggles.voronoi == 'on'}
+            {#if displayToggles.voronoi == 1}
             <td>on</td>
             {/if}
           </tr>
@@ -497,6 +497,7 @@ export default {
       token: '',
       spaceInfo: null,
       hexbinInfo: {},
+      gisInfo: {},
       demoMode: false, // display collapsed UI demo mode
       feature: null,
       featureProp: null,
@@ -928,6 +929,7 @@ export default {
         changed.tagFilterQueryParam ||
         changed.propertySearchQueryParams ||
         changed.hexbinInfo ||
+        changed.gisInfo ||
         changed.featureProp ||
         changed.featurePropValue ||
         changed.featurePointSizeProp ||
