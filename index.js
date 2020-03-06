@@ -236,13 +236,11 @@ function makeLayer(scene_obj) {
   window.scene = scene;  // debugging
 }
 
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi } = {}, propertySearchQueryParams, hexbinInfo, gisInfo }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, hexbinInfo, gisInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
     var activeSpaceId 
-    // look for voronoi (will need to add tin. maybe look for GIS in general?
-    console.log('voronoi state',voronoi,gisInfo.voronoi)
     if (voronoi == 1 && gisInfo.voronoi){
       console.log('switching to voronoi space',gisInfo.voronoi)
       if (hexbins > 0){
@@ -250,6 +248,14 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         console.log('sorry CLI hexbins, GIS wins')
       }
       activeSpaceId = gisInfo.voronoi 
+    }
+    else if if (delaunay == 1 && gisInfo.delaunay){
+      console.log('switching to delaunay space',gisInfo.delaunay)
+      if (hexbins > 0){
+        hexbins = 0;  //  gis wins over hexbins
+        console.log('sorry CLI hexbins, GIS wins')
+      }
+      activeSpaceId = gisInfo.delaunay 
     }
     else {
       activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
@@ -508,14 +514,14 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     }
   }
   
-//   var gisInfo = {"voronoi": null, "tin": null}
   var gisInfo = {}
   if (spaceInfo.client) {
     if (spaceInfo.client.voronoiSpaceId){
       gisInfo.voronoi = spaceInfo.client.voronoiSpaceId   
     }
     if (spaceInfo.client.tinSpaceId){
-      gisInfo.tin = spaceInfo.client.tinSpaceId   
+      gisInfo.delaunay = spaceInfo.client.tinSpaceId  
+      // will need to add triangles, edges, neighbors when we get it via the CLI
     }
     console.log('gis:',gisInfo);
   }
