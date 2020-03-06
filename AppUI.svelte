@@ -76,9 +76,9 @@
         </table>
         
         {#if gisInfo.voronoi || gisInfo.delaunay}
+        GIS:
         <table>
           <tr>
-            <td>GIS: </td>
             {#if gisInfo.voronoi}
               <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi ({gisInfo.voronoi}):</td>
               {#if displayToggles.voronoi == 0}
