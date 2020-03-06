@@ -75,7 +75,7 @@
           </tr>
         </table>
         
-        {#if gisInfo}
+        {#if gisInfo.voronoi || gisInfo.delaunay}
         <table>
           <tr>
             <td>GIS: </td>
