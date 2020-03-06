@@ -249,6 +249,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         console.log('sorry CLI hexbins, GIS wins')
       }
       if (delaunay == 1){
+        appUI.set({displayOptions.delaunay: 0})
         delaunay = 0
       }
       activeSpaceId = gisInfo.voronoi 
