@@ -82,19 +82,19 @@
             {#if gisInfo.voronoi}
               <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi ({gisInfo.voronoi}):</td>
               {#if displayToggles.voronoi == 0}
-              <td>off</td>
+              off
               {/if}
               {#if displayToggles.voronoi == 1}
-              <td>on</td>
+              on
               {/if}
             {/if}
             {#if gisInfo.delaunay}
               <td style="color:blue;" on:click='toggleDisplayOption("delaunay")'>Delaunay ({gisInfo.delaunay}):</td>
               {#if displayToggles.delaunay == 0}
-              <td>off</td>
+              off
               {/if}
               {#if displayToggles.delaunay == 1}
-              <td>on</td>
+              on
               {/if}
             {/if}
           </tr>
