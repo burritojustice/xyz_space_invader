@@ -241,34 +241,40 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
   if (spaceId && token) {
     // choose main space, or hexbins space
     var activeSpaceId 
-    // may want to test for gisInfo, and then choose voronoi or delaunay?
+    var toggles = appUI.get().displayToggles
+    // check to see if GIS spaces exist
     if (voronoi == 1 && gisInfo.voronoi){
       console.log('switching to voronoi space',gisInfo.voronoi)
       if (hexbins > 0){
-      appUI.set({ displayToggles: {hexbins: 0} }) // voronoi wins over hexbins
-      console.log('sorry CLI hexbins, GIS wins')
+        toggles.hexbin = 0
+        console.log('sorry CLI hexbins, GIS wins')
       }
+      // if delaunay is already selected, turn it off and update ui
       if (delaunay == 1){
-        appUI.set({ displayToggles: {delaunay: 0} })
+        toggles.delaunay = 0
+        appUI.set({ displayToggles: toggles }
       }
       activeSpaceId = gisInfo.voronoi 
+      
     }
     else if (delaunay == 1 && gisInfo.delaunay){
       console.log('switching to delaunay space',gisInfo.delaunay)
       if (hexbins > 0){
-        hexbins = 0;  //  gis wins over hexbins
+        toggles.hexbin = 0
         console.log('sorry CLI hexbins, GIS wins')
       }
+      // if voronoi is already selected, turn it off and update ui
       if (voronoi == 1){
-        appUI.set({ displayToggles: {voronoi: 0} })
+        toggles.voronoi = 0
+        appUI.set({ displayToggles: toggles }
+
       }
       // how would this work if we have edges? maybe tags?
       activeSpaceId = gisInfo.delaunay 
     }
-    else {
+    else { // enable hexbin space
       activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
     }
-    
     
 
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
