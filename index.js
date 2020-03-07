@@ -252,7 +252,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       // if delaunay is already selected, turn it off and update ui
       if (delaunay == 1){
         toggles.delaunay = 0
-        appUI.set({ displayToggles: toggles }
+        appUI.set({ displayToggles: toggles })
       }
       activeSpaceId = gisInfo.voronoi 
       
@@ -266,8 +266,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       // if voronoi is already selected, turn it off and update ui
       if (voronoi == 1){
         toggles.voronoi = 0
-        appUI.set({ displayToggles: toggles }
-
+        appUI.set({ displayToggles: toggles })
       }
       // how would this work if we have edges? maybe tags?
       activeSpaceId = gisInfo.delaunay 
