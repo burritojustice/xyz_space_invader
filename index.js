@@ -245,30 +245,30 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     // check to see if GIS spaces exist
     if (voronoi == 1 && gisInfo.voronoi){
       console.log('switching to voronoi space',gisInfo.voronoi)
-      if (hexbins > 0){
+//       if (hexbins > 0){
         toggles.hexbin = 0
         console.log('sorry CLI hexbins, GIS wins')
-      }
+//       }
       // if delaunay is already selected, turn it off and update ui
-      if (delaunay == 1){
+//       if (delaunay == 1){
         toggles.delaunay = 0
-        toggles.voronoi = 1
-      }
+//         toggles.voronoi = 1
+//       }
       appUI.set({ displayToggles: toggles })
       activeSpaceId = gisInfo.voronoi 
       
     }
     else if (delaunay == 1 && gisInfo.delaunay){
       console.log('switching to delaunay space',gisInfo.delaunay)
-      if (hexbins > 0){
+//       if (hexbins > 0){
         toggles.hexbin = 0
         console.log('sorry CLI hexbins, GIS wins')
-      }
+//       }
       // if voronoi is already selected, turn it off and update ui
-      if (voronoi == 1){
+//       if (voronoi == 1){
         toggles.voronoi = 0
-        toggles.delaunay = 1
-      }
+//         toggles.delaunay = 1
+//       }
       appUI.set({ displayToggles: toggles })
       // how would this work if we have edges? maybe tags?
       activeSpaceId = gisInfo.delaunay 
