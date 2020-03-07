@@ -162,7 +162,7 @@ layers:
         data: { source: _xyzspace }
         draw:
             # regular filled points
-            points:
+            _points:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
@@ -170,7 +170,7 @@ layers:
                 size: global.featurePointSize
                 outline:
                     width: 0px
-                text:
+                _text:
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
                     optional: true
@@ -181,7 +181,7 @@ layers:
         donut_points:
             enabled: false
             draw:
-              points:
+              _points:
                   color: transparent
                   outline:
                       color: global.featureColor
@@ -202,6 +202,7 @@ layers:
                 outline:
                    width: 0px
             text:
+              style: _text
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
@@ -228,6 +229,7 @@ layers:
                 order: 300
                 blend_order: 0
             text:
+              style: _text
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
