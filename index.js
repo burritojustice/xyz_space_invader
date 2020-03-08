@@ -235,11 +235,49 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp } = {}, propertySearchQueryParams, hexbinInfo }, scene_config) {
+
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, hexbinInfo, gisInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
-    const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+    var activeSpaceId 
+    var toggles = appUI.get().displayToggles
+    // check to see if GIS spaces exist
+    if (voronoi == 1 && gisInfo.voronoi){
+      console.log('switching to voronoi space',gisInfo.voronoi)
+//       if (hexbins > 0){
+        toggles.hexbin = 0
+        console.log('sorry CLI hexbins, GIS wins')
+//       }
+      // if delaunay is already selected, turn it off and update ui
+//       if (delaunay == 1){
+        toggles.delaunay = 0
+//         toggles.voronoi = 1
+//       }
+      appUI.set({ displayToggles: toggles })
+      activeSpaceId = gisInfo.voronoi 
+      
+    }
+    else if (delaunay == 1 && gisInfo.delaunay){
+      console.log('switching to delaunay space',gisInfo.delaunay)
+//       if (hexbins > 0){
+        toggles.hexbin = 0
+        console.log('sorry CLI hexbins, GIS wins')
+//       }
+      // if voronoi is already selected, turn it off and update ui
+//       if (voronoi == 1){
+        toggles.voronoi = 0
+//         toggles.delaunay = 1
+//       }
+      appUI.set({ displayToggles: toggles })
+      // how would this work if we have edges? maybe tags?
+      activeSpaceId = gisInfo.delaunay 
+    }
+    else { // enable hexbin space
+      activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
+    }
+    
+
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
     // build property search query string params
     // TODO: replace with native Tangram `url_params` when multiple-value support is available
@@ -252,21 +290,53 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
-    if (clustering == 1) {
+    
+    if (clustering == 1) { // h3 hexbin clustering
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
-    } else if (clustering == 2) {
-      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-      scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
-      if (clusteringProp){
-        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
-      }
+      console.log('H3 hexbins')
+    } else if (clustering == 2) { // h3 hexbin centroids
+        scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+        scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
+        if (clusteringProp){
+          scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+        }
+        console.log('H3 hexbin centroids')
+    } else if (clustering == 3) { // quadbin clustering 
+        scene_config.sources._xyzspace.url_params.clustering = 'quad';
+        if (clusteringProp){
+          scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+        }
+        console.log('quadbins');
+        if (quadRez > 0){
+          scene_config.sources._xyzspace.url_params['clustering.resolution'] = quadRez;
+          console.log('quadbin resolution',quadRez);
+        }
+        if (quadCountmode){
+          scene_config.sources._xyzspace.url_params['clustering.countmode'] = quadCountmode;
+          console.log('quadbin countmode', quadCountmode)
+        }
     }
     else {
       delete scene_config.sources._xyzspace.url_params.clustering;
+      delete scene_config.sources._xyzspace.url_params['clustering.resolution']
+      delete scene_config.sources._xyzspace.url_params['clustering.property']
+      delete scene_config.sources._xyzspace.url_params['clustering.countmode']
     }
+
+      
+    // if we ever can increase h3 resolution (denser hexbins), can enable this
+//     const h3zoomRez = [2,2,2,2,3,4,4,5,6,6,7,8,9,9,10,11,11,12,13,14,14,15,15] // h3 hexbin resolution - map zoom lookup, 0-22
+//     const currentZoom = scene.view.tile_zoom;
+//     if (clusterRez == 0){
+//       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
+//     }
+//     else if (clusterRez > 1){
+//       scene_config.sources._xyzspace.url_params['clustering.resolution'] = h3zoomRez[currentZoom] + clusterRez
+//     }
+    
   }
 }
 
@@ -427,22 +497,48 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
   const spaceInfo = await fetch(spaceURL).then((response) => response.json());
-
+  console.log(spaceInfo)
+  var tokenURL = `https://xyz.api.here.com/token-api/tokens/${token}`;
+  const tokenInfo = await fetch(tokenURL).then((response) => response.json());
+  var tokenCapabilities = {"hexbinClustering": false, "quadClustering": false}
+  tokenCapabilities = 
+    (tokenInfo.urm['xyz-hub'].useCapabilities || [])
+      .reduce((props, p) => {
+        props[p.id] = true;
+        return props;
+      }, {});
+     
+  console.log("token has", tokenCapabilities);
+  
+      
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
 
   // check for hexbins, if they exist, create a hexbin object
-  const hexbinInfo = {};
+  var hexbinInfo = {};
   if (spaceInfo.client) {
     if (spaceInfo.client.hexbinSpaceId) {
       hexbinInfo.spaceId = spaceInfo.client.hexbinSpaceId;
       const hexbinSpaceURL = `https://xyz.api.here.com/hub/spaces/${hexbinInfo.spaceId}?access_token=${token}`;
+      console.log(hexbinSpaceURL)
       try {
         const hexbinSpaceInfo = await fetch(hexbinSpaceURL).then((response) => response.json());
         hexbinInfo.zoomLevels = hexbinSpaceInfo.client.zoomLevels;
         hexbinInfo.cellSizes = hexbinSpaceInfo.client.cellSizes;
       } catch (e) { } // in case hexbin space doesn't exist or fails to load
     }
+  }
+  
+  var gisInfo = {}
+  if (spaceInfo.client) {
+    if (spaceInfo.client.voronoiSpaceId){
+      gisInfo.voronoi = spaceInfo.client.voronoiSpaceId   
+    }
+    if (spaceInfo.client.tinSpaceId){
+      gisInfo.delaunay = spaceInfo.client.tinSpaceId  
+      // will need to add triangles, edges, neighbors when we get it via the CLI
+    }
+    console.log('gis:',gisInfo);
   }
 
   // calculate time since data was last written to the space
@@ -476,7 +572,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       timeUnitsElapsed = timeUnitsPrefix + Math.round(secondsElapsed) + " seconds ago"
     }
   };
-
+  
   // update UI
   appUI.set({
     spaceInfo: {
@@ -488,9 +584,9 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       featureSize: featureSize,
       updatedAt: timeUnitsElapsed
     },
-
     hexbinInfo,
-
+    tokenCapabilities,
+    gisInfo,
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))
   });

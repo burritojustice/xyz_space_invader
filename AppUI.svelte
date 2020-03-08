@@ -31,30 +31,95 @@
       {#if displayToggles}
         <table>
           <tr>
-            <td on:click='toggleDisplayOption("roads")'>roads:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("roads")'>roads:</td>
             <td>{displayToggles.roads}</td>
-            <td on:click='toggleDisplayOption("buildings")'>buildings:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("buildings")'>buildings:</td>
             <td>{displayToggles.buildings}</td>
-            <td on:click='toggleDisplayOption("water")'>water:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("water")'>water:</td>
             <td>{displayToggles.water}</td>
-            <td on:click='toggleDisplayOption("places")'>places:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("places")'>places:</td>
             <td>{displayToggles.places}</td>
           </tr>
           <tr>
-            <td on:click='toggleDisplayOption("points")'>points:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("points")'>points:</td>
             <td>{displayToggles.points}</td>
-            <td on:click='toggleDisplayOption("lines")'>lines:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("lines")'>lines:</td>
             <td>{displayToggles.lines}</td>
-            <td on:click='toggleDisplayOption("outlines")'>outlines:</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
-            <td on:click='toggleDisplayOption("clustering")'>clustering:</td>
-            <td>{displayToggles.clustering}</td>            
           </tr>
         </table>
+        <table>
+          <tr>
+            <td style="color:blue;" on:click='toggleDisplayOption("clustering")'>clustering:</td>
+            {#if displayToggles.clustering == 0}
+            <td>
+<!--             {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering} -->
+             off
+<!--             {:else} -->
+<!--              sign up for XYZ Pro to cluster -->
+<!--             {/if} -->
+            </td>
+            {/if}
+            {#if displayToggles.clustering == 1}
+            <td>H3 hexbins</td>
+            {/if}
+            {#if displayToggles.clustering == 2}
+            <td>H3 hexbin centroids</td>
+            {/if}
+            {#if displayToggles.clustering == 3}
+            <td>Quadbins</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("quadRez")'>resolution:</td>
+            <td>{displayToggles.quadRez}</td>
+            {/if}
+          </tr>
+        </table>
+        
+        {#if gisInfo.voronoi || gisInfo.delaunay}
+        <table>
+          <tr>
+            <td>GIS:</td>
+            {#if gisInfo.voronoi}
+              <td style="color:blue;" on:click='toggleDisplayOption("voronoi")'>Voronoi:</td>
+              <td>
+              {#if displayToggles.voronoi == 0}
+              off
+              {/if}
+              {#if displayToggles.voronoi == 1}
+              {gisInfo.voronoi}
+              {/if}
+              </td>
+            {/if}
+            {#if gisInfo.delaunay}
+              <td style="color:blue;" on:click='toggleDisplayOption("delaunay")'>Delaunay:</td>
+              <td>
+              {#if displayToggles.delaunay == 0}
+              off
+              {/if}
+              {#if displayToggles.delaunay == 1}
+              {gisInfo.delaunay}
+              {/if}
+              </td>
+            {/if}
+          </tr>
+        </table>
+        {/if}
+      
         {#if hexbinInfo.spaceId}
           <table>
               <tr>
-                <td on:click='toggleDisplayOption("hexbins")'>hexbins available: mode {displayToggles.hexbins}</td>
+                <td style="color:blue;" on:click='toggleDisplayOption("hexbins")'>
+                  CLI hexbins: </td><td>
+                  {#if displayToggles.hexbins == 0}
+                  off
+                  {/if}
+                  {#if displayToggles.hexbins == 1}
+                  on
+                  {/if}
+                  {#if displayToggles.hexbins == 2}
+                  centroids
+                  {/if}
+                </td>
               </tr><tr>
                 <td>{hexbinInfo.spaceId}, zoom {hexbinInfo.zoomLevels}</td>
               </tr>
@@ -448,6 +513,7 @@ export default {
       token: '',
       spaceInfo: null,
       hexbinInfo: {},
+      gisInfo: {},
       demoMode: false, // display collapsed UI demo mode
       feature: null,
       featureProp: null,
@@ -470,6 +536,14 @@ export default {
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
       featurePointSizeDisplayRange: [4, 20],
+      featurePointSizeProp: '', // setting this to null breaks the point toggle
+      
+      // these are params
+//       clustering: null,
+//       quadCountmode: null,
+//       quadRez: 4,
+//       voronoi: 'off',
+      
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
@@ -479,6 +553,7 @@ export default {
       tagSort: 'count',
       tagFilterSearch: '', // set these to empty strings (not null) to get placeholder text in input
       propertySearch: {},
+      propertySearchOverride: null,
 
       featuresInViewport: [],
       featurePropTypesCache: {}, // cache of inferred feature property types
@@ -871,6 +946,7 @@ export default {
         changed.tagFilterQueryParam ||
         changed.propertySearchQueryParams ||
         changed.hexbinInfo ||
+        changed.gisInfo ||
         changed.featureProp ||
         changed.featurePropValue ||
         changed.featurePointSizeProp ||

@@ -14,9 +14,9 @@
   <select bind:value=op>
     <option value=""></option>
     <option value="equals">equals</option>
-    {#if datatype === 'number'}
+<!--     {#if datatype === 'number'} --> // removing this so we can sort things like 8601 dates
       <option value="range">range</option>
-    {/if}
+<!--     {/if} -->
   </select>
 </span>
 <span>
