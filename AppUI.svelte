@@ -68,14 +68,16 @@
           </select>
         </div>
 
-        <!-- Projection selector -->
-        <div class="controls_left_selector">projection:
-          <select bind:value="projection" class="controls_left_dropdown">
-            {#each Object.keys(projections) as projection}
-              <option value="{projection}">{projection}</option>
-            {/each}
-          </select>
-        </div>
+        {#if isProjectable(basemap) }
+          <!-- Projection selector -->
+          <div class="controls_left_selector">projection:
+            <select bind:value="projection" class="controls_left_dropdown">
+              {#each Object.keys(projections) as projection}
+                <option value="{projection}">{projection}</option>
+              {/each}
+            </select>
+          </div>
+        {/if}
 
         <!-- Export scene -->
           <button on:click="fire('exportScene')" style="float: right;">export</button>
@@ -378,7 +380,7 @@
 <script>
 
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap,
-          projections, getProjectionScene, getDefaultProjectionName, } from './basemaps';
+          projections, getProjectionScene, getDefaultProjectionName, isProjectable, } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers } from './colorFunctions';
 import { displayOptions } from './displayOptions';
@@ -436,6 +438,7 @@ export default {
       colorHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
       projections, // need to reference here to make accessible to templates
+      isProjectable, // needa to reference here to make accessible to templates
     }
   },
 
@@ -447,6 +450,9 @@ export default {
 
   computed: {
     basemapScene: ({ basemap, projection }) => {
+      if (!isProjectable(basemap)) {
+        projection = getDefaultProjectionName();
+      }
       const scene = getBasemapScene(basemap, projection);
       if (scene) {
         scene.global = {
@@ -916,9 +922,10 @@ export default {
       if (!getBasemapScene(basemap)) {
         basemap = getDefaultBasemapName();
       }
+      let projectable = isProjectable(basemap);
 
       let projection = params.projection;
-      if (!getProjectionScene(projection)) {
+      if (!getProjectionScene(projection) || !projectable) {
         projection = getDefaultProjectionName();
       }
 

@@ -367,3 +367,15 @@ export const projections = {
     files: ['globe.yaml', 'globe-points.yaml']
   }
 };
+
+// array of projectable basemaps - if one of these is selected in the "basemap" menu,
+// the "projection" menu will become available
+const projectable = [
+  "projected",
+  "xyz-reduction-light",
+  "xyz-reduction-dark",
+]
+
+export function isProjectable(basemap) {
+  return projectable.indexOf(basemap) > -1;
+}
