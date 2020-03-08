@@ -371,7 +371,6 @@ export const projections = {
 // array of projectable basemaps - if one of these is selected in the "basemap" menu,
 // the "projection" menu will become available
 const projectable = [
-  "projected",
   "none",
   "xyz-reduction-light",
   "xyz-reduction-dark",
