@@ -116,6 +116,7 @@ export const displayOptions = {
     values: [0, 1, 2, 3, 4],
     apply: (scene, value, { featurePointSizeProp, featurePointSizeRange }) => {
       let size;
+      console.log('featurePointSizeProp', featurePointSizeProp)
 
       // ignore explicit point size setting when a feature property is selected
       const featurePointSizePropStack = parsePropStack(featurePointSizeProp);
@@ -148,7 +149,7 @@ export const displayOptions = {
       else if (value === 2) { // bigger
         size = '15px';
       }
-    else if (value === 3) { // big
+      else if (value === 3) { // big
         size = '12px';
       }
       else if (value === 4) { // medium
@@ -234,7 +235,7 @@ export const displayOptions = {
   // places on/off
   places: {
     parse: parseInt,
-    values: [1, 0],
+    values: [1, 0], // need to add ux_language: en and other options 
     apply: (scene, value) => {
       _.set(scene, 'layers.places.enabled', (value === 1));
       _.merge(scene.layers.places, { data: {} }); // ensure there is at least an empty data block, to suppress warnings
@@ -265,21 +266,41 @@ export const displayOptions = {
     }
   },
   
-  // toggle XYZ H3 hexbin clustering
+  // toggle XYZ clustering
   clustering: {
     parse: parseInt,
-    values: [0, 1, 2], // 0 = raw data, 1 = h3 clustering, 2 - h3 hexbin centroids
+    values: [0, 1, 2, 3] // 0 = source, 1 = h3 hexbins, 2 = h3 centroids, 3 - quadbins
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
-  
-  // toggle hexbins
+  quadCountmode: {
+//     parse: parseInt,
+    values: ["mixed", "estimated", "real"] // mixed is the default
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
+  quadRez: {
+    parse: parseInt,
+    values: [4, 3, 2, 1, 0] // 0 is the API default for that zoom, 1 is the default divided into 4 quads, 2 is 16, 3 is 64, 4 is 256 
+    // we're using displayOptions for storing and parsing values, but they get applied when creating
+    // the Tangram data source in index.js, so there's no `apply()` function here
+  },
+  // toggle CLI hexbins
   hexbins: {
     parse: parseInt,
-    values: [0, 1, 2], // 0 = source, 1 = hexbins, 2 = centroids
+    values: [0, 1, 2] // 0 - raw data, 1 - hexbins (cli), 2 - hexbin centroids
     // we're using displayOptions for storing and parsing values, but they get applied when creating
     // the Tangram data source in index.js, so there's no `apply()` function here
   },
+  voronoi: {
+    parse: parseInt,
+    values: [0,1] 
+  },
+  delaunay: {
+    parse: parseInt,
+    values: [0,1] 
+  },
+  
 
   // Water under/over
   water: {

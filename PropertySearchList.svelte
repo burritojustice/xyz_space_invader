@@ -1,7 +1,10 @@
 {#if numProperties > 0}
   <div>
     {numProperties} properties
-    ({numSearchableProperties === numProperties ? 'all' : numSearchableProperties} searchable):
+    ({numSearchableProperties === numProperties ? 'all' : numSearchableProperties} searchable): 
+    {#if numSearchableProperties == 0}
+        <label><input type="checkbox" bind:checked="propertySearchOverride">Override API</label>
+    {/if}
   </div>
   <table>
     {#each Object.entries(properties) as [prop, { searchable, datatype }]}
@@ -9,7 +12,7 @@
         <td style="width: 105px; max-width: 105px; overflow: hidden;">
           {prop}
         </td>
-        {#if searchable}
+        {#if searchable || propertySearchOverride}
           <td>
             <PropertySearchField
               prop={prop}
@@ -31,6 +34,7 @@
 
 export default {
   data() {
+
     return {
       properties: null,
       propertySearch: null
@@ -48,7 +52,7 @@ export default {
 
     numSearchableProperties: ({ properties }) => {
       return properties ? Object.values(properties).filter(p => p.searchable).length : 0;
-    }
+    },
   },
 
   methods: {
