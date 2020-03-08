@@ -372,6 +372,7 @@ export const projections = {
 // the "projection" menu will become available
 const projectable = [
   "projected",
+  "none",
   "xyz-reduction-light",
   "xyz-reduction-dark",
 ]
