@@ -1,7 +1,8 @@
-import { parseNumber, lookupProperty } from './utils';
+import { parseNumber, lookupProperty, parsePropStack } from './utils';
 
-export function calcFeaturePropertyStats(features, propStack) {
-  if (!propStack || propStack.length === 0) {
+export function calcFeaturePropertyStats(features, prop) {
+  const propStack = parsePropStack(prop);
+  if (!propStack) {
     return {};
   }
 

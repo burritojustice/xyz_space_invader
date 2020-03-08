@@ -25,8 +25,8 @@
         </td>
         <td
           class="value_row"
-          class:active="propValue != null && value == propValue"
-          on:click="set({propValue: (value != propValue ? value : null)})">
+          class:active="propValue != '' && value == propValue"
+          on:click="set({propValue: (value != propValue ? value : '')})">
           {maybeStringifyObject(value)}
         </td>
       </tr>
@@ -71,6 +71,10 @@ export default {
   border-radius: 50%;
   display: inline-block;
   vertical-align: bottom;
+}
+
+.active {
+  background-color: lightyellow; padding: 3px;
 }
 
 .value_row:hover {

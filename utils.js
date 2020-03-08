@@ -3,6 +3,27 @@ export const PROP_TYPES = {
   NUMERIC: 1
 };
 
+// parse a nested object in dot and array notation (e.g. feature.a[2].b.c) into a "stack" of its components:
+// ['feature', 'a', 2, 'b', 'c']
+export function parsePropStack(prop) {
+  return prop &&
+    prop
+      .replace(/\\\./g, '__DELIMITER__') // handle escaped . notation in property names
+      .split('.')
+      .flatMap(s => {
+        // handle array bracket syntax (only for numeric indexes), e.g. names[4]
+        const brackets = s.match(/\[(\d+)\]/);
+        if (brackets != null && brackets.length === 2) {
+          const idx = parseInt(brackets[1]); // the numeric index we found inside the brackets
+          if (typeof idx === 'number' && !isNaN(idx)) {
+            return [s.substr(0, brackets.index), idx]; // insert the array index
+          }
+        }
+        return s; // continue without array index
+      })
+      .map(s => typeof s === 'string' ? s.replace(/__DELIMITER__/g, '.') : s); // swap out delimeter
+}
+
 // format nested property name stack with dot (object) and bracket (array) notation
 export function formatPropStack(propStack) {
   return propStack &&
@@ -59,15 +80,16 @@ export function stringifyWithFunctions (obj) {
 // More robust number parsing, try to get a floating point or integer value from a string
 export function parseNumber(value) {
   // don't bother parsing these
-  if (value == null || typeof value === 'object') {
+  if (value == null || typeof value === 'object' || typeof value === 'boolean') {
     return value;
   }
   else if (typeof value === 'number') {
     return isNaN(value) ? undefined : value;
   }
-
-  const m = value.match(/[-+]?([0-9]+,?)*\.?[0-9]+/); // get floating point or integer via regex
-  const num = parseFloat(m && m[0].replace(/[,-\/]/g, '')); // strip formatter chars, e.g. '1,500' => '1500' (NB only works for US-style numbers)
+  const n = value.replace(/[,\/]/g, '').replace(/([0-9])\-([0-9])/g, '$1$2'); 
+  // ^ strip formatter chars, including interior dashes, forward slash, e.g. '1,500' => '1500' (NB only works for US-style numbers)
+  const m = n.match(/[-+]?([0-9]+,?)*\.?[0-9]+/); // get floating point or integer via regex, keeping negative nums
+  const num = parseFloat(m && m[0]); 
   if (typeof num === 'number' && !isNaN(num)) {
     return num;
   }

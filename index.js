@@ -8,6 +8,7 @@ import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 import { calcFeaturePropertyStats } from './stats';
 import { stringifyWithFunctions } from './utils';
+import { isProjectable } from './basemaps';
 
 let query;
 let layer, scene;
@@ -235,28 +236,46 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp } = {}, propertySearchQueryParams, basemap, hexbinInfo }, scene_config) {
 
-function applySpace({ spaceId, token, hexbinInfo, basemap, displayToggles: { hexbins } = {} }, scene_config) {
   if (spaceId && token) {
     // choose main space, or hexbins space
     const activeSpaceId = (hexbins > 0 && hexbinInfo.spaceId != null) ? hexbinInfo.spaceId : spaceId;
-    if (basemap == 'projected' || 'xyz-reduction-dark') {
-        try {
-          scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
-        } catch(e) {
-          console.error("Failed to set scene.view.buffer:\n", e)
-        }
-    }
+    const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
+    // build property search query string params
+    // TODO: replace with native Tangram `url_params` when multiple-value support is available
 
     scene_config.sources = scene_config.sources || {};
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
-      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}?${propertySearch}`,
       url_params: {
         access_token: token,
         clip: true
-      }
+      }      
     };
+    if (isProjectable(basemap)) {
+      try {
+        scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
+      } catch(e) {
+        console.error("Failed to set scene.view.buffer:\n", e)
+      }
+    }
+    if (clustering == 1) {
+      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+      }
+    } else if (clustering == 2) {
+      scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      scene_config.sources._xyzspace.url_params['clustering.pointmode'] = true;
+      if (clusteringProp){
+        scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
+      }
+    }
+    else {
+      delete scene_config.sources._xyzspace.url_params.clustering;
+    }
   }
 }
 
@@ -343,7 +362,18 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
   const stats = await fetch(url).then(r => r.json());
     // console.log(stats)
-
+  if (stats.type == 'ErrorResponse'){
+    console.log(stats.errorMessage);
+    var error_response = stats.errorMessage;
+    if (stats.errorMessage == "Unauthorized"){
+      error_response = "Unauthorized: " + token + " is not a valid XYZ token"
+    }
+    if (stats.errorMessage == "The space with this ID does not exist."){
+      error_response = "Error: XYZ space " + spaceId + " does not exist"
+    }    
+    alert(error_response); // old-school
+    return
+  }
   var bbox = stats.bbox.value
   console.log('map start location:', mapStartLocation)
   console.log('bbox',bbox)
@@ -373,9 +403,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     const bounds = L.latLngBounds(sw, ne);
     map.fitBounds(bounds);
   }
-
-  var spaceSize = stats.byteSize.value
-  var spaceCount = stats.count.value
+  
+  
+  var spaceSize = (stats.byteSize) ? stats.byteSize.value : 0
+  var spaceCount = (stats.count) ? stats.count.value : 0
 
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
@@ -386,10 +417,21 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   else {
     calcSize = (spaceSize/1024/1024/1024).toFixed(1) + ' GB'
   }
+  if (spaceSize > 0){
+    var featureSize = spaceSize/spaceCount/1024 // KB per feature
+    featureSize = featureSize.toFixed(1) + ' KB/feature'
+  } else {
+    calcSize = "n/a"
+    featureSize = "n/a"
+  }
 
-  var featureSize = spaceSize/spaceCount/1024 // KB per feature
-  featureSize = featureSize.toFixed(1) + ' KB'
-
+  // Get property info
+  const properties =
+    ((stats.properties && stats.properties.value) || [])
+      .reduce((props, p) => {
+        props[p.key] = p;
+        return props;
+      }, {});
 
   // Get space endpoint
   var spaceURL = `https://xyz.api.here.com/hub/spaces/${spaceId}?access_token=${token}`;
@@ -450,6 +492,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       title: spaceInfo.title,
       description: spaceInfo.description,
       numFeatures: spaceCount,
+      properties,
       dataSize: calcSize,
       featureSize: featureSize,
       updatedAt: timeUnitsElapsed
@@ -470,10 +513,40 @@ async function queryViewport() {
   updateViewportProperties(features);
 }
 
+
+function updateViewportTags(features) {  // for tags
+  // grab the tags from Tangram's viewport tiles
+  let tagsViewport = [];
+  features.forEach(x => {
+    if (x.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
+      tagsViewport.push(...x.properties['@ns:com:here:xyz'].tags)
+    }
+  })
+
+  const tagsWithCountsInViewport =
+    Object.entries(
+      features
+        .flatMap(f => { 
+          if (f.properties['@ns:com:here:xyz']){ // check to see if there are xyz tags
+            f.properties['@ns:com:here:xyz'].tags
+          }
+        })
+        .reduce((tagCounts, tag) => {
+            tagCounts[tag] = tagCounts[tag] ? tagCounts[tag] + 1 : 1;
+            return tagCounts;
+          }, {}))
+    .sort((a, b) => b[1] > a[1] ? 1 : (b[1] > a[1] ? -1 : 0));
+
+  appUI.set({
+    numFeaturesInViewport: features.length,
+    tagsWithCountsInViewport
+  });
+}
+
 function updateViewportProperties(features) { // for feature prop
   // then get feature values based on currently selected property
-  const propStack = appUI.get().featurePropStack;
-  const stats = calcFeaturePropertyStats(features, propStack);
+  const { featureProp } = appUI.get();
+  const stats = calcFeaturePropertyStats(features, featureProp);
 
   // update UI
   appUI.set({
