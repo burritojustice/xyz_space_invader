@@ -44,6 +44,7 @@ function addBasePath(url) {
   return base + url;
 }
 
+// load the files for a named projection
 export function getProjectionScene(projection) {
   if (typeof projection !== "undefined") {
     if (!projections[projection]) {
@@ -52,6 +53,10 @@ export function getProjectionScene(projection) {
     return projections[projection].files;
   }
   else return null
+}
+
+export function getDefaultProjectionName() {
+  return Object.keys(projections)[0]; // mercator
 }
 
 // skeletal structure of Invader viz scene, merged on top of underlying basemap, extended at run-time

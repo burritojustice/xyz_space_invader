@@ -378,7 +378,7 @@
 <script>
 
 import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap,
-          projections, getProjectionScene, } from './basemaps';
+          projections, getProjectionScene, getDefaultProjectionName, } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { colorFunctions, colorHelpers } from './colorFunctions';
 import { displayOptions } from './displayOptions';
@@ -919,7 +919,7 @@ export default {
 
       let projection = params.projection;
       if (!getProjectionScene(projection)) {
-        projection = "mercator";
+        projection = getDefaultProjectionName();
       }
 
       // parse selected feature property
