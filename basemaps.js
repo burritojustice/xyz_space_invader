@@ -330,28 +330,6 @@ export const basemaps = {
     },
     ...xyzTilezenSourceOverride
   },
-  'projected': {
-    import: [
-      'projected.yaml',
-      xyzTangramBaseScene,
-    ],
-    global: {
-      featureLabelFont: labelFontPresets.dark
-    },
-    ...xyzTilezenSourceOverride,
-    sources: {
-      mapzen: {
-        url: 'https://xyz.api.here.com/tiles/osmbase/512/all/{z}/{x}/{y}.mvt',
-        url_params: {
-          'access_token': 'global.xyz_access_token'
-        },
-        max_zoom: 2
-      },
-      _xyzspace: {
-          max_zoom: 1 // important until edge tile loading is resolved
-      }
-    }
-  }
 };
 
 export const projections = {
