@@ -246,7 +246,7 @@ layers:
                 style: _polygons
                 order: global.feature_order
 #                 order: 9
-                color: [0.149,0.149,0.149]
+                color: [0.120,0.120,0.120]
 
     water:
         data: { source: mapzen, layer: water }
@@ -306,7 +306,7 @@ layers:
                     visible: true
                     order: global.feature_order
                     color: [0.212,0.212,0.212]
-                    width: 2px
+                    width: 1.25px
                     join: round
 
         water_boundaries-not-ocean:
