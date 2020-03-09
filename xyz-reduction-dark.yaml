@@ -429,7 +429,7 @@ layers:
         draw:
             lines:
                 style: _lines
-                order: global.feature_order
+                order: 500 # global.feature_order
         country:
             filter:
                 any:
@@ -438,7 +438,7 @@ layers:
             draw:
                 lines:
                     order: function() { return (feature.sort_rank -1); }
-                    color: [0.110,0.110,0.110]
+                    color: [0.2,0.2,0.2]
                     width: [[0, 0px], [4, 2px], [8, 6px], [14, 8px], [17, 16m]]
             water:
                 filter: { maritime_boundary: true }
@@ -460,7 +460,7 @@ layers:
                     lines:
                         dash: [2.0, 1.0]
                         order: global.feature_order
-                        color: [0.110,0.110,0.110]
+                        color: [0.2,0.2,0.2]
                         width: [[1, 1px], [9, 4px], [17,14m]]
 
         region:
@@ -470,7 +470,7 @@ layers:
                     - kind_detail: [3,4]
             draw:
                 lines:
-                    color: [0.110,0.110,0.110]
+                    color: [0.2,0.2,0.2]
                     width: [[0, 0.5px], [9, 2px], [14, 4px], [16, 6.5px], [17, 16m]]
 
             water:
