@@ -1,9 +1,5 @@
 # Author: Geraldine Sarmiento
 
-cameras:
-    camera1:
-        type: perspective
-
 global:
     # default order for basemap features
     feature_order: function() { return feature.sort_rank; }
