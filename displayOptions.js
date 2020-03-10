@@ -252,11 +252,11 @@ export const displayOptions = {
       }
       else if (value === 1) {
         _.set(scene, 'layers.roads.enabled', true);
-        _.set(scene, 'layers.roads.draw.xyz_lines.visible', true);
+        _.set(scene, 'layers.roads.draw.lines.visible', true);
       }
       else if (value === 2) {
         _.set(scene, 'layers.roads.enabled', 'true');
-        _.set(scene, 'layers.roads.draw.xyz_lines.visible', false); // just labels, no geometry
+        _.set(scene, 'layers.roads.draw.lines.visible', false); // just labels, no geometry
         _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
       }
 
