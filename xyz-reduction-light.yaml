@@ -212,8 +212,8 @@ sources:
         url: https://xyz.api.here.com/tiles/osmbase/512/all/{z}/{x}/{y}.mvt
         url_params:
             access_token: AVoxWfIDYgZOr4zOaUV3urg
-        tile_size: 512
-        max_zoom: 6
+#         tile_size: 512
+#         max_zoom: 6
 
 layers:
     _xyz_dots:
@@ -254,7 +254,7 @@ layers:
             polygons:
                 style: _polygons
                 order: global.feature_order
-                color: [0.850,0.842,0.842]
+                color: [0.930,0.922,0.922]
 
         lakes:
             filter:
@@ -280,13 +280,13 @@ layers:
                     - { $zoom: { min: 15 } }
             draw:
                 polygons:
-                    color: [0.850,0.842,0.842]
+                    color: [0.930,0.922,0.922]
 
         other-water-areas:
             filter: { not: { kind: [ocean, lake, water, reservoir] }, $zoom: { min: 11 }, area: { min: 100 } }
             draw:
                 polygons:
-                    color: [0.850,0.842,0.842]
+                    color: [0.930,0.922,0.922]
 
         playas:
             filter: { kind: playa }
@@ -429,7 +429,7 @@ layers:
         draw:
             lines:
                 style: _lines
-                order: global.feature_order
+                order: 500 # global.feature_order
         country:
             filter:
                 any:
