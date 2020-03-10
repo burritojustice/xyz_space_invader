@@ -43,9 +43,9 @@ export const displayOptions = {
       }
 
       // show/hide labels
-      _.set(scene, 'layers._xyz_dots.draw.xyz_points.text.visible', showLabels);
-      _.set(scene, 'layers._xyz_polygons.draw.xyz_text.visible', showLabels);
-      _.set(scene, 'layers._xyz_lines.draw.xyz_text.visible', showLabels);
+      _.set(scene, 'layers._xyz_dots.draw._points._text.visible', showLabels);
+      _.set(scene, 'layers._xyz_polygons.draw._text.visible', showLabels);
+      _.set(scene, 'layers._xyz_lines.draw._text.visible', showLabels);
     }
   },
 
@@ -226,8 +226,8 @@ export const displayOptions = {
       _.set(scene, 'layers._xyz_lines.draw._lines_overlay.outline.width', width);
       _.set(scene, 'layers._xyz_lines.draw._lines_overlay.outline.color', color);
 
-      _.set(scene, 'layers._xyz_dots.draw.xyz_points.outline.width', width);
-      _.set(scene, 'layers._xyz_dots.draw.xyz_points.outline.color', color);
+      _.set(scene, 'layers._xyz_dots.draw._points.outline.width', width);
+      _.set(scene, 'layers._xyz_dots.draw._points.outline.color', color);
       _.set(scene, 'layers._xyz_dots.donut_points.enabled', donutOutline);
     }
   },
