@@ -109,7 +109,5 @@ styles:
                             float factor = EARTH_RADIUS / length(position.xy);
                             // multiply by factor to snap point to horizon
                             position.xy *= vec2(factor * 2.);
-                            //position.z = -1000000.;
-                            //position.xy = vec2(3.402823466e+38);
                         }
                     }
