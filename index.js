@@ -305,7 +305,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         }
         console.log('H3 hexbin centroids')
     } else if (clustering == 3) { // quadbin clustering 
-        scene_config.sources._xyzspace.url_params.clustering = 'quad';
+        scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
         if (clusteringProp){
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
         }
