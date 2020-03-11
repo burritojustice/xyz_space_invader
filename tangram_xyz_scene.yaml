@@ -192,7 +192,8 @@ layers:
                 size: global.featurePointSize
                 outline:
                     width: 0px
-                _text:
+                text:
+                    style: _text
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
                     optional: true

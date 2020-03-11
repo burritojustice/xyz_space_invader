@@ -43,9 +43,9 @@ export const displayOptions = {
       }
 
       // show/hide labels
-      _.set(scene, 'layers._xyz_dots.draw._points._text.visible', showLabels);
-      _.set(scene, 'layers._xyz_polygons.draw._text.visible', showLabels);
-      _.set(scene, 'layers._xyz_lines.draw._text.visible', showLabels);
+      _.set(scene, 'layers._xyz_dots.draw._points.text.visible', showLabels);
+      _.set(scene, 'layers._xyz_polygons.draw.text.visible', showLabels);
+      _.set(scene, 'layers._xyz_lines.draw.text.visible', showLabels);
     }
   },
 
