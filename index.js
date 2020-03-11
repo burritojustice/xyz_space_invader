@@ -308,7 +308,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     
     if (clustering == 1) { // h3 hexbin clustering
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-      scene_config._xyzspace.url_params.clip = false; // keeps hexbins from getting split across tiles and having different counts
+      scene_config.sources._xyzspace.url_params.clip = false; // keeps hexbins from getting split across tiles and having different counts
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
