@@ -276,8 +276,8 @@ layers:
                 - { $zoom: [14], area: { min: 40000 } }
                 - { $zoom: { min: 15 } }
         draw:
-            order: 501
             polygons:
+                order: 501
                 color: [0.075,0.075,0.075]
 
     water:
