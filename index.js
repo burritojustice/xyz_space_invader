@@ -300,9 +300,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       }
       if (projection = 'globe'){
         toggles.water = 1; // will this raise it? or just the display?
-        // raise xyz polygons above water
-        // change water color to land color
-        // raise borders
+        scene_config.layers.boundaries.country.draw.lines.order = 500;
+        scene_config.layers.boundaries.region.draw.lines.order = 500;
+        scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color;
+        scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500
       }
     }
     
@@ -342,7 +343,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       delete scene_config.sources._xyzspace.url_params['clustering.property']
       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
       scene_config._xyzspace.url_params.clip = true;
-
+      scene_config.layers.boundaries.country.draw.lines.order = 'function() { return (feature.sort_rank -1); }'
+      scene_config.layers.boundaries.region.draw.lines.order = global.feature_order;
+      scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;
+      scene_config.layers.water['water-boundary-ocean'].draw.lines.order = global.feature_order
     }
 
       
