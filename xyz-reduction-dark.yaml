@@ -22,6 +22,9 @@ global:
 
     roads_text_fill:              [0.750,0.750,0.750]
     roads_text_stroke:            [0.149,0.149,0.149]
+    
+    earth_color: [0.149,0.149,0.149]
+    water_color: [0.120,0.120,0.120]
 
     text_font_family: 'Open Sans'
 
@@ -246,7 +249,7 @@ layers:
                 style: _polygons
                 order: global.feature_order
 #                 order: 9
-                color: [0.120,0.120,0.120]
+                color: [0.149,0.149,0.149]
 
     water:
         data: { source: mapzen, layer: water }
@@ -262,7 +265,7 @@ layers:
         lakes:
             filter:
                 all:
-                    - kind: [ocean, lake, water, riverbank, reservoir, swimming_pool]
+                    - kind: [ocean, water, riverbank, reservoir, swimming_pool]
                 any:
                     # limit show smaller landuse areas to higher zooms
                     - { $zoom: [1],  area: { min: 10000000000 } }
@@ -284,6 +287,32 @@ layers:
             draw:
                 polygons:
                     color: [0.120,0.120,0.120]
+                    
+        great_lakes:
+            filter:
+                all:
+                    - kind: [lake]
+                any:
+                    # limit show smaller landuse areas to higher zooms
+                    - { $zoom: [1],  area: { min: 10000000000 } }
+                    - { $zoom: [2],  area: { min: 7000000000 } }
+                    # some weird natural earth scale set transition
+                    - { $zoom: [3],  area: { min: 5000000000 } }
+                    - { $zoom: [4],  area: { min: 300000000 } }
+                    - { $zoom: [5],  area: { min: 50000000 } }
+                    - { $zoom: [6],  area: { min: 50000000 } }
+                    - { $zoom: [7],  area: { min: 50000000 } }
+                    - { $zoom: [8],  area: { min: 50000000 } }
+                    - { $zoom: [9],  area: { min: 15000000 } }
+                    - { $zoom: [10], area: { min: 4000000 } }
+                    - { $zoom: [11], area: { min: 1000000 } }
+                    - { $zoom: [12], area: { min: 250000 } }
+                    - { $zoom: [13], area: { min: 150000 } }
+                    - { $zoom: [14], area: { min: 40000 } }
+                    - { $zoom: { min: 15 } }
+            draw:
+                polygons:
+                    color: [0.075,0.075,0.075]
 
         other-water-areas:
             filter: { not: { kind: [ocean, lake, water, reservoir] }, $zoom: { min: 11 }, area: { min: 100 } }
