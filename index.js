@@ -236,7 +236,7 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, basemap, hexbinInfo, gisInfo }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, basemap, hexbinInfo, gisInfo, projection }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
@@ -291,16 +291,24 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
+    
     if (isProjectable(basemap)) {
       try {
         scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
+      if (projection = 'globe'){
+        toggles.water = 1; // will this raise it? or just the display?
+        // raise xyz polygons above water
+        // change water color to land color
+        // raise borders
+      }
     }
-
+    
     if (clustering == 1) { // h3 hexbin clustering
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
+      scene_config._xyzspace.url_params.clip = false; // keeps hexbins from getting split across tiles and having different counts
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
@@ -314,6 +322,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         console.log('H3 hexbin centroids')
     } else if (clustering == 3) { // quadbin clustering 
         scene_config.sources._xyzspace.url_params.clustering = 'quadbin';
+      // do we need clip = false?
         if (clusteringProp){
           scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
         }
@@ -332,6 +341,8 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
       delete scene_config.sources._xyzspace.url_params['clustering.property']
       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
+      scene_config._xyzspace.url_params.clip = true;
+
     }
 
       
