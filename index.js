@@ -342,7 +342,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
       delete scene_config.sources._xyzspace.url_params['clustering.property']
       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
-      scene_config._xyzspace.url_params.clip = true;
+      scene_config.sources._xyzspace.url_params.clip = true;
       scene_config.layers.boundaries.country.draw.lines.order = 'function() { return (feature.sort_rank -1); }'
       scene_config.layers.boundaries.region.draw.lines.order = global.feature_order;
       scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;
