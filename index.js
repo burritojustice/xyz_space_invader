@@ -295,16 +295,26 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     if (isProjectable(basemap)) {
       try {
         scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
+        // switch to 256px tiles? but do we then need to bump scene.view.buffer to 4?
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
-      if (projection = 'globe'){
+      if (projection == 'globe' && basemap == 'xyz-reduction-dark') {
+        // change land color to avoid global shader madness, raise lines above hexbins for better visibility
         toggles.water = 1; // will this raise it? or just the display?
         scene_config.layers.boundaries.country.draw.lines.order = 500;
         scene_config.layers.boundaries.region.draw.lines.order = 500;
         scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color;
-        scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500
+        scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
       }
+        // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
+//       else {
+//         scene_config.sources._xyzspace.url_params.clip = true;
+//         scene_config.layers.boundaries.country.draw.lines.order = 'function() { return (feature.sort_rank -1); }'
+//         scene_config.layers.boundaries.region.draw.lines.order = global.feature_order;
+//         scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;
+//         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = global.feature_order
+//         }
     }
     
     if (clustering == 1) { // h3 hexbin clustering
@@ -338,15 +348,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         }
     }
     else {
-      delete scene_config.sources._xyzspace.url_params.clustering;
+      delete scene_config.sources._xyzspace.url_params.clustering
       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
       delete scene_config.sources._xyzspace.url_params['clustering.property']
       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
-      scene_config.sources._xyzspace.url_params.clip = true;
-      scene_config.layers.boundaries.country.draw.lines.order = 'function() { return (feature.sort_rank -1); }'
-      scene_config.layers.boundaries.region.draw.lines.order = global.feature_order;
-      scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;
-      scene_config.layers.water['water-boundary-ocean'].draw.lines.order = global.feature_order
     }
 
       
