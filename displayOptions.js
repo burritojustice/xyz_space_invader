@@ -43,9 +43,9 @@ export const displayOptions = {
       }
 
       // show/hide labels
-      _.set(scene, 'layers._xyz_dots.draw.xyz_points.text.visible', showLabels);
-      _.set(scene, 'layers._xyz_polygons.draw.xyz_text.visible', showLabels);
-      _.set(scene, 'layers._xyz_lines.draw.xyz_text.visible', showLabels);
+      _.set(scene, 'layers._xyz_dots.draw._points.text.visible', showLabels);
+      _.set(scene, 'layers._xyz_polygons.draw.text.visible', showLabels);
+      _.set(scene, 'layers._xyz_lines.draw.text.visible', showLabels);
     }
   },
 
@@ -177,7 +177,7 @@ export const displayOptions = {
         width = '1px';
       }
 
-      _.set(scene, 'layers._xyz_lines.draw.xyz_lines.width', width);
+      _.set(scene, 'layers._xyz_lines.draw._lines_overlay.width', width);
     }
   },
 
@@ -220,14 +220,14 @@ export const displayOptions = {
         donutOutline = true;
       }
 
-      _.set(scene, 'layers._xyz_polygons._outlines.draw.xyz_lines.width', width);
-      _.set(scene, 'layers._xyz_polygons._outlines.draw.xyz_lines.color', color);
+      _.set(scene, 'layers._xyz_polygons._outlines.draw._lines_overlay.width', width);
+      _.set(scene, 'layers._xyz_polygons._outlines.draw._lines_overlay.color', color);
 
-      _.set(scene, 'layers._xyz_lines.draw.xyz_lines.outline.width', width);
-      _.set(scene, 'layers._xyz_lines.draw.xyz_lines.outline.color', color);
+      _.set(scene, 'layers._xyz_lines.draw._lines_overlay.outline.width', width);
+      _.set(scene, 'layers._xyz_lines.draw._lines_overlay.outline.color', color);
 
-      _.set(scene, 'layers._xyz_dots.draw.xyz_points.outline.width', width);
-      _.set(scene, 'layers._xyz_dots.draw.xyz_points.outline.color', color);
+      _.set(scene, 'layers._xyz_dots.draw._points.outline.width', width);
+      _.set(scene, 'layers._xyz_dots.draw._points.outline.color', color);
       _.set(scene, 'layers._xyz_dots.donut_points.enabled', donutOutline);
     }
   },
@@ -252,11 +252,11 @@ export const displayOptions = {
       }
       else if (value === 1) {
         _.set(scene, 'layers.roads.enabled', true);
-        _.set(scene, 'layers.roads.draw.xyz_lines.visible', true);
+        _.set(scene, 'layers.roads.draw.lines.visible', true);
       }
       else if (value === 2) {
         _.set(scene, 'layers.roads.enabled', 'true');
-        _.set(scene, 'layers.roads.draw.xyz_lines.visible', false); // just labels, no geometry
+        _.set(scene, 'layers.roads.draw.lines.visible', false); // just labels, no geometry
         _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
       }
 
@@ -308,10 +308,10 @@ export const displayOptions = {
     values: [0, 1],
     apply: (scene, value) => {
       if (value === 0) {
-        _.set(scene, 'layers._xyz_polygons.draw.xyz_polygons.order', 200);
+        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 200);
       }
       else if (value === 1) {
-        _.set(scene, 'layers._xyz_polygons.draw.xyz_polygons.order', 300);
+        _.set(scene, 'layers._xyz_polygons.draw._polygons_inlay.order', 300);
       }
     }
   }

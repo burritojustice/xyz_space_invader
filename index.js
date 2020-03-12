@@ -8,6 +8,7 @@ import AppUI from './AppUI.svelte';
 import { displayOptions } from './displayOptions';
 import { calcFeaturePropertyStats } from './stats';
 import { stringifyWithFunctions } from './utils';
+import { isProjectable } from './basemaps';
 
 let query;
 let layer, scene;
@@ -235,8 +236,7 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
-
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, hexbinInfo, gisInfo }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, basemap, hexbinInfo, gisInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
@@ -281,6 +281,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
     // build property search query string params
     // TODO: replace with native Tangram `url_params` when multiple-value support is available
+
     scene_config.sources = scene_config.sources || {};
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
@@ -290,7 +291,14 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
-    
+    if (isProjectable(basemap)) {
+      try {
+        scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
+      } catch(e) {
+        console.error("Failed to set scene.view.buffer:\n", e)
+      }
+    }
+
     if (clustering == 1) { // h3 hexbin clustering
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
       if (clusteringProp){

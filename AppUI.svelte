@@ -127,15 +127,27 @@
         {/if}
 
         <!-- Basemap selector -->
-        basemap:
-        <select bind:value="basemap" id="basemap_select">
-          {#each Object.keys(basemaps) as basemap}
-            <option value="{basemap}">{basemap}</option>
-          {/each}
-        </select>
+        <div class="controls_left_selector">basemap:
+          <select bind:value="basemap" class="controls_left_dropdown">
+            {#each Object.keys(basemaps) as basemap}
+              <option value="{basemap}">{basemap}</option>
+            {/each}
+          </select>
+        </div>
+
+        {#if isProjectable(basemap) }
+          <!-- Projection selector -->
+          <div class="controls_left_selector">projection:
+            <select bind:value="projection" class="controls_left_dropdown">
+              {#each Object.keys(projections) as projection}
+                <option value="{projection}">{projection}</option>
+              {/each}
+            </select>
+          </div>
+        {/if}
 
         <!-- Export scene -->
-        <button on:click="fire('exportScene')" style="float: right;">export</button>
+          <button on:click="fire('exportScene')" style="float: right;">export</button>
       {/if}
     </div>
 
@@ -498,7 +510,8 @@
 
 <script>
 
-import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap } from './basemaps';
+import { basemaps, getBasemapScene, getBasemapName, getDefaultBasemapName, getNextBasemap,
+          projections, getProjectionScene, getDefaultProjectionName, isProjectable, } from './basemaps';
 import { colorPalettes } from './colorPalettes';
 import { vizModes, vizHelpers } from './vizModes';
 import { displayOptions, defaultDisplayOptionValue } from './displayOptions';
@@ -566,6 +579,8 @@ export default {
       colorPalettes, // need to reference here to make accessible to templates and tangram functions
       vizHelpers, // need to reference here to make accessible to templates and tangram functions
       basemaps, // need to reference here to make accessible to templates
+      projections, // need to reference here to make accessible to templates
+      isProjectable, // needa to reference here to make accessible to templates
     }
   },
 
@@ -577,8 +592,11 @@ export default {
   },
 
   computed: {
-    basemapScene: ({ basemap }) => {
-      const scene = getBasemapScene(basemap);
+    basemapScene: ({ basemap, projection }) => {
+      if (!isProjectable(basemap)) {
+        projection = getDefaultProjectionName();
+      }
+      const scene = getBasemapScene(basemap, projection);
       if (scene) {
         scene.global = {
           ...scene.global,
@@ -814,7 +832,7 @@ export default {
     },
 
     queryParams: ({
-        spaceId, token, basemap,
+        spaceId, token, basemap, projection,
         demoMode,
         displayToggles,
         featureProp,
@@ -842,6 +860,8 @@ export default {
       }
 
       params.set('basemap', basemap);
+
+      params.set('projection', projection);
 
       params.set('demo', demoMode ? 1 : 0);
 
@@ -938,7 +958,7 @@ export default {
 
     // Apply Tangram scene updates based on state change
     if (current.spaceInfo &&
-        (changed.basemapScene || changed.spaceInfo)) {
+        (changed.basemapScene || changed.spaceInfo || changed.projection)) {
       this.fire('loadScene', current);
     }
 
@@ -1076,6 +1096,12 @@ export default {
       if (!getBasemapScene(basemap)) {
         basemap = getDefaultBasemapName();
       }
+      let projectable = isProjectable(basemap);
+
+      let projection = params.projection;
+      if (!getProjectionScene(projection) || !projectable) {
+        projection = getDefaultProjectionName();
+      }
 
       // parse selected feature property
       const featureProp = params.property;
@@ -1120,6 +1146,7 @@ export default {
         spaceId,
         token,
         basemap,
+        projection,
         demoMode,
         displayToggles,
         featureProp,
@@ -1458,6 +1485,19 @@ function hashString (string) {
     float: right;
   }
 
+  .controls_left_selector {
+    float: left;
+    clear: left;
+  }
+
+  .demoModeToggle {
+    /* position: absolute; */
+    /* right: 10px; */
+    /* top: 10px; */
+    /* z-index: 1001; */
+    float: right;
+  }
+
   /* mobile styles at the end for higher precedence */
 
   /* mobile (any orientation) */
@@ -1494,9 +1534,9 @@ function hashString (string) {
 
   /* mobile in landscape */
   @media (max-width: 960px) and (orientation: landscape) {
-    /* keep basemap selector from being too wide */
-    #basemap_select {
-      width: 115px;
+    /* keep basemap and projection selectors from being too wide */
+    .controls_left_dropdown {
+      width: 110px;
     }
   }
 

@@ -129,28 +129,50 @@ global:
         return size;
       }
 
-# sources:
-#     _xyzspace: # this source is created at run-time based on XYZ space
+sources:
+    # this source is created at run-time based on XYZ space
+    _xyzspace: {}
 
-# App-specific versions of styles, with extra mixins for projections, patterns, etc.
 styles:
-  xyz_points:
-    base: points
-  xyz_lines:
-    base: lines
-    blend: overlay
-  xyz_polygons:
-    base: polygons
-    blend: inlay
-    mix: xyz_pattern
-  xyz_text:
-    base: text
-
-  # set to the currently active pattern at run-time
-  xyz_pattern: {}
+    projection:
+        mix: []
+    _points:
+        base: points
+        mix: projection_points
+        blend: overlay
+        blend_order: 0
+    _text:
+        base: text
+        mix: projection_points
+        blend: overlay
+        blend_order: 11
+    _lines:
+        base: lines
+        mix: projection
+        blend: opaque
+        blend_order: 0
+    _lines_overlay:
+        base: lines
+        mix: projection
+        blend: overlay
+        blend_order: 0
+    _polygons:
+        base: polygons
+        mix: projection
+        blend: opaque
+        blend_order: 1
+    _polygons_inlay:
+        base: polygons
+        mix: projection
+        blend: inlay
+        blend_order: 0
+    _polygons_overlay:
+        base: polygons
+        mix: projection
+        blend: overlay
+        blend_order: 1
 
 layers:
-
     _xyz_dots:
         filter:
           all:
@@ -162,7 +184,7 @@ layers:
             all_layers: true
         draw:
             # regular filled points
-            xyz_points:
+            _points:
                 interactive: true
                 collide: false
                 blend_order: 0 # put our points under the basemap labels
@@ -171,6 +193,7 @@ layers:
                 outline:
                     width: 0px
                 text:
+                    style: _text
                     visible: false # updated by JS app at run-time
                     text_source: global.featureLabelText
                     optional: true
@@ -181,7 +204,7 @@ layers:
         donut_points:
             enabled: false
             draw:
-              xyz_points:
+              _points:
                   color: transparent
                   outline:
                       color: global.featureColor
@@ -196,14 +219,15 @@ layers:
             source: _xyzspace
             all_layers: true
         draw:
-            xyz_lines:
+            _lines_overlay:
                 interactive: true
                 color: global.featureColor
                 width: 4px
                 blend_order: 0
                 outline:
                    width: 0px
-            xyz_text:
+            text:
+              style: _text
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values
@@ -221,17 +245,18 @@ layers:
             all_layers: true        
         _outlines:
             draw:
-                xyz_lines:
+                _lines_overlay:
                     width: 0px
                     blend_order: 0
         draw:
-            xyz_polygons:
+            _polygons_inlay:
                 interactive: true
                 color: global.featureColor
                 width: 2px
                 order: 300
                 blend_order: 0
             text:
+              style: _text
               visible: false # updated by JS app at run-time
               text_source: global.featureLabelText
               # unique repeat group per feature, to avoid culling of labels with same values

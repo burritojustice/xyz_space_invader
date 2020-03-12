@@ -1,0 +1,3 @@
+styles:
+  # Mercator is the Leaflet/Tangram built-in default, so this projection is a no-op
+  projection: {}

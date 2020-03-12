@@ -1,0 +1,24 @@
+import: globe.yaml
+styles:
+    projection_points:
+        mix: stereo-points
+    stereo-points:
+        mix: stereo
+        shaders:
+            blocks:
+                position: |
+                    // lat, lon, centerlat, and centerlon are defined in globe.yaml
+
+                    // if the point goes past the horizon
+                    if (haversine(rad2deg(lat), rad2deg(lon), rad2deg(centerlat), rad2deg(centerlon)) > EARTH_RADIUS * PI / 2.0) {
+                        // clip the point
+                        position.xy = vec2(3.402823466e+38);
+                    } else {
+                        // bend map into globe
+                        position.xyz = latLongToVector3(lat, lon, 2.) * EARTH_RADIUS;
+
+                        // rotate globe with map navigation
+                        // 90 degrees in radians = 1.5708
+                        position.xyz *= globe_rotateY3D((-centerlon - 1.5708));
+                        position.xyz *= globe_rotateX3D(-(centerlat));
+                    }

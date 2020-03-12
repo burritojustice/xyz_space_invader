@@ -1,0 +1,30 @@
+# contributors: @patriciogv @meetar
+import: mollweide-points.yaml
+styles:
+    projection:
+        mix: mollweide
+    mollweide:
+        mix: mollweide-points
+        blend_order: 0
+        shaders:
+            blocks:
+                position: |
+                    // lat and lon are defined in mollweide-points.yaml
+                    if (abs(lon) > 270.) {
+                        // clip
+                        position.xy = vec2(3.402823466e+38);
+                    } else {
+                        if (abs(lon) > 180.) {
+                            // snap to horizon
+                            if (lon < -180.) {
+                                lon = -180.;
+                            } else {
+                                lon = 180.;
+                            }
+                        }
+                        vec2 new = mollweide(deg2rad(lon), deg2rad(lat));
+                        // TODO: factor out this magic number – possibly something related to the difference in coordinate systems?
+                        float magic_number = 100.;
+                        new = vec2(lon2x_m(new.x)*magic_number, lat2y_m(new.y)*magic_number);
+                        position.xy = new;
+                    }
