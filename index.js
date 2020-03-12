@@ -306,10 +306,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.layers.boundaries.region.draw.lines.order = 500;
         scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color;
         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
+        scene_config.sources._xyzspace.url_params.clip = false
       }
         // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
 //       else {
-//         scene_config.sources._xyzspace.url_params.clip = true;
 //         scene_config.layers.boundaries.country.draw.lines.order = 'function() { return (feature.sort_rank -1); }'
 //         scene_config.layers.boundaries.region.draw.lines.order = global.feature_order;
 //         scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;
@@ -348,10 +348,14 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         }
     }
     else {
+      // clear out clustering params
       delete scene_config.sources._xyzspace.url_params.clustering
       delete scene_config.sources._xyzspace.url_params['clustering.resolution']
       delete scene_config.sources._xyzspace.url_params['clustering.property']
       delete scene_config.sources._xyzspace.url_params['clustering.countmode']
+      // turn tile clipping back on
+      scene_config.sources._xyzspace.url_params.clip = true;
+
     }
 
       
