@@ -277,15 +277,15 @@ layers:
                 - { $zoom: { min: 15 } }
         draw:
             polygons:
+                style: _polygons
                 order: 501
-                color: [0.075,0.075,0.075]
+                color: [0.1,0.1,0.1]
 
     water:
         data: { source: mapzen, layer: water }
         draw:
             polygons:
                 style: _polygons
-#                 order: 8
                 order: global.feature_order
                 color: [0.120,0.120,0.120]
             lines:
