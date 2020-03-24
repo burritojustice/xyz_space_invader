@@ -549,14 +549,7 @@ export default {
       featurePropSigmaFloor: null,
       featurePropSigmaCeiling: null,
       featurePointSizeDisplayRange: [4, 20],
-      featurePointSizeProp: '', // setting this to null breaks the point toggle
-      
-      // these are params
-//       clustering: null,
-//       quadCountmode: null,
-//       quadRez: 4,
-//       voronoi: 'off',
-      
+//       featurePointSizeProp: '', // setting this to null breaks the point toggle
 
       tagsWithCountsInViewport: [],
       tagFilterList: [],
@@ -1096,6 +1089,7 @@ export default {
       if (!getBasemapScene(basemap)) {
         basemap = getDefaultBasemapName();
       }
+      console.log("basemap via AppUI",basemap)
       let projectable = isProjectable(basemap);
 
       let projection = params.projection;
