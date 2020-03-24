@@ -1089,8 +1089,6 @@ export default {
         basemap = getDefaultBasemapName();
       }
 
-
-      console.log("params.basemap",params.basemap,"basemap",basemap,"default is",getDefaultBasemapName())
       let projectable = isProjectable(basemap);
 
       let projection = params.projection;
