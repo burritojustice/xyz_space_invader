@@ -113,7 +113,7 @@ export const displayOptions = {
   // Point sizes
   points: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4],
+    values: [0, 1, 2, 3, 4, 5],
     apply: (scene, value, { featurePointSizeProp, featurePointSizeRange }) => {
       let size;
       console.log('featurePointSizeProp', featurePointSizeProp)
@@ -155,6 +155,9 @@ export const displayOptions = {
       else if (value === 4) { // medium
         size = '9px';
       }
+      else if (value === 5) { // medium
+        size = '0px'; // good for just centroid label
+      }
 
       _.set(scene, 'global.featurePointSize', size);
     }
@@ -163,7 +166,7 @@ export const displayOptions = {
   // Line widths
   lines: {
     parse: parseInt,
-    values: [0, 1, 2],
+    values: [0, 1, 2, 3],
     apply: (scene, value) => {
       let width;
 
@@ -176,7 +179,9 @@ export const displayOptions = {
       else if (value === 2) {
         width = '1px';
       }
-
+      else if (value === 3) {
+        width = '6px';
+      }
       _.set(scene, 'layers._xyz_lines.draw._lines_overlay.width', width);
     }
   },
@@ -184,7 +189,7 @@ export const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4, 5, 6],
+    values: [1, 0, 2, 3, 4, 5, 6], // start with subtle, then off, then donut/other widths
     apply: (scene, value) => {
       let width, color;
       let donutOutline = false;
@@ -214,7 +219,7 @@ export const displayOptions = {
         color = [.5, .5, .5, .5];
         donutOutline = true;
       }
-       else if (value === 6) { // donut outlines hair
+       else if (value === 6) { // donut outlines hair (good for really dense datasets)
         width = '0.5px';
         color = [.5, .5, .5, .5];
         donutOutline = true;
@@ -259,6 +264,8 @@ export const displayOptions = {
         _.set(scene, 'layers.roads.draw.lines.visible', false); // just labels, no geometry
         _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
       }
+      
+      // how to do just road lines but no labels?
 
       // ensure there is at least an empty data block, to suppress warnings
       _.merge(scene.layers.roads, { data: {} });
