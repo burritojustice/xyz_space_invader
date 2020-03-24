@@ -890,7 +890,7 @@ export default {
 
       params.set('sort', featurePropValueSort);
       params.set('hideOutliers', featurePropHideOutliers);
-
+ 
       params.set('pointSizeProp', featurePointSizeProp);
       params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
 
@@ -1125,7 +1125,7 @@ export default {
       const featurePropValueSort = params.sort || 'count';
       const featurePropHideOutliers = (params.hideOutliers === 'true');
 
-      const featurePointSizeProp = params.pointSizeProp;
+      const featurePointSizeProp = params.pointSizeProp || '';
       let featurePointSizeDisplayRange = this.get().featurePointSizeDisplayRange;
       try { // protect against JSON.parse failure (it's brittle with string input)
         featurePointSizeDisplayRange = JSON.parse(params.pointSizeRange);
