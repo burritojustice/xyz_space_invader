@@ -1089,7 +1089,7 @@ export default {
       if (!getBasemapScene(basemap)) {
         basemap = getDefaultBasemapName();
       }
-      console.log("basemap via AppUI",basemap)
+      console.log("basemap via AppUI",basemap,"default is",getDefaultBasemapName())
       let projectable = isProjectable(basemap);
 
       let projection = params.projection;
