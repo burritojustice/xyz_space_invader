@@ -304,7 +304,7 @@ layers:
                     visible: true
                     order: global.feature_order
                     color: [0.690,0.671,0.663]
-                    width: 2px
+                    width: 1.25px
                     join: round
 
         water_boundaries-not-ocean:
