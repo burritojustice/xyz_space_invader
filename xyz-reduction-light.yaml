@@ -255,7 +255,8 @@ layers:
                 style: _polygons
                 order: global.feature_order
                 color: [0.930,0.922,0.922]
-
+            lines:
+                style: _lines
         lakes:
             filter:
                 all:
@@ -301,7 +302,6 @@ layers:
             draw:
                 lines:
                     visible: true
-                    style: alberslines
                     order: global.feature_order
                     color: [0.690,0.671,0.663]
                     width: 2px
