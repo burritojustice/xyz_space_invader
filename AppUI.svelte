@@ -1084,11 +1084,11 @@ export default {
           tagFilterAndOr = 'and';
         }
       }
-
       let basemap = getBasemapName(params.basemap);
-      if (!getBasemapScene(basemap)) {
+      if (!getBasemapScene(basemap) || !params.basemap) {
         basemap = getDefaultBasemapName();
       }
+
 
       console.log("params.basemap",params.basemap,"basemap",basemap,"default is",getDefaultBasemapName())
       let projectable = isProjectable(basemap);
