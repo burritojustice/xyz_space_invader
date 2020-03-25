@@ -311,7 +311,8 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       }
       if (projection == 'albers'){
         map.setMinZoom(4) // Albers xyz layers start bending around and getting weird below 4
-
+        scene.view.buffer = 5 // at 4 iceland hexbins start to bend
+        // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
       }
         // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
 //       else {
