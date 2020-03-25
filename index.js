@@ -307,6 +307,11 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color;
         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
         scene_config.sources._xyzspace.url_params.clip = false
+        map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
+      }
+      if (projection == 'albers'){
+        map.setMinZoom(4) // Albers xyz layers start bending around and getting weird below 4
+
       }
         // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
 //       else {
