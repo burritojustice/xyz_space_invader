@@ -314,7 +314,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         map.setMinZoom(4) // weird artifacts below 5 when the map starts wrapping around
         map.setMaxZoom(7) // stopping where region boundaries disappear
         scene.view.buffer = 4 // we like Baffin Island 
-        scene_config.scene.background = global.water_color // avoid square holes in the arctic and antarctica
+        scene_config.scene.background = scene_config.global.water_color // avoid square holes in the arctic and antarctica
         scene_config.sources._xyzspace.url_params.clip = true; // weeeiiird shit happens with albers if clip = false, rainbow lasers, Europe shows up off California
         scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;  // in case we're coming from globe
         // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
