@@ -534,7 +534,7 @@ layers:
             text-blend-order:
                 style: _text
                 visible: false    # labels are enabled by each layer below
-                buffer: 3px
+                buffer: 1px
                 font:
                     family: global.text_font_family
                     fill: [0.250,0.250,0.250]
