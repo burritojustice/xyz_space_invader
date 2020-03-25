@@ -1,4 +1,4 @@
-# Author: Geraldine Sarmiento
+Author: Geraldine Sarmiento
 
 global:
     # default order for basemap features
@@ -15,6 +15,9 @@ global:
 
     roads_text_fill:              [0.250,0.250,0.250]
     roads_text_stroke:            [0.820,0.812,0.812]
+    
+    earth_color:                  [0.930,0.922,0.922]
+    water_color:                  [0.850,0.842,0.842]
 
     text_font_family: 'Open Sans'
 
@@ -246,7 +249,7 @@ layers:
             polygons:
                 style: _polygons
                 order: global.feature_order
-                color: [0.930,0.922,0.922]
+                color: global.earth_color. #[0.930,0.922,0.922]
 
 
     great_lakes: # ocean tiles were getting bent by shaders but lakes are fine
@@ -276,7 +279,7 @@ layers:
             polygons:
                 style: _polygons
                 order: 501
-                color: [0.1,0.1,0.1]
+                color: global.water_color
 
     water:
         data: { source: mapzen, layer: water }
@@ -284,7 +287,7 @@ layers:
             polygons:
                 style: _polygons
                 order: global.feature_order
-                color: [0.930,0.922,0.922]
+                color: global.water_color
             lines:
                 style: _lines     
         lakes:
@@ -332,7 +335,7 @@ layers:
             draw:
                 lines:
                     visible: true
-                    style: alberslines
+                    style: _lines
                     order: global.feature_order
                     color: [0.690,0.671,0.663]
                     width: 1.25px
