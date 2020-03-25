@@ -311,12 +311,12 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
 
       }
-      if (projection == 'albers'){
-        map.setMinZoom(5) // weird artifacts below 5 when the map starts wrapping around
-        map.setMaxZoom(7) // stopping where region boundaries disappear
-        scene.view.buffer = 3 // increasing this past 2 causes things to wrap around way more than you'd expect
-        // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
-      }
+//       if (projection == 'albers'){
+//         map.setMinZoom(5) // weird artifacts below 5 when the map starts wrapping around
+//         map.setMaxZoom(7) // stopping where region boundaries disappear
+//         scene.view.buffer = 3 // increasing this past 2 causes things to wrap around way more than you'd expect
+//         // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
+//       }
         // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
 //       else {
 //         scene_config.layers.boundaries.country.draw.lines.order = 'function() { return (feature.sort_rank -1); }'
