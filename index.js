@@ -295,7 +295,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     if (isProjectable(basemap)) {
       try {
         scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
-        // switch to 256px tiles? but do we then need to bump scene.view.buffer to 4?
+        // shoud we switch to 256px tiles? but do we then need to bump scene.view.buffer to 4?
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
@@ -304,19 +304,21 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         toggles.water = 1; // will this raise it? or just the display?
         scene_config.layers.boundaries.country.draw.lines.order = 500;
         scene_config.layers.boundaries.region.draw.lines.order = 500;
-        scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color;
+        scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color; // doesn't matter if distorted ocean tiles overlap land
         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
-//         scene_config.sources._xyzspace.url_params.clip = false
+        scene_config.sources._xyzspace.url_params.clip = false // hexbins split across tiles get different counts
         map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
         map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
 
       }
-//       if (projection == 'albers'){
-//         map.setMinZoom(5) // weird artifacts below 5 when the map starts wrapping around
-//         map.setMaxZoom(7) // stopping where region boundaries disappear
-//         scene.view.buffer = 3 // increasing this past 2 causes things to wrap around way more than you'd expect
-//         // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
-//       }
+      if (projection == 'albers'){
+        map.setMinZoom(4) // weird artifacts below 5 when the map starts wrapping around
+        map.setMaxZoom(7) // stopping where region boundaries disappear
+        scene.view.buffer = 3 // Baffin Island increasing this past 2 causes things to wrap around way more than you'd expect
+        scene_config.sources._xyzspace.url_params.clip = true; // weird shit happens with albers if clip = false, Europe shows up off California
+        scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;  // in case we're coming from globe
+        // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
+      }
         // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
 //       else {
 //         scene_config.layers.boundaries.country.draw.lines.order = 'function() { return (feature.sort_rank -1); }'
