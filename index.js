@@ -312,8 +312,8 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
 
       }
       if (projection == 'albers'){
-        map.setMinZoom(4) // Albers xyz layers start bending around and getting weird below 4
-        map.setMaxZoom(7) // stopping at region boundaries
+        map.setMinZoom(5) // Albers xyz layers start bending around and getting weird below 4
+        map.setMaxZoom(6) // was stopping at region boundaries but seeing hexbin shader weirdness at 7
         scene.view.buffer = 5 // at 4 iceland hexbins start to bend
         // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
       }
