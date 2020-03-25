@@ -312,9 +312,9 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
 
       }
       if (projection == 'albers'){
-        map.setMinZoom(3) // Albers xyz layers start bending around and getting weird below 4
-        map.setMaxZoom(7) // was stopping at region boundaries but seeing hexbin shader weirdness at 7
-        scene.view.buffer = 3 
+        map.setMinZoom(4) // depends on buffer
+        map.setMaxZoom(7) // stopping where region boundaries disappear
+        scene.view.buffer = 3 // increasing this past 2 causes things to wrap around way more than you'd expect
         // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
       }
         // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
