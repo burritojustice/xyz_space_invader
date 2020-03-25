@@ -306,7 +306,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.layers.boundaries.region.draw.lines.order = 500;
         scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color; // doesn't matter if distorted ocean tiles overlap land
         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
-        scene_config.sources._xyzspace.url_params.clip = false // hexbins split across tiles get different counts
+//         scene_config.sources._xyzspace.url_params.clip = false // hexbins split across tiles get different counts
         map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
         map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
 
@@ -314,8 +314,8 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       if (projection == 'albers'){
         map.setMinZoom(4) // weird artifacts below 5 when the map starts wrapping around
         map.setMaxZoom(7) // stopping where region boundaries disappear
-        scene.view.buffer = 3 // Baffin Island increasing this past 2 causes things to wrap around way more than you'd expect
-        scene_config.sources._xyzspace.url_params.clip = true; // weird shit happens with albers if clip = false, Europe shows up off California
+        scene.view.buffer = 4 // Baffin Island 
+        scene_config.sources._xyzspace.url_params.clip = true; // weeeiiird shit happens with albers if clip = false, Europe shows up off California
         scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;  // in case we're coming from globe
         // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
       }
@@ -330,7 +330,11 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     
     if (clustering == 1) { // h3 hexbin clustering
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-//       scene_config.sources._xyzspace.url_params.clip = false; // keeps hexbins from getting split across tiles and having different counts
+      if (projection == 'globe'){
+        scene_config.sources._xyzspace.url_params.clip = false; 
+        // keeps hexbins from getting split across tiles and having different counts
+        // don't do this for albers
+      }
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
