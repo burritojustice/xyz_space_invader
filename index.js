@@ -306,7 +306,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.layers.boundaries.region.draw.lines.order = 500;
         scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color;
         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
-        scene_config.sources._xyzspace.url_params.clip = false
+//         scene_config.sources._xyzspace.url_params.clip = false
         map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
         map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
 
@@ -328,7 +328,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     
     if (clustering == 1) { // h3 hexbin clustering
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-      scene_config.sources._xyzspace.url_params.clip = false; // keeps hexbins from getting split across tiles and having different counts
+//       scene_config.sources._xyzspace.url_params.clip = false; // keeps hexbins from getting split across tiles and having different counts
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
