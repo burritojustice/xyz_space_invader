@@ -299,7 +299,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
-      if (projection == 'globe' && basemap == 'xyz-reduction-dark') {
+      if (projection == 'globe' && basemap == 'xyz-reduction-dark' || 'xyz-reduction-light') {
         // change land color to avoid global shader madness, raise lines above hexbins for better visibility
         toggles.water = 1; // will this raise it? or just the display?
         scene_config.layers.boundaries.country.draw.lines.order = 500;
@@ -308,9 +308,12 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
         scene_config.sources._xyzspace.url_params.clip = false
         map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
+        map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
+
       }
       if (projection == 'albers'){
         map.setMinZoom(4) // Albers xyz layers start bending around and getting weird below 4
+        map.setMaxZoom(7) // stopping at region boundaries
         scene.view.buffer = 5 // at 4 iceland hexbins start to bend
         // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
       }
@@ -469,10 +472,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     console.log(stats.errorMessage);
     var error_response = stats.errorMessage;
     if (stats.errorMessage == "Unauthorized"){
-      error_response = "Unauthorized: " + token + " is not a valid XYZ token"
+      error_response = "Alas, " + token + " is not a valid XYZ token"
     }
     if (stats.errorMessage == "The space with this ID does not exist."){
-      error_response = "Error: XYZ space " + spaceId + " does not exist"
+      error_response = "The space " + spaceId + " you seek\n Cannot be located, but\n Countless more exist"
     }    
     alert(error_response); // old-school
     return
