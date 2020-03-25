@@ -198,6 +198,7 @@ layers:
                     text_source: global.featureLabelText
                     optional: true
                     font: global.featureLabelFont # set by the basemap
+                    repeat_distance: 128px
 
         # inverted, outline-only "donut" points
         # these get toggled on/off with the filled points above, as an alternate point draw mode
