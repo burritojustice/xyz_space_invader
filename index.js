@@ -295,18 +295,29 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     if (isProjectable(basemap)) {
       try {
         scene.view.buffer = 2 // hack to modify the tangram view object directly, increasing the number of edge tiles loaded, which helps fill in gaps in the projection
-        // switch to 256px tiles? but do we then need to bump scene.view.buffer to 4?
+        // shoud we switch to 256px tiles? but do we then need to bump scene.view.buffer to 4?
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
-      if (projection == 'globe' && basemap == 'xyz-reduction-dark') {
+      if (projection == 'globe' && (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light')) {
         // change land color to avoid global shader madness, raise lines above hexbins for better visibility
         toggles.water = 1; // will this raise it? or just the display?
         scene_config.layers.boundaries.country.draw.lines.order = 500;
         scene_config.layers.boundaries.region.draw.lines.order = 500;
-        scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color;
+        scene_config.layers.earth.draw.polygons.color = scene_config.global.water_color; // hide extruding ocean tiles by making land the same color, psyche
         scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500;
-        scene_config.sources._xyzspace.url_params.clip = false
+//         scene_config.sources._xyzspace.url_params.clip = false // hexbins split across tiles get different counts
+        map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
+        map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
+      }
+      if (projection == 'albers'){
+        map.setMinZoom(4) // weird artifacts below 5 when the map starts wrapping around
+        map.setMaxZoom(7) // stopping where region boundaries disappear
+        scene.view.buffer = 4 // we like Baffin Island 
+        scene_config.scene.background.color = scene_config.global.water_color // avoid square holes in the arctic and antarctica
+        scene_config.sources._xyzspace.url_params.clip = true; // weeeiiird shit happens with albers if clip = false, rainbow lasers, Europe shows up off California
+        scene_config.layers.earth.draw.polygons.color = scene_config.global.earth_color;  // in case we're coming from globe
+        // may want to figure out how to bump down hexbin ['clustering.resolution'] in albers (-1 or -2?)
       }
         // so what happens if someone switches to albers or molleweide to 'none' -- how to reset?
 //       else {
@@ -319,10 +330,18 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     
     if (clustering == 1) { // h3 hexbin clustering
       scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
-      scene_config.sources._xyzspace.url_params.clip = false; // keeps hexbins from getting split across tiles and having different counts
+      if (projection == 'globe'){
+        scene_config.sources._xyzspace.url_params.clip = false; 
+        // keeps hexbins from getting split across tiles and having different counts
+        // don't do this for albers
+      }
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
+      scene_config.layers.boundaries.country.draw.lines.order = 500; // raise borders above hexbins
+      scene_config.layers.boundaries.region.draw.lines.order = 500;
+      scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500; // coastline too
+
       console.log('H3 hexbins')
     } else if (clustering == 2) { // h3 hexbin centroids
         scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
@@ -459,10 +478,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     console.log(stats.errorMessage);
     var error_response = stats.errorMessage;
     if (stats.errorMessage == "Unauthorized"){
-      error_response = "Unauthorized: " + token + " is not a valid XYZ token"
+      error_response = "Alas, " + token + " is not a valid XYZ token"
     }
     if (stats.errorMessage == "The space with this ID does not exist."){
-      error_response = "Error: XYZ space " + spaceId + " does not exist"
+      error_response = "The space " + spaceId + " you seek\n Cannot be located, but\n Countless more exist"
     }    
     alert(error_response); // old-school
     return

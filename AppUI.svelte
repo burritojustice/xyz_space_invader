@@ -1093,7 +1093,7 @@ export default {
       }
 
       let basemap = getBasemapName(params.basemap);
-      if (!getBasemapScene(basemap)) {
+      if (!getBasemapScene(basemap) || !params.basemap) { // check for no parameter
         basemap = getDefaultBasemapName();
       }
       let projectable = isProjectable(basemap);
@@ -1130,7 +1130,7 @@ export default {
       const featurePropValueSort = params.sort || 'count';
       const featurePropHideOutliers = (params.hideOutliers === 'true');
 
-      const featurePointSizeProp = params.pointSizeProp;
+      const featurePointSizeProp = params.pointSizeProp || '';
       let featurePointSizeDisplayRange = this.get().featurePointSizeDisplayRange;
       try { // protect against JSON.parse failure (it's brittle with string input)
         featurePointSizeDisplayRange = JSON.parse(params.pointSizeRange);
