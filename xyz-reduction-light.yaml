@@ -178,7 +178,7 @@ fonts:
 
 scene:
     background:
-        color: [0.912,0.912,0.912]
+        color: [0.912,0.902,0.902]
 
 sources:
     # mapzen:
