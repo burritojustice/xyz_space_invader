@@ -299,7 +299,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
-      if (projection == 'globe' && (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light')) {
+      if (projection == (('globe' || 'albers') && (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light')) {
         // change land color to avoid global shader madness, raise lines above hexbins for better visibility
         toggles.water = 1; // will this raise it? or just the display?
         scene_config.layers.boundaries.country.draw.lines.order = 500;
@@ -338,15 +338,16 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       if (clusteringProp){
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
-      if (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light'){ // not all basemaps have these? will need to change later when we project more of them
-        try {
-          scene_config.layers.boundaries.country.draw.lines.order = 500; // raise borders above hexbins
-          scene_config.layers.boundaries.region.draw.lines.order = 500;
-          scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500; // coastline too
-        } catch(e) {
-        console.error("Failed to raise borders:\n", e)
-        }
-      }
+// not sure why this doesn't work, doesn't like the water-boundary-ocean thing even when not called "TypeError: Cannot read property 'draw' of undefined"
+//       if (basemap == ('xyz-reduction-dark' || 'xyz-reduction-light')){ // not all basemaps have these? will need to change later when we project more of them
+//         try {
+//           scene_config.layers.boundaries.country.draw.lines.order = 500; // raise borders above hexbins
+//           scene_config.layers.boundaries.region.draw.lines.order = 500;
+//           scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500; // coastline too
+//         } catch(e) {
+//         console.error("Failed to raise borders:\n", e)
+//         }
+//       }
       console.log('H3 hexbins')
     } else if (clustering == 2) { // h3 hexbin centroids
         scene_config.sources._xyzspace.url_params.clustering = 'hexbin';
