@@ -313,12 +313,18 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
         map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
       }
-      
+      //tune label collisions
       if (projection == 'globe' && basemap != 'none'){
         // label collisions get weird in this projection, but you can get more cities this way with acceptable overlap
         scene_config.layers.places.draw['text-blend-order'].collide = false
       }
-
+      if (projection == 'albers' && basemap != 'none'){
+        // label collisions get weird in this projection, but you can get more cities this way with acceptable overlap
+        scene_config.layers.places['populated-places'].draw["text-blend-order"].collide = false
+        scene_config.layers.places["populated-places"].filter = {kind: "locality", population: {min: 2300000}}
+      }
+      
+      // change land color to water to minimize glitches
       if (projection == 'albers' && basemap != 'none'){
         map.setMinZoom(4) // weird artifacts below 5 when the map starts wrapping around
         map.setMaxZoom(7) // stopping where region boundaries disappear
