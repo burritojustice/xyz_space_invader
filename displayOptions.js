@@ -113,7 +113,7 @@ export const displayOptions = {
   // Point sizes
   points: {
     parse: parseInt,
-    values: [1, 2, 3, 4, 5, 0],
+    values: [9, 12, 15, 6, 3, 0],
     apply: (scene, value, { featurePointSizeProp, featurePointSizeRange }) => {
       let size;
       console.log('featurePointSizeProp', featurePointSizeProp)
@@ -140,19 +140,19 @@ export const displayOptions = {
           size = '6px'; // use fixed point size for non-numeric properties
         }
       }
-      else if (value === 1) { // small
+      else if (value === 3) { // small
         size = '3px';
       }
-      else if (value === 2) { // smaller
+      else if (value === 6) { // smaller
         size = '6px';
       }
-      else if (value === 3) { // bigger
+      else if (value === 9) { // bigger
         size = '9px';
       }
-      else if (value === 4) { // big
+      else if (value === 12) { // big
         size = '12px';
       }
-      else if (value === 5) { // medium
+      else if (value === 15) { // medium
         size = '15px';
       }
       else if (value === 0) { // medium
