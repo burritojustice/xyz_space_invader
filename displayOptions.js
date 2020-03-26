@@ -157,7 +157,7 @@ export const displayOptions = {
       }
       else if (value === 0) { // medium
         size = '0px'; // good for just centroid label
-
+      }
       _.set(scene, 'global.featurePointSize', size);
     }
   },
