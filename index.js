@@ -299,7 +299,8 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
-      if (projection == ('globe' || 'albers') && (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light')) {
+//       if (projection == ('globe' || 'albers') && (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light')) {
+      if (projection == ('globe' || 'albers') && (basemap != 'none')) {
         // change land color to avoid global shader madness, raise lines above hexbins for better visibility
         toggles.water = 1; // will this raise it? or just the display?
         scene_config.layers.boundaries.country.draw.lines.order = 500;
@@ -310,7 +311,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         map.setMinZoom(2) // hexbin data isn't available below 2 and it's pretty small anyway
         map.setMaxZoom(7) // looks OK below this but we don't have roads enabled
       }
-      if (projection == 'albers'){
+      if (projection == 'albers' && basemap != 'none'){
         map.setMinZoom(4) // weird artifacts below 5 when the map starts wrapping around
         map.setMaxZoom(7) // stopping where region boundaries disappear
         scene.view.buffer = 4 // we like Baffin Island 
