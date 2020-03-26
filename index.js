@@ -299,7 +299,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       } catch(e) {
         console.error("Failed to set scene.view.buffer:\n", e)
       }
-      if (projection == (('globe' || 'albers') && (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light')) {
+      if (projection == ('globe' || 'albers') && (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light')) {
         // change land color to avoid global shader madness, raise lines above hexbins for better visibility
         toggles.water = 1; // will this raise it? or just the display?
         scene_config.layers.boundaries.country.draw.lines.order = 500;
