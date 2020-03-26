@@ -339,9 +339,13 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.sources._xyzspace.url_params['clustering.property'] = clusteringProp.replace(/[]"/,'')
       }
       if (basemap == 'xyz-reduction-dark' || 'xyz-reduction-light'){ // not all basemaps have these? will need to change later when we project more of them
-        scene_config.layers.boundaries.country.draw.lines.order = 500; // raise borders above hexbins
-        scene_config.layers.boundaries.region.draw.lines.order = 500;
-        scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500; // coastline too
+        try {
+          scene_config.layers.boundaries.country.draw.lines.order = 500; // raise borders above hexbins
+          scene_config.layers.boundaries.region.draw.lines.order = 500;
+          scene_config.layers.water['water-boundary-ocean'].draw.lines.order = 500; // coastline too
+        } catch(e) {
+        console.error("Failed to raise borders:\n", e)
+        }
       }
       console.log('H3 hexbins')
     } else if (clustering == 2) { // h3 hexbin centroids
