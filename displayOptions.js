@@ -113,7 +113,7 @@ export const displayOptions = {
   // Point sizes
   points: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4],
+    values: [9, 12, 15, 6, 3, 0],
     apply: (scene, value, { featurePointSizeProp, featurePointSizeRange }) => {
       let size;
       console.log('featurePointSizeProp', featurePointSizeProp)
@@ -140,22 +140,24 @@ export const displayOptions = {
           size = '6px'; // use fixed point size for non-numeric properties
         }
       }
-      else if (value === 0) { // small
-        size = '6px';
-      }
-      else if (value === 1) { // smaller
+      else if (value === 3) { // small
         size = '3px';
       }
-      else if (value === 2) { // bigger
-        size = '15px';
+      else if (value === 6) { // smaller
+        size = '6px';
       }
-      else if (value === 3) { // big
-        size = '12px';
-      }
-      else if (value === 4) { // medium
+      else if (value === 9) { // bigger
         size = '9px';
       }
-
+      else if (value === 12) { // big
+        size = '12px';
+      }
+      else if (value === 15) { // medium
+        size = '15px';
+      }
+      else if (value === 0) { // medium
+        size = '0px'; // good for just centroid label
+      }
       _.set(scene, 'global.featurePointSize', size);
     }
   },
@@ -163,7 +165,7 @@ export const displayOptions = {
   // Line widths
   lines: {
     parse: parseInt,
-    values: [0, 1, 2],
+    values: [0, 1, 2, 3],
     apply: (scene, value) => {
       let width;
 
@@ -176,7 +178,9 @@ export const displayOptions = {
       else if (value === 2) {
         width = '1px';
       }
-
+      else if (value === 3) {
+        width = '6px';
+      }
       _.set(scene, 'layers._xyz_lines.draw._lines_overlay.width', width);
     }
   },
@@ -184,7 +188,7 @@ export const displayOptions = {
   // Outlines
   outlines: {
     parse: parseInt,
-    values: [0, 1, 2, 3, 4, 5, 6],
+    values: [1, 0, 2, 3, 4, 5, 6],
     apply: (scene, value) => {
       let width, color;
       let donutOutline = false;
@@ -214,7 +218,7 @@ export const displayOptions = {
         color = [.5, .5, .5, .5];
         donutOutline = true;
       }
-       else if (value === 6) { // donut outlines hair
+       else if (value === 6) { // donut outlines hair (good for really dense datasets
         width = '0.5px';
         color = [.5, .5, .5, .5];
         donutOutline = true;
@@ -235,18 +239,18 @@ export const displayOptions = {
   // places on/off
   places: {
     parse: parseInt,
-    values: [1, 0], // need to add ux_language: en and other options 
+    values: [1, 0], // need to add ux_language: en and other options, just countries, just cities, just regions
     apply: (scene, value) => {
       _.set(scene, 'layers.places.enabled', (value === 1));
       _.merge(scene.layers.places, { data: {} }); // ensure there is at least an empty data block, to suppress warnings
     }
   },
 
-  roads: {
+  roads: { // how to do just road lines but no labels?
     parse: parseInt,
     values: [1, 0, 2], // 1 = on, 0 = off, 2 = just road labels, no lines
     apply: (scene, value) => {
-      if (value === 0) {
+      if (value === 0) { // turns off roads altogether
         _.set(scene, 'layers.roads.enabled', false);
         _.set(scene, 'layers.pois.enabled', (value === 1)); // to handle road exit numbers
       }
