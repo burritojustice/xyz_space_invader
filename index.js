@@ -510,7 +510,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 //     stats.properties = null
 //     stats.byteSize = null
 //     stats.count = null
-    return
+//     return
   }
   var bbox = stats.bbox.value
   console.log('map start location:', mapStartLocation)
