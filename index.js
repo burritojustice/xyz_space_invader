@@ -500,14 +500,25 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     var error_response = stats.errorMessage;
     if (stats.errorMessage == "Unauthorized"){
       error_response = "Alas, " + token + " is not a valid XYZ token"
+      alert(error_response);
+      return
     }
     if (stats.errorMessage == "The space with this ID does not exist."){
       error_response = "The space " + spaceId + " you seek\n Cannot be located, but\n Countless more exist"
+      alert(error_response);
+      return
     }    
-    alert(error_response); // old-school
-    return
+    if (stats.error == 'BadGateway'){
+      stats.properties = {}
+      stats.properties.value = []
+      stats.tags = {}
+      stats.tags.value = []
+      error_response = "Statistics for " + spaceId + " not responding: map, properties and features enabled; bbox, count, size, tags currently unavailable"
+      alert(, error_response);
+      console.log(error_response, stats.error)
+    }    
   }
-  var bbox = stats.bbox.value
+  var bbox = (stats.bbox) ? stats.bbox.value : [-45, -45, 45, 45]
   console.log('map start location:', mapStartLocation)
   console.log('bbox',bbox)
 
