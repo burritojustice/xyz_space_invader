@@ -506,8 +506,11 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     }    
     alert(error_response); // old-school
 //     stats.bbox.value = null
-    stats.properties = []
-    stats.tags = []
+    if (stats.error == 'BadGateway'){
+      stats.properties = []
+      stats.tags = []
+    }
+
 //     stats.byteSize.value = null
 //     stats.count.value = null
 //     return
