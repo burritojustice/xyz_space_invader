@@ -493,7 +493,8 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
 async function getStats({ spaceId, token, mapStartLocation }) {
   // Get stats endpoint
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
-  const stats = await fetch(url).then(r => r.json());
+  var stats = null
+  stats = await fetch(url).then(r => r.json());
     // console.log(stats)
   if (stats.type == 'ErrorResponse'){
     console.log(stats.errorMessage);
@@ -505,6 +506,10 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       error_response = "The space " + spaceId + " you seek\n Cannot be located, but\n Countless more exist"
     }    
     alert(error_response); // old-school
+//     stats.bbox = null
+//     stats.properties = null
+//     stats.byteSize = null
+//     stats.count = null
     return
   }
   var bbox = stats.bbox.value
