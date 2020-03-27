@@ -1,4 +1,4 @@
-import L from 'leaflet';
+atimport L from 'leaflet';
 import 'leaflet-hash';
 import 'leaflet/dist/leaflet.css';
 import yaml from 'js-yaml';
@@ -493,7 +493,6 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
 async function getStats({ spaceId, token, mapStartLocation }) {
   // Get stats endpoint
   var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/statistics?access_token=${token}`;
-  var stats = null
   stats = await fetch(url).then(r => r.json());
     // console.log(stats)
   if (stats.type == 'ErrorResponse'){
@@ -506,13 +505,14 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       error_response = "The space " + spaceId + " you seek\n Cannot be located, but\n Countless more exist"
     }    
     alert(error_response); // old-school
-//     stats.bbox = null
-//     stats.properties = null
-//     stats.byteSize = null
-//     stats.count = null
+//     stats.bbox.value = null
+    stats.properties = []
+    stats.tags = []
+//     stats.byteSize.value = null
+//     stats.count.value = null
 //     return
   }
-  var bbox = stats.bbox.value
+  var bbox = (stats.bbox) ? stats.bbox.value : [-45, -45, 45, 45]
   console.log('map start location:', mapStartLocation)
   console.log('bbox',bbox)
 
