@@ -513,7 +513,9 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       stats.properties.value = []
       stats.tags = {}
       stats.tags.value = []
-      console.log(stats.error)
+      error_response = "Statistics for " + spaceId + " not responding: map, properties and features enabled; bbox, count, size, tags currently unavailable"
+      alert(, error_response);
+      console.log(error_response, stats.error)
     }    
   }
   var bbox = (stats.bbox) ? stats.bbox.value : [-45, -45, 45, 45]
