@@ -239,9 +239,27 @@ export const displayOptions = {
   // places on/off
   places: {
     parse: parseInt,
-    values: [1, 0], // need to add ux_language: en and other options, just countries, just cities, just regions
+    values: [1, 0, 2, 3, 4], // need to add ux_language: en and other options, just countries, just cities, just regions      
     apply: (scene, value) => {
-      _.set(scene, 'layers.places.enabled', (value === 1));
+      if (value === 0) { // turns off roads altogether
+        _.set(scene, 'layers.places.enabled', false);
+      }
+      else if (value === 1) {
+        _.set(scene, 'layers.places.enabled', true);
+        _.set(scene, 'layers.places.filter.kind', null);
+      }
+      else if (value === 2) { // only show city labels
+        _.set(scene, 'layers.places.enabled', true);
+        _.set(scene, 'layers.places.filter.kind', 'locality');
+      }
+      else if (value === 3) { // only show region labels
+        _.set(scene, 'layers.places.enabled', true);
+        _.set(scene, 'layers.places.filter.kind', 'region');
+      }
+      else if (value === 4) { // only show country labels
+        _.set(scene, 'layers.places.enabled', true);
+        _.set(scene, 'layers.places.filter.kind', 'country');
+      }
       _.merge(scene.layers.places, { data: {} }); // ensure there is at least an empty data block, to suppress warnings
     }
   },
