@@ -249,12 +249,15 @@ export const displayOptions = {
         _.set(scene, 'layers.places.filter.kind', null);
       }
       else if (value === 2) { // only show city labels
+        _.set(scene, 'layers.places.enabled', true);
         _.set(scene, 'layers.places.filter.kind', 'locality');
       }
       else if (value === 3) { // only show region labels
+        _.set(scene, 'layers.places.enabled', true);
         _.set(scene, 'layers.places.filter.kind', 'region');
       }
       else if (value === 4) { // only show country labels
+        _.set(scene, 'layers.places.enabled', true);
         _.set(scene, 'layers.places.filter.kind', 'country');
       }
       _.merge(scene.layers.places, { data: {} }); // ensure there is at least an empty data block, to suppress warnings
