@@ -54,8 +54,9 @@
             <td style="color:blue;" on:click='toggleDisplayOption("clustering")'>clustering:</td>
             {#if displayToggles.clustering == 0}
             <td>
-              {#if tokenCapabilities}
-              off
+              {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering}
+              {tokenCapabilities} 
+<!--               off -->
               {:else}
               enable with XYZ Pro + capabilities token
             {/if}
