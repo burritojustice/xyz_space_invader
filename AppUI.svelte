@@ -526,6 +526,7 @@ export default {
       spaceInfo: null,
       hexbinInfo: {},
       gisInfo: {},
+      tokenCapabilities: {},
       demoMode: false, // display collapsed UI demo mode
       feature: null,
       featureProp: null,
