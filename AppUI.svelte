@@ -9,8 +9,7 @@
           <!-- Demo/inspect mode toggle-->
           <button on:click="set({ demoMode: !demoMode })" class="demoModeToggle">
             {demoMode ? 'inspect' : 'demo'}
-          </button>
-
+          </button>          
           <!-- Space info -->
           <div>{spaceInfo.title}</div>
           {#if !demoMode}
@@ -53,24 +52,24 @@
           <tr>
             <td style="color:blue;" on:click='toggleDisplayOption("clustering")'>clustering:</td>
             {#if displayToggles.clustering == 0}
-            <td>
-              {#if tokenCapabilities}
+              <td>
+              {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering}
               off
               {:else}
-              enable with XYZ Pro + capabilities token
+              enable with XYZ Pro or capabilities token
             {/if}
-            </td>
+              </td>
             {/if}
-            {#if displayToggles.clustering == 1}
-            <td>H3 hexbins</td>
+            {#if displayToggles.clustering == 1 && tokenCapabilities.hexbinClustering}
+              <td>H3 hexbins</td>
             {/if}
-            {#if displayToggles.clustering == 2}
-            <td>H3 hexbin centroids</td>
+            {#if displayToggles.clustering == 2 && tokenCapabilities.hexbinClustering}
+              <td>H3 hexbin centroids</td>
             {/if}
-            {#if displayToggles.clustering == 3}
-            <td>Quadbins</td>
-            <td style="color:blue;" on:click='toggleDisplayOption("quadRez")'>resolution:</td>
-            <td>{displayToggles.quadRez}</td>
+            {#if displayToggles.clustering == 3 && tokenCapabilities.quadClustering}
+              <td>Quadbins</td>
+              <td style="color:blue;" on:click='toggleDisplayOption("quadRez")'>resolution:</td>
+              <td>{displayToggles.quadRez}</td>
             {/if}
           </tr>
         </table>
