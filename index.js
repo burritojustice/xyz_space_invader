@@ -583,16 +583,26 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   console.log(spaceInfo)
   var tokenURL = `https://xyz.api.here.com/token-api/tokens/${token}`;
   const tokenInfo = await fetch(tokenURL).then((response) => response.json());
-  var tokenCapabilities = {"hexbinClustering": false, "quadClustering": false}
-  tokenCapabilities = 
+  
+  // check the token to see if clustering is enabled
+  const tokenCheck = 
     (tokenInfo.urm['xyz-hub'].useCapabilities || [])
       .reduce((props, p) => {
         props[p.id] = true;
         return props;
       }, {});
-     
+  // let's take a look at what the token can do
+  var tokenCapabilities = {"hexbinClustering": false, "quadClustering": false}
+  if (tokenCheck.hexbinClustering){
+    tokenCapabilities.hexbinClustering = true
+  }
+  if (tokenCheck.quadClustering){
+    tokenCapabilities.quadClustering = true
+  }
+
   console.log("token has", tokenCapabilities);
   
+
       
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
