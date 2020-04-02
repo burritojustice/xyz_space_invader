@@ -55,8 +55,7 @@
             {#if displayToggles.clustering == 0}
             <td>
               {#if tokenCapabilities}
-              {tokenCapabilities} 
-<!--               off -->
+              off
               {:else}
               enable with XYZ Pro + capabilities token
             {/if}
