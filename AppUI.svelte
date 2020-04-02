@@ -64,7 +64,8 @@
               {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering}
               off
               {:else}
-              enable with XYZ Pro token
+              enable with Pro token
+              {/if}
             {/if}
               </td>
             {/if}
