@@ -32,18 +32,26 @@
           <tr>
             <td style="color:blue;" on:click='toggleDisplayOption("roads")'>roads:</td>
             <td>{displayToggles.roads}</td>
-            <td style="color:blue;" on:click='toggleDisplayOption("buildings")'>buildings:</td>
-            <td>{displayToggles.buildings}</td>
-            <td style="color:blue;" on:click='toggleDisplayOption("water")'>water:</td>
-            <td>{displayToggles.water}</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("points")'>points:</td>
+            <td>{displayToggles.points}</td>
             <td style="color:blue;" on:click='toggleDisplayOption("places")'>places:</td>
             <td>{displayToggles.places}</td>
           </tr>
           <tr>
-            <td style="color:blue;" on:click='toggleDisplayOption("points")'>points:</td>
-            <td>{displayToggles.points}</td>
+            <td style="color:blue;" on:click='toggleDisplayOption("buildings")'>buildings:</td>
+            <td>
+              {#if displayToggles.buildings = 1}
+              on
+              {:else}
+              off
+              {/if}
+            </td>
             <td style="color:blue;" on:click='toggleDisplayOption("lines")'>lines:</td>
             <td>{displayToggles.lines}</td>
+          </tr>
+          <tr>
+            <td style="color:blue;" on:click='toggleDisplayOption("water")'>water:</td>
+            <td>{displayToggles.water}</td>
             <td style="color:blue;" on:click='toggleDisplayOption("outlines")'>outlines:</td>
             <td>{displayToggles.outlines}</td>
           </tr>
@@ -56,7 +64,7 @@
               {#if tokenCapabilities.hexbinClustering || tokenCapabilities.quadClustering}
               off
               {:else}
-              enable with XYZ Pro or capabilities token
+              enable with XYZ Pro token
             {/if}
               </td>
             {/if}
