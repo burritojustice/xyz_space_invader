@@ -610,7 +610,6 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       spaceInfo.virtualspaceMembers = spaceInfo.storage.params.virtualspace[spaceInfo.virtualspaceKind]
       spaceInfo.virtualspaceLabel = spaceInfo.virtualspaceMembers.reduce((label, p, index) => {
         console.log('index',index,'vs length',spaceInfo.virtualspaceMembers.length,p)
-        label += p
         if (index < spaceInfo.virtualspaceMembers.length){
           if (spaceInfo.virtualspaceKind == 'merge'){
             label += " -> "
@@ -619,6 +618,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
             label += " + " 
           }
         }
+        label += p
         console.log(label)
         return label
       })
