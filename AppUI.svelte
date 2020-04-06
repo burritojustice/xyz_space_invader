@@ -66,7 +66,6 @@
               {:else}
               enable with Pro token
               {/if}
-            {/if}
               </td>
             {/if}
             {#if displayToggles.clustering == 1 && tokenCapabilities.hexbinClustering}
