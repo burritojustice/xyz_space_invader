@@ -609,6 +609,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       spaceInfo.virtualspaceKind = Object.keys(spaceInfo.storage.params.virtualspace).toString()
       spaceInfo.virtualspaceMembers = spaceInfo.storage.params.virtualspace[spaceInfo.virtualspaceKind]
       spaceInfo.virtualspaceLabel = spaceInfo.virtualspaceMembers.reduce((label, p, index) => {
+        // why does only the second space shows up in console?
         console.log('index',index,'vs length',spaceInfo.virtualspaceMembers.length,p)
         if (index < spaceInfo.virtualspaceMembers.length){
           if (spaceInfo.virtualspaceKind == 'merge'){
@@ -618,10 +619,13 @@ async function getStats({ spaceId, token, mapStartLocation }) {
             label += " + " 
           }
         }
-        label += p
+        label += p // moved this below ^, otherwise the spaces get smashed together and the symbol is last
         console.log(label)
         return label
       })
+//       spaceInfo.virtualspaceSizes = spaceInfo.virtualspaceMembers.map() => {
+//       }
+      
      console.log(spaceInfo.virtualspaceKind,spaceInfo.virtualspaceMembers)
     }
   }
