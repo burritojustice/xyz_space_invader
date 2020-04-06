@@ -607,7 +607,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   if (spaceInfo.storage){
     if (spaceInfo.storage.id == "virtualspace"){
       spaceInfo.virtualspaceKind = Object.keys(spaceInfo.storage.params.virtualspace)
-      spaceInfo.virtualspaceMembers = spaceInfo.storage.params.virtualspace[spaceInfo.virtualspace.kind]
+      spaceInfo.virtualspaceMembers = spaceInfo.storage.params.virtualspace[spaceInfo.virtualspaceKind]
       spaceInfo.virtualspaceLabel = spaceInfo.virtualspaceMembers.reduce((label, p, index) => {
         label += p
         if (index != spaceInfo.virtualspaceMembers.length()){
