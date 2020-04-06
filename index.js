@@ -622,6 +622,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
         return label
       })
      console.log(spaceInfo.virtualspaceKind,spaceInfo.virtualspaceMembers)
+    }
   }
   
 
