@@ -602,7 +602,31 @@ async function getStats({ spaceId, token, mapStartLocation }) {
 
   console.log("token has", tokenCapabilities);
   
+  //check for virtual spaces and get their stats
 
+  if (spaceInfo.storage){
+    if (spaceInfo.storage.id == "virtualspace"){
+      spaceInfo.virtualspaceKind = Object.keys(spaceInfo.storage.params.virtualspace)
+      spaceInfo.virtualspaceMembers = spaceInfo.storage.params.virtualspace[spaceInfo.virtualspace.kind]
+      spaceInfo.virtualspaceLabel = spaceInfo.virtualspaceMembers.reduce((label, p, index) => {
+        label += p
+        if (index != spaceInfo.virtualspaceMembers.length()){
+          if (spaceInfo.virtualspaceKind == 'merge'){
+            label += " -> "
+          }
+          else if (spaceInfo.virtualspaceKind == 'group'){
+            label += " + " 
+          }
+        }
+        console.log(label)
+        return label
+      })
+     console.log(spaceInfo.virtualspaceKind,spaceInfo.virtualspaceMembers)
+  }
+  
+
+  
+  
       
   // updated document title
   document.title = document.title + " / " + spaceId + " / " + spaceInfo.title
