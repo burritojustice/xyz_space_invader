@@ -289,7 +289,9 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       url_params: {
         access_token: token,
         clip: true,
-        tweaks: 'ensure'
+        tweaks: 'simplification',
+        tweaks['algorithm']: 'distribution',
+        tweaks['strength']: 'high'
       }      
     };
     
