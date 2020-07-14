@@ -281,16 +281,16 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     const propertySearch = propertySearchQueryParams.map(v => v.join('=')).join('&');
     // build property search query string params
     // TODO: replace with native Tangram `url_params` when multiple-value support is available
-    var tweaks = 'simplification'
-    var tweaks_algorithm = 'distribution'
-    var tweaks_strength = 'high'
     scene_config.sources = scene_config.sources || {};
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
-      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}?${propertySearch}&{tweaks}&{tweaks_algorithm}&{tweaks_strength}`,
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}?${propertySearch}`,
       url_params: {
         access_token: token,
-        clip: true
+        clip: true,
+        tweaks: 'simplification',
+        ['tweaks.algorithm']: 'distribution',
+        ['tweaks.strength']: 'high'
       }      
     };
     
