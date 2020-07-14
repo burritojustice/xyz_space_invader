@@ -287,12 +287,15 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}?${propertySearch}`,
       url_params: {
         access_token: token,
-        clip: true,
-        tweaks: 'simplification',
-        ['tweaks.algorithm']: 'distribution',
-        ['tweaks.strength']: 'high'
+        clip: true
       }      
     };
+    var tweaks = true
+    if (tweaks){
+      scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
+      scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
+      scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'high'
+    }
     
     if (isProjectable(basemap)) {
       try {
