@@ -294,7 +294,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     if (tweaks){
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
       scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
-      scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'high'
+      scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
     }
     
     if (isProjectable(basemap)) {
