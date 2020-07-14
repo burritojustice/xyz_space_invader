@@ -288,7 +288,8 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}?${propertySearch}`,
       url_params: {
         access_token: token,
-        clip: true
+        clip: true,
+        tweaks: 'ensure'
       }      
     };
     
