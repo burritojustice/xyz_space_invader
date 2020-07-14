@@ -251,7 +251,7 @@ function applySpace({ spaceId, token, hexbinInfo, basemap, displayToggles: { hex
     scene_config.sources = scene_config.sources || {};
     scene_config.sources._xyzspace = {
       type: 'GeoJSON',
-      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}`,
+      url: `https://xyz.api.here.com/hub/spaces/${activeSpaceId}/tile/web/{z}_{x}_{y}&tweaks=ensure`,
       url_params: {
         access_token: token,
         clip: true
