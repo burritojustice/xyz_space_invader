@@ -857,7 +857,8 @@ export default {
         propertySearch,
         tweaksSimplification,
         tweaksSampling,
-        tweaksStrength
+        tweaksStrength,
+        tweaksEnsure
       }) => {
 
       const params = new URLSearchParams();
@@ -916,7 +917,8 @@ export default {
       
       params.set('simplification',tweaksSimplification);
       params.set('sampling',tweaksSampling);
-      params.set(  tweaksStrength
+      params.set('strength',tweaksStrength);
+      params.set('ensure',tweaksEnsure)
 
       return params;
     }
@@ -1159,6 +1161,7 @@ export default {
       const tweaksSimplification = params.simplification
       const tweaksSampling = params.sampling
       const tweaksStrength = params.strength
+      const tweaksEnsure = params.ensure
 
       // set all params
       this.set({
