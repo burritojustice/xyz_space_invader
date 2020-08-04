@@ -290,12 +290,13 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
-    var sampling = false
+    //
+    var sampling = true
     var simplification = true
     if (sampling){
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
       scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
-      scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
+      scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
     }
     if (simplification){
       scene_config.sources._xyzspace.url_params.tweaks = 'simplification'
