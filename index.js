@@ -236,7 +236,7 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, basemap, hexbinInfo, gisInfo, projection }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, basemap, hexbinInfo, gisInfo, projection, tweaks }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
@@ -290,17 +290,46 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
-    //
-    var sampling = true
-    var simplification = true
-    if (sampling){
+
+    
+    if (tweaks.sampling){
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
-      scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
-      scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
+      if (tweaks.sampling){
+        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = tweaks.sampling
+      }
+      else {
+        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
+      }
+      if (tweaks.strength){
+        scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+      } 
+      else {
+        scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
+      }
+      
     }
-    if (simplification){
+    else if (tweaks.simplification){
       scene_config.sources._xyzspace.url_params.tweaks = 'simplification'
-      scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
+      if (tweaks.simplification == 'grid'){
+        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'grid';
+        if (tweaks.strength){
+          scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+        }
+        else {
+          scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medium'
+        }
+      }
+      else {
+        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
+      }
+    }
+    else if (tweaks.ensure){
+       scene_config.sources._xyzspace.url_params.tweaks = 'ensure'
+    }
+    else {
+      delete scene_config.sources._xyzspace.url_params.tweaks
+      delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
+      delete scene_config.sources._xyzspace.url_params['tweaks.strength']
     }
     
     if (isProjectable(basemap)) {
