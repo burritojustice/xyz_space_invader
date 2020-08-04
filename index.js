@@ -290,11 +290,16 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
-    var tweaks = true
-    if (tweaks){
+    var sampling = false
+    var simplification = true
+    if (sampling){
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
       scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
       scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
+    }
+    if (simplification){
+      scene_config.sources._xyzspace.url_params.tweaks = 'simplification'
+      scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
     }
     
     if (isProjectable(basemap)) {
