@@ -589,6 +589,8 @@ export default {
       basemaps, // need to reference here to make accessible to templates
       projections, // need to reference here to make accessible to templates
       isProjectable, // needa to reference here to make accessible to templates
+      
+      tweaks: {}
     }
   },
 
@@ -855,10 +857,7 @@ export default {
         featurePointSizeDisplayRange,
         tagFilterQueryParam,
         propertySearch,
-        tweaksSimplification,
-        tweaksSampling,
-        tweaksStrength,
-        tweaksEnsure
+        tweaks
       }) => {
 
       const params = new URLSearchParams();
@@ -915,10 +914,10 @@ export default {
 
       params.set('propertySearch', JSON.stringify(propertySearch));
       
-      params.set('simplification',tweaksSimplification);
-      params.set('sampling',tweaksSampling);
-      params.set('strength',tweaksStrength);
-      params.set('ensure',tweaksEnsure)
+      params.set('simplification',tweaks.simplification);
+      params.set('sampling',tweaks.sampling);
+      params.set('strength',tweaks.strength);
+      params.set('ensure',tweaks.ensure)
 
       return params;
     }
@@ -1158,10 +1157,11 @@ export default {
         propertySearch = JSON.parse(params.propertySearch);
       } catch(e) {}
       
-      const tweaksSimplification = params.simplification
-      const tweaksSampling = params.sampling
-      const tweaksStrength = params.strength
-      const tweaksEnsure = params.ensure
+      let tweaks = {}
+      tweaks.simplification = params.simplification
+      tweaks.sampling = params.sampling
+      tweaks.strength = params.strength
+      tweaks.ensure = params.ensure
 
       // set all params
       this.set({
@@ -1185,9 +1185,7 @@ export default {
         tagFilterList,
         tagFilterAndOr,
         propertySearch,
-        tweaksSimplification,
-        tweaksSampling,
-        tweaksStrength
+        tweaks
       });
 
       this.updateSpace(false);
