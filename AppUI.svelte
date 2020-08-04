@@ -854,7 +854,10 @@ export default {
         featurePointSizeProp,
         featurePointSizeDisplayRange,
         tagFilterQueryParam,
-        propertySearch
+        propertySearch,
+        tweaksSimplification,
+        tweaksSampling,
+        tweaksStrength
       }) => {
 
       const params = new URLSearchParams();
@@ -910,6 +913,10 @@ export default {
       params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
 
       params.set('propertySearch', JSON.stringify(propertySearch));
+      
+      params.set('simplification',tweaksSimplification);
+      params.set('sampling',tweaksSampling);
+      params.set(  tweaksStrength
 
       return params;
     }
@@ -1148,6 +1155,10 @@ export default {
       try { // protect against JSON.parse failure (it's brittle with string input)
         propertySearch = JSON.parse(params.propertySearch);
       } catch(e) {}
+      
+      const tweaksSimplification = params.simplification
+      const tweaksSampling = params.sampling
+      const tweaksStrength = params.strength
 
       // set all params
       this.set({
@@ -1170,7 +1181,10 @@ export default {
         featurePointSizeDisplayRange,
         tagFilterList,
         tagFilterAndOr,
-        propertySearch
+        propertySearch,
+        tweaksSimplification,
+        tweaksSampling,
+        tweaksStrength
       });
 
       this.updateSpace(false);
