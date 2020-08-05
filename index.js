@@ -291,19 +291,19 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       }      
     };
 
-    
+    console.log(tweaks)    
     if (tweaks.sampling){
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
       if (tweaks.sampling){
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = tweaks.sampling
       }
-      else {
+      else { // is it missing? then assume distribution
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
       }
       if (tweaks.strength){
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
       } 
-      else {
+      else { // is it missing? then assume medhigh
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
       }
       
@@ -315,11 +315,11 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         if (tweaks.strength){
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
         }
-        else {
+        else { // is it missing? then assume medium
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medium'
         }
       }
-      else {
+      else { // if it isn't grid, then do gridbylevel
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
       }
     }
