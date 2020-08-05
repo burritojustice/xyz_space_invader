@@ -318,9 +318,11 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       }
       else { // is it missing? or wrong? then assume medhigh
         var currentZoom = scene.view.tile_zoom;
-        var mapResolution = scene.view.meters_per_pixel
+//         var mapResolution = scene.view.meters_per_pixel
         // do a quick estimate using the space's data density and zoom level
-        
+        var screenSqkm = scene.view.size.x/1000 * scene.view.size.y/1000 // sq.km
+        var screenFeatureEstimate = screenArea * spaceInfo.density
+        console.log('viewport features estimated by space density:',screenFeatureEstimate)
         
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
       }
