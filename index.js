@@ -236,7 +236,7 @@ function makeLayer(scene_obj) {
   window.layer = layer; // debugging
   window.scene = scene;  // debugging
 }
-function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, basemap, hexbinInfo, gisInfo, projection, tweaks }, scene_config) {
+function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clusteringProp, quadRez, quadCountmode, voronoi, delaunay } = {}, propertySearchQueryParams, basemap, hexbinInfo, gisInfo, projection, tweaks, spaceInfo }, scene_config) {
 
   if (spaceId && token) {
     // choose main space, or hexbins space
@@ -291,21 +291,37 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       }      
     };
 
-    console.log(tweaks)    
+    console.table(tweaks)    
     if (tweaks.sampling){
+      console.log('sampling selected')
+      // if a user jams something into sampling, run with distribution
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
-      if (tweaks.sampling){
-        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = tweaks.sampling
+      if (tweaks.sampling == true || tweaks.sampling == 'distribution'){
+        // if sampling=true just assume they want distribution
+        console.log('distribution selected')
+        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
       }
-      else { // is it missing? then assume distribution
+      else if (tweaks.sampling == 'geometrysize'){
+        console.log('geometrysize selected')
+        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'geometrysize'
+      }
+      else { // is it something else? let's just assume distribution
         console.log('sampling chosen, no algorithm selected, choosing distribution')
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
       }
-      if (tweaks.strength){
+      
+      if (tweaks.strength == 'low' || 'lowmed' || 'med' || 'medhigh' || 'high'){
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
       } 
-      else { // is it missing? then assume medhigh
-        console.log('no strength chosen, selecting medhigh')
+      else if (tweaks.strength >=1 && tweaks.strength <= 100){
+          scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+      }
+      else { // is it missing? or wrong? then assume medhigh
+        var currentZoom = scene.view.tile_zoom;
+        var mapResolution = scene.view.meters_per_pixel
+        // do a quick estimate using the space's data density and zoom level
+        
+        
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
       }
       
@@ -582,7 +598,18 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     console.log('zeros')
     bbox = [-45, -45, 45, 45]
   }
+  
+  function degToRad(degrees) {
+    return degrees * (Math.PI / 180);
+  };
 
+  function radToDeg(rad) {
+    return rad / (Math.PI / 180);
+  };
+  
+  var bbox_area = Math.pow(6371,2) * Math.PI * Math.abs(Math.sin(degToRad(bbox[3])) - Math.sin(degToRad(bbox[1]))) * Math.abs(bbox[2] - (bbox[0])) / 180;
+  console.log(bbox_area,'sq km')
+  
   let fitBounds = false;
   if (mapStartLocation) {
     // if there is a map hashtag and it is outside the bbox, recenter, but if it's inside, keep that view
@@ -606,6 +633,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   
   var spaceSize = (stats.byteSize) ? stats.byteSize.value : 0
   var spaceCount = (stats.count) ? stats.count.value : 0
+  var density = (spaceCount/bbox_area).toFixed(1) // features per sq.km
 
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
@@ -756,7 +784,9 @@ async function getStats({ spaceId, token, mapStartLocation }) {
       properties,
       dataSize: calcSize,
       featureSize: featureSize,
-      updatedAt: timeUnitsElapsed
+      updatedAt: timeUnitsElapsed,
+      bbox_area: bbox_area,
+      density: density
     },
     hexbinInfo,
     tokenCapabilities,
