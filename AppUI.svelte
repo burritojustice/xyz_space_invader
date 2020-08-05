@@ -919,7 +919,7 @@ export default {
       if (tweaks.sampling){
         params.set('sampling',tweaks.sampling);
       }
-      if (tweaks.strength)){
+      if (tweaks.strength){
         params.set('strength',tweaks.strength);
       }
       if ()tweaks.ensure {
