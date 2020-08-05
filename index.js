@@ -332,7 +332,6 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
           console.log('auto-selected med for simplifiedkeeptopology')// default if no strength selected
         }
-        }
       }
       else { 
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
