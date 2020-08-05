@@ -923,7 +923,7 @@ export default {
         params.set('strength',tweaks.strength);
       }
       if (tweaks.ensure) {
-        params.set('ensure',tweaks.ensure))
+        params.set('ensure',tweaks.ensure)
       }
       
       
