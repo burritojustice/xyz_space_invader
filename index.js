@@ -309,10 +309,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         console.log('sampling chosen, no algorithm selected, choosing distribution')
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
       }
-      
-      if (tweaks.strength == 'low' || 'lowmed' || 'med' || 'medhigh' || 'high'){
+      console.log('tweaks.strength:',tweaks.strength)
+      if ((tweaks.strength) && (tweaks.strength== 'low' || 'lowmed' || 'med' || 'medhigh' || 'high')){
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
-        console.log('sampling strength text:',tweaks.strength)
+        console.log('sampling strength text:',tweaks.strength,scene_config.sources._xyzspace.url_params['tweaks.strength'])
       } 
       else if (tweaks.strength >=1 && tweaks.strength <= 100){
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
