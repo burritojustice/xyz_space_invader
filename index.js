@@ -298,12 +298,14 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = tweaks.sampling
       }
       else { // is it missing? then assume distribution
+        console.log('sampling chosen, no algorithm selected, choosing distribution')
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
       }
       if (tweaks.strength){
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
       } 
       else { // is it missing? then assume medhigh
+        console.log('no strength chosen, selecting medhigh')
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
       }
       
@@ -315,12 +317,26 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         if (tweaks.strength){
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
         }
-        else { // is it missing? then assume medium
-          scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medium'
+        else {
+          scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
+          console.log('auto-selected med for grid')// default if no strength selected
         }
       }
-      else { // if it isn't grid, then do gridbylevel
+      else if (tweaks.simplification == 'simplifiedkeeptopology'){
+        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'simplifiedkeeptopology';
+        if (tweaks.strength){
+          scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+          console.log('simplifiedkeeptopology,med')
+        }
+        else {
+          scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
+          console.log('auto-selected med for simplifiedkeeptopology')// default if no strength selected
+        }
+        }
+      }
+      else { 
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
+        console.log('no algorithm chosen, applying gridbylevel')
       }
     }
     else if (tweaks.ensure){
