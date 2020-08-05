@@ -913,11 +913,20 @@ export default {
       params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
 
       params.set('propertySearch', JSON.stringify(propertySearch));
+      if (tweaks.simplification){
+        params.set('simplification',tweaks.simplification);
+      }
+      if (tweaks.sampling){
+        params.set('sampling',tweaks.sampling);
+      }
+      if (tweaks.strength)){
+        params.set('strength',tweaks.strength);
+      }
+      if ()tweaks.ensure {
+        params.set('ensure',tweaks.ensure))
+      }
       
-      params.set('simplification',tweaks.simplification);
-      params.set('sampling',tweaks.sampling);
-      params.set('strength',tweaks.strength);
-      params.set('ensure',tweaks.ensure)
+      
 
       return params;
     }
@@ -1158,10 +1167,19 @@ export default {
       } catch(e) {}
       
       let tweaks = {}
-      tweaks.simplification = params.simplification
-      tweaks.sampling = params.sampling
-      tweaks.strength = params.strength
-      tweaks.ensure = params.ensure
+      if (params.simplification){
+        tweaks.simplification = params.simplification
+      }
+      else if (params.sampling){
+        tweaks.sampling = params.sampling
+      }
+      if (params.strength){
+        tweaks.strength = params.strength
+      }
+      if (params.ensure){
+        tweaks.ensure = params.ensure
+      }
+      
 
       // set all params
       this.set({
