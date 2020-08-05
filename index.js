@@ -293,7 +293,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
 
     console.table(tweaks)    
     if (tweaks.sampling){
-      console.log('sampling selected')
+      console.log('feature sampling selected')
       // if a user jams something into sampling, run with distribution
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
       if (tweaks.sampling == true || tweaks.sampling == 'distribution'){
@@ -312,23 +312,25 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       
       if (tweaks.strength == 'low' || 'lowmed' || 'med' || 'medhigh' || 'high'){
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+        console.log('sampling strength:',tweaks.strength)
       } 
       else if (tweaks.strength >=1 && tweaks.strength <= 100){
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+          console.log('sampling strength:',tweaks.strength)
       }
       else { // is it missing? or wrong? then assume medhigh
         var currentZoom = scene.view.tile_zoom;
-//         var mapResolution = scene.view.meters_per_pixel
+        var mapResolution = scene.view.meters_per_pixel
         // do a quick estimate using the space's data density and zoom level
         var screenSqkm = scene.view.size.x/1000 * scene.view.size.y/1000 // sq.km
-        var screenFeatureEstimate = screenArea * spaceInfo.density
-        console.log('viewport features estimated by space density:',screenFeatureEstimate)
-        
+        var screenFeatureEstimate = screenSqkm * spaceInfo.density
+        console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
       }
-      
+      console.log('sampling set')
     }
     else if (tweaks.simplification){
+      console.log('feature simplification selected')
       scene_config.sources._xyzspace.url_params.tweaks = 'simplification'
       if (tweaks.simplification == 'grid'){
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'grid';
