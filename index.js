@@ -312,11 +312,11 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       
       if (tweaks.strength == 'low' || 'lowmed' || 'med' || 'medhigh' || 'high'){
         scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
-        console.log('sampling strength:',tweaks.strength)
+        console.log('sampling strength text:',tweaks.strength)
       } 
       else if (tweaks.strength >=1 && tweaks.strength <= 100){
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
-          console.log('sampling strength:',tweaks.strength)
+          console.log('sampling strength number:',tweaks.strength)
       }
       else { // is it missing? or wrong? then assume medhigh
         var currentZoom = scene.view.tile_zoom;
