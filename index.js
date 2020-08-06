@@ -296,7 +296,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       console.log('feature sampling selected')
       // if a user jams something into sampling, run with distribution
       scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
-      if (tweaks.sampling == true || tweaks.sampling == 'distribution'){
+      if (tweaks.sampling == 'distribution'){
         // if sampling=true just assume they want distribution
         console.log('distribution selected')
         scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
@@ -325,7 +325,27 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
         var screenFeatureEstimate = screenSqkm * spaceInfo.density
         console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
-        scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'medhigh'
+        var ratio = 50000/screenFeatureEstimate
+        if (ratio > 1){
+          console.log(screenFeatureEstimate,'estimated features on screen, no need to use sampling')
+          delete scene_config.sources._xyzspace.url_params.tweaks
+          delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
+          delete scene_config.sources._xyzspace.url_params['tweaks.strength']
+        }
+        else {
+          if (ratio > 1 && ratio < 4){
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'low'
+            console.log(ratio,'strength = low')
+          }
+          if (ratio >= 4 && ratio < 16){
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'lowmed'
+            console.log(ratio,'strength = lowmed')
+          }
+          if (ratio >= 16 && ratio < 64){
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
+            console.log(ratio,'strength = med')
+          }          
+        }
       }
       console.log('sampling set')
     }
