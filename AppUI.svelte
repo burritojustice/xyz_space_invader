@@ -135,12 +135,12 @@
       
         {#if tweaks}
           <table>
-              <tr><td> 
+              <tr> 
                 {#if tweaks.sampling}
-                  sampling:</td><td> {tweaks.sampling}</td><td>{tweaks.strength}</td>
+                  <td>sampling:</td><td> {tweaks.sampling}</td><td>{tweaks.strength}</td>
                 {/if}
                 {#if tweaks.simplification}
-                  simplification:</td><td> {tweaks.simplification}</td><td>{tweaks.strength}</td>
+                  <td>simplification:</td><td> {tweaks.simplification}</td><td>{tweaks.strength}</td>
                 {/if}
               </tr>
           </table>
