@@ -13,7 +13,7 @@
           <!-- Space info -->
           <div>{spaceInfo.title}</div>
           {#if !demoMode}
-            <div>{spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}, {spaceInfo.featureSize}</div>
+            <div>{spaceId}: {spaceInfo.numFeatures.toLocaleString()} features, {spaceInfo.dataSize}<br>{spaceInfo.featureSize}, {spaceInfo.density}/sq.km</div>
             {#if spaceInfo.updatedAt}
               <div>{spaceInfo.updatedAt}</div>
             {/if}
@@ -132,7 +132,19 @@
               </tr>
           </table>
         {/if}
-
+      
+        {#if tweaks}
+          <table>
+              <tr><td> 
+                {#if tweaks.sampling}
+                  sampling:</td><td> {tweaks.sampling}</td><td>{tweaks.strength}</td>
+                {/if}
+                {#if tweaks.simplification}
+                  simplification:</td><td> {tweaks.simplification}</td><td>{tweaks.strength}</td>
+                {/if}
+              </tr>
+          </table>
+        {/if}
         <!-- Basemap selector -->
         <div class="controls_left_selector">basemap:
           <select bind:value="basemap" class="controls_left_dropdown">
@@ -871,9 +883,10 @@ export default {
       }
 
       params.set('basemap', basemap);
-
-      params.set('projection', projection);
-
+      
+      if (projection){
+        params.set('projection', projection);
+      }
       params.set('demo', demoMode ? 1 : 0);
 
       for(const p in displayToggles) {
@@ -907,12 +920,18 @@ export default {
       }
 
       params.set('sort', featurePropValueSort);
+      
       params.set('hideOutliers', featurePropHideOutliers);
-
-      params.set('pointSizeProp', featurePointSizeProp);
-      params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
-
-      params.set('propertySearch', JSON.stringify(propertySearch));
+      
+      if (featurePointSizeProp){
+        params.set('pointSizeProp', featurePointSizeProp);
+      }
+      if (featurePointSizeDisplayRange){
+        params.set('pointSizeRange', JSON.stringify(featurePointSizeDisplayRange));
+      }
+      if (propertySearch){
+        params.set('propertySearch', JSON.stringify(propertySearch));
+      }
       if (tweaks.simplification){
         params.set('simplification',tweaks.simplification);
       }
