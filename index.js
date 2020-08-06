@@ -318,14 +318,14 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
           console.log('sampling strength number:',tweaks.strength)
       }
-      else { // is it missing? or wrong? then assume medhigh
+      else { // if strength is not explicitly set, try to figure out a reasonable number of features based on space feature count and density
         var currentZoom = scene.view.tile_zoom;
         var mapResolution = scene.view.meters_per_pixel
         // do a quick estimate using the space's data density and zoom level
         var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
-        var screenFeatureEstimate = screenSqkm * spaceInfo.density
+        var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
         console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
-        var ratio = 50000/screenFeatureEstimate
+        var ratio = 500000/screenFeatureEstimate 
         if (ratio > 1){
           console.log(screenFeatureEstimate,'estimated features on screen, no need to use sampling')
           delete scene_config.sources._xyzspace.url_params.tweaks
@@ -657,7 +657,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   
   var spaceSize = (stats.byteSize) ? stats.byteSize.value : 0
   var spaceCount = (stats.count) ? stats.count.value : 0
-  var density = (spaceCount/bbox_area).toFixed(1) // features per sq.km
+  var density = (spaceCount/bbox_area).toFixed(2) // features per sq.km
 
   var calcSize = (spaceSize/1024/1024)
   console.log(spaceSize,'KB',calcSize,featureSize)
