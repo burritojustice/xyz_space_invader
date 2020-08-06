@@ -632,7 +632,6 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   };
   
   var bbox_area = Math.pow(6371,2) * Math.PI * Math.abs(Math.sin(degToRad(bbox[3])) - Math.sin(degToRad(bbox[1]))) * Math.abs(bbox[2] - (bbox[0])) / 180;
-  console.log(bbox_area,'sq km')
   
   let fitBounds = false;
   if (mapStartLocation) {
@@ -658,9 +657,8 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   var spaceSize = (stats.byteSize) ? stats.byteSize.value : 0
   var spaceCount = (stats.count) ? stats.count.value : 0
   var density = (spaceCount/bbox_area).toFixed(2) // features per sq.km
-
+  console.log(density,"/ features / sq.km", bbox_area, "sq.km",)
   var calcSize = (spaceSize/1024/1024)
-  console.log(spaceSize,'KB',calcSize,featureSize)
 
   if (calcSize < 1000) {
     calcSize = calcSize.toFixed(1) + ' MB'
@@ -675,6 +673,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     calcSize = "n/a"
     featureSize = "n/a"
   }
+  console.log(spaceSize,calcSize,featureSize)
 
   // Get property info
   const properties =
