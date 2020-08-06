@@ -298,7 +298,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       const north = bounds[1[0]]
       console.table(west,east,north,south)
       if (tweaks.sampling){
-        var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west=`west`&east=`east`&north=`north`&south=`south`&clustering=quadbin&clustering.relativeResolution=4&access_token=${token}`;
+        var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west={west}&east={east}&north={north}&south={south}&clustering=quadbin&clustering.relativeResolution=4&access_token=${token}`;
         const stats = await fetch(url).then(r => r.json());
       // console.log(stats)
         console.log('feature sampling selected')
@@ -395,6 +395,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         delete scene_config.sources._xyzspace.url_params['tweaks.strength']
       }
     }
+    setTweaks()
     
     if (isProjectable(basemap)) {
       try {
