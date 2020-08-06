@@ -39,9 +39,8 @@ map.setView([37.7,-122.4], 2);
 const appUI = new AppUI({
   target: document.getElementById('ui')
 });
-
 window.appUI = appUI; // debugging
-
+window.map = map;
 // Handle UI events affecting Tangram scene
 appUI.on('loadScene', state => {
   loadScene(state);
@@ -290,101 +289,111 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
-
-    console.table(tweaks)    
-    if (tweaks.sampling){
-      console.log('feature sampling selected')
-      // if a user jams something into sampling, run with distribution
-      scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
-      if (tweaks.sampling == 'distribution'){
-        // if sampling=true just assume they want distribution
-        console.log('distribution selected')
-        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
-      }
-      else if (tweaks.sampling == 'geometrysize'){
-        console.log('geometrysize selected')
-        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'geometrysize'
-      }
-      else { // is it something else? let's just assume distribution
-        console.log('sampling chosen, no algorithm selected, choosing distribution')
-        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
-      }
-      console.log('tweaks.strength:',tweaks.strength)
-      if ((tweaks.strength) && (tweaks.strength== 'low' || 'lowmed' || 'med' || 'medhigh' || 'high')){
-        scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
-        console.log('sampling strength text:',tweaks.strength,scene_config.sources._xyzspace.url_params['tweaks.strength'])
-      } 
-      else if (tweaks.strength >=1 && tweaks.strength <= 100){
-          scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
-          console.log('sampling strength number:',tweaks.strength)
-      }
-      else { // if strength is not explicitly set, try to figure out a reasonable number of features based on space feature count and density
-        var currentZoom = scene.view.tile_zoom;
-        var mapResolution = scene.view.meters_per_pixel
-        // do a quick estimate using the space's data density and zoom level
-        var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
-        var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
-        console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
-        var ratio = 500000/screenFeatureEstimate 
-        if (ratio > 1){
-          console.log(screenFeatureEstimate,'estimated features on screen, no need to use sampling')
-          delete scene_config.sources._xyzspace.url_params.tweaks
-          delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
-          delete scene_config.sources._xyzspace.url_params['tweaks.strength']
+    async function setTweaks(){
+      console.table(tweaks)
+      const bounds = map.getBounds()
+      const west = bounds[0[1]]
+      const east = bounds[1[1]]
+      const south = bounds[0[0]]
+      const north = bounds[1[0]]
+      console.table(west,east,north,south]
+      if (tweaks.sampling){
+        var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west=`west`&east=`east`&north=`north`&south=`south`&clustering=quadbin&clustering.relativeResolution=4&access_token=${token}`;
+        const stats = await fetch(url).then(r => r.json());
+      // console.log(stats)
+        console.log('feature sampling selected')
+        // if a user jams something into sampling, run with distribution
+        scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
+        if (tweaks.sampling == 'distribution'){
+          // if sampling=true just assume they want distribution
+          console.log('distribution selected')
+          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
         }
-        else {
-          if (ratio > 1 && ratio < 4){
-            scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'low'
-            console.log(ratio,'strength = low')
+        else if (tweaks.sampling == 'geometrysize'){
+          console.log('geometrysize selected')
+          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'geometrysize'
+        }
+        else { // is it something else? let's just assume distribution
+          console.log('sampling chosen, no algorithm selected, choosing distribution')
+          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'distribution'
+        }
+        console.log('tweaks.strength:',tweaks.strength)
+        if ((tweaks.strength) && (tweaks.strength== 'low' || 'lowmed' || 'med' || 'medhigh' || 'high')){
+          scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+          console.log('sampling strength text:',tweaks.strength,scene_config.sources._xyzspace.url_params['tweaks.strength'])
+        } 
+        else if (tweaks.strength >=1 && tweaks.strength <= 100){
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+            console.log('sampling strength number:',tweaks.strength)
+        }
+        else { // if strength is not explicitly set, try to figure out a reasonable number of features based on space feature count and density
+          var currentZoom = scene.view.tile_zoom;
+          var mapResolution = scene.view.meters_per_pixel
+          // do a quick estimate using the space's data density and zoom level
+          var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
+          var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
+          console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
+          var ratio = 500000/screenFeatureEstimate 
+          if (ratio > 1){
+            console.log(screenFeatureEstimate,'estimated features on screen, no need to use sampling')
+            delete scene_config.sources._xyzspace.url_params.tweaks
+            delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
+            delete scene_config.sources._xyzspace.url_params['tweaks.strength']
           }
-          if (ratio >= 4 && ratio < 16){
-            scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'lowmed'
-            console.log(ratio,'strength = lowmed')
+          else {
+            if (ratio > 1 && ratio < 4){
+              scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'low'
+              console.log(ratio,'strength = low')
+            }
+            if (ratio >= 4 && ratio < 16){
+              scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'lowmed'
+              console.log(ratio,'strength = lowmed')
+            }
+            if (ratio >= 16 && ratio < 64){
+              scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
+              console.log(ratio,'strength = med')
+            }          
           }
-          if (ratio >= 16 && ratio < 64){
+        }
+        console.log('sampling set')
+      }
+      else if (tweaks.simplification){
+        console.log('feature simplification selected')
+        scene_config.sources._xyzspace.url_params.tweaks = 'simplification'
+        if (tweaks.simplification == 'grid'){
+          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'grid';
+          if (tweaks.strength){
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+          }
+          else {
             scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
-            console.log(ratio,'strength = med')
-          }          
+            console.log('auto-selected med for grid')// default if no strength selected
+          }
+        }
+        else if (tweaks.simplification == 'simplifiedkeeptopology'){
+          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'simplifiedkeeptopology';
+          if (tweaks.strength){
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
+            console.log('simplifiedkeeptopology,med')
+          }
+          else {
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
+            console.log('auto-selected med for simplifiedkeeptopology')// default if no strength selected
+          }
+        }
+        else { 
+          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
+          console.log('no algorithm chosen, applying gridbylevel')
         }
       }
-      console.log('sampling set')
-    }
-    else if (tweaks.simplification){
-      console.log('feature simplification selected')
-      scene_config.sources._xyzspace.url_params.tweaks = 'simplification'
-      if (tweaks.simplification == 'grid'){
-        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'grid';
-        if (tweaks.strength){
-          scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
-        }
-        else {
-          scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
-          console.log('auto-selected med for grid')// default if no strength selected
-        }
+      else if (tweaks.ensure){
+         scene_config.sources._xyzspace.url_params.tweaks = 'ensure'
       }
-      else if (tweaks.simplification == 'simplifiedkeeptopology'){
-        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'simplifiedkeeptopology';
-        if (tweaks.strength){
-          scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
-          console.log('simplifiedkeeptopology,med')
-        }
-        else {
-          scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
-          console.log('auto-selected med for simplifiedkeeptopology')// default if no strength selected
-        }
+      else {
+        delete scene_config.sources._xyzspace.url_params.tweaks
+        delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
+        delete scene_config.sources._xyzspace.url_params['tweaks.strength']
       }
-      else { 
-        scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
-        console.log('no algorithm chosen, applying gridbylevel')
-      }
-    }
-    else if (tweaks.ensure){
-       scene_config.sources._xyzspace.url_params.tweaks = 'ensure'
-    }
-    else {
-      delete scene_config.sources._xyzspace.url_params.tweaks
-      delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
-      delete scene_config.sources._xyzspace.url_params['tweaks.strength']
     }
     
     if (isProjectable(basemap)) {
@@ -630,7 +639,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   function radToDeg(rad) {
     return rad / (Math.PI / 180);
   };
-  
+  var height = 
   var bbox_area = Math.pow(6371,2) * Math.PI * Math.abs(Math.sin(degToRad(bbox[3])) - Math.sin(degToRad(bbox[1]))) * Math.abs(bbox[2] - (bbox[0])) / 180;
   
   let fitBounds = false;
