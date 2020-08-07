@@ -292,6 +292,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     async function setTweaks(){
       console.table(tweaks)
       const bounds = map.getBounds()
+      console.table(bounds)
       const west = bounds[0[1]]
       const east = bounds[1[1]]
       const south = bounds[0[0]]
