@@ -138,9 +138,13 @@
               <tr> 
                 {#if tweaks.sampling}
                   <td>sampling:</td><td> {tweaks.sampling}</td><td>{tweaks.strength}</td>
+                  <div class="slidecontainer">
+                    <input bind:value="tweaks.sampling" type="range" min="0" max="100" value="{tweaks.sampling}" class="slider" id="distribution">
+                  </div>
                 {/if}
                 {#if tweaks.simplification}
                   <td>simplification:</td><td> {tweaks.simplification}</td><td>{tweaks.strength}</td>
+                
                 {/if}
               </tr>
           </table>
