@@ -303,7 +303,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west=${west}&east=${east}&north=${north}&south=${south}&clustering=quadbin&clustering.relativeResolution=0&access_token=${token}`;
         const stats = await fetch(url).then(r => r.json());
         console.log(stats)
-        var viewport_count = stats.features[0].geometry.properties.count // should be just one quadbin
+        var viewport_count = stats.features[0].properties.count // should be just one quadbin
         console.log('feature sampling selected')
         // if a user jams something into sampling, run with distribution
         scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
