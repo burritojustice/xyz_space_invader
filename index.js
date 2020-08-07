@@ -336,7 +336,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
 //           var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
 //           var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
 //           console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
-          var ratio = viewport_count/10000 
+          var ratio = Math.round(viewport_count/10000)
           console.log('ratio',ratio)
           if (ratio < 1){
             console.log(viewport_count,'estimated features on screen, no need to use sampling')
