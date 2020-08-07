@@ -292,17 +292,18 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     async function setTweaks(){
       console.table(tweaks)
       const viewport_bounds = map.getBounds()
-      console.log(viewport_bounds)
+//       console.log(viewport_bounds)
       const west = viewport_bounds._southWest.lng
       const east = viewport_bounds._northEast.lng
       const south = viewport_bounds._southWest.lat
       const north = viewport_bounds._northEast.lat
-      console.log(west,east,north,south)
+//       console.log(west,east,north,south)
       if (tweaks.sampling){
+        // get a count of the viewport before loading it
         var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west=${west}&east=${east}&north=${north}&south=${south}&clustering=quadbin&clustering.relativeResolution=0&access_token=${token}`;
         const stats = await fetch(url).then(r => r.json());
         console.log(stats)
-        console.log(stats.features[0].geometry.properties.count)
+        var viewport_count = stats.features[0].geometry.properties.count // should be just one quadbin
         console.log('feature sampling selected')
         // if a user jams something into sampling, run with distribution
         scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
@@ -332,29 +333,18 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
           var currentZoom = scene.view.tile_zoom;
           var mapResolution = scene.view.meters_per_pixel
           // do a quick estimate using the space's data density and zoom level
-          var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
-          var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
-          console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
-          var ratio = 500000/screenFeatureEstimate 
-          if (ratio > 1){
-            console.log(screenFeatureEstimate,'estimated features on screen, no need to use sampling')
+//           var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
+//           var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
+//           console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
+          var ratio = viewport_count/10000 
+          if (ratio < 1){
+            console.log(viewport_count,'estimated features on screen, no need to use sampling')
             delete scene_config.sources._xyzspace.url_params.tweaks
             delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
             delete scene_config.sources._xyzspace.url_params['tweaks.strength']
           }
           else {
-            if (ratio > 1 && ratio < 4){
-              scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'low'
-              console.log(ratio,'strength = low')
-            }
-            if (ratio >= 4 && ratio < 16){
-              scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'lowmed'
-              console.log(ratio,'strength = lowmed')
-            }
-            if (ratio >= 16 && ratio < 64){
-              scene_config.sources._xyzspace.url_params['tweaks.strength'] = 'med'
-              console.log(ratio,'strength = med')
-            }          
+            scene_config.sources._xyzspace.url_params['tweaks.strength'] = ratio
           }
         }
         console.log('sampling set')
