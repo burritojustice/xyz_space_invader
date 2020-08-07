@@ -291,12 +291,12 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     };
     async function setTweaks(){
       console.table(tweaks)
-      const bounds = map.getBounds()
+      const viewport_bounds = map.getBounds()
       console.log(bounds)
-      const west = bounds[0[1]]
-      const east = bounds[1[1]]
-      const south = bounds[0[0]]
-      const north = bounds[1[0]]
+      const west = viewport_bounds._southwest.lat
+      const east = viewport_bounds._northeast.lat
+      const south = viewport_bounds._southwest.lng
+      const north = viewport_bounds._northeast.lng
       console.log(west,east,north,south)
       if (tweaks.sampling){
         var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west={west}&east={east}&north={north}&south={south}&clustering=quadbin&clustering.relativeResolution=4&access_token=${token}`;
