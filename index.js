@@ -292,7 +292,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
     async function setTweaks(){
       console.table(tweaks)
       const viewport_bounds = map.getBounds()
-      console.log(bounds)
+      console.log(viewport_bounds)
       const west = viewport_bounds._southwest.lat
       const east = viewport_bounds._northeast.lat
       const south = viewport_bounds._southwest.lng
