@@ -1025,9 +1025,7 @@ export default {
         changed.featurePropMinFilter ||
         changed.featurePropMaxFilter ||
         changed.featurePropHideOutliers ||
-        changed.tweaks.strength ||
-        changed.tweaks.sampling ||
-        changed.tweaks.distribution
+        changed.tweaks
        ) {
       this.fire('updateScene', current);
     }
