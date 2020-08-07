@@ -293,13 +293,13 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       console.table(tweaks)
       const viewport_bounds = map.getBounds()
       console.log(viewport_bounds)
-      const west = viewport_bounds._southWest.lat
-      const east = viewport_bounds._northEast.lat
-      const south = viewport_bounds._southWest.lng
-      const north = viewport_bounds._northEast.lng
+      const west = viewport_bounds._southWest.lng
+      const east = viewport_bounds._northEast.lng
+      const south = viewport_bounds._southWest.lat
+      const north = viewport_bounds._northEast.lat
       console.log(west,east,north,south)
       if (tweaks.sampling){
-        var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west={west}&east={east}&north={north}&south={south}&clustering=quadbin&clustering.relativeResolution=4&access_token=${token}`;
+        var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west=${west}&east=${east}&north=${north}&south=${south}&clustering=quadbin&clustering.relativeResolution=4&access_token=${token}`;
         const stats = await fetch(url).then(r => r.json());
       // console.log(stats)
         console.log('feature sampling selected')
