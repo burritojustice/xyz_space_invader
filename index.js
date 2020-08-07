@@ -299,9 +299,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
       const north = viewport_bounds._northEast.lat
       console.log(west,east,north,south)
       if (tweaks.sampling){
-        var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west=${west}&east=${east}&north=${north}&south=${south}&clustering=quadbin&clustering.relativeResolution=4&access_token=${token}`;
+        var url = `https://xyz.api.here.com/hub/spaces/${spaceId}/bbox?west=${west}&east=${east}&north=${north}&south=${south}&clustering=quadbin&clustering.relativeResolution=0&access_token=${token}`;
         const stats = await fetch(url).then(r => r.json());
       // console.log(stats)
+        console.log(stats.features.geometry.properties.count)
         console.log('feature sampling selected')
         // if a user jams something into sampling, run with distribution
         scene_config.sources._xyzspace.url_params.tweaks = 'sampling'
