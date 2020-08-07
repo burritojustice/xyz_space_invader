@@ -330,13 +330,14 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
             console.log('sampling strength number:',tweaks.strength)
         }
         else { // if strength is not explicitly set, try to figure out a reasonable number of features based on space feature count and density
-          var currentZoom = scene.view.tile_zoom;
-          var mapResolution = scene.view.meters_per_pixel
+//           var currentZoom = scene.view.tile_zoom;
+//           var mapResolution = scene.view.meters_per_pixel
           // do a quick estimate using the space's data density and zoom level
 //           var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
 //           var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
 //           console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
           var ratio = viewport_count/10000 
+          console.log('ratio',ratio)
           if (ratio < 1){
             console.log(viewport_count,'estimated features on screen, no need to use sampling')
             delete scene_config.sources._xyzspace.url_params.tweaks
@@ -344,6 +345,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
             delete scene_config.sources._xyzspace.url_params['tweaks.strength']
           }
           else {
+            console.log('setting strength to',ratio)
             scene_config.sources._xyzspace.url_params['tweaks.strength'] = ratio
           }
         }
