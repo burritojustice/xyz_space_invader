@@ -640,7 +640,6 @@ async function getStats({ spaceId, token, mapStartLocation }) {
   function radToDeg(rad) {
     return rad / (Math.PI / 180);
   };
-  var height = 
   var bbox_area = Math.pow(6371,2) * Math.PI * Math.abs(Math.sin(degToRad(bbox[3])) - Math.sin(degToRad(bbox[1]))) * Math.abs(bbox[2] - (bbox[0])) / 180;
   
   let fitBounds = false;
