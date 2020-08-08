@@ -289,6 +289,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         clip: true
       }      
     };
+    
     async function setTweaks(){
       console.table(tweaks)
       const viewport_bounds = map.getBounds()
@@ -329,13 +330,10 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
             scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
             console.log('sampling strength number:',tweaks.strength)
         }
-        else { // if strength is not explicitly set, try to figure out a reasonable number of features based on space feature count and density
+        else { // if strength is not explicitly set, try to figure out a reasonable number of features based on space feature count
 //           var currentZoom = scene.view.tile_zoom;
 //           var mapResolution = scene.view.meters_per_pixel
           // do a quick estimate using the space's data density and zoom level
-//           var screenSqkm = scene.view.size.meters.x/1000 * scene.view.size.meters.y/1000 // sq.km
-//           var screenFeatureEstimate = screenSqkm * spaceInfo.density // this is way off
-//           console.log('viewport features estimated by space density:',screenFeatureEstimate, 'zoom',currentZoom,'m/px:',mapResolution)
           var ratio = Math.round(viewport_count/10000)
           console.log('ratio',ratio)
           if (ratio < 1){
@@ -389,8 +387,9 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
         delete scene_config.sources._xyzspace.url_params['tweaks.strength']
       }
+      appUI.set({ tweaks })
     }
-    setTweaks()
+    if (tweaks){setTweaks()}
     
     if (isProjectable(basemap)) {
       try {
