@@ -376,11 +376,12 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
           }
         }
         else { 
-          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbylevel'
+          scene_config.sources._xyzspace.url_params['tweaks.algorithm'] = 'gridbytilelevel'
           console.log('no algorithm chosen, applying gridbylevel')
         }
       }
       else if (tweaks.ensure){
+         cnosole.log('setting tweaks=ensure')
          scene_config.sources._xyzspace.url_params.tweaks = 'ensure'
       }
       else {
@@ -817,6 +818,7 @@ async function getStats({ spaceId, token, mapStartLocation }) {
     hexbinInfo,
     tokenCapabilities,
     gisInfo,
+    tweaks,
     // seed with top tags from stats endpoint
     uniqueTagsSeen: new Set([...appUI.get().uniqueTagsSeen, ...stats.tags.value.map(t => t.key)].filter(x => x))
   });
