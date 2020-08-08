@@ -387,9 +387,9 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         delete scene_config.sources._xyzspace.url_params['tweaks.algorithm']
         delete scene_config.sources._xyzspace.url_params['tweaks.strength']
       }
-      appUI.set({ tweaks })
+//       appUI.set({ tweaks }) // do we need this here? seems to be causing a loop
     }
-    if (tweaks){setTweaks()}
+    setTweaks()
     
     if (isProjectable(basemap)) {
       try {
