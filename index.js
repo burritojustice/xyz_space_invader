@@ -324,7 +324,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         if ((tweaks.strength) && (tweaks.strength== 'low' || 'lowmed' || 'med' || 'medhigh' || 'high')){
           scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
           console.log('sampling strength text:',tweaks.strength,scene_config.sources._xyzspace.url_params['tweaks.strength'])
-        } 
+        }
         else if (tweaks.strength >=1 && tweaks.strength <= 100){
             scene_config.sources._xyzspace.url_params['tweaks.strength'] = tweaks.strength
             console.log('sampling strength number:',tweaks.strength)
@@ -381,7 +381,7 @@ function applySpace({ spaceId, token, displayToggles: { hexbins, clustering, clu
         }
       }
       else if (tweaks.ensure){
-         cnosole.log('setting tweaks=ensure')
+         console.log('setting tweaks=ensure')
          scene_config.sources._xyzspace.url_params.tweaks = 'ensure'
       }
       else {
