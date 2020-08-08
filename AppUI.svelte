@@ -134,13 +134,17 @@
         {/if}
       
         {#if tweaks}
+
           <table>
               <tr> 
                 {#if tweaks.sampling}
                   <td>sampling:</td><td> {tweaks.sampling}</td><td>{tweaks.strength}</td>
                   <div class="slidecontainer">
-                    <input bind:value="tweaks.strength" type="range" min="0" max="100" value="{tweaks.strength}" class="slider" id="strength">
+                    <input bind:value="tweaks.strength" type="range" min="0" max="100" value="{tweaks.strength}" class="slider" id="strength" on:change="setTweaks(this.value)>
                   </div>
+                {/if}
+                {#if tweaks.ensure}
+                  <td>ensure (auto sampling mode)</td>
                 {/if}
                 {#if tweaks.simplification}
                   <td>simplification:</td><td> {tweaks.simplification}</td><td>{tweaks.strength}</td>
@@ -1352,6 +1356,10 @@ export default {
 
     toggleTagFilterAt() {
       this.set({ tagFilterAt: !this.get().tagFilterAt })
+    },
+    
+    setTweaks() {
+      this.set({ tweaks })
     },
 
     handleKeyPress({ key }) {
