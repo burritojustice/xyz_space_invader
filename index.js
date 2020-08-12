@@ -577,7 +577,7 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
 //     activeTags = 'zoom13_centroid';
   }
-
+  activeTags = encodeURIComponent(activeTags)
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
   scene_config.sources._xyzspace.url_params = {
     ...scene_config.sources._xyzspace.url_params,
