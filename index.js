@@ -70,6 +70,7 @@ appUI.on('loadSpace', ({ spaceId, token }) => {
 // Handle query string updates
 appUI.on('updateQueryString', ({ queryParams }) => {
   const query = new URLSearchParams(queryParams);
+  console.log('query',query)
   const qs = `?${query.toString()}${window.location.hash}`;
   window.history.replaceState(null, null, qs);
 });
@@ -577,7 +578,6 @@ function applyTags({ spaceId, tagFilterQueryParam, hexbinInfo, displayToggles: {
     }
 //     activeTags = 'zoom13_centroid';
   }
-  activeTags = encodeURIComponent(activeTags)
   scene_config.sources._xyzspace = scene_config.sources._xyzspace || {};
   scene_config.sources._xyzspace.url_params = {
     ...scene_config.sources._xyzspace.url_params,
