@@ -70,8 +70,9 @@ appUI.on('loadSpace', ({ spaceId, token }) => {
 // Handle query string updates
 appUI.on('updateQueryString', ({ queryParams }) => {
   const query = new URLSearchParams(queryParams);
-  console.log('query',query)
+  console.log('query',query, queryParams)
   const qs = `?${query.toString()}${window.location.hash}`;
+  console.log(qs)
   window.history.replaceState(null, null, qs);
 });
 
