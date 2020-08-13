@@ -828,8 +828,9 @@ export default {
       if (tagFilterList.length === 0) {
         return null;
       }
-      //uri encode spaces so they don't get converted to + (which would screw up + used for AND tags)
-      tagFilterList.forEach((tag, index) => tagFilterList[index] = encodeURIComponent(tag)); 
+//       //uri encode spaces so they don't get converted to + (which would screw up + used for AND tags)
+//       tagFilterList.forEach((tag, index) => tagFilterList[index] = encodeURIComponent(tag)); 
+//       well, that didn't work -- tags=the%2520states
        
       if (tagFilterAndOr === 'and') {
         return tagFilterList.join('+');
